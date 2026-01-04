@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# OpenBox Guardrails Evaluation
+# OpenBox Guardrails
 
 OpenBox Guardrails is a robust API service designed to evaluate and enforce safety and content moderation for AI agents. It provides a set of guardrails to ensure AI-generated content adheres to safety guidelines and content policies.
 

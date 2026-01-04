@@ -9,7 +9,6 @@ This site collects the OpenBox documentation set and keeps the component readmes
 
 ## What's inside
 
-- [OpenBox READMEs](openbox-readmes)
 - [OpenBox Core](openbox-core)
 - [OpenBox Backend](openbox-backend)
 - [OpenBox Guardrails](openbox-guardrails)
