@@ -141,14 +141,14 @@ Clone the main Temporal Server repo: [https://github.com/temporalio/temporal](ht
 git clone https://github.com/temporalio/temporal.git
 ```
 
-In the following command, replace **<YOUR_TAG>** and **<YOUR_COMMIT>** to build the custom Docker image:
+In the following command, replace `YOUR_TAG` and `YOUR_COMMIT` to build the custom Docker image:
 
 ```bash
 git checkout <YOUR_COMMIT>
 docker build . -t temporalio/auto-setup:<YOUR_TAG> --build-arg TARGET=auto-setup
 ```
 
-Next, in the `docker-compose.yml` file, replace the `services.temporal.image` configuration value with **<YOUR_TAG>**.
+Next, in the `docker-compose.yml` file, replace the `services.temporal.image` configuration value with `YOUR_TAG`.
 
 Then run the `docker-compose up` command:
 
