@@ -25,6 +25,7 @@ const sidebars = {
         'openbox-backend',
         'openbox-guardrails',
         'opa-app',
+        'temporal',
       ],
     },
   ],

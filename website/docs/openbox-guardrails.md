@@ -6,57 +6,14 @@ sidebar_position: 5
 
 OpenBox Guardrails is a robust API service designed to evaluate and enforce safety and content moderation for AI agents. It provides a set of guardrails to ensure AI-generated content adheres to safety guidelines and content policies.
 
-## Features
+## Services and ports
 
-- **Content Moderation**: Detect and filter inappropriate content
-- **PII Detection**: Identify and handle personally identifiable information
-- **Toxic Language Detection**: Flag and manage toxic or harmful language
-- **NSFW Content Detection**: Identify not-safe-for-work content
-- **Custom Rule Support**: Implement custom validation rules
-- **RESTful API**: Easy integration with existing systems
+| Service | Port | Notes |
+|---------|------|-------|
+| `openbox-guardrails` | `8000` | Guardrails API |
+| `openbox-postgres` | `5432` | PostgreSQL for guardrails data |
 
-## Getting Started
-
-### Prerequisites
-
-- Python 3.12+
-- pip (Python package manager)
-- PostgreSQL (for production)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/guardrails-openbox.git
-   cd guardrails-openbox
-   ```
-
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-### Running the Application
-
-```bash
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-```
-
-## Deployment
-
-### Docker
+### Docker Deployment
 
 Build and run using Docker:
 
