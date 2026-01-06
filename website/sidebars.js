@@ -24,6 +24,7 @@ const sidebars = {
         'openbox-core',
         'openbox-backend',
         'openbox-guardrails',
+        'openbox-fe',
         'opa-app',
         'temporal',
       ],

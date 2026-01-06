@@ -12,4 +12,5 @@ This site collects the OpenBox documentation set and keeps the component readmes
 - [OpenBox Core](openbox-core)
 - [OpenBox Backend](openbox-backend)
 - [OpenBox Guardrails](openbox-guardrails)
+- [OpenBox FE](openbox-fe)
 - [OPA App](opa-app)
