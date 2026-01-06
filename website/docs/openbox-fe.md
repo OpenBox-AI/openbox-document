@@ -42,11 +42,9 @@ Create the network (if not exist):
 docker network create openbox
 ```
 
-The Dockerfile in this repo builds the frontend and serves it with Nginx.
-
 ```bash
 docker build -t openbox-fe .
-docker run -p 80:80 openbox-fe 
+docker run -p 3233:3233 openbox-fe 
 ```
 
-Open `http://localhost:80` to view the app.
+Open `http://localhost:3233` to view the app.
