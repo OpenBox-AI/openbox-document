@@ -87,7 +87,7 @@ const config = {
             items: [
               {
                 label: 'OpenBox Docs',
-                to: '/docs/intro',
+                to: '/docs/openbox/intro',
               },
             ],
           },
