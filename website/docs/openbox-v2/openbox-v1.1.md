@@ -1607,12 +1607,12 @@ Assuming Sprint 4-5 complete OpenBox v1.0 MVP:
 
 ### References
 
-- [OpenBox v1.0 PRD](./openbox.md)
-- [AGE System Architecture](../../src/agent-governance-engine/docs/SYSTEM_ARCHITECTURE.md)
-- [AGE Risk Scoring](../../src/agent-governance-engine/docs/RISK_SCORING.md)
-- [AGE Behavioral Conformance](../../src/agent-governance-engine/docs/BEHAVIORAL_CONFORMANCE.md)
-- [AGE Goal Alignment](../../src/agent-governance-engine/docs/GOAL_ALIGNMENT.md)
-- [Sprint 4-5 Planning](../sprints/sprint-4.md)
+- OpenBox v1.0 PRD (internal doc)
+- AGE System Architecture (internal doc)
+- AGE Risk Scoring (internal doc)
+- AGE Behavioral Conformance (internal doc)
+- AGE Goal Alignment (internal doc)
+- Sprint 4-5 Planning (internal doc)
 
 ---
 
