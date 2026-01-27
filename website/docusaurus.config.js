@@ -14,10 +14,6 @@ const config = {
   tagline: 'Documentation for OpenBox components.',
   favicon: 'img/favicon.ico',
 
-  markdown: {
-    mermaid: true,
-  },
-
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
@@ -34,7 +30,7 @@ const config = {
   organizationName: 'openbox',
   projectName: 'opebox-docs',
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -60,8 +56,6 @@ const config = {
     ],
   ],
 
-  themes: ['@docusaurus/theme-mermaid'],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -79,7 +73,7 @@ const config = {
         items: [
           {
             type: 'docSidebar',
-            sidebarId: 'docs',
+            sidebarId: 'tutorialSidebar',
             position: 'left',
             label: 'Docs',
           },
@@ -92,33 +86,8 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Getting Started',
-                to: '/docs/getting-started/quick-start',
-              },
-              {
-                label: 'Trust Lifecycle',
-                to: '/docs/agents/trust-lifecycle',
-              },
-              {
-                label: 'SDK',
-                to: '/docs/sdk',
-              },
-            ],
-          },
-          {
-            title: 'Platform',
-            items: [
-              {
-                label: 'Dashboard',
-                to: '/docs/dashboard',
-              },
-              {
-                label: 'Approvals',
-                to: '/docs/approvals',
-              },
-              {
-                label: 'Compliance',
-                to: '/docs/compliance',
+                label: 'OpenBox Docs',
+                to: '/docs/openbox/intro',
               },
             ],
           },
@@ -128,7 +97,6 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
-        additionalLanguages: ['mermaid'],
       },
     }),
 };

@@ -1,5 +1,7 @@
 // @ts-check
 
+// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
 /**
  * Creating a sidebar enables you to:
  - create an ordered group of docs
@@ -13,97 +15,34 @@
  @type {import('@docusaurus/plugin-content-docs').SidebarsConfig}
  */
 const sidebars = {
-  docs: [
-    'index',
+  tutorialSidebar: [
     {
       type: 'category',
-      label: 'Getting Started',
-      collapsed: false,
+      label: 'OpenBox Docs',
+      link: {type: 'doc', id: 'openbox/intro'},
       items: [
-        'getting-started/index',
-        'getting-started/quick-start',
-        {
-          type: 'category',
-          label: 'Workflow Engines',
-          items: [
-            'getting-started/workflow-engines/temporal',
-          ],
-        },
+        'openbox/openbox-core',
+        'openbox/openbox-backend',
+        'openbox/openbox-guardrails',
+        'openbox/openbox-fe',
+        'openbox/opa-app',
+        'openbox/temporal',
       ],
     },
     {
       type: 'category',
-      label: 'Concepts',
-      collapsed: true,
+      label: 'openbox-v2',
+      link: {
+        type: 'generated-index',
+        title: 'openbox-v2',
+        slug: '/openbox-v2',
+      },
       items: [
-        'concepts/trust-scores',
-        'concepts/trust-tiers',
-        'concepts/event-types',
-        'concepts/governance-decisions',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Dashboard',
-      items: [
-        'dashboard/index',
-        'dashboard/trust-overview',
-        'dashboard/alerts',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Agents',
-      collapsed: false,
-      items: [
-        'agents/index',
-        'agents/registering-agents',
-        {
-          type: 'category',
-          label: 'Trust Lifecycle',
-          collapsed: false,
-          items: [
-            'agents/trust-lifecycle/index',
-            'agents/trust-lifecycle/assess',
-            'agents/trust-lifecycle/authorize',
-            'agents/trust-lifecycle/monitor',
-            'agents/trust-lifecycle/verify',
-            'agents/trust-lifecycle/adapt',
-          ],
-        },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Approvals',
-      items: [
-        'approvals/index',
-        'approvals/workflows',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Organization',
-      items: [
-        'organization/index',
-        'organization/audit-log',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Compliance',
-      items: [
-        'compliance/index',
-        'compliance/attestation',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'SDK',
-      items: [
-        'sdk/index',
-        'sdk/configuration',
-        'sdk/error-handling',
+        'openbox-v2/plan',
+        'openbox-v2/openbox-v1.1',
+        'openbox-v2/openbox-v1.1-technical-spec',
+        'openbox-v2/glossary-v1.1',
+        'openbox-v2/krnl-cluster',
       ],
     },
   ],
