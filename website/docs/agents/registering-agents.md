@@ -148,6 +148,6 @@ The agent is matched by the API key. When your worker starts, it will appear as 
 
 After creating your agent:
 
-1. **[Configure Governance (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules before running your agent
+1. **[Configure Trust Controls (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules before running your agent
 2. **[Connect Your Worker](/docs/getting-started/workflow-engines/temporal)** - Configure the SDK with your API key
 3. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Once running, watch your agent's activity in real-time

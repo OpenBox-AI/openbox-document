@@ -108,6 +108,6 @@ Click any session (active or completed) to open **Session Replay**:
 
 ## Next Steps
 
-1. **[Register a New Agent](/docs/agents/registering-agents)** - Add another agent to govern
-2. **[Understand the Trust Lifecycle](/docs/agents/trust-lifecycle)** - Learn how the 5 governance phases work together
-3. **[Configure Governance (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails and policies for an agent
+1. **[Register a New Agent](/docs/agents/registering-agents)** - Add another agent to the trust layer
+2. **[Understand the Trust Lifecycle](/docs/agents/trust-lifecycle)** - Learn how the 5 phases work together
+3. **[Configure Trust Controls (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails and policies for an agent

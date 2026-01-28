@@ -1,12 +1,12 @@
 ---
 title: Trust Tiers
-description: Trust Tier levels and their governance implications
+description: Trust Tier levels and how they affect trust controls
 sidebar_position: 2
 ---
 
 # Trust Tiers
 
-Trust Tiers translate the numeric Trust Score (0-100) into governance levels that determine how strictly an agent is controlled.
+Trust Tiers translate the numeric Trust Score (0-100) into trust levels that determine how strictly an agent is controlled.
 
 ## Tier Definitions
 
@@ -18,7 +18,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 | **Tier 4** | 25-49 | Low Trust | Strict controls, frequent HITL |
 | **Tier 5** | 0-24 | Untrusted | Supervised mode, all actions reviewed |
 
-## Governance by Tier
+## Trust Controls by Tier
 
 ### Tier 1: Highly Trusted
 
@@ -27,7 +27,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 - No recent violations
 - High goal alignment
 
-**Governance:**
+**Trust controls:**
 - Most operations auto-approved
 - Logging only for standard actions
 - HITL only for highest-risk operations
@@ -42,11 +42,11 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 - Minor or infrequent violations
 - Good alignment
 
-**Governance:**
+**Trust controls:**
 - Standard policy enforcement
 - Normal monitoring
 - HITL for medium-risk operations
-- Typical governance overhead
+- Typical trust overhead
 
 **Example agents:** Most production agents after initial period.
 
@@ -57,7 +57,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 - Recent violations being addressed
 - Inconsistent alignment
 
-**Governance:**
+**Trust controls:**
 - Enhanced monitoring
 - Stricter policy enforcement
 - HITL for more operation types
@@ -72,7 +72,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 - Pattern of non-compliance
 - Significant goal drift
 
-**Governance:**
+**Trust controls:**
 - Strict controls on all operations
 - Frequent HITL requirements
 - Rate limiting
@@ -87,7 +87,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into governance levels tha
 - Blocked after severe incident
 - Failed critical compliance checks
 
-**Governance:**
+**Trust controls:**
 - All significant operations require approval
 - May be limited to read-only
 - Constant monitoring
@@ -161,7 +161,7 @@ Tier 4  ██░░░░░░░░░░░░░░░░░░   4%  (5 ag
 Untrust █░░░░░░░░░░░░░░░░░░░   1%  (1 agent)
 ```
 
-Monitor this distribution to ensure your governance is working effectively.
+Monitor this distribution to ensure your trust controls are working effectively.
 
 ## Related
 

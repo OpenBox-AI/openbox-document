@@ -256,7 +256,7 @@ async def main():
     )
     
     print("🚀 Worker started! Listening on task queue: customer-support-queue")
-    print("📊 OpenBox governance enabled")
+    print("📊 OpenBox trust layer enabled")
     print("🔗 Temporal UI: http://localhost:8080")
     
     await worker.run()
@@ -278,7 +278,7 @@ uv run worker.py
 You should see:
 ```
 🚀 Worker started! Listening on task queue: customer-support-queue
-📊 OpenBox governance enabled
+📊 OpenBox trust layer enabled
 🔗 Temporal UI: http://localhost:8080
 ```
 
@@ -473,7 +473,7 @@ The SDK automatically captures and sends to OpenBox:
 
 ## Next Steps
 
-1. **[Configure Governance](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
+1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit
 3. **[Set Up Approvals](/docs/approvals/workflows)** - Add human-in-the-loop for sensitive operations
 4. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering

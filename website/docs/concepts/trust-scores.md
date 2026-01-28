@@ -140,6 +140,6 @@ Recovery rate: typically +0.5 to +1.5 points per day with good behavior.
 
 ## Related
 
-- **[Trust Tiers](/docs/concepts/trust-tiers)** - How scores map to governance levels
+- **[Trust Tiers](/docs/concepts/trust-tiers)** - How scores map to trust controls
 - **[Assess Phase](/docs/agents/trust-lifecycle/assess)** - Configure the AIVSS component
 - **[Adapt Phase](/docs/agents/trust-lifecycle/adapt)** - Watch trust evolve over time

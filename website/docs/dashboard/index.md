@@ -91,6 +91,6 @@ See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-fie
 
 From the Dashboard, you'll typically:
 
-1. **[View Agents](/docs/agents)** - Click an agent to see its details and configure governance
+1. **[View Agents](/docs/agents)** - Click an agent to see its details and configure trust controls
 2. **[Handle Approvals](/docs/approvals)** - Review pending HITL requests when the badge shows pending items
-3. **[Add a New Agent](/docs/agents/registering-agents)** - Register another agent to govern
+3. **[Add a New Agent](/docs/agents/registering-agents)** - Register another agent to bring under the trust layer

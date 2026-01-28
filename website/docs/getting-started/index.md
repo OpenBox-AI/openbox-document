@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Getting Started
 
-OpenBox integrates with your existing workflow engine by wrapping the worker process. All governance configuration happens in the OpenBox dashboard - your code stays clean.
+OpenBox integrates with your existing workflow engine by wrapping the worker process. All trust configuration happens in the OpenBox dashboard - your code stays clean.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ OpenBox integrates with your existing workflow engine by wrapping the worker pro
                          └─────────────────────┘
 ```
 
-**The SDK does one thing:** wraps your workflow engine worker to intercept events and apply governance. Everything else - policies, guardrails, approvals, monitoring - is configured in the dashboard.
+**The SDK does one thing:** wraps your workflow engine worker to intercept events and apply trust controls. Everything else - policies, guardrails, approvals, monitoring - is configured in the dashboard.
 
 ## Next Steps
 

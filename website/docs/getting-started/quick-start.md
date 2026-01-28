@@ -1,12 +1,12 @@
 ---
 title: Quick Start
-description: Add OpenBox governance to your existing Temporal agent in 5 minutes
+description: Add the OpenBox trust layer to your existing Temporal agent in 5 minutes
 sidebar_position: 1
 ---
 
 # Quick Start
 
-Add governance to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for governance, monitoring, and compliance.
+Add a trust layer to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for trust, monitoring, and compliance.
 
 :::tip Building from Scratch?
 If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/getting-started/workflow-engines/temporal)** for a complete end-to-end setup.
@@ -135,7 +135,7 @@ Start your worker as usual:
 python worker.py
 ```
 
-Your agent now runs with OpenBox governance enabled.
+Your agent now runs with the OpenBox trust layer enabled.
 
 ---
 
@@ -172,7 +172,7 @@ All captured data is evaluated against your governance policies in real-time.
 
 Now that your agent is running with OpenBox:
 
-1. **[Configure Governance](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
+1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit agent behavior
 3. **[Set Up Approvals](/docs/approvals/workflows)** - Add human-in-the-loop for sensitive operations
 4. **[Advanced Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and event filtering

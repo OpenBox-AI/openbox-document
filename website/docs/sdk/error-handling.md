@@ -1,12 +1,12 @@
 ---
 title: Error Handling
-description: Handle governance decisions in your code
+description: Handle trust decisions in your code
 sidebar_position: 3
 ---
 
 # Error Handling
 
-Governance decisions surface as exceptions in your activities. Handle them appropriately for robust agent behavior.
+Trust decisions surface as exceptions in your activities. Handle them appropriately for robust agent behavior.
 
 ## Exception Types
 
@@ -47,7 +47,7 @@ async def sensitive_operation(data: dict) -> str:
 
         if e.termination:
             # Agent is being terminated
-            logger.critical("Agent terminated by governance")
+            logger.critical("Agent terminated by trust policy")
             # Perform cleanup
             raise
 
@@ -188,7 +188,7 @@ async def validated_operation(data: dict) -> str:
 
 ## Workflow-Level Handling
 
-For workflow-level governance handling:
+For workflow-level trust handling:
 
 ```python
 @workflow.defn
@@ -225,12 +225,12 @@ class MyAgentWorkflow:
 2. **Log GovernanceStop with context** - Helps debugging
 3. **Consider fallback behavior** - Not all denials should crash
 4. **Handle termination specially** - Clean up resources
-5. **Don't catch and ignore** - Governance exceptions are intentional
+5. **Don't catch and ignore** - These exceptions are intentional
 
 ## Next Steps
 
-Now that you understand how to handle governance in code:
+Now that you understand how to handle trust decisions in code:
 
-1. **[Configure Governance Rules](/docs/agents/trust-lifecycle/authorize)** - Set up the guardrails, policies, and behavioral rules that trigger these decisions
-2. **[Monitor Your Agent](/docs/agents/trust-lifecycle/monitor)** - Watch how governance decisions appear in Session Replay
+1. **[Configure Policies](/docs/agents/trust-lifecycle/authorize)** - Set up the guardrails, policies, and behavioral rules that trigger these decisions
+2. **[Monitor Your Agent](/docs/agents/trust-lifecycle/monitor)** - Watch how decisions appear in Session Replay
 3. **[Handle Approvals](/docs/approvals)** - Review and process HITL requests in the dashboard

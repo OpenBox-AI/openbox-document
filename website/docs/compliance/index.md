@@ -25,7 +25,7 @@ Every agent action is logged with:
 - Timestamp
 - Actor identification
 - Action details
-- Governance decision
+- Trust decision
 - Cryptographic signature
 
 ### Automated Evidence Collection
@@ -79,7 +79,7 @@ Track audit schedule and preparation status.
 
 1. **Regular reviews** - Review policies quarterly
 2. **Document changes** - Add comments to all configuration changes
-3. **Test controls** - Validate governance works as expected
+3. **Test controls** - Validate trust controls work as expected
 4. **Export regularly** - Maintain off-platform backups
 5. **Train approvers** - Ensure HITL reviewers understand requirements
 

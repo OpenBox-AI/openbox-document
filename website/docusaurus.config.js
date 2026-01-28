@@ -69,61 +69,15 @@ const config = {
       image: 'img/docusaurus-social-card.jpg',
       colorMode: {
         respectPrefersColorScheme: true,
+        disableSwitch: false,
       },
       navbar: {
-        title: 'OpenBox Docs',
+        title: 'Docs',
         logo: {
           alt: 'OpenBox Logo',
           src: 'img/logo.svg',
         },
-        items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'docs',
-            position: 'left',
-            label: 'Docs',
-          },
-        ],
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Getting Started',
-                to: '/docs/getting-started/quick-start',
-              },
-              {
-                label: 'Trust Lifecycle',
-                to: '/docs/agents/trust-lifecycle',
-              },
-              {
-                label: 'SDK',
-                to: '/docs/sdk',
-              },
-            ],
-          },
-          {
-            title: 'Platform',
-            items: [
-              {
-                label: 'Dashboard',
-                to: '/docs/dashboard',
-              },
-              {
-                label: 'Approvals',
-                to: '/docs/approvals',
-              },
-              {
-                label: 'Compliance',
-                to: '/docs/compliance',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright (c) ${new Date().getFullYear()} OpenBox.`,
+        items: [],
       },
       prism: {
         theme: prismThemes.github,

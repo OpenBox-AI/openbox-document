@@ -181,5 +181,5 @@ async def main():
 ## Next Steps
 
 1. **[Handle Governance Errors](/docs/sdk/error-handling)** - Learn how to handle `GovernanceStop`, `ApprovalPending`, and other exceptions
-2. **[Configure Governance Rules](/docs/agents/trust-lifecycle/authorize)** - Set up the policies and guardrails in the dashboard
+2. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up the policies and guardrails in the dashboard
 ```

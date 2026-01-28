@@ -61,4 +61,4 @@ Export dashboard data for reporting:
 ## Next Steps
 
 1. **[View Alerts](/docs/dashboard/alerts)** - See agents that need attention
-2. **[Drill into Agents](/docs/agents)** - Click any agent to view details and configure governance
+2. **[Drill into Agents](/docs/agents)** - Click any agent to view details and configure trust controls

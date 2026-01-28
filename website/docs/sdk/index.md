@@ -6,10 +6,10 @@ sidebar_position: 6
 
 # SDK Reference
 
-The OpenBox SDK integrates with Temporal workflows. It handles event capture, telemetry collection, and governance evaluation with a single function call.
+The OpenBox SDK integrates with Temporal workflows. It handles event capture, telemetry collection, and trust evaluation with a single function call.
 
 :::info What the SDK Does
-The SDK's primary job is to **wrap your Temporal worker** and send workflow/activity events to the OpenBox platform. All governance logic, policies, and UI management happens on the platform - not in the SDK.
+The SDK's primary job is to **wrap your Temporal worker** and send workflow/activity events to the OpenBox platform. All trust logic, policies, and UI management happens on the platform - not in the SDK.
 :::
 
 ## Philosophy
@@ -61,7 +61,7 @@ The SDK automatically captures and sends to OpenBox:
 - File read/write operations
 - File paths and sizes
 
-All captured data is evaluated against your governance policies on the OpenBox platform.
+All captured data is evaluated against your trust policies on the OpenBox platform.
 
 ## How It Works
 
@@ -86,7 +86,7 @@ All captured data is evaluated against your governance policies on the OpenBox p
                            ▼
               ┌────────────────────────────┐
               │        OpenBox             │
-              │     Governance Engine      │
+              │       Trust Engine        │
               │                            │
               │   Returns:                 │
               │   - continue/stop          │
@@ -113,4 +113,4 @@ See **[Error Handling](/docs/sdk/error-handling)** for how to handle:
 
 1. **[Quick Start Guide](/docs/getting-started/quick-start)** - Wrap an existing Temporal agent
 2. **[Configuration](/docs/sdk/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
+3. **[Error Handling](/docs/sdk/error-handling)** - Handle trust decisions in your code
