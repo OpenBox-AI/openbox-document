@@ -1,6 +1,6 @@
 ---
 title: Compliance Frameworks
-description: 
+description: Overview of compliance frameworks and audit-ready evidence in OpenBox.
 sidebar_position: 2
 ---
 
