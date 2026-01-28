@@ -22,7 +22,7 @@ OpenBox provides built-in support for security and compliance requirements. Gene
 
 Every agent action is logged with:
 
-- Timestamp (RFC 3161 timestamping)
+- Timestamp
 - Actor identification
 - Action details
 - Governance decision

@@ -151,7 +151,7 @@ The Merkle root is signed with:
 
 ### Timestamp
 
-RFC 3161 timestamping provides:
+Timestamping provides:
 - Proof of existence at specific time
 - Third-party trust anchor
 - Legal admissibility
