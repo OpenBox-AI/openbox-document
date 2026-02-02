@@ -32,12 +32,6 @@ The operation is permitted to proceed.
 - Event logged for audit
 - Behavioral score slightly improves
 
-**SDK behavior:**
-```python
-# Operation proceeds transparently
-result = await my_activity(data)
-```
-
 ## CONSTRAIN
 
 The operation proceeds but with modifications or limitations.
@@ -79,21 +73,6 @@ The operation is paused pending human approval.
 - Request appears in Approvals queue
 - Once approved/rejected, retry succeeds/fails
 
-**SDK behavior:**
-```python
-try:
-    result = await my_activity(data)
-except ApprovalPending:
-    # Automatic retry handles this
-    raise
-except ApprovalRejected as e:
-    # Human rejected the request
-    logger.error(f"Approval rejected: {e.reason}")
-except ApprovalExpired:
-    # Timeout without decision
-    logger.error("Approval timed out")
-```
-
 **Approval flow:**
 ```
 1. Operation triggers REQUIRE_APPROVAL
@@ -120,15 +99,6 @@ The specific operation is blocked.
 - Event logged with denial reason
 - Behavioral score decreases
 
-**SDK behavior:**
-```python
-try:
-    result = await my_activity(data)
-except GovernanceStop as e:
-    logger.error(f"Operation blocked: {e.reason}")
-    # Handle the denial (retry with different params, alert, etc.)
-```
-
 ## TERMINATE_AGENT
 
 The entire agent session is halted.
@@ -146,18 +116,6 @@ The entire agent session is halted.
 - Agent may be blocked from further execution
 - Significant trust score decrease
 - Alert generated
-
-**SDK behavior:**
-```python
-# Workflow level handling
-try:
-    await workflow.execute_activity(...)
-except GovernanceStop as e:
-    if e.termination:
-        # Entire workflow is being terminated
-        logger.critical(f"Agent terminated: {e.reason}")
-        # Cleanup and exit
-```
 
 ## Decision Precedence
 
@@ -184,32 +142,7 @@ Session replay shows decisions at each operation:
 
 ## Customizing Decisions
 
-In OPA policies, return the appropriate decision:
-
-```rego
-package openbox.policy
-
-# Default allow
-default decision = "ALLOW"
-
-# Require approval for external calls
-decision = "REQUIRE_APPROVAL" {
-    input.operation.type == "EXTERNAL_API_CALL"
-    input.agent.trust_tier >= 2
-}
-
-# Deny for untrusted agents
-decision = "DENY_ACTION" {
-    input.operation.type == "DATABASE_WRITE"
-    input.agent.trust_tier == 5
-}
-
-# Terminate on critical violation
-decision = "TERMINATE_AGENT" {
-    input.operation.type == "AGENT_ACTION"
-    input.operation.metadata.violation == "critical"
-}
-```
+// TODO
 
 ## Related
 
