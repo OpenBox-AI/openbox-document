@@ -17,7 +17,7 @@ The SDK's primary job is to **wrap your Temporal worker** and send workflow/acti
 The SDK is intentionally minimal:
 
 - **One function call** to wrap your worker (`create_openbox_worker`)
-- **Zero code changes** to your workflows and activities
+- **Zero code changes** to workflow/activity logic. Worker initialization requires adding OpenBox wrapper (~5 lines).
 - **Automatic telemetry** - captures HTTP, database, and file I/O operations
 
 ## Supported Engines

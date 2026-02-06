@@ -12,11 +12,11 @@ When an agent operation is evaluated, OpenBox returns one of five governance dec
 
 | Decision | Effect | Trust Impact |
 |----------|--------|--------------|
-| **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
-| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
+| **HALT** | Terminates entire agent session | Significant negative |
+| **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
-| **DENY_ACTION** | Specific operation blocked | Negative |
-| **TERMINATE_AGENT** | Entire agent session halted | Significant negative |
+| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
+| **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
 
@@ -84,7 +84,7 @@ The operation is paused pending human approval.
 5c. Timeout → Next retry raises ApprovalExpired
 ```
 
-## DENY_ACTION
+## BLOCK
 
 The specific operation is blocked.
 
@@ -99,9 +99,9 @@ The specific operation is blocked.
 - Event logged with denial reason
 - Behavioral score decreases
 
-## TERMINATE_AGENT
+## HALT
 
-The entire agent session is halted.
+The entire agent session is terminated.
 
 **When returned:**
 - Critical policy violation
@@ -122,10 +122,10 @@ The entire agent session is halted.
 When multiple policies apply, decisions follow precedence:
 
 ```
-TERMINATE_AGENT > DENY_ACTION > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
 ```
 
-If any policy returns TERMINATE, the agent is terminated regardless of other policies.
+If any policy returns HALT, the agent session is terminated regardless of other policies.
 
 ## Decision in Session Replay
 

@@ -16,9 +16,9 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
 
 ## Prerequisites
 
-- **Python 3.10+** installed
+- **Python 3.11+** installed
 - **Temporal Server** running locally or access to Temporal Cloud
-- **OpenBox Account** - Sign up at [app.openbox.ai](https://app.openbox.ai)
+- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** - OpenAI, Anthropic, or Google AI
 
 ---
@@ -188,7 +188,7 @@ LLM_KEY=sk-your-openai-key
 
 ### Register Your Agent in OpenBox
 
-1. **Log in** to the [OpenBox Dashboard](https://app.openbox.ai)
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Add Agent**
 3. Configure the agent:
    - **Workflow Engine**: Temporal
@@ -201,7 +201,7 @@ LLM_KEY=sk-your-openai-key
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Level 1-4)
+   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
    - **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**) - set an alignment threshold and drift action
 6. Click **Add Agent**
@@ -321,7 +321,7 @@ uv run trigger.py
 
 ### View in OpenBox Dashboard
 
-1. Open the [OpenBox Dashboard](https://app.openbox.ai)
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Customer Support Agent**
 3. Go to **Monitor** tab
 4. Click on your workflow session to see:

@@ -57,10 +57,10 @@ The main table displays:
 
 | Tier | Color | Description |
 |------|-------|-------------|
-| **TIER 1** | Green | Low risk, minimal constraints |
-| **TIER 2** | Blue | Medium risk, standard policies |
-| **TIER 3** | Orange | High risk, enhanced controls |
-| **TIER 4** | Red | Critical, strict governance |
+| **TIER 1** | Green | Tier 1 (90-100): Trusted — Minimal oversight, broad permissions |
+| **TIER 2** | Blue | Tier 2 (75-89): Confident — Standard controls, approval for sensitive ops |
+| **TIER 3** | Orange | Tier 3 (50-74): Monitor — Strict controls, monitoring required |
+| **TIER 4** | Red | Tier 4 (25-49): Restrict — Minimal permissions, approval for most ops |
 
 ## Agent Actions
 

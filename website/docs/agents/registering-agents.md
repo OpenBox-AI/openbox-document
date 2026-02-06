@@ -46,12 +46,12 @@ Expand the **Initial Risk Assessment** section and configure your agent's AIVSS 
 
 Select a preset that matches your agent's intended use:
 
-| Level | Name | Use Cases | Default Governance |
+| Tier | Name | Use Cases | Default Governance |
 |-------|------|-----------|-------------------|
-| **Level 1** | Minimal Risk | Read-only access, internal research, no external APIs | Fully autonomous |
-| **Level 2** | Low Risk | Internal automation, limited writes, monitored external calls | Mostly autonomous |
-| **Level 3** | Medium Risk | Customer data access, external API calls, financial reads | Approval for sensitive ops |
-| **Level 4** | High Risk | Production admin, financial writes, PII access | HITL for most operations |
+| **Tier 1 (90-100)** | Trusted | Read-only access, internal research, no external APIs | Fully autonomous |
+| **Tier 2 (75-89)** | Confident | Internal automation, limited writes, monitored external calls | Mostly autonomous |
+| **Tier 3 (50-74)** | Monitor | Customer data access, external API calls, financial reads | Approval for sensitive ops |
+| **Tier 4 (25-49)** | Restrict | Production admin, financial writes, PII access | HITL for most operations |
 
 ### AIVSS Parameters
 
@@ -71,11 +71,11 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 | Parameter | Options |
 |-----------|---------|
-| **Prompt Injection Risk** | Low (1), Medium (2), High (3), Critical (4) |
+| **Model Robustness** | Low (1), Medium (2), High (3), Critical (4) |
 | **Data Sensitivity** | Public (1), Internal (2), Confidential (3), Restricted (4) |
-| **Autonomy Level** | Supervised (1), Guided (2), Semi-autonomous (3), Autonomous (4) |
-| **Tool Access** | None (1), Read-only (2), Read-write (3), Admin (4) |
-| **External Connectivity** | None (1), Internal APIs (2), External APIs (3), Internet (4) |
+| **Ethical Impact** | Low (1), Medium (2), High (3), Critical (4) |
+| **Decision Criticality** | Low (1), Medium (2), High (3), Critical (4) |
+| **Adaptability** | Low (1), Medium (2), High (3), Critical (4) |
 
 #### Impact (30% weight)
 
@@ -84,7 +84,7 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 | **Confidentiality Impact** | None (1), Low (2), High (3) |
 | **Integrity Impact** | None (1), Low (2), High (3) |
 | **Availability Impact** | None (1), Low (2), High (3) |
-| **Business Criticality** | Low (1), Medium (2), High (3), Critical (4) |
+| **Safety Impact** | None (1), Low (2), High (3) |
 
 ### Predicted Trust Tier
 

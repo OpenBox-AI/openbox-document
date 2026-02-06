@@ -97,17 +97,14 @@ The Trust Score evolves based on behavior:
 | Compliant operations | +0.1 per 10 operations |
 | Approved HITL requests | +0.5 per approval |
 | High alignment scores | +0.2 per session |
-| No violations (streak) | +0.5 per day |
+| Recovery rate | +1 pt/day (Tier 1-3), +0.5 pt/day (Tier 4) |
 
 ### Negative Factors
 
 | Factor | Impact |
 |--------|--------|
-| Policy violation | -2 to -10 depending on severity |
-| Goal drift detected | -1 to -5 |
-| Approval timeout | -1 |
-| Approval rejection | -2 |
-| TERMINATE_AGENT triggered | -15 |
+| Violations affect Behavioral Compliance component (0-100 scale) | Minor: -5 pts, Major: -15 pts, Critical: -25 pts |
+| Violation aging | Violations age out after 30 days with linear decay |
 
 ### Tier Transitions
 

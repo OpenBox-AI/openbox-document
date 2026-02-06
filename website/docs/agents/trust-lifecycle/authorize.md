@@ -126,8 +126,8 @@ Stateful rules that detect multi-step patterns:
 | `ALLOW` | Permit and log |
 | `CONSTRAIN` | Apply additional limits |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
-| `DENY_ACTION` | Block the specific operation |
-| `TERMINATE_AGENT` | Halt the entire agent session |
+| `BLOCK` | Action rejected, agent continues |
+| `HALT` | Terminates entire agent session |
 
 ## Governance Decisions
 
@@ -135,11 +135,11 @@ The authorization pipeline produces one of five decisions:
 
 | Decision | Effect | Trust Impact |
 |----------|--------|--------------|
-| **ALLOW** | Operation proceeds | Positive (compliance) |
-| **CONSTRAIN** | Proceeds with limits | Neutral |
+| **HALT** | Terminates entire agent session | Significant negative |
+| **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Pauses for HITL | Neutral (pending) |
-| **DENY_ACTION** | Blocks operation | Negative |
-| **TERMINATE_AGENT** | Halts session | Significant negative |
+| **CONSTRAIN** | Proceeds with limits | Neutral |
+| **ALLOW** | Operation proceeds | Positive (compliance) |
 
 ## Trust Tier-Based Defaults
 

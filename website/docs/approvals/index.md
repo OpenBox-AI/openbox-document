@@ -107,7 +107,7 @@ For each pending request:
 
 If no action is taken:
 
-- Default timeout: configured per agent (typically 5-60 minutes)
+- Default timeout: 5 minutes per approval request (configurable per behavioral rule, 5-60 min range)
 - Activity fails with `ApprovalExpired`
 - Trust score slightly decreases (-1)
 - Appears in "Expired Today" stat

@@ -34,10 +34,10 @@ A donut chart showing the distribution of agents across Trust Tiers:
 
 | Tier | Risk Level | Description |
 |------|------------|-------------|
-| **Tier 1** | Low Risk | Highly trusted, minimal constraints |
-| **Tier 2** | Medium Risk | Standard policies, normal monitoring |
-| **Tier 3** | High Risk | Enhanced controls, some HITL required |
-| **Tier 4** | Critical | Strict governance, frequent HITL |
+| **Tier 1 (90-100): Trusted - Green** | Low Risk | Highly trusted, minimal constraints |
+| **Tier 2 (75-89): Confident - Blue** | Medium Risk | Standard policies, normal monitoring |
+| **Tier 3 (50-74): Monitor - Orange** | High Risk | Enhanced controls, some HITL required |
+| **Tier 4 (25-49): Restrict - Red** | Critical | Strict governance, frequent HITL |
 
 Click any tier in the legend to filter the agents list.
 

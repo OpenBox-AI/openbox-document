@@ -17,8 +17,8 @@ If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities
-- **Python 3.10+** installed
-- **OpenBox Account** - Sign up at [app.openbox.ai](https://app.openbox.ai)
+- **Python 3.11+** installed
+- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 
 ---
 
@@ -26,7 +26,7 @@ If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs
 
 Before wrapping your worker, create an agent in the OpenBox platform:
 
-1. **Log in** to the [OpenBox Dashboard](https://app.openbox.ai)
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Add Agent**
 3. Configure the agent:
    - **Workflow Engine**: Temporal
@@ -39,7 +39,7 @@ Before wrapping your worker, create an agent in the OpenBox platform:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Level 1-4)
+   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
    - **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**) - set an alignment threshold and drift action
 6. Click **Add Agent**
@@ -144,7 +144,7 @@ Your agent now runs with the OpenBox trust layer enabled.
 Trigger a workflow and view it in the dashboard:
 
 1. **Run a workflow** (using your existing trigger/client code)
-2. **Open the [OpenBox Dashboard](https://app.openbox.ai)**
+2. **Open the [OpenBox Dashboard](https://platform.openbox.ai)**
 3. Navigate to **Agents** → Click your agent
 4. Go to **Monitor** tab to see:
    - Active and completed sessions

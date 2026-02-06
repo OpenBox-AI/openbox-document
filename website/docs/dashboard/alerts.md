@@ -29,8 +29,8 @@ Triggered when the Verify phase detects misalignment:
 
 Triggered when governance blocks an operation:
 
-- **DENY_ACTION** - Specific operation blocked
-- **TERMINATE_AGENT** - Agent execution halted
+- **BLOCK** - Action rejected, agent continues
+- **HALT** - Terminates entire agent session
 - Review details in **Agent Detail → Adapt → Insights**
 
 ### Approval Timeouts
