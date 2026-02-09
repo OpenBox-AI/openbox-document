@@ -8,6 +8,8 @@ sidebar_position: 3
 
 The Dashboard provides a real-time overview of your organization's AI governance health. Access it from the sidebar by clicking **Dashboard**.
 
+![Dashboard](/img/Dashboard.png)
+
 ## Navigation
 
 The sidebar navigation includes:
@@ -83,7 +85,6 @@ The agent creation form includes:
 - **API Key Generation** (copy once)
 - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**)
 - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**)
-- **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**)
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough.
 

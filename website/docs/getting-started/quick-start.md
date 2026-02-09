@@ -41,7 +41,6 @@ Before wrapping your worker, create an agent in the OpenBox platform:
 5. Configure platform settings:
    - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
-   - **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**) - set an alignment threshold and drift action
 6. Click **Add Agent**
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
@@ -71,7 +70,7 @@ Add OpenBox credentials to your environment:
 
 ```bash
 # .env or export these
-OPENBOX_URL=https://api.openbox.ai
+OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
 ```
 
@@ -183,4 +182,4 @@ Now that your agent is running with OpenBox:
 
 - **[Temporal Integration Guide](/docs/getting-started/workflow-engines/temporal)** - Complete end-to-end setup from scratch
 - **[SDK Reference](/docs/sdk)** - Full SDK documentation and configuration options
-- **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
+- **[Approvals](/docs/approvals)** - Review and act on HITL approvals in the dashboard

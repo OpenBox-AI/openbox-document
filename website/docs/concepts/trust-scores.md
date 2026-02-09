@@ -11,12 +11,12 @@ The Trust Score is a 0-100 metric representing an agent's trustworthiness based 
 ## Calculation
 
 ```
-Trust Score = (AIVSS × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (AIVSS Baseline × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Weight | Source | Range |
 |-----------|--------|--------|-------|
-| **AIVSS** | 40% | Risk assessment (Assess phase) | 0-100 |
+| **AIVSS Baseline** | 40% | Derived from AIVSS risk scoring (Assess phase) | 0-100 |
 | **Behavioral** | 35% | Policy compliance (Authorize + Monitor) | 0-100 |
 | **Alignment** | 25% | Goal consistency (Verify phase) | 0-100 |
 
@@ -29,7 +29,8 @@ Based on the agent's inherent risk profile:
 - Configured at agent creation
 - 14 dimensions across access, capability, impact
 - Static unless re-assessed
-- Higher score = lower inherent risk
+- Risk scoring produces a **normalized AIVSS score (0.0-1.0)** and a **Risk Tier (1-4)**
+- The Trust Score uses an **AIVSS Baseline (0-100)** derived from that risk scoring (higher baseline = lower inherent risk)
 
 ### Behavioral Score (35%)
 

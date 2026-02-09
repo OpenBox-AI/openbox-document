@@ -1,12 +1,12 @@
 ---
 title: Temporal (Python)
-description: Build a governed AI agent with Temporal and OpenBox from scratch
+description: Integrate OpenBox with a Temporal AI agent using the OpenBox demo repo
 sidebar_position: 1
 ---
 
 # Temporal Integration Guide
 
-Build a complete AI agent with Temporal workflows and OpenBox governance from the ground up. This guide walks you through creating a customer support agent with LLM integration, then adding OpenBox for governance, monitoring, and compliance.
+Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wraps a real Temporal AI agent worker. You’ll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
 
 :::tip Already Have a Temporal Agent?
 If you already have a working Temporal agent, see the **[Quick Start](/docs/getting-started/quick-start)** for a faster integration path.
@@ -23,7 +23,14 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
 
 ---
 
-## Part 1: Set Up Temporal
+## Part 1: Clone and Set Up the Demo
+
+This guide uses the public demo repo:
+
+```bash
+git clone https://github.com/OpenBox-AI/poc-temporal-agent
+cd poc-temporal-agent
+```
 
 ### Install Temporal Server (Local Development)
 
@@ -35,166 +42,54 @@ brew install temporal
 temporal server start-dev
 ```
 
-Temporal UI will be available at [http://localhost:8080](http://localhost:8080)
-
-### Create Your Project
-
-```bash
-mkdir my-ai-agent
-cd my-ai-agent
-```
-
 ### Install Dependencies
 
-```bash
-# Install uv (fast Python package manager)
-pip install uv
+From the repo root:
 
-# Initialize project and install dependencies
-uv init
-uv add temporalio litellm python-dotenv openbox-temporal-sdk-python
+```bash
+make setup
 ```
 
 ---
 
-## Part 2: Build Your Temporal Agent
+## Part 2: Configure Environment
 
-### Create Workflows
-
-Create `workflows.py`:
-
-```python
-from temporalio import workflow
-from temporalio.common import RetryPolicy
-from datetime import timedelta
-
-@workflow.defn
-class CustomerSupportWorkflow:
-    """AI agent workflow for customer support"""
-    
-    def __init__(self):
-        self.messages = []
-        self.status = "active"
-    
-    @workflow.run
-    async def run(self, customer_query: str) -> dict:
-        """Process customer query using AI agent"""
-        
-        # Call LLM activity to process the query
-        result = await workflow.execute_activity(
-            "process_customer_query",
-            customer_query,
-            start_to_close_timeout=timedelta(seconds=30),
-            retry_policy=RetryPolicy(maximum_attempts=3),
-        )
-        
-        self.messages.append({
-            "role": "user",
-            "content": customer_query
-        })
-        self.messages.append({
-            "role": "assistant", 
-            "content": result["response"]
-        })
-        
-        return result
-    
-    @workflow.query
-    def get_messages(self) -> list:
-        """Query to retrieve conversation history"""
-        return self.messages
-    
-    @workflow.signal
-    async def add_message(self, message: str):
-        """Signal to add a new message to the conversation"""
-        result = await workflow.execute_activity(
-            "process_customer_query",
-            message,
-            start_to_close_timeout=timedelta(seconds=30),
-        )
-        self.messages.append({"role": "user", "content": message})
-        self.messages.append({"role": "assistant", "content": result["response"]})
-```
-
-### Create Activities
-
-Create `activities.py`:
-
-```python
-import os
-from temporalio import activity
-from litellm import completion
-
-@activity.defn
-async def process_customer_query(query: str) -> dict:
-    """Process customer query using LLM"""
-    
-    model = os.getenv("LLM_MODEL", "openai/gpt-4o")
-    api_key = os.getenv("LLM_KEY")
-    
-    # Call LLM
-    response = await completion(
-        model=model,
-        api_key=api_key,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful customer support agent. Provide clear, concise answers."
-            },
-            {
-                "role": "user",
-                "content": query
-            }
-        ],
-        temperature=0.7,
-    )
-    
-    return {
-        "response": response.choices[0].message.content,
-        "model": model,
-        "tokens": response.usage.total_tokens
-    }
-```
-
-### Configure Environment
-
-Create `.env`:
+Copy the example env file:
 
 ```bash
-# Temporal Configuration
-TEMPORAL_ADDRESS=localhost:7233
-TEMPORAL_NAMESPACE=default
+cp .env.example .env
+```
 
-# LLM Configuration (choose one)
-LLM_MODEL=openai/gpt-4o
-LLM_KEY=sk-your-openai-key
+Edit `.env` and set at minimum:
 
-# Or use Anthropic
-# LLM_MODEL=anthropic/claude-3-5-sonnet-20240620
-# LLM_KEY=sk-ant-your-anthropic-key
+- `LLM_MODEL`
+- `LLM_KEY`
+- `TEMPORAL_ADDRESS` (defaults to `localhost:7233`)
 
-# Or use Google AI
-# LLM_MODEL=gemini/gemini-2.0-flash-exp
-# LLM_KEY=your-google-api-key
+### Enable OpenBox (recommended)
 
-# OpenBox Configuration (add after Part 3)
-# OPENBOX_URL=https://api.openbox.ai
-# OPENBOX_API_KEY=obx_live_your_api_key_here
+Add your OpenBox Core URL and API key:
+
+```bash
+OPENBOX_URL=https://openbox-core-v2.node.lat
+OPENBOX_API_KEY=your-openbox-api-key
+OPENBOX_GOVERNANCE_ENABLED=true
+OPENBOX_GOVERNANCE_TIMEOUT=30.0
+OPENBOX_GOVERNANCE_MAX_RETRIES=1
+OPENBOX_GOVERNANCE_POLICY=fail_closed
 ```
 
 ---
 
-## Part 3: Add OpenBox Governance
-
-### Register Your Agent in OpenBox
+## Part 3: Register Your Agent in OpenBox
 
 1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Add Agent**
 3. Configure the agent:
    - **Workflow Engine**: Temporal
-   - **Agent Name**: Customer Support Agent
+   - **Agent Name**: Temporal AI Agent
    - **Agent ID**: Auto-generated
-   - **Description**: AI agent that handles customer inquiries
+   - **Description**: Temporal AI agent demo
    - **Teams**: assign the agent to one or more teams
    - **Icon**: select an icon
 4. **API Key Generation**:
@@ -203,7 +98,6 @@ LLM_KEY=sk-your-openai-key
 5. Configure platform settings:
    - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
-   - **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**) - set an alignment threshold and drift action
 6. Click **Add Agent**
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
@@ -211,113 +105,65 @@ See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-fie
 Add the API key to your `.env`:
 
 ```bash
-OPENBOX_URL=https://api.openbox.ai
-OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_URL=https://openbox-core-v2.node.lat
+OPENBOX_API_KEY=your-openbox-api-key
 ```
 
-### Create Worker with OpenBox
+## Part 4: Run the Demo
 
-Create `worker.py`:
+In separate terminals:
 
-```python
-import os
-import asyncio
-from temporalio.client import Client
-from openbox import create_openbox_worker
-from dotenv import load_dotenv
-
-from workflows import CustomerSupportWorkflow
-from activities import process_customer_query
-
-async def main():
-    # Load environment variables
-    load_dotenv()
-    
-    # Connect to Temporal
-    temporal_client = await Client.connect(
-        os.getenv("TEMPORAL_ADDRESS", "localhost:7233"),
-        namespace=os.getenv("TEMPORAL_NAMESPACE", "default"),
-    )
-    
-    # Create OpenBox-wrapped worker
-    worker = create_openbox_worker(
-        client=temporal_client,
-        task_queue="customer-support-queue",
-        workflows=[CustomerSupportWorkflow],
-        activities=[process_customer_query],
-        
-        # OpenBox configuration
-        openbox_url=os.getenv("OPENBOX_URL"),
-        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
-        
-        # Governance settings
-        governance_timeout=30.0,
-        governance_policy="fail_open",  # Continue if governance API fails
-    )
-    
-    print("🚀 Worker started! Listening on task queue: customer-support-queue")
-    print("📊 OpenBox trust layer enabled")
-    print("🔗 Temporal UI: http://localhost:8080")
-    
-    await worker.run()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+```bash
+make run-worker
+make run-api
+make run-frontend
 ```
+
+Or run everything at once:
+
+```bash
+make run-dev
+```
+
+Open the UI:
+
+- [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## Part 4: Run and Test
+## How It Works (Where to Look in the Repo)
 
-### Start the Worker
+The OpenBox integration point is the worker bootstrap script:
 
-```bash
-uv run worker.py
-```
+- `scripts/run_worker.py`
 
-You should see:
-```
-🚀 Worker started! Listening on task queue: customer-support-queue
-📊 OpenBox trust layer enabled
-🔗 Temporal UI: http://localhost:8080
-```
-
-### Trigger a Workflow
-
-Create `trigger.py`:
+That script wraps a standard Temporal worker with OpenBox:
 
 ```python
-import asyncio
-from temporalio.client import Client
-from workflows import CustomerSupportWorkflow
+from openbox import create_openbox_worker
 
-async def main():
-    client = await Client.connect("localhost:7233")
-    
-    # Start workflow
-    handle = await client.start_workflow(
-        CustomerSupportWorkflow.run,
-        "How do I reset my password?",
-        id="customer-support-001",
-        task_queue="customer-support-queue",
-    )
-    
-    print(f"Started workflow: {handle.id}")
-    
-    # Wait for result
-    result = await handle.result()
-    print(f"Response: {result['response']}")
-    print(f"Tokens used: {result['tokens']}")
+worker = create_openbox_worker(
+    client=client,
+    task_queue=TEMPORAL_TASK_QUEUE,
+    workflows=[AgentGoalWorkflow],
+    activities=[...],
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    openbox_url=os.getenv("OPENBOX_URL"),
+    openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+    governance_timeout=float(os.getenv("OPENBOX_GOVERNANCE_TIMEOUT", "30.0")),
+    governance_policy=os.getenv("OPENBOX_GOVERNANCE_POLICY", "fail_open"),
+
+    instrument_databases=True,
+    instrument_file_io=True,
+)
 ```
 
-Run it:
+The agent’s Temporal code is organized in:
 
-```bash
-uv run trigger.py
-```
+- `workflows/`
+- `activities/`
+- `tools/`
+- `goals/`
 
 ### View in OpenBox Dashboard
 
@@ -339,7 +185,7 @@ uv run trigger.py
 | Option | Default | Description |
 |--------|---------|-------------|
 | `governance_timeout` | `30.0` | Max seconds to wait for governance evaluation |
-| `governance_policy` | `fail_open` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+| `governance_policy` | `fail_closed` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
 
 ### Event Filtering
 
@@ -349,13 +195,13 @@ Skip governance for specific workflows or activities:
 worker = create_openbox_worker(
     client=temporal_client,
     task_queue="my-task-queue",
-    workflows=[CustomerSupportWorkflow, UtilityWorkflow],
-    activities=[process_customer_query, internal_activity],
+    workflows=[AgentGoalWorkflow, UtilityWorkflow],
+    activities=[...],
     
     # Skip these from governance
-    skip_workflow_types=["UtilityWorkflow"],
-    skip_activity_types=["internal_activity"],
-    skip_signals=["heartbeat"],
+    skip_workflow_types={"UtilityWorkflow"},
+    skip_activity_types={"internal_activity"},
+    skip_signals={"heartbeat"},
 )
 ```
 
@@ -367,8 +213,8 @@ Enable additional telemetry capture:
 worker = create_openbox_worker(
     client=temporal_client,
     task_queue="my-task-queue",
-    workflows=[CustomerSupportWorkflow],
-    activities=[process_customer_query],
+    workflows=[AgentGoalWorkflow],
+    activities=[...],
     
     # Optional: Capture database operations
     instrument_databases=True,
@@ -383,35 +229,18 @@ worker = create_openbox_worker(
 
 ## Error Handling
 
-OpenBox governance decisions surface as exceptions:
+In this demo, the SDK’s role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
 
-```python
-from openbox.errors import (
-    GovernanceStop,
-    ApprovalPending,
-    ApprovalRejected,
-    GuardrailsValidationFailed,
-)
+To investigate failures:
 
-@activity.defn
-async def sensitive_operation(data: dict) -> str:
-    try:
-        result = await perform_action(data)
-        return result
-    except ApprovalPending:
-        # Waiting for human approval - will retry
-        raise
-    except GovernanceStop as e:
-        # Policy blocked this operation
-        logger.error(f"Blocked: {e.reason}")
-        raise
-    except GuardrailsValidationFailed as e:
-        # Input/output validation failed
-        logger.error(f"Validation failed: {e.violations}")
-        raise
-```
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to your agent → **Monitor**
+3. Open the session to review:
+   - Governance decisions
+   - Inputs/outputs for activities and tool calls
+   - Approval requests and outcomes
 
-See **[Error Handling Guide](/docs/sdk/error-handling)** for complete details.
+Use the session view in OpenBox to investigate end-to-end execution.
 
 ---
 
@@ -419,11 +248,10 @@ See **[Error Handling Guide](/docs/sdk/error-handling)** for complete details.
 
 When governance requires approval:
 
-1. Activity raises `ApprovalPending`
-2. Temporal retries the activity (with backoff)
-3. Approval request appears in OpenBox dashboard
-4. Human approves/rejects
-5. Next retry proceeds or fails
+1. OpenBox creates an approval request
+2. Approval request appears in the OpenBox dashboard
+3. Human approves/rejects
+4. Temporal proceeds or fails based on the decision
 
 Configure retry behavior in your activity options:
 
@@ -487,7 +315,7 @@ The SDK automatically captures and sends to OpenBox:
 Check your API key:
 ```bash
 echo $OPENBOX_API_KEY
-# Should print: obx_live_...
+# Should print your OpenBox API key
 ```
 
 Verify configuration:
@@ -498,10 +326,9 @@ Verify configuration:
 
 ### No Events in Dashboard
 
-1. Ensure worker is running: `uv run worker.py`
-2. Trigger a workflow: `uv run trigger.py`
-3. Check Temporal UI: [http://localhost:8080](http://localhost:8080)
-4. Verify workflow completed successfully
+1. Ensure worker is running: `make run-worker`
+2. Ensure API and UI are running: `make run-api` and `make run-frontend`
+3. Verify the workflow completed successfully
 
 ### LLM API Errors
 

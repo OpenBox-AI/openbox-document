@@ -30,32 +30,32 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 Pre-configured profiles simplify AIVSS setup:
 
-| Profile | Typical AIVSS Score | Use Cases |
+| Profile | Normalized Score Range | Use Cases |
 |---------|-------------------|-----------|
-| **Tier 1 (90-100): Trusted** | 90-100 | Read-only tools, internal dashboards |
-| **Tier 2 (75-89): Confident** | 75-89 | Standard automation, limited writes |
-| **Tier 3 (50-74): Monitor** | 50-74 | Customer-facing, data processing |
-| **Tier 4 (25-49): Restrict** | 25-49 | Financial, healthcare, critical ops |
+| **Tier 1** | 0.00 - 0.24 | Read-only tools, internal dashboards |
+| **Tier 2** | 0.25 - 0.49 | Standard automation, limited writes |
+| **Tier 3** | 0.50 - 0.74 | Customer-facing, data processing |
+| **Tier 4** | 0.75 - 1.00 | Financial, healthcare, critical ops |
 
 ## Viewing Current Assessment
 
 The Assess tab shows:
 
-### Risk Profile Summary
+### Risk Summary
 
-- Current profile level
+- Current risk tier
 - AIVSS score breakdown by category
 - Last assessment date
 
 ### Trust Score Impact
 
 ```
-AIVSS Score: 72
-├── Base Security: 70
-├── AI-Specific: 75
-└── Impact: 68
+AIVSS Normalized Score: 0.72
+├── Base Security: 0.70
+├── AI-Specific: 0.75
+└── Impact: 0.68
 
-AIVSS Contribution: 72 × 40% = 28.8 points
+AIVSS Contribution: (0.72 × 100) × 40% = 28.8 points
 ```
 
 ### Assessment History

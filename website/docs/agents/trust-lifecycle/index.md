@@ -37,7 +37,7 @@ Access each phase via the tabs in **Agent Detail**.
 The Trust Score (0-100) aggregates across the lifecycle:
 
 ```
-Trust Score = (AIVSS × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (AIVSS Baseline × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Phase | Description |

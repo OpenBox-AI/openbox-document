@@ -8,6 +8,9 @@ sidebar_position: 8
 
 Manage your organization's teams, members, API keys, and settings. Access from the sidebar by clicking **Organization**.
 
+![Organization](/img/Organization.png)
+
+
 ## Teams
 
 Organize agents and members into teams for access control.

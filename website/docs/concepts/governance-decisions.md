@@ -51,12 +51,7 @@ The operation proceeds but with modifications or limitations.
 - Constraint logged
 - Behavioral score neutral
 
-**SDK behavior:**
-```python
-# Operation proceeds with constraints applied
-result = await my_activity(data)
-# Result may be modified (e.g., PII redacted)
-```
+Constraints and the resulting transformed inputs/outputs are visible in session replay.
 
 ## REQUIRE_APPROVAL
 
@@ -68,20 +63,17 @@ The operation is paused pending human approval.
 - Agent trust tier mandates review
 
 **Effect:**
-- Activity raises `ApprovalPending`
-- Temporal retries with backoff
-- Request appears in Approvals queue
-- Once approved/rejected, retry succeeds/fails
+- Request appears in the Approvals queue
+- Session replay shows the operation context and decision timeline
+- Once approved/rejected, the operation proceeds or is blocked
 
 **Approval flow:**
 ```
 1. Operation triggers REQUIRE_APPROVAL
-2. Activity raises ApprovalPending
-3. Temporal schedules retry (with backoff)
-4. Request appears in dashboard queue
-5a. Approved → Next retry succeeds
-5b. Rejected → Next retry raises ApprovalRejected
-5c. Timeout → Next retry raises ApprovalExpired
+2. Request appears in dashboard queue
+3a. Approved → Operation proceeds
+3b. Rejected → Operation blocked
+3c. Timeout → Operation expires
 ```
 
 ## BLOCK
@@ -94,7 +86,6 @@ The specific operation is blocked.
 - Behavioral rule violation detected
 
 **Effect:**
-- Activity raises `GovernanceStop`
 - Operation does not execute
 - Event logged with denial reason
 - Behavioral score decreases
@@ -147,5 +138,4 @@ Session replay shows decisions at each operation:
 ## Related
 
 - **[Authorize Phase](/docs/agents/trust-lifecycle/authorize)** - Configure policies that produce these decisions
-- **[SDK Error Handling](/docs/sdk/error-handling)** - Handle decisions in your code
 - **[Approvals](/docs/approvals)** - Process REQUIRE_APPROVAL decisions

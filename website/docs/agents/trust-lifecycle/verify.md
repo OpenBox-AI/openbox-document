@@ -92,17 +92,6 @@ TSA: timestamp.openbox.ai
 
 Use for compliance audits and legal evidence.
 
-## Goal Alignment Configuration
-
-Click **Configure** to set thresholds:
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| **Drift threshold** | 70% | Score below this triggers drift alert |
-| **Auto-block threshold** | 30% | Score below this terminates agent |
-| **LLM model** | gpt-4o-mini | Model for alignment evaluation |
-| **Fallback behavior** | heuristic | When LLM unavailable: heuristic, allow-all, block-all |
-
 ## Reasoning Trace
 
 View the LLM's reasoning for alignment scoring:

@@ -13,7 +13,7 @@ The Trust Overview is the primary dashboard view, showing aggregate governance h
 The organization Trust Score is calculated from individual agent scores:
 
 ```
-Agent Trust Score = (AIVSS × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Agent Trust Score = (AIVSS Baseline × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Weight | Source |
