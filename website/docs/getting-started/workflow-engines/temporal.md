@@ -71,7 +71,7 @@ Edit `.env` and set at minimum:
 Add your OpenBox Core URL and API key:
 
 ```bash
-OPENBOX_URL=https://openbox-core-v2.node.lat
+OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=your-openbox-api-key
 OPENBOX_GOVERNANCE_ENABLED=true
 OPENBOX_GOVERNANCE_TIMEOUT=30.0
@@ -105,7 +105,7 @@ See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-fie
 Add the API key to your `.env`:
 
 ```bash
-OPENBOX_URL=https://openbox-core-v2.node.lat
+OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=your-openbox-api-key
 ```
 

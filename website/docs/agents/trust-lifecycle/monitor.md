@@ -91,6 +91,74 @@ Click any event to see full details:
 
 The session header shows alignment:
 
+Goal Alignment tracks whether your agent's actions and outputs match the user's original request. OpenBox compares the user's goal (sent via Temporal signal) against the agent's LLM responses and tool outputs.
+
+Goal Alignment requires you to implement goal context propagation in your workflow. In practice, this is done by sending a Temporal **Signal** into the running workflow and handling it with a signal handler that stores the user request input (goal context) in workflow state. Signals are asynchronous (the send returns when the server accepts it, not when the workflow processes it) and appear in workflow history as `WorkflowExecutionSignaled`. Without this signal, OpenBox cannot detect a goal session, and no stated goal is available for alignment scoring.
+
+#### How to implement goal context propagation (Temporal Python)
+
+**Step 1: Add a signal handler to your workflow**
+
+```python
+from datetime import timedelta
+
+from temporalio import workflow
+
+
+@workflow.defn
+class YourAgentWorkflow:
+    def __init__(self):
+        self.user_goal = None
+
+    @workflow.signal
+    async def user_prompt(self, prompt: str) -> None:
+        self.user_goal = prompt
+
+    @workflow.run
+    async def run(self, input_data: str) -> dict:
+        await workflow.wait_condition(lambda: self.user_goal is not None)
+
+        result = await workflow.execute_activity(
+            "your_activity",
+            input_data,
+            start_to_close_timeout=timedelta(minutes=10),
+        )
+
+        return result
+```
+
+**Step 2: Send the signal when starting the workflow**
+
+Option A: Signal-With-Start (recommended)
+
+```python
+handle = await client.start_workflow(
+    YourAgentWorkflow.run,
+    "your input data",
+    id="your-workflow-id",
+    task_queue="your-task-queue",
+    start_signal="user_prompt",
+    start_signal_args=["The user's goal or request goes here"],
+)
+```
+
+Option B: Separate signal call
+
+```python
+handle = await client.start_workflow(
+    YourAgentWorkflow.run,
+    "your input data",
+    id="your-workflow-id",
+    task_queue="your-task-queue",
+)
+
+await handle.signal("user_prompt", "The user's goal or request goes here")
+```
+
+**Step 3: Return the full LLM response in activity output**
+
+Your activity should return the complete LLM response so OpenBox can compare it against the goal.
+
 | Score | Badge | Meaning |
 |-------|-------|---------|
 | 90-100% | Green | Well aligned with stated goal |
@@ -101,6 +169,19 @@ Hover for details including:
 - Alignment score breakdown
 - LLM evaluation status
 - Stated goal at session start
+
+References:
+
+- Temporal signals/message passing (Python): https://docs.temporal.io/develop/python/message-passing
+- Temporal AI agent demo (booking flight chatbot): https://github.com/temporal-community/temporal-ai-agent
+- OpenBox implementation of the demo: https://github.com/OpenBox-AI/poc-temporal-agent
+
+You can also review signal-driven event logs in the OpenBox dashboard under the **Verify** tab (example): https://platform.openbox.ai/agents/f23f4a3c-fc84-4cc8-ad73-005304f444eb?tab=verify
+
+Notes:
+
+- The signal name can be anything (it does not have to be `user_prompt`).
+- If your activities do file operations, ensure your worker has `instrument_file_io=True` enabled.
 
 ## Observability Metrics
 
