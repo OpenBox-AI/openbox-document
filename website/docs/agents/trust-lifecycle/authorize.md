@@ -686,20 +686,6 @@ The platform uses this result to produce an authorization decision and to explai
 
 You can test Rego using the **Rego Playground**: https://play.openpolicyagent.org/
 
-</details>
-
-<details>
-<summary>Edit Policy</summary>
-
-#### Edit Policy (policy exists)
-
-When a policy already exists, the Policies sub-tab shows:
-
-- A large Rego editor for the policy source
-- A results area that shows the evaluated decision and reason
-
-After changes, use the **Save** action to update the policy attached to the agent.
-
 Example policy (risk-tier-driven approvals using restricted semantic types):
 
 ```rego
@@ -753,6 +739,20 @@ has_restricted_span(restricted_set) if {
   restricted_set[span.semantic_type]
 }
 ```
+
+</details>
+
+<details>
+<summary>Edit Policy</summary>
+
+#### Edit Policy (policy exists)
+
+When a policy already exists, the Policies sub-tab shows:
+
+- A large Rego editor for the policy source
+- A results area that shows the evaluated decision and reason
+
+After changes, use the **Save** action to update the policy attached to the agent.
 
 ##### Runtime Enforcement
 
