@@ -10,7 +10,7 @@ import styles from './index.module.css';
 
 const ExploreSections = [
   {
-    title: 'Getting started',
+    title: 'Try it out',
     links: [
       {label: 'Introduction', to: '/docs/'},
       {label: 'Quick start', to: '/docs/getting-started/quick-start'},
@@ -312,13 +312,13 @@ export default function Home() {
           <div className="container">
             <div className={styles.tryHeader}>
               <div className={styles.tryTitleRow}>
-                <div className={styles.tryTitle}>Getting started</div>
+                <div className={styles.tryTitle}>Try it out</div>
                 <Link className={styles.tryLink} to="/docs/getting-started/quick-start">
                   Open Quick Start →
                 </Link>
               </div>
               <div className={styles.trySubtitle}>
-                Add OpenBox to an existing Temporal agent by wrapping your worker. Your workflows and activities stay unchanged.
+                Add OpenBox to your Temporal workers in 4 simple steps.
               </div>
             </div>
 
