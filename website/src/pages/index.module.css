@@ -317,13 +317,13 @@
 
 .tryStepRow {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 1.5rem;
-  align-items: stretch;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 2rem;
+  align-items: flex-start;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 16px;
   background: var(--ifm-card-background-color);
-  padding: 2rem;
+  padding: 2.5rem;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease;
   opacity: 1;
   transform: translateY(0);
@@ -547,15 +547,19 @@
 .tryStepMedia {
   min-width: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tryMediaImage {
   width: 100%;
   height: auto;
+  max-width: 100%;
   border-radius: 12px;
   border: 1px solid var(--ifm-color-emphasis-200);
   background: var(--ifm-background-color);
-  object-fit: cover;
+  object-fit: contain;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .tryMediaPlaceholder {
