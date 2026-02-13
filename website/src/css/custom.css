@@ -20,6 +20,8 @@
   --ifm-color-primary-lightest: #82c2ff;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --search-local-modal-width: 340px;
+  --search-local-modal-width-sm: 240px;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -117,32 +119,36 @@
 }
 
 .navbar__search-input {
-  width: 280px;
-  height: 40px;
-  padding: 0 5.25rem 0 2.5rem;
-  font-size: 0.95rem;
+  width: 340px;
+  height: 46px;
+  padding: 0 5.5rem 0 2.65rem;
+  font-size: 1rem;
   border-radius: 999px;
   background-position: 0.9rem center;
   background-size: 1rem;
 }
 
 .navbar .DocSearch-Button {
-  width: 280px;
-  height: 40px;
+  width: 340px;
+  height: 46px;
   border-radius: 999px;
 }
 
 .navbar .DocSearch-Button-Placeholder {
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 @media (max-width: 996px) {
+  :root {
+    --search-local-modal-width: 240px;
+  }
+
   .navbar__search-input,
   .navbar .DocSearch-Button {
-    width: 200px;
+    width: 240px;
   }
 
   .navbar__search-input {
-    padding: 0 4.75rem 0 2.35rem;
+    padding: 0 5rem 0 2.4rem;
   }
 }
