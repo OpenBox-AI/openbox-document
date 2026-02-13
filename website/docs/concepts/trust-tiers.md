@@ -10,13 +10,12 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 ## Tier Definitions
 
-| Tier | Score Range | Name | Description |
-|------|-------------|------|-------------|
-| **Tier 1** | 90-100 | Highly Trusted | Proven track record, minimal constraints |
-| **Tier 2** | 75-89 | Trusted | Standard operations, normal policies |
-| **Tier 3** | 50-74 | Developing | Enhanced monitoring, some restrictions |
-| **Tier 4** | 25-49 | Low Trust | Strict controls, frequent HITL |
-| **Tier 5** | 0-24 | Untrusted | Supervised mode, all actions reviewed |
+| Tier | AIVSS Score | Risk Level | Description |
+|------|-------------|------------|-------------|
+| **Tier 1** | 0% – 24% | Low | Read-only, public data access |
+| **Tier 2** | 25% – 49% | Medium | Internal data, non-critical actions |
+| **Tier 3** | 50% – 74% | High | PII, financial data, critical actions |
+| **Tier 4** | 75% – 100% | Critical | System admin, destructive actions |
 
 ## Trust Controls by Tier
 
@@ -80,21 +79,6 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 **Example agents:** Agents under investigation, after major violations.
 
-### Tier 5: Untrusted
-
-**Characteristics:**
-- New without any history
-- Blocked after severe incident
-- Failed critical compliance checks
-
-**Trust controls:**
-- All significant operations require approval
-- May be limited to read-only
-- Constant monitoring
-- Manual review before tier upgrade
-
-**Example agents:** New high-risk agents, agents pending security review.
-
 ## Tier Transitions
 
 ### Downgrade (Immediate)
@@ -146,22 +130,7 @@ require_approval {
 | Tier 1 | Green | Shield with check |
 | Tier 2 | Blue | Shield |
 | Tier 3 | Yellow | Shield with warning |
-| Tier 4 | Orange | Shield with exclamation |
-| Untrusted | Red | Shield with X |
-
-## Tier Distribution Dashboard
-
-The dashboard shows organization-wide tier distribution:
-
-```
-Tier 1  ████████████░░░░░░░░  38%  (45 agents)
-Tier 2  ██████████████████░░  44%  (52 agents)
-Tier 3  ████░░░░░░░░░░░░░░░░  13%  (15 agents)
-Tier 4  ██░░░░░░░░░░░░░░░░░░   4%  (5 agents)
-Untrust █░░░░░░░░░░░░░░░░░░░   1%  (1 agent)
-```
-
-Monitor this distribution to ensure your trust controls are working effectively.
+| Tier 4 | Red | Shield with exclamation |
 
 ## Related
 

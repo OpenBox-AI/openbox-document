@@ -76,20 +76,22 @@ OpenBox classifies agent operations into 21 semantic event types. These types en
 Reference event types in OPA policies:
 
 ```rego
-package openbox.policy
+package openbox
+
+default result := {"decision": "CONTINUE", "reason": ""}
 
 # Allow all read operations
-allow {
+result := {"decision": "CONTINUE", "reason": "Database read allowed"} if {
     input.operation.type == "DATABASE_READ"
 }
 
 # Require approval for external calls
-require_approval {
+result := {"decision": "REQUIRE_APPROVAL", "reason": "External API calls require review"} if {
     input.operation.type == "EXTERNAL_API_CALL"
 }
 
 # Block file writes for low-trust agents
-deny {
+result := {"decision": "BLOCK", "reason": "File writes blocked for lower-tier agents"} if {
     input.operation.type == "FILE_WRITE"
     input.agent.trust_tier >= 3
 }
@@ -173,10 +175,12 @@ openbox.emit_event(
 Then reference in policies:
 
 ```rego
-require_approval {
+default result := {"decision": "CONTINUE", "reason": ""}
+
+result := {"decision": "REQUIRE_APPROVAL", "reason": "High-value payment processing requires approval"} if {
     input.operation.type == "AGENT_ACTION"
     input.operation.metadata.custom_type == "payment_processing"
-    input.operation.metadata.amount > 100
+    object.get(input.operation.metadata, "amount", 0) > 100
 }
 ```
 

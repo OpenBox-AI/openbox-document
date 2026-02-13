@@ -60,17 +60,6 @@ Agents are assigned to teams:
 | **Team Member** | Team | View and operate team agents |
 | **Billing Admin** | Org-wide | Billing and invoices only |
 
-### SSO Integration
-
-Enterprise plans support SSO:
-
-- SAML 2.0
-- OAuth 2.0 / OIDC
-- Azure AD
-- Okta
-- Google Workspace
-
-Configure in **Organization → Settings → Security → SSO**.
 
 ## API Keys
 
@@ -111,14 +100,7 @@ Configure in **Organization → Settings → Security → SSO**.
 - Default timezone
 - Notification preferences
 
-### Security
-
-- Password policy
-- Session timeout
-- SSO configuration
-- IP allowlisting (Enterprise)
-
-### Integrations
+<!-- ### Integrations
 
 Configure external integrations:
 
@@ -136,7 +118,7 @@ Configure external integrations:
 - Usage metrics
 - Invoice history
 - Payment methods
-- Upgrade/downgrade
+- Upgrade/downgrade -->
 
 ## Audit Log
 
@@ -160,15 +142,6 @@ Filter audit log by:
 - User
 - Agent
 - Team
-
-### Export
-
-Export audit logs for compliance:
-
-- CSV format
-- JSON format
-- Configurable date range
-- Scheduled exports (Enterprise)
 
 See [Audit Log](/docs/organization/audit-log) for details.
 

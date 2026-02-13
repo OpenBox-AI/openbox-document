@@ -29,7 +29,6 @@
 
 ## Approvals
 - Approvals: https://docs.openbox.ai/docs/approvals
-- Approval Workflows: https://docs.openbox.ai/docs/approvals/workflows
 
 ## Concepts
 - Trust Scores: https://docs.openbox.ai/docs/concepts/trust-scores

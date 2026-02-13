@@ -10,6 +10,58 @@ The Monitor phase provides visibility into agent runtime behavior. Observe sessi
 
 Access via **Agent Detail → Monitor** tab.
 
+## Operational Dashboard
+
+The Monitor tab provides operational observability into performance, cost, and health.
+
+### Total Invocations
+
+Total number of agent invocations, with trend and average response time.
+
+### Token Consumption
+
+Total tokens consumed, with trend and associated cost for the current day.
+
+### Total Errors
+
+Total error count, with today's error count and overall success rate.
+
+### Goal Alignment Trend
+
+Trend chart of alignment across sessions over time.
+
+### Recent Drift Events
+
+Recent sessions where goal drift was detected, including session ID, score, and drift summary.
+
+### Tool Health Matrix
+
+Health table for tools/MCP servers (success rate, latency, status) to identify degraded dependencies.
+
+### Request Volume
+
+Request volume chart (last 24h) with total requests, peak per hour, and average per hour.
+
+### Model Usage
+
+Model usage view with token and cost breakdown by model.
+
+### Latency Distribution
+
+Response-time distribution with percentiles (P50, P95, P99, Max).
+
+### Error Breakdown
+
+Error categories with counts/percentages (for example: timeout, rate limit, server error, policy violation).
+
+### Cost Analytics
+
+Spending view with today's spend, projection, and budget utilization split by input tokens, output tokens, and tool calls.
+
+### Recent Issues
+
+Latest issues requiring action (policy violations, workflow failures, timeouts), with links to details.
+
 ## Sessions
 
 View active and completed workflow sessions.
@@ -170,14 +222,6 @@ Hover for details including:
 - LLM evaluation status
 - Stated goal at session start
 
-References:
-
-- Temporal signals/message passing (Python): https://docs.temporal.io/develop/python/message-passing
-- Temporal AI agent demo (booking flight chatbot): https://github.com/temporal-community/temporal-ai-agent
-- OpenBox implementation of the demo: https://github.com/OpenBox-AI/poc-temporal-agent
-
-You can also review signal-driven event logs in the OpenBox dashboard under the **Verify** tab (example): https://platform.openbox.ai/agents/f23f4a3c-fc84-4cc8-ad73-005304f444eb?tab=verify
-
 Notes:
 
 - The signal name can be anything (it does not have to be `user_prompt`).
@@ -230,14 +274,6 @@ Session replay shows events with semantic types:
 | Approval Granted | CheckCircle | Approved by sarah@company.com |
 | Session Completed | CheckCircle | Success |
 
-## Telemetry Export
-
-Export telemetry data for external analysis:
-
-- **OpenTelemetry** - OTLP export to Jaeger, Datadog, etc.
-- **CSV** - Download raw event data
-
-Configure in **Organisation → Settings → Integrations**.
 
 ## Next Phase
 

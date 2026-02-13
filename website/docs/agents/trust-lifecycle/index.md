@@ -37,7 +37,7 @@ Access each phase via the tabs in **Agent Detail**.
 The Trust Score (0-100) aggregates across the lifecycle:
 
 ```
-Trust Score = (AIVSS Baseline × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Phase | Description |
@@ -50,13 +50,12 @@ Trust Score = (AIVSS Baseline × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 
 The Trust Score maps to Trust Tiers that determine governance strictness:
 
-| Tier | Score Range | Governance Level |
-|------|-------------|------------------|
-| **Tier 1** | 90-100 | Minimal constraints, high autonomy |
-| **Tier 2** | 75-89 | Standard policies, normal monitoring |
-| **Tier 3** | 50-74 | Enhanced controls, frequent checks |
-| **Tier 4** | 25-49 | Strict governance, HITL required |
-| **Untrusted** | 0-24 | Supervised mode, all actions require approval |
+| Tier | AIVSS Score | Risk Level | Governance Level |
+|------|-------------|------------|------------------|
+| **Tier 1** | 0% – 24% | Low | Minimal constraints, high autonomy |
+| **Tier 2** | 25% – 49% | Medium | Standard policies, normal monitoring |
+| **Tier 3** | 50% – 74% | High | Enhanced controls, frequent checks |
+| **Tier 4** | 75% – 100% | Critical | Strict governance, HITL required |
 
 ## Lifecycle Flow
 

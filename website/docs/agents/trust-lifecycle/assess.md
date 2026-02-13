@@ -30,33 +30,59 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 Pre-configured profiles simplify AIVSS setup:
 
-| Profile | Normalized Score Range | Use Cases |
-|---------|-------------------|-----------|
-| **Tier 1** | 0.00 - 0.24 | Read-only tools, internal dashboards |
-| **Tier 2** | 0.25 - 0.49 | Standard automation, limited writes |
-| **Tier 3** | 0.50 - 0.74 | Customer-facing, data processing |
-| **Tier 4** | 0.75 - 1.00 | Financial, healthcare, critical ops |
+| Risk Tier | Risk Level | AIVSS Score | Use Cases |
+|-----------|------------|-------------|-----------|
+| **Tier 1** | Low | 0% – 24% | Read-only, public data access |
+| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions |
+| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions |
+| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions |
 
 ## Viewing Current Assessment
 
 The Assess tab shows:
 
-### Risk Summary
+### Predicted Trust Tier
 
-- Current risk tier
-- AIVSS score breakdown by category
-- Last assessment date
+The Assess tab displays the **Predicted Trust Tier** card with:
+
+- **Sub-scores** for each AIVSS category (shown as weighted contributions):
+  - Base Security (out of 0.25)
+  - AI-Specific (out of 0.45)
+  - Impact (out of 0.30)
+- **AIVSS Score** — the combined score out of 100
+- **Trust Score Calculation** — shows how the AIVSS score feeds into the overall Trust Score:
+  - Risk Profile (AIVSS) × 40%
+  - Behavioral (Initial) × 35%
+  - Alignment (Initial) × 25%
+- **Trust Score** and **Trust Tier** classification
+
+### Risk Profile Category Breakdown
+
+A detailed breakdown of how the trust score is calculated across weighted categories:
+
+- **Base Security** (25%): attack surface and classic security factors
+- **AI-Specific Risk** (45%): model behavior, sensitivity, and criticality
+- **Impact Assessment** (30%): confidentiality, integrity, availability, and safety impact
 
 ### Trust Score Impact
 
-```
-AIVSS Normalized Score: 0.72
-├── Base Security: 0.70
-├── AI-Specific: 0.75
-└── Impact: 0.68
+Example from the UI (low-risk agent):
 
-AIVSS Contribution: (0.72 × 100) × 40% = 28.8 points
 ```
+Base Security:    0.00 / 0.25
+AI-Specific:      0.05 / 0.45
+Impact:           0.00 / 0.30
+AIVSS Score:      98 / 100
+
+Trust Score Calculation:
+  Risk Profile (AIVSS):   98 × 40% = 39.2
+  Behavioral (Initial):  100 × 35% = 35.0
+  Alignment (Initial):   100 × 25% = 25.0
+  ─────────────────────────────────
+  Trust Score:            99.2 → TIER 1
+```
+
+New agents start with 100% behavioral and alignment scores. Trust tier may decrease based on runtime violations and goal drift.
 
 ### Assessment History
 
@@ -65,6 +91,22 @@ Timeline of AIVSS changes with:
 - Previous vs. new values
 - Change reason
 - User who made the change
+
+### Trust Score History
+
+A line chart of trust score over time with selectable ranges (for example 7d, 30d, 90d, 1y).
+
+Tier threshold overlays help show when an agent moves between tiers.
+
+### Events Affecting Trust Score
+
+A table of score-impacting events, such as:
+
+- Clean-week milestones
+- Policy violations
+- Tier promotions or demotions
+
+Each row includes timestamp, event type, impact direction, and score delta.
 
 ## Re-Assessment
 

@@ -123,24 +123,7 @@ Filter the queue by:
 - **Team** - Owning team
 - **SLA Status** - Within, At Risk, Breached
 
-## Bulk Actions
-
-Select multiple approvals and:
-
-- **Bulk Approve** - Approve all selected
-- **Bulk Reject** - Reject all selected (with shared reason)
-
-Use carefully--bulk actions affect all selected items.
-
-## Notifications
-
-Configure how you're notified in **Organisation → Settings**:
-
-- **Email** - Immediate notification on new requests
-- **Slack** - Channel notifications with action buttons
-- **Webhook** - POST to your systems
-
 ## Next Steps
 
-1. **[Configure Approval Workflows](/docs/approvals/workflows)** - Set up routing, escalation, and auto-approve rules
+1. **[Review Approvals](/docs/approvals)** - Manage pending requests and approval history
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review the full session context before approving or rejecting

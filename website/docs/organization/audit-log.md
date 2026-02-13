@@ -176,30 +176,9 @@ Search: "external api" agent:customer-support
 
 ## Export
 
-### Manual Export
-
 1. Apply desired filters
 2. Click **Export**
-3. Select format (CSV or JSON)
-4. Download file
-
-### Scheduled Export (Enterprise)
-
-Enterprise feature:
-
-1. Go to **Organization → Audit Log**
-2. Click **Configure Export**
-3. Set schedule (daily, weekly, monthly)
-4. Configure destination (S3, GCS, SFTP)
-5. Enable encryption (optional)
-
-### Retention
-
-| Plan | Retention |
-|------|-----------|
-| Free | 30 days |
-| Team | 90 days |
-| Enterprise | 1 year+ (configurable) |
+3. Queue Export
 
 ## Compliance Use Cases
 
@@ -208,23 +187,6 @@ Use the audit log to support audits and investigations:
 - Review access and configuration changes
 - Confirm approval decisions and escalations
 - Provide evidence timelines during incident response
-
-## Alerts
-
-Configure alerts for specific events:
-
-1. Go to **Organization → Settings → Alerts**
-2. Click **Create Alert**
-3. Select trigger event (e.g., `user.login_failed` count > 5)
-4. Configure notification channel
-5. Enable alert
-
-Example alerts:
-
-- Multiple failed logins
-- Agent blocked
-- Policy deleted
-- API key created
 
 ## Next Steps
 

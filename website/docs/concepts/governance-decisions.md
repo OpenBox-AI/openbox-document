@@ -133,7 +133,14 @@ Session replay shows decisions at each operation:
 
 ## Customizing Decisions
 
-// TODO
+You can tune how decisions are produced in the **Authorize** phase:
+
+1. **Policies (OPA/Rego)** - Return `allow`, `deny`, or `require_approval` for specific operations and conditions.
+2. **Behavioral Rules** - Detect multi-step patterns and escalate to `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
+3. **Trust-tier conditions** - Apply stricter decisions for lower-tier agents and relax controls for higher-tier agents.
+4. **Approval timeout settings** - Configure how long `REQUIRE_APPROVAL` requests can remain pending before expiring.
+
+Use policy and behavioral-rule testing before rollout to confirm expected outcomes.
 
 ## Related
 

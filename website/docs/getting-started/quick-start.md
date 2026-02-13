@@ -173,7 +173,7 @@ Now that your agent is running with OpenBox:
 
 1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit agent behavior
-3. **[Set Up Approvals](/docs/approvals/workflows)** - Add human-in-the-loop for sensitive operations
+3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 4. **[Advanced Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and event filtering
 
 ---
