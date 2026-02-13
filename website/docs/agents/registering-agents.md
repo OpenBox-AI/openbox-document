@@ -17,6 +17,8 @@ Select the workflow engine your agent uses:
 | Engine | Status |
 |--------|--------|
 | **Temporal** | Available |
+| **n8n** | Coming soon |
+| **LangChain** | Coming soon |
 
 ### Agent Information
 
