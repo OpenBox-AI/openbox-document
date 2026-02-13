@@ -60,7 +60,7 @@ const config = {
     ],
   ],
 
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-mermaid', require.resolve('@easyops-cn/docusaurus-search-local')],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -78,7 +78,14 @@ const config = {
           alt: 'OpenBox Logo',
           src: 'img/logo.svg',
         },
-        items: [],
+        items: [{type: 'search', position: 'right'}],
+      },
+      searchLocal: {
+        indexDocs: true,
+        indexBlog: false,
+        docsRouteBasePath: '/docs',
+        hashed: true,
+        language: ['en'],
       },
       prism: {
         theme: prismThemes.github,

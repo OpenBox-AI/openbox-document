@@ -106,12 +106,43 @@
    transition: transform 120ms ease, background-color 120ms ease;
  }
 
- .button.button--primary:hover {
-   background: rgb(0, 124, 226);
-   transform: translateY(-1px);
- }
+.button.button--primary:hover {
+  background: rgb(0, 124, 226);
+  transform: translateY(-1px);
+}
 
- .button.button--primary:active {
-   background: rgb(0, 112, 204);
-   transform: translateY(0);
- }
+.button.button--primary:active {
+  background: rgb(0, 112, 204);
+  transform: translateY(0);
+}
+
+.navbar__search-input {
+  width: 280px;
+  height: 40px;
+  padding: 0 5.25rem 0 2.5rem;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  background-position: 0.9rem center;
+  background-size: 1rem;
+}
+
+.navbar .DocSearch-Button {
+  width: 280px;
+  height: 40px;
+  border-radius: 999px;
+}
+
+.navbar .DocSearch-Button-Placeholder {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 996px) {
+  .navbar__search-input,
+  .navbar .DocSearch-Button {
+    width: 200px;
+  }
+
+  .navbar__search-input {
+    padding: 0 4.75rem 0 2.35rem;
+  }
+}
