@@ -60,15 +60,6 @@ For each alert, you can:
 | **Create Rule** | Pre-fill a behavioral rule to prevent recurrence |
 | **Dismiss** | Remove from active alerts |
 
-## Alert Configuration
-
-Configure alert thresholds in **Organization → Settings**:
-
-- Trust tier change notifications
-- Goal drift threshold (default: 70%)
-- Approval timeout duration
-- Notification channels (email, Slack, webhook)
-
 ## Next Steps
 
 When you see an alert:
