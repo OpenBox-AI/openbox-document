@@ -14,7 +14,9 @@ Access via **Agent Detail → Adapt** tab.
 
 ### Approvals
 
-The **Approvals** sub-tab shows agent-specific approval status for the last 7 days, including:
+The **Approvals** sub-tab shows agent-specific approval status for the last 7 days.
+
+**Summary Cards**:
 
 - Pending approvals
 - Approved (7d)
@@ -23,29 +25,27 @@ The **Approvals** sub-tab shows agent-specific approval status for the last 7 da
 
 #### Pending Approvals
 
-Agent-specific pending approval requests (if any):
+Pending approval cards show:
 
-| Field | Description |
-|-------|-------------|
-| **Request ID** | Unique identifier |
-| **Operation** | What needs approval |
-| **Session** | Originating session |
-| **Requested** | Timestamp |
+- Risk tier
+- Semantic action type (for example: `database_delete`, `external_api_call`)
+- Requested operation description
+- Triggering rule/reason
 
 Actions:
 - **Approve** - Allow operation to proceed
 - **Reject** - Deny operation
-- **View Context** - See full governance decision details
+- **Escalate** - Forward for higher-level review
 
 If there are no approvals waiting, the page shows an empty state ("No pending approvals found").
 
 #### Approval History
 
-Shows recent decisions for this agent, including:
+Collapsible history of recent decisions for this agent:
 
 | Field | Description |
 |-------|-------------|
-| **Request** | The request that required approval |
+| **Request** | The operation/request that required approval |
 | **Trust Tier** | Trust tier at the time of the request |
 | **Decision** | Approved or rejected |
 | **Decided By** | User who made the decision |
@@ -55,12 +55,14 @@ For the organization-wide approval queue, see **[Approvals](/docs/approvals)**.
 
 ### Insights
 
-The **Insights** sub-tab summarizes learning signals for the last 7 days, including:
+The **Insights** sub-tab summarizes governance learning signals.
+
+**Summary Cards**:
 
 - Violation patterns
 - Policy suggestions
-- Trust recovery
-- Tier changes
+- Trust recovery plans
+- Tier changes (last 30 days)
 
 #### Violation Patterns for This Agent
 
@@ -74,11 +76,30 @@ Aggregated patterns derived from this agent's violations, including:
 | **Sessions** | Number of sessions involved |
 | **Action** | View Details |
 
+#### Agent Trust Timeline
+
+Chronological history of trust tier changes for this agent, including:
+
+- Promotions
+- Demotions
+- Recovery completions
+- Initial provisioning events with reasons
+
 #### Recent Violations
 
 Shows the most recent violations for this agent, including the event type (for example, `ActivityStarted`), the rule type (for example, `GUARDRAIL`), and the resulting governance decision.
 
 Use **View All Rules** to jump back to Authorize and review the rules that are currently enforcing governance.
+
+#### Trust Recovery Status
+
+Shows whether the agent is currently under a recovery plan after a demotion.
+
+Typical indicators include:
+
+- Compliance rate
+- Days since last violation
+- Promotion eligibility progress/checklist
 
 #### Policy Suggestions
 

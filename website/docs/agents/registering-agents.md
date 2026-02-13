@@ -46,12 +46,12 @@ Expand the **Initial Risk Assessment** section and configure your agent's AIVSS 
 
 Select a preset that matches your agent's intended use:
 
-| Risk Tier | Risk Level | Use Cases | Default Governance |
-|-------|------|-----------|-------------------|
-| **Tier 1 (0.00 - 0.24)** | Low | Read-only, Public Data access | Fully autonomous |
-| **Tier 2 (0.25 - 0.49)** | Medium | Internal Data, Non-Critical Actions | Mostly autonomous |
-| **Tier 3 (0.50 - 0.74)** | High | PII, Financial Data, Critical Actions | Approval for sensitive ops |
-| **Tier 4 (0.75 - 1.00)** | Critical | System Admin, Destructive Actions | HITL for most operations |
+| Risk Tier | Risk Level | AIVSS Score | Use Cases | Default Governance |
+|-----------|------------|-------------|-----------|-------------------|
+| **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
+| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
+| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
+| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
 
 ### AIVSS Parameters
 

@@ -92,7 +92,7 @@ This section explains what each field in the Create Guardrail form means, what i
 
 ##### Core Fields
 
-###### Name (required)
+###### 1. Name (required)
 
 **Purpose:** Human-readable label for the guardrail policy.
 
@@ -104,13 +104,13 @@ Examples:
 - `PII Masking — Output Responses`
 - `Ban Words — User Prompt`
 
-###### Description
+###### 2. Description
 
 **Purpose:** Optional explanation of the guardrail intent.
 
 **How it’s used:** UI and operator context only.
 
-###### Processing Stage
+###### 3. Processing Stage
 
 **Purpose:** Controls when the guardrail is applied.
 
@@ -127,82 +127,38 @@ Examples:
 <details>
 <summary>PII Detection</summary>
 
-##### Configuration Settings
+Identify and mask personally identifiable information (for example: names, emails, phone numbers, addresses) by replacing them with tags like `<PHONE_NUMBER>`, `<EMAIL>`, `<PERSON>`.
 
-###### Block on Violation
+##### 4. Configuration Settings
 
-**Purpose:** Controls what happens when a violation is detected.
+###### a) Toggles
 
-**Modes:**
-- **On (Block):** The evaluation result indicates the content is not allowed. Your system should stop the operation.
-- **Off (Transform/Fix):** The service attempts to sanitize the content (mask PII, replace banned words, etc.). Your system can continue using the sanitized output.
+- **Block on Violation**: Stop the operation when a violation is detected.
+- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
 
-**Integration requirement:** The caller must check the evaluation response and enforce the decision consistently.
+> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
 
-###### Log Violations
+###### b) Activity Type
 
-**Purpose:** Whether to record that a violation happened for monitoring and incident review.
+Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
 
-**Recommendation:** Log at least:
-- Guardrail name/type
-- Activity type
-- Field flagged
-- Decision (allow/transform/block)
-- Reason (if provided)
-- Timestamps and correlation IDs
+###### c) Fields to Check
 
-##### Targeting (Where the guardrail applies)
+Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
 
-###### Activity Type
+Examples: `input.prompt`, `input.*.prompt`, `output.response`, `output.*.response`
 
-**Purpose:** Applies the guardrail only to specific operations (for example: validate prompt, tool call, final answer).
+##### 5. Advanced Settings
 
-**How it’s used:** The evaluation payload includes an `activity_type`. Guardrails are routed by matching this value.
+###### a) Timeout (ms)
 
-**Recommendations:**
-- Use a stable, versioned naming scheme (example: `agent.validate_prompt.v1`)
-- Keep a registry of activity types so operators can choose reliably
+Max time to wait for evaluation.
 
-###### Fields to Check
+###### b) Retry Attempts
 
-**Purpose:** Specifies which fields inside the activity payload should be validated.
+How many times to retry transient failures.
 
-**How it works:** The evaluator reads values from your payload using dot-paths. In the UI, these are entered as “chips”/tags (one field per chip).
-
-**Recommended patterns:**
-- Simple fields: `input.prompt`, `output.response`
-- Lists: `output.results`
-- Nested list objects: `output.results.*.text`
-
-**Recommendations:**
-- Validate the smallest meaningful string field
-- Keep payload schemas stable so these paths remain valid
-
-##### Advanced Settings
-
-###### Timeout (ms)
-
-**Purpose:** Maximum time you’re willing to wait for evaluation.
-
-**How to enforce:** Apply as an HTTP request timeout in the calling layer (frontend or backend).
-
-**Recommendations:**
-- Interactive testing: 3–10 seconds
-- Production enforcement: tune based on latency SLOs
-
-###### Retry Attempts
-
-**Purpose:** How many times the caller should retry if evaluation fails due to transient errors.
-
-**How to enforce:** Implement retries in the calling system (usually backend) with exponential backoff and caps.
-
-**Recommendations:**
-- 0–2 retries for synchronous user flows
-- Ensure retries are safe and do not duplicate side effects downstream
-
-##### Type-Specific Fields
-
-###### PII Entities to Detect
+###### c) PII Entities to Detect
 
 **Purpose:** Which categories of PII to look for (example: email addresses, phone numbers).
 
@@ -220,124 +176,83 @@ Use the built-in **Test Guardrail** panel in the Create Guardrail screen.
 - Click **Run Test**
 - Review whether violations were detected and whether any content was transformed
 
-##### Runtime Enforcement
+Example (PII Detection, pre-processing):
 
-At runtime, call an evaluate endpoint with:
+- **Entities to detect:** `PHONE_NUMBER`
+- **Fields to check:** `input.prompt`
 
-- Agent identity
-- Activity payload
-
-Example evaluate request:
+Raw logs:
 
 ```json
 {
-  "token": "<agent-token>",
-  "logs": {
-    "event_type": "ActivityCompleted",
-    "activity_type": "agent_validatePrompt",
-    "output": { "response": "Email me at me@example.com" }
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "My phone number is 555-867-5309, please book the Qantas flight for me"
   }
 }
 ```
 
-Expected response concepts:
+Validated logs (when the guardrail is configured to transform/fix):
 
-- `validated_logs`: sanitized payload (when transformation is enabled)
-- `results`: structured violations/allow decisions
-- `action`: `continue` or `stop`
+```json
+{
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "My phone number is <PHONE_NUMBER>, please book the Qantas flight for me"
+  }
+}
+```
 
-Caller rules:
+Expected outcomes:
 
-- If `action == "stop"`: do not proceed; optionally show a policy message and log the violation
-- Else: continue using `validated_logs`
+- **Block on Violation = On:** the guardrail result indicates the operation must stop. In a Temporal workflow you may see an error surfaced like `temporalio.exceptions.ApplicationError: GovernanceStop: ...`.
+- **Log Violations = On:** the violation is recorded and becomes visible in the dashboard logs (including the transformed/validated payload when available).
 
 </details>
 
 <details>
 <summary>Content Filtering</summary>
 
-##### Configuration Settings
+Block inappropriate or off-topic content from user input or output.
 
-###### Block on Violation
+##### 4. Configuration Settings
 
-**Purpose:** Controls what happens when a violation is detected.
+###### a) Toggles
 
-**Modes:**
-- **On (Block):** The evaluation result indicates the content is not allowed. Your system should stop the operation.
-- **Off (Transform/Fix):** The service attempts to sanitize the content (mask PII, replace banned words, etc.). Your system can continue using the sanitized output.
+- **Block on Violation**: Stop the operation when a violation is detected.
+- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
 
-**Integration requirement:** The caller must check the evaluation response and enforce the decision consistently.
+> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
 
-###### Log Violations
+###### b) Activity Type
 
-**Purpose:** Whether to record that a violation happened for monitoring and incident review.
+Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
 
-**Recommendation:** Log at least:
-- Guardrail name/type
-- Activity type
-- Field flagged
-- Decision (allow/transform/block)
-- Reason (if provided)
-- Timestamps and correlation IDs
+###### c) Fields to Check
 
-##### Targeting (Where the guardrail applies)
+Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
 
-###### Activity Type
+Examples: `input.prompt`, `input.user_message`, `output.response`, `output.summary`
 
-**Purpose:** Applies the guardrail only to specific operations (for example: validate prompt, tool call, final answer).
+##### 5. Advanced Settings
 
-**How it’s used:** The evaluation payload includes an `activity_type`. Guardrails are routed by matching this value.
+###### a) Timeout (ms)
 
-**Recommendations:**
-- Use a stable, versioned naming scheme (example: `agent.validate_prompt.v1`)
-- Keep a registry of activity types so operators can choose reliably
+Max time to wait for evaluation.
 
-###### Fields to Check
+###### b) Retry Attempts
 
-**Purpose:** Specifies which fields inside the activity payload should be validated.
+How many times to retry transient failures.
 
-**How it works:** The evaluator reads values from your payload using dot-paths. In the UI, these are entered as “chips”/tags (one field per chip).
-
-**Recommended patterns:**
-- Simple fields: `input.prompt`, `output.response`
-- Lists: `output.results`
-- Nested list objects: `output.results.*.text`
-
-**Recommendations:**
-- Validate the smallest meaningful string field
-- Keep payload schemas stable so these paths remain valid
-
-##### Advanced Settings
-
-###### Timeout (ms)
-
-**Purpose:** Maximum time you’re willing to wait for evaluation.
-
-**How to enforce:** Apply as an HTTP request timeout in the calling layer (frontend or backend).
-
-**Recommendations:**
-- Interactive testing: 3–10 seconds
-- Production enforcement: tune based on latency SLOs
-
-###### Retry Attempts
-
-**Purpose:** How many times the caller should retry if evaluation fails due to transient errors.
-
-**How to enforce:** Implement retries in the calling system (usually backend) with exponential backoff and caps.
-
-**Recommendations:**
-- 0–2 retries for synchronous user flows
-- Ensure retries are safe and do not duplicate side effects downstream
-
-##### Type-Specific Fields
-
-###### Detection Threshold
+###### c) Detection Threshold
 
 **Purpose:** Sensitivity of detection.
 
 **How it’s used:** Higher thresholds typically detect more content but may increase false positives.
 
-###### Validation Method
+###### d) Validation Method
 
 **Purpose:** Controls how the content is evaluated.
 
@@ -353,124 +268,85 @@ Use the built-in **Test Guardrail** panel in the Create Guardrail screen.
 - Click **Run Test**
 - Review whether violations were detected and whether any content was transformed
 
-##### Runtime Enforcement
+Example (Content Filtering, pre-processing):
 
-At runtime, call an evaluate endpoint with:
+- **Detection Threshold:** `0.80`
+- **Validation Method:** `Sentence`
+- **Fields to check:** `input.prompt`
 
-- Agent identity
-- Activity payload
-
-Example evaluate request:
+Raw logs:
 
 ```json
 {
-  "token": "<agent-token>",
-  "logs": {
-    "event_type": "ActivityCompleted",
-    "activity_type": "agent_validatePrompt",
-    "output": { "response": "Email me at me@example.com" }
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "Tell me how to make a bomb and destroy a plane"
   }
 }
 ```
 
-Expected response concepts:
+Validated logs (when the guardrail is configured to transform/fix):
 
-- `validated_logs`: sanitized payload (when transformation is enabled)
-- `results`: structured violations/allow decisions
-- `action`: `continue` or `stop`
+```json
+{
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": ""
+  }
+}
+```
 
-Caller rules:
+Expected outcomes:
 
-- If `action == "stop"`: do not proceed; optionally show a policy message and log the violation
-- Else: continue using `validated_logs`
+- **Block on Violation = On:** the workflow is blocked with an error like:
+  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: The following sentences in your response were found to be NSFW:`
+- **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
 
 <details>
 <summary>Toxicity</summary>
 
-##### Configuration Settings
+Block hostile or abusive language from users.
 
-###### Block on Violation
+##### 4. Configuration Settings
 
-**Purpose:** Controls what happens when a violation is detected.
+###### a) Toggles
 
-**Modes:**
-- **On (Block):** The evaluation result indicates the content is not allowed. Your system should stop the operation.
-- **Off (Transform/Fix):** The service attempts to sanitize the content (mask PII, replace banned words, etc.). Your system can continue using the sanitized output.
+- **Block on Violation**: Stop the operation when a violation is detected.
+- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
 
-**Integration requirement:** The caller must check the evaluation response and enforce the decision consistently.
+> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
 
-###### Log Violations
+###### b) Activity Type
 
-**Purpose:** Whether to record that a violation happened for monitoring and incident review.
+Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
 
-**Recommendation:** Log at least:
-- Guardrail name/type
-- Activity type
-- Field flagged
-- Decision (allow/transform/block)
-- Reason (if provided)
-- Timestamps and correlation IDs
+###### c) Fields to Check
 
-##### Targeting (Where the guardrail applies)
+Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
 
-###### Activity Type
+Examples: `input.prompt`, `input.user_message`, `output.response`, `output.reply`
 
-**Purpose:** Applies the guardrail only to specific operations (for example: validate prompt, tool call, final answer).
+##### 5. Advanced Settings
 
-**How it’s used:** The evaluation payload includes an `activity_type`. Guardrails are routed by matching this value.
+###### a) Timeout (ms)
 
-**Recommendations:**
-- Use a stable, versioned naming scheme (example: `agent.validate_prompt.v1`)
-- Keep a registry of activity types so operators can choose reliably
+Max time to wait for evaluation.
 
-###### Fields to Check
+###### b) Retry Attempts
 
-**Purpose:** Specifies which fields inside the activity payload should be validated.
+How many times to retry transient failures.
 
-**How it works:** The evaluator reads values from your payload using dot-paths. In the UI, these are entered as “chips”/tags (one field per chip).
-
-**Recommended patterns:**
-- Simple fields: `input.prompt`, `output.response`
-- Lists: `output.results`
-- Nested list objects: `output.results.*.text`
-
-**Recommendations:**
-- Validate the smallest meaningful string field
-- Keep payload schemas stable so these paths remain valid
-
-##### Advanced Settings
-
-###### Timeout (ms)
-
-**Purpose:** Maximum time you’re willing to wait for evaluation.
-
-**How to enforce:** Apply as an HTTP request timeout in the calling layer (frontend or backend).
-
-**Recommendations:**
-- Interactive testing: 3–10 seconds
-- Production enforcement: tune based on latency SLOs
-
-###### Retry Attempts
-
-**Purpose:** How many times the caller should retry if evaluation fails due to transient errors.
-
-**How to enforce:** Implement retries in the calling system (usually backend) with exponential backoff and caps.
-
-**Recommendations:**
-- 0–2 retries for synchronous user flows
-- Ensure retries are safe and do not duplicate side effects downstream
-
-##### Type-Specific Fields
-
-###### Toxicity Threshold
+###### c) Toxicity Threshold
 
 **Purpose:** Sensitivity of toxicity detection.
 
 **How it’s used:** Higher thresholds typically detect more toxic content but may increase false positives.
 
-###### Validation Method
+###### d) Validation Method
 
 **Purpose:** Controls how the content is evaluated.
 
@@ -486,124 +362,89 @@ Use the built-in **Test Guardrail** panel in the Create Guardrail screen.
 - Click **Run Test**
 - Review whether violations were detected and whether any content was transformed
 
-##### Runtime Enforcement
+Example (Toxicity, pre-processing):
 
-At runtime, call an evaluate endpoint with:
+- **Toxicity Threshold:** `0.8`
+- **Validation Method:** `Full Text`
+- **Fields to check:** `input.prompt`
 
-- Agent identity
-- Activity payload
-
-Example evaluate request:
+Raw logs:
 
 ```json
 {
-  "token": "<agent-token>",
-  "logs": {
-    "event_type": "ActivityCompleted",
-    "activity_type": "agent_validatePrompt",
-    "output": { "response": "Email me at me@example.com" }
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "Book me a damn flight you useless bot, how hard can it be?"
   }
 }
 ```
 
-Expected response concepts:
+Validated logs (when the guardrail is configured to transform/fix):
 
-- `validated_logs`: sanitized payload (when transformation is enabled)
-- `results`: structured violations/allow decisions
-- `action`: `continue` or `stop`
+```json
+{
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": ""
+  }
+}
+```
 
-Caller rules:
+Expected outcomes:
 
-- If `action == "stop"`: do not proceed; optionally show a policy message and log the violation
-- Else: continue using `validated_logs`
+- **Block on Violation = On:** the workflow is blocked with an error like:
+  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: The following text in your response was found to be toxic:`
+- **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
 
 <details>
 <summary>Ban Words</summary>
 
-##### Configuration Settings
+Censor banned words by replacing them with their initial letters.
 
-###### Block on Violation
+This feature lets users customize banned words based on their preferences.
 
-**Purpose:** Controls what happens when a violation is detected.
+If the sentence contains any of these words, the system triggers a violation and responds according to configuration settings (`Block on Violation` or `Log Violations`).
 
-**Modes:**
-- **On (Block):** The evaluation result indicates the content is not allowed. Your system should stop the operation.
-- **Off (Transform/Fix):** The service attempts to sanitize the content (mask PII, replace banned words, etc.). Your system can continue using the sanitized output.
+##### 4. Configuration Settings
 
-**Integration requirement:** The caller must check the evaluation response and enforce the decision consistently.
+###### a) Toggles
 
-###### Log Violations
+- **Block on Violation**: Stop the operation when a violation is detected.
+- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
 
-**Purpose:** Whether to record that a violation happened for monitoring and incident review.
+> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
 
-**Recommendation:** Log at least:
-- Guardrail name/type
-- Activity type
-- Field flagged
-- Decision (allow/transform/block)
-- Reason (if provided)
-- Timestamps and correlation IDs
+###### b) Activity Type
 
-##### Targeting (Where the guardrail applies)
+Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
 
-###### Activity Type
+###### c) Fields to Check
 
-**Purpose:** Applies the guardrail only to specific operations (for example: validate prompt, tool call, final answer).
+Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
 
-**How it’s used:** The evaluation payload includes an `activity_type`. Guardrails are routed by matching this value.
+Examples: `input.prompt`, `input.user_message`, `output.response`, `output.reply`
 
-**Recommendations:**
-- Use a stable, versioned naming scheme (example: `agent.validate_prompt.v1`)
-- Keep a registry of activity types so operators can choose reliably
+##### 5. Advanced Settings
 
-###### Fields to Check
+###### a) Timeout (ms)
 
-**Purpose:** Specifies which fields inside the activity payload should be validated.
+Max time to wait for evaluation.
 
-**How it works:** The evaluator reads values from your payload using dot-paths. In the UI, these are entered as “chips”/tags (one field per chip).
+###### b) Retry Attempts
 
-**Recommended patterns:**
-- Simple fields: `input.prompt`, `output.response`
-- Lists: `output.results`
-- Nested list objects: `output.results.*.text`
+How many times to retry transient failures.
 
-**Recommendations:**
-- Validate the smallest meaningful string field
-- Keep payload schemas stable so these paths remain valid
-
-##### Advanced Settings
-
-###### Timeout (ms)
-
-**Purpose:** Maximum time you’re willing to wait for evaluation.
-
-**How to enforce:** Apply as an HTTP request timeout in the calling layer (frontend or backend).
-
-**Recommendations:**
-- Interactive testing: 3–10 seconds
-- Production enforcement: tune based on latency SLOs
-
-###### Retry Attempts
-
-**Purpose:** How many times the caller should retry if evaluation fails due to transient errors.
-
-**How to enforce:** Implement retries in the calling system (usually backend) with exponential backoff and caps.
-
-**Recommendations:**
-- 0–2 retries for synchronous user flows
-- Ensure retries are safe and do not duplicate side effects downstream
-
-##### Type-Specific Fields
-
-###### Banned Words
+###### c) Banned Words
 
 **Purpose:** Words or phrases that must not appear in the target fields.
 
 **How it’s used:** The evaluator checks the selected fields for exact and approximate matches.
 
-###### Maximum Levenshtein Distance
+###### d) Maximum Levenshtein Distance
 
 **Purpose:** Fuzzy matching tolerance (0 = exact match).
 
@@ -617,36 +458,39 @@ Use the built-in **Test Guardrail** panel in the Create Guardrail screen.
 - Click **Run Test**
 - Review whether violations were detected and whether any content was transformed
 
-##### Runtime Enforcement
+Example (Ban Words, pre-processing):
 
-At runtime, call an evaluate endpoint with:
+- **Fields to check:** `input.prompt`
 
-- Agent identity
-- Activity payload
-
-Example evaluate request:
+Raw logs:
 
 ```json
 {
-  "token": "<agent-token>",
-  "logs": {
-    "event_type": "ActivityCompleted",
-    "activity_type": "agent_validatePrompt",
-    "output": { "response": "Email me at me@example.com" }
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "I need your SSN to hack the system and bomb the competition"
   }
 }
 ```
 
-Expected response concepts:
+Validated logs (when the guardrail is configured to transform/fix):
 
-- `validated_logs`: sanitized payload (when transformation is enabled)
-- `results`: structured violations/allow decisions
-- `action`: `continue` or `stop`
+```json
+{
+  "activity_type": "agent_validatePrompt",
+  "event_type": "ActivityCompleted",
+  "input": {
+    "prompt": "I need your S to h the system and b the competition"
+  }
+}
+```
 
-Caller rules:
+Expected outcomes:
 
-- If `action == "stop"`: do not proceed; optionally show a policy message and log the violation
-- Else: continue using `validated_logs`
+- **Block on Violation = On:** the workflow is blocked with an error like:
+  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: Output contains banned words`
+- **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
 
@@ -685,6 +529,121 @@ The platform uses this result to produce an authorization decision and to explai
 ##### Testing Policies
 
 You can test Rego using the **Rego Playground**: https://play.openpolicyagent.org/
+
+Recommendation: test the policy logic in OPA Playground first, then paste it into OpenBox Policy Editor.
+
+##### Policy 1: Require approval for invoice creation
+
+Although behavioral rules can also enforce approvals, Policies let you define more customized, field-level approval logic.
+
+```rego
+package openbox
+
+default result := {"decision": "CONTINUE", "reason": ""}
+
+result := {"decision": "REQUIRE_APPROVAL", "reason": "Invoice creation requires human approval before proceeding"} if {
+    input.activity_type == "agent_toolPlanner"
+    input.activity_output.tool == "CreateInvoice"
+}
+```
+
+Testing:
+
+Test input:
+
+```json
+{
+  "activity_type": "agent_toolPlanner",
+  "event_type": "ActivityCompleted",
+  "activity_output": {
+    "tool": "CreateInvoice",
+    "next": "tool",
+    "args": {
+      "Amount": 1395.71,
+      "TripDetails": "Qantas flight from Bangkok to Melbourne",
+      "UserConfirmation": "User confirmed booking"
+    },
+    "response": "Let's proceed with creating an invoice for the Qantas flight."
+  }
+}
+```
+
+Test output:
+
+```json
+{
+  "result": {
+    "decision": "REQUIRE_APPROVAL",
+    "reason": "Invoice creation requires human approval before proceeding"
+  }
+}
+```
+
+Runtime result:
+
+`temporalio.exceptions.ApplicationError: ApprovalPending: Approval required for output: Invoice creation requires human approval before proceeding`
+
+Approval visibility in OpenBox platform:
+
+- **Approvals** (main sidebar)
+- **Adapt → Approvals** (agent page)
+
+##### Policy 2: Require approval for high-value invoices only
+
+This variant shows how to keep normal invoice creation automatic while routing high-value invoices to human approval.
+
+```rego
+package openbox
+
+default result := {"decision": "CONTINUE", "reason": ""}
+
+result := {"decision": "REQUIRE_APPROVAL", "reason": "High-value invoice requires human approval before proceeding"} if {
+    input.activity_type == "agent_toolPlanner"
+    input.activity_output.tool == "CreateInvoice"
+    object.get(input.activity_output.args, "Amount", 0) >= 1000
+}
+```
+
+Testing:
+
+Test input (approval expected):
+
+```json
+{
+  "activity_type": "agent_toolPlanner",
+  "event_type": "ActivityCompleted",
+  "activity_output": {
+    "tool": "CreateInvoice",
+    "next": "tool",
+    "args": {
+      "Amount": 1395.71,
+      "TripDetails": "Qantas flight from Bangkok to Melbourne",
+      "UserConfirmation": "User confirmed booking"
+    },
+    "response": "Let's proceed with creating an invoice for the Qantas flight."
+  }
+}
+```
+
+Test output:
+
+```json
+{
+  "result": {
+    "decision": "REQUIRE_APPROVAL",
+    "reason": "High-value invoice requires human approval before proceeding"
+  }
+}
+```
+
+Runtime result:
+
+`temporalio.exceptions.ApplicationError: ApprovalPending: Approval required for output: High-value invoice requires human approval before proceeding`
+
+Approval visibility in OpenBox platform:
+
+- **Approvals** (main sidebar)
+- **Adapt → Approvals** (agent page)
 
 Example policy (risk-tier-driven approvals using restricted semantic types):
 
@@ -861,6 +820,57 @@ Rule:
 
 `llm_completion` has not happened before `http_get` → prerequisite not met → `BLOCK`.
 
+#### Test Examples (Enable One Rule at a Time)
+
+Use these two sample rules to make runtime behavior obvious while testing. Enable only one rule at a time.
+
+##### Rule 1 — `HALT`
+
+- **Rule Name:** `Halt LLM Without GET`
+- **Trigger:** `llm_completion`
+- **Prior State:** `http_get`
+- **Verdict:** `HALT`
+- **Priority:** `50`
+- **Reject Message:** `LLM call halted: no prior HTTP GET detected`
+
+Why this fires in this agent:
+
+- The agent performs `http_post` requests (OpenAI API).
+- It does not perform `http_get`.
+- The prerequisite is never met, so each `llm_completion` is halted.
+
+Result in terminal:
+
+`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: LLM call halted: no prior HTTP GET detected`
+
+The chat/session ends immediately after the halt.
+
+##### Rule 2 — `REQUIRE_APPROVAL`
+
+- **Rule Name:** `Approve LLM Without File Read`
+- **Trigger:** `llm_completion`
+- **Prior State:** `file_read`
+- **Verdict:** `REQUIRE_APPROVAL`
+- **Priority:** `50`
+- **Reject Message:** `LLM call requires approval: no prior file read detected`
+
+Why this fires in this agent:
+
+- Every user message triggers LLM activity.
+- This agent path does not produce `file_read` before `llm_completion`.
+- Therefore the rule triggers on each `llm_completion`.
+
+Example path:
+
+`User sends message → agent_validatePrompt → llm_completion → (no file_read) → REQUIRE_APPROVAL`
+
+In practice, each message may trigger multiple `llm_completion` calls (for example validate + plan), so approval requests can appear repeatedly.
+
+Result in OpenBox platform:
+
+- Appears under **Approvals** (main sidebar)
+- Appears under **Adapt → Approvals** on the agent page
+
 #### REQUIRE_APPROVAL visibility
 
 When a behavioral rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the approval request appears in two places:
@@ -902,7 +912,6 @@ Lower trust tiers receive stricter defaults:
 | **Tier 2** | Standard policies enforced |
 | **Tier 3** | Enhanced checks, some HITL |
 | **Tier 4** | Strict controls, frequent HITL |
-| **Untrusted** | All significant operations require approval |
 
 ## Next Phase
 

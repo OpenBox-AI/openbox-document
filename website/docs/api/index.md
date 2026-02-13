@@ -22,5 +22,5 @@ To integrate notifications into your systems (Slack, incident response, ticketin
 
 See:
 
-1. **[Approval Workflows](/docs/approvals/workflows)** - Routing and escalation
+1. **[Approvals](/docs/approvals)** - Review and act on pending requests
 2. **[Audit Log](/docs/organization/audit-log)** - Evidence of decisions and actions

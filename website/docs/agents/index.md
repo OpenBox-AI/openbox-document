@@ -27,7 +27,7 @@ The top of the page shows three key metrics:
 Filter the agent list using:
 
 - **Search** - Find agents by name or ID
-- **Trust Tier** - Filter by Tier 1, 2, 3, 4, or Untrusted
+- **Trust Tier** - Filter by Tier 1, 2, 3, or 4
 - **Status** - Active, Inactive, or Revoked
 - **Team** - Filter by owning team
 
@@ -59,10 +59,10 @@ The main table displays:
 
 | Tier | Color | Description |
 |------|-------|-------------|
-| **TIER 1** | Green | Tier 1 (90-100): Trusted — Minimal oversight, broad permissions |
-| **TIER 2** | Blue | Tier 2 (75-89): Confident — Standard controls, approval for sensitive ops |
-| **TIER 3** | Orange | Tier 3 (50-74): Monitor — Strict controls, monitoring required |
-| **TIER 4** | Red | Tier 4 (25-49): Restrict — Minimal permissions, approval for most ops |
+| **TIER 1** | Green | Tier 1 (0% – 24%): Trusted — Minimal oversight, broad permissions |
+| **TIER 2** | Blue | Tier 2 (25% – 49%): Confident — Standard controls, approval for sensitive ops |
+| **TIER 3** | Orange | Tier 3 (50% – 74%): Monitor — Strict controls, monitoring required |
+| **TIER 4** | Red | Tier 4 (75% – 100%): Restrict — Minimal permissions, approval for most ops |
 
 ## Agent Actions
 
