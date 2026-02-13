@@ -4,191 +4,119 @@ description: Organization activity audit trail
 sidebar_position: 1
 ---
 
-# Audit Log
+# Organization Audit Log
 
-The Audit Log provides a complete record of all organization activity. Use it for security monitoring, compliance, and incident investigation.
+Complete activity history across all agents and users.
 
-Access via **Organization → Audit Log**.
+Access via **Organisation Management → Audit Log** tab.
 
-## Event Types
+---
 
-### Authentication Events
+## Table Columns
 
-| Event | Description |
+Each audit log entry is displayed with the following columns:
+
+| Column | Description |
+|--------|-------------|
+| **Timestamp** | Date and time of the event (e.g., "Feb 13, 10:28:22 AM") |
+| **Event Type** | Category badge (e.g., Guardrail Change, Policy Change) |
+| **Actor** | Email of the user or system that performed the action |
+| **Action** | Description of what happened (e.g., "Created guardrail for agent") |
+| **Result** | Outcome badge — **Success**, **Failed**, **Denied**, **Warning**, **Approved**, or **Allowed** |
+| **Details** | Eye icon to view the full event detail |
+
+---
+
+## Event Type Categories
+
+Use the **All Event Types** dropdown to filter by category:
+
+| Category | What It Covers |
+|----------|---------------|
+| **Agent Operations** | Agent created, updated, deleted, blocked, trust tier changed |
+| **Policy Changes** | OPA policy created, updated, deleted, enabled, or disabled |
+| **User Actions** | Member invited, role changed, approval decisions, settings changes |
+| **Security Events** | Login attempts, API key usage, suspicious activity |
+| **System Events** | Automated trust score changes, scheduled jobs, system-level operations |
+
+---
+
+## Filtering & Search
+
+### Search
+
+Use the **Search audit events…** bar to perform free-text search across event descriptions, actor emails, and action text.
+
+### Event Type Filter
+
+Click the **All Event Types** dropdown and select a category to narrow results to a specific event type.
+
+### Time Range Filter
+
+Click the time range dropdown to select a window:
+
+- **Last 24 Hours** (default)
+- **Last 7 Days**
+- **Last 30 Days**
+- **This Month**
+- **Custom date range**
+
+---
+
+## Event Detail Modal
+
+Clicking the eye icon on any row opens the **Audit Event Details** modal with full event information and metadata.
+
+### Event Overview
+
+| Field | Description |
 |-------|-------------|
-| `user.login` | User logged in |
-| `user.logout` | User logged out |
-| `user.login_failed` | Failed login attempt |
-| `user.mfa_enabled` | MFA enabled |
-| `user.password_changed` | Password changed |
-| `sso.login` | SSO authentication |
+| **Timestamp** | Date and time of the event |
+| **Result** | Outcome of the action (e.g., success, failed, denied) |
+| **Actor** | Email of the user who performed the action |
+| **Action** | Human-readable description of what happened |
+| **Resource Type** | Type of resource affected (e.g., guardrail, policy, agent) |
 
-### Member Events
+### Request Details
 
-| Event | Description |
+Shows the HTTP request that triggered the event:
+
+- **Method and path** — e.g., `PUT /agent/{agent_id}/guardrails/{guardrail_id}`
+- **Request Body** — Full JSON payload sent in the request
+- **Response** — Full JSON response returned by the server
+
+### Technical Information
+
+| Field | Description |
 |-------|-------------|
-| `member.invited` | Invitation sent |
-| `member.joined` | Accepted invitation |
-| `member.role_changed` | Role updated |
-| `member.removed` | Removed from org |
-| `member.suspended` | Account suspended |
+| **Event ID** | Unique identifier for this audit event |
+| **Organization ID** | Organization where the event occurred |
+| **Actor ID** | Unique identifier of the user who performed the action |
 
-### Agent Events
-
-| Event | Description |
-|-------|-------------|
-| `agent.created` | New agent registered |
-| `agent.updated` | Agent configuration changed |
-| `agent.deleted` | Agent removed |
-| `agent.blocked` | Agent blocked |
-| `agent.unblocked` | Agent unblocked |
-| `agent.trust_tier_changed` | Trust tier changed |
-
-### Policy Events
-
-| Event | Description |
-|-------|-------------|
-| `policy.created` | New policy created |
-| `policy.updated` | Policy modified |
-| `policy.deleted` | Policy removed |
-| `policy.enabled` | Policy activated |
-| `policy.disabled` | Policy deactivated |
-
-### Guardrail Events
-
-| Event | Description |
-|-------|-------------|
-| `guardrail.created` | New guardrail created |
-| `guardrail.updated` | Guardrail modified |
-| `guardrail.deleted` | Guardrail removed |
-
-### Behavioral Rule Events
-
-| Event | Description |
-|-------|-------------|
-| `behavioral_rule.created` | New rule created |
-| `behavioral_rule.updated` | Rule modified |
-| `behavioral_rule.deleted` | Rule removed |
-| `behavioral_rule.triggered` | Rule matched a pattern |
-
-### Approval Events
-
-| Event | Description |
-|-------|-------------|
-| `approval.requested` | HITL request created |
-| `approval.approved` | Request approved |
-| `approval.rejected` | Request rejected |
-| `approval.expired` | Request timed out |
-| `approval.escalated` | Request escalated |
-
-### API Key Events
-
-| Event | Description |
-|-------|-------------|
-| `api_key.created` | New key created |
-| `api_key.deleted` | Key revoked |
-| `api_key.used` | Key used for authentication |
-
-### Settings Events
-
-| Event | Description |
-|-------|-------------|
-| `settings.updated` | Organization settings changed |
-| `integration.configured` | Integration added/updated |
-| `webhook.configured` | Webhook configured |
-
-## Log Entry Structure
-
-Each entry contains:
-
-```json
-{
-  "id": "log_abc123",
-  "timestamp": "2024-01-15T09:14:32.001Z",
-  "event": "approval.approved",
-  "actor": {
-    "id": "usr_xyz789",
-    "email": "john@company.com",
-    "type": "user"
-  },
-  "target": {
-    "type": "approval",
-    "id": "apr_def456"
-  },
-  "metadata": {
-    "agent_id": "agt_ghi789",
-    "operation": "EXTERNAL_API_CALL",
-    "comment": "Verified by security team"
-  },
-  "ip_address": "192.168.1.1",
-  "user_agent": "Mozilla/5.0..."
-}
-```
-
-## Filtering
-
-### By Date Range
-
-- Last 24 hours
-- Last 7 days
-- Last 30 days
-- Custom range
-
-### By Event Type
-
-Select specific event categories:
-
-- Authentication
-- Members
-- Agents
-- Policies
-- Approvals
-- Settings
-
-### By Actor
-
-Filter by who performed the action:
-
-- Specific user
-- System (automated)
-- API (programmatic)
-
-### By Target
-
-Filter by what was affected:
-
-- Specific agent
-- Specific team
-- Specific policy
-
-## Search
-
-Full-text search across:
-
-- Event descriptions
-- Actor emails
-- Target names
-- Metadata
-
-```
-Search: "external api" agent:customer-support
-```
+---
 
 ## Export
 
-1. Apply desired filters
-2. Click **Export**
-3. Queue Export
+Click the **Export Log** button in the top-right corner to export audit log data.
 
-## Compliance Use Cases
+1. Click **Export Log**
+2. Enter an export name
+3. Select time range (presets: 24h, 7d, 30d, this month, or custom)
+4. Select event types to include
+5. Click **Queue Export**
 
-Use the audit log to support audits and investigations:
+Exports are processed in the background and made available for download once complete.
 
-- Review access and configuration changes
-- Confirm approval decisions and escalations
-- Provide evidence timelines during incident response
+### Supported Formats
+
+| Format | Description |
+|--------|-------------|
+| **CSV** | Comma-separated values for spreadsheet tools |
+| **Excel** | Native Excel workbook format |
+
+---
 
 ## Next Steps
 
-1. **[Compliance](/docs/compliance)** - Use audit trails and attestation evidence for auditors
-2. **[View Attestation](/docs/compliance/attestation)** - Get cryptographic proof of agent behavior
+1. **[Compliance & Audit](/docs/compliance)** — Use audit trails and attestation evidence for auditors
+2. **[Attestation & Cryptographic Proof](/docs/compliance/attestation)** — View cryptographic proof of agent behavior

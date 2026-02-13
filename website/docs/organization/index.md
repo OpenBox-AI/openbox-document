@@ -60,37 +60,12 @@ Agents are assigned to teams:
 | **Team Member** | Team | View and operate team agents |
 | **Billing Admin** | Org-wide | Billing and invoices only |
 
-
-## API Keys
-
-### Creating API Keys
-
-1. Go to **Organization → API Keys**
-2. Click **Create API Key**
-3. Name the key (e.g., "Production Worker")
-4. Select scope (organization or team)
-5. Copy the key (shown only once)
-
-### Key Types
-
-| Prefix | Environment | Purpose |
-|--------|-------------|---------|
-| `obx_live_` | Production | Production workers |
-| `obx_test_` | Staging | Testing and development |
-
 ### Key Scopes
 
 | Scope | Access |
 |-------|--------|
 | **Organization** | All agents across all teams |
 | **Team** | Agents within specific team only |
-
-### Rotating Keys
-
-1. Create new key
-2. Update your workers with new key
-3. Verify new key works
-4. Delete old key
 
 ## Settings
 
