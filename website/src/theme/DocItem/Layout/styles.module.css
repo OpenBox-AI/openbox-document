@@ -1,0 +1,66 @@
+.docItemContainer header + *,
+.docItemContainer article > *:first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 997px) {
+  .docItemCol {
+    max-width: 75% !important;
+  }
+}
+
+.docActionsRow {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.75rem;
+}
+
+.docActionMenu {
+  position: relative;
+}
+
+.docActionMenu summary {
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.docActionMenu summary::-webkit-details-marker {
+  display: none;
+}
+
+.docActionMenu[open] summary {
+  border-color: var(--ifm-color-primary);
+}
+
+.docActionMenuList {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  min-width: 220px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  overflow: hidden;
+}
+
+.docActionLink {
+  display: block;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+
+.docActionLink:hover {
+  text-decoration: none;
+  background: var(--ifm-color-emphasis-100);
+}
