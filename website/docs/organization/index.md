@@ -6,7 +6,7 @@ sidebar_position: 8
 
 # Organization
 
-Manage your organization's teams, members, API keys, and settings. Access from the sidebar by clicking **Organization**.
+Manage your organization's teams, members, and settings. Access from the sidebar by clicking **Organization**.
 
 ![Organization](/img/Organization.png)
 
@@ -20,52 +20,33 @@ Organize agents and members into teams for access control.
 1. Go to **Organization → Teams**
 2. Click **Create Team**
 3. Enter team name and description
-4. Add members
-5. Assign agents
 
-### Team Permissions
-
-| Role | Permissions |
-|------|-------------|
-| **Owner** | Full access, can delete team |
-| **Admin** | Manage members, configure agents |
-| **Member** | View agents, handle approvals |
-| **Viewer** | Read-only access |
-
-### Agent Assignment
-
-Agents are assigned to teams:
-
-- Each agent belongs to one team
-- Team members can view/manage their agents
-- Cross-team access requires Admin or Owner role
+:::note
+Agents are assigned to teams during [agent creation](/docs/agents/registering-agents). Users are assigned to teams by editing their profile (see [Adding Members](#adding-members) below).
+:::
 
 ## Members
 
-### Inviting Members
+### Adding Members
 
 1. Go to **Organization → Members**
-2. Click **Invite Member**
-3. Enter email address
-4. Select role and teams
-5. Send invitation
+2. Click **Create User**
+3. Enter user details and select a role
+4. To assign a team, edit the user after creation and select a team
 
-### Roles
+:::note
+Team assignment is only available for non-administrator roles (e.g., Developer, Viewer). Organization-level admins have access across all teams.
+:::
 
-| Role | Scope | Permissions |
-|------|-------|-------------|
-| **Organization Owner** | Org-wide | Full access, billing, danger zone |
-| **Organization Admin** | Org-wide | Manage all teams, members, settings |
-| **Team Admin** | Team | Manage team agents and members |
-| **Team Member** | Team | View and operate team agents |
-| **Billing Admin** | Org-wide | Billing and invoices only |
+### Permissions
 
-### Key Scopes
+Configure what each role can access and modify within the organisation. Go to **Organization → Permissions**.
 
-| Scope | Access |
-|-------|--------|
-| **Organization** | All agents across all teams |
-| **Team** | Agents within specific team only |
+| Role | Permissions |
+|------|-------------|
+| **Admin** | Can manage all teams, agents, policies, and organisation settings |
+| **Developer** | Can create and manage agents within assigned teams. Cannot modify organisation settings |
+| **Viewer** | Can view agents, logs, and reports. Cannot make any modifications |
 
 ## Settings
 
