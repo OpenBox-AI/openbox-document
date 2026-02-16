@@ -21,26 +21,44 @@ const sidebars = {
       collapsed: false,
       items: [
         'getting-started/index',
+        'agents/registering-agents',
         'getting-started/quick-start',
-        {
-          type: 'category',
-          label: 'Workflow Engines',
-          items: [
-            'getting-started/workflow-engines/temporal',
-          ],
-        },
         'getting-started/troubleshooting',
       ],
     },
     {
       type: 'category',
-      label: 'Concepts',
+      label: 'Core Concepts',
       collapsed: true,
       items: [
         'concepts/trust-scores',
         'concepts/trust-tiers',
-        'concepts/event-types',
         'concepts/governance-decisions',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Trust Lifecycle',
+      collapsed: false,
+      items: [
+        'agents/trust-lifecycle/index',
+        'agents/overview',
+        'agents/trust-lifecycle/assess',
+        'agents/trust-lifecycle/authorize',
+        'agents/trust-lifecycle/monitor',
+        'agents/trust-lifecycle/verify',
+        'agents/trust-lifecycle/adapt',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Developer Guide',
+      items: [
+        'sdk/index',
+        'getting-started/workflow-engines/temporal',
+        'sdk/configuration',
+        'sdk/error-handling',
+        'concepts/event-types',
       ],
     },
     {
@@ -48,31 +66,9 @@ const sidebars = {
       label: 'Dashboard',
       items: [
         'dashboard/index',
+        'agents/index',
         'dashboard/trust-overview',
         'dashboard/alerts',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Agents',
-      collapsed: false,
-      items: [
-        'agents/index',
-        'agents/registering-agents',
-        'agents/overview',
-        {
-          type: 'category',
-          label: 'Trust Lifecycle',
-          collapsed: false,
-          items: [
-            'agents/trust-lifecycle/index',
-            'agents/trust-lifecycle/assess',
-            'agents/trust-lifecycle/authorize',
-            'agents/trust-lifecycle/monitor',
-            'agents/trust-lifecycle/verify',
-            'agents/trust-lifecycle/adapt',
-          ],
-        },
       ],
     },
     {
@@ -84,27 +80,12 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Organization',
+      label: 'Administration',
       items: [
         'organization/index',
-        'organization/audit-log',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Compliance',
-      items: [
         'compliance/index',
         'compliance/attestation',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'SDK',
-      items: [
-        'sdk/index',
-        'sdk/configuration',
-        'sdk/error-handling',
+        'organization/audit-log',
       ],
     },
   ],
