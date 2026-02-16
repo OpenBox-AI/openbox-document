@@ -4,6 +4,9 @@ description: Integrate OpenBox with a Temporal AI agent using the OpenBox demo r
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Temporal Integration Guide
 
 Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wraps a real Temporal AI agent worker. You’ll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
@@ -16,10 +19,22 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
 
 ## Prerequisites
 
-- **Python 3.11+** installed
-- **Temporal Server** running locally or access to Temporal Cloud
-- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
-- **LLM API Key** - OpenAI, Anthropic, or Google AI
+- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
+- **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
+  - `openai/gpt-4o`
+  - `anthropic/claude-sonnet-4-5-20250929`
+  - `gemini/gemini-2.0-flash`
+
+  See [LiteLLM Supported Providers](https://docs.litellm.ai/docs/providers) for the full list.
+- **[Python 3.11+](https://www.python.org/downloads/)**
+- **[Node.js](https://nodejs.org/)** — Required for the frontend
+- **[uv](https://docs.astral.sh/uv/)** — Python package manager
+- **`make`** — Required to run setup and dev scripts:
+  - **macOS**: `xcode-select --install`
+  - **Linux**:
+    - **Debian/Ubuntu**: `sudo apt install make`
+    - **Fedora/RHEL**: `sudo dnf install make`
+  - **Windows**: `winget install GnuWin32.Make` or `choco install make`
 
 ---
 
@@ -32,15 +47,46 @@ git clone https://github.com/OpenBox-AI/poc-temporal-agent
 cd poc-temporal-agent
 ```
 
-### Install Temporal Server (Local Development)
+### Install Temporal CLI
+
+<Tabs>
+<TabItem value="mac" label="macOS" default>
+
+Install with [Homebrew](https://brew.sh/):
 
 ```bash
-# macOS
 brew install temporal
-
-# Start Temporal server
-temporal server start-dev
 ```
+
+To manually install, download the version for your architecture:
+
+- [Download for Intel Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
+- [Download for Apple Silicon Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64)
+
+Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
+
+</TabItem>
+<TabItem value="linux" label="Linux">
+
+Download the version for your architecture:
+
+- [Download for Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
+- [Download for Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
+
+Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+Download the version for your architecture:
+
+- [Download for Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
+- [Download for Windows arm64](https://temporal.download/cli/archive/latest?platform=windows&arch=arm64)
+
+Extract the archive and add `temporal.exe` to your `PATH`.
+
+</TabItem>
+</Tabs>
 
 ### Install Dependencies
 
@@ -52,36 +98,7 @@ make setup
 
 ---
 
-## Part 2: Configure Environment
-
-Copy the example env file:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and set at minimum:
-
-- `LLM_MODEL`
-- `LLM_KEY`
-- `TEMPORAL_ADDRESS` (defaults to `localhost:7233`)
-
-### Enable OpenBox (recommended)
-
-Add your OpenBox Core URL and API key:
-
-```bash
-OPENBOX_URL=https://core.openbox.ai
-OPENBOX_API_KEY=your-openbox-api-key
-OPENBOX_GOVERNANCE_ENABLED=true
-OPENBOX_GOVERNANCE_TIMEOUT=30.0
-OPENBOX_GOVERNANCE_MAX_RETRIES=1
-OPENBOX_GOVERNANCE_POLICY=fail_closed
-```
-
----
-
-## Part 3: Register Your Agent in OpenBox
+## Part 2: Register Your Agent in OpenBox
 
 1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Add Agent**
@@ -102,14 +119,42 @@ OPENBOX_GOVERNANCE_POLICY=fail_closed
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
 
-Add the API key to your `.env`:
+---
+
+## Part 3: Configure Environment
+
+Copy the example env file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set at minimum:
+
+- `LLM_MODEL`
+- `LLM_KEY`
+- `TEMPORAL_ADDRESS` (defaults to `localhost:7233`)
+
+### Enable OpenBox
+
+Add your OpenBox Core URL and API key (from [Part 2](#part-2-register-your-agent-in-openbox)):
 
 ```bash
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=your-openbox-api-key
+OPENBOX_GOVERNANCE_ENABLED=true
+OPENBOX_GOVERNANCE_TIMEOUT=30.0
+OPENBOX_GOVERNANCE_MAX_RETRIES=1
+OPENBOX_GOVERNANCE_POLICY=fail_closed
 ```
 
 ## Part 4: Run the Demo
+
+Start the Temporal development server:
+
+```bash
+temporal server start-dev
+```
 
 In separate terminals:
 
@@ -168,9 +213,8 @@ The agent’s Temporal code is organized in:
 ### View in OpenBox Dashboard
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Navigate to **Agents** → Click **Customer Support Agent**
-3. Go to **Monitor** tab
-4. Click on your workflow session to see:
+2. Navigate to **Agents** → Click **your agent** (the one you created in Part 2)
+3. On the **Overview** tab, click your session to open Session Replay and see:
    - Complete event timeline
    - LLM request/response capture
    - Activity inputs/outputs
@@ -234,13 +278,11 @@ In this demo, the SDK’s role is to connect your Temporal worker to OpenBox and
 To investigate failures:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Go to your agent → **Monitor**
-3. Open the session to review:
+2. Go to your agent → **Overview** tab
+3. Click a session to open Session Replay and review:
    - Governance decisions
    - Inputs/outputs for activities and tool calls
    - Approval requests and outcomes
-
-Use the session view in OpenBox to investigate end-to-end execution.
 
 ---
 
@@ -309,6 +351,16 @@ The SDK automatically captures and sends to OpenBox:
 ---
 
 ## Troubleshooting
+
+### Worker Fails to Start
+
+If `make run-worker` fails with a connection error, the Temporal server is likely not running:
+
+```bash
+temporal server start-dev
+```
+
+Then retry `make run-worker` in a separate terminal.
 
 ### Worker Not Connecting to OpenBox
 
