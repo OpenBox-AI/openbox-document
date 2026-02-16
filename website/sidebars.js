@@ -29,6 +29,7 @@ const sidebars = {
             'getting-started/workflow-engines/temporal',
           ],
         },
+        'getting-started/troubleshooting',
       ],
     },
     {

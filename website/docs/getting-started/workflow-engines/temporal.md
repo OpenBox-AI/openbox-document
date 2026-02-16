@@ -388,44 +388,4 @@ The SDK automatically captures and sends to OpenBox:
 
 ## Troubleshooting
 
-### Worker Fails to Start
-
-If `make run-worker` fails with a connection error, the Temporal server is likely not running:
-
-```bash
-temporal server start-dev
-```
-
-Then retry `make run-worker` in a separate terminal.
-
-### Worker Not Connecting to OpenBox
-
-Check your API key:
-```bash
-echo $OPENBOX_API_KEY
-# Should print your OpenBox API key
-```
-
-Verify configuration:
-
-1. Confirm `OPENBOX_URL` and `OPENBOX_API_KEY` are set in the worker environment
-2. Start the worker and check logs for OpenBox initialization errors
-3. Trigger a workflow and confirm a session appears in the OpenBox dashboard
-
-### No Events in Dashboard
-
-1. Ensure worker is running: `make run-worker`
-2. Ensure API and UI are running: `make run-api` and `make run-frontend`
-3. Verify the workflow completed successfully
-
-### LLM API Errors
-
-Test your LLM configuration:
-```python
-from litellm import completion
-response = completion(
-    model="openai/gpt-4o",
-    api_key="your-key",
-    messages=[{"role": "user", "content": "test"}]
-)
-```
+Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.
