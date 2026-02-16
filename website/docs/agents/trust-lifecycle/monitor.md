@@ -10,6 +10,58 @@ The Monitor phase provides visibility into agent runtime behavior. Observe sessi
 
 Access via **Agent Detail → Monitor** tab.
 
+## Operational Dashboard
+
+The Monitor tab provides operational observability into performance, cost, and health.
+
+### Total Invocations
+
+Total number of agent invocations, with trend and average response time.
+
+### Token Consumption
+
+Total tokens consumed, with trend and associated cost for the current day.
+
+### Total Errors
+
+Total error count, with today's error count and overall success rate.
+
+### Goal Alignment Trend
+
+Trend chart of alignment across sessions over time.
+
+### Recent Drift Events
+
+Recent sessions where goal drift was detected, including session ID, score, and drift summary.
+
+### Tool Health Matrix
+
+Health table for tools/MCP servers (success rate, latency, status) to identify degraded dependencies.
+
+### Request Volume
+
+Request volume chart (last 24h) with total requests, peak per hour, and average per hour.
+
+### Model Usage
+
+Model usage view with token and cost breakdown by model.
+
+### Latency Distribution
+
+Response-time distribution with percentiles (P50, P95, P99, Max).
+
+### Error Breakdown
+
+Error categories with counts/percentages (for example: timeout, rate limit, server error, policy violation).
+
+### Cost Analytics
+
+Spending view with today's spend, projection, and budget utilization split by input tokens, output tokens, and tool calls.
+
+### Recent Issues
+
+Latest issues requiring action (policy violations, workflow failures, timeouts), with links to details.
+
 ## Sessions
 
 View active and completed workflow sessions.
@@ -91,6 +143,74 @@ Click any event to see full details:
 
 The session header shows alignment:
 
+Goal Alignment tracks whether your agent's actions and outputs match the user's original request. OpenBox compares the user's goal (sent via Temporal signal) against the agent's LLM responses and tool outputs.
+
+Goal Alignment requires you to implement goal context propagation in your workflow. In practice, this is done by sending a Temporal **Signal** into the running workflow and handling it with a signal handler that stores the user request input (goal context) in workflow state. Signals are asynchronous (the send returns when the server accepts it, not when the workflow processes it) and appear in workflow history as `WorkflowExecutionSignaled`. Without this signal, OpenBox cannot detect a goal session, and no stated goal is available for alignment scoring.
+
+#### How to implement goal context propagation (Temporal Python)
+
+**Step 1: Add a signal handler to your workflow**
+
+```python
+from datetime import timedelta
+
+from temporalio import workflow
+
+
+@workflow.defn
+class YourAgentWorkflow:
+    def __init__(self):
+        self.user_goal = None
+
+    @workflow.signal
+    async def user_prompt(self, prompt: str) -> None:
+        self.user_goal = prompt
+
+    @workflow.run
+    async def run(self, input_data: str) -> dict:
+        await workflow.wait_condition(lambda: self.user_goal is not None)
+
+        result = await workflow.execute_activity(
+            "your_activity",
+            input_data,
+            start_to_close_timeout=timedelta(minutes=10),
+        )
+
+        return result
+```
+
+**Step 2: Send the signal when starting the workflow**
+
+Option A: Signal-With-Start (recommended)
+
+```python
+handle = await client.start_workflow(
+    YourAgentWorkflow.run,
+    "your input data",
+    id="your-workflow-id",
+    task_queue="your-task-queue",
+    start_signal="user_prompt",
+    start_signal_args=["The user's goal or request goes here"],
+)
+```
+
+Option B: Separate signal call
+
+```python
+handle = await client.start_workflow(
+    YourAgentWorkflow.run,
+    "your input data",
+    id="your-workflow-id",
+    task_queue="your-task-queue",
+)
+
+await handle.signal("user_prompt", "The user's goal or request goes here")
+```
+
+**Step 3: Return the full LLM response in activity output**
+
+Your activity should return the complete LLM response so OpenBox can compare it against the goal.
+
 | Score | Badge | Meaning |
 |-------|-------|---------|
 | 90-100% | Green | Well aligned with stated goal |
@@ -101,6 +221,11 @@ Hover for details including:
 - Alignment score breakdown
 - LLM evaluation status
 - Stated goal at session start
+
+Notes:
+
+- The signal name can be anything (it does not have to be `user_prompt`).
+- If your activities do file operations, ensure your worker has `instrument_file_io=True` enabled.
 
 ## Observability Metrics
 
@@ -149,14 +274,6 @@ Session replay shows events with semantic types:
 | Approval Granted | CheckCircle | Approved by sarah@company.com |
 | Session Completed | CheckCircle | Success |
 
-## Telemetry Export
-
-Export telemetry data for external analysis:
-
-- **OpenTelemetry** - OTLP export to Jaeger, Datadog, etc.
-- **CSV** - Download raw event data
-
-Configure in **Organisation → Settings → Integrations**.
 
 ## Next Phase
 

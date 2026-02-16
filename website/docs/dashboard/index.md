@@ -8,6 +8,8 @@ sidebar_position: 3
 
 The Dashboard provides a real-time overview of your organization's AI governance health. Access it from the sidebar by clicking **Dashboard**.
 
+![Dashboard](/img/Dashboard.png)
+
 ## Navigation
 
 The sidebar navigation includes:
@@ -34,10 +36,10 @@ A donut chart showing the distribution of agents across Trust Tiers:
 
 | Tier | Risk Level | Description |
 |------|------------|-------------|
-| **Tier 1** | Low Risk | Highly trusted, minimal constraints |
-| **Tier 2** | Medium Risk | Standard policies, normal monitoring |
-| **Tier 3** | High Risk | Enhanced controls, some HITL required |
-| **Tier 4** | Critical | Strict governance, frequent HITL |
+| **Tier 1 (0% – 24%): Trusted - Green** | Low | Highly trusted, minimal constraints |
+| **Tier 2 (25% – 49%): Confident - Blue** | Medium | Standard policies, normal monitoring |
+| **Tier 3 (50% – 74%): Monitor - Orange** | High | Enhanced controls, some HITL required |
+| **Tier 4 (75% – 100%): Restrict - Red** | Critical | Strict governance, frequent HITL |
 
 Click any tier in the legend to filter the agents list.
 
@@ -83,7 +85,6 @@ The agent creation form includes:
 - **API Key Generation** (copy once)
 - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**)
 - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**)
-- **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**)
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough.
 

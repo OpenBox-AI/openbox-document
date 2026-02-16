@@ -12,7 +12,7 @@ Trust decisions surface as exceptions in your activities. Handle them appropriat
 
 | Exception | Governance Decision | Description |
 |-----------|-------------------|-------------|
-| `GovernanceStop` | DENY_ACTION or TERMINATE_AGENT | Operation blocked |
+| `GovernanceStop` | BLOCK or HALT | Operation blocked |
 | `ApprovalPending` | REQUIRE_APPROVAL | Awaiting human review |
 | `ApprovalRejected` | REQUIRE_APPROVAL (rejected) | Human rejected request |
 | `ApprovalExpired` | REQUIRE_APPROVAL (timeout) | No response before timeout |
@@ -34,7 +34,7 @@ from openbox.errors import (
 
 ### GovernanceStop
 
-Raised when an operation is blocked (DENY_ACTION) or the agent is terminated (TERMINATE_AGENT).
+Raised when an operation is blocked (BLOCK) or the agent session is terminated (HALT).
 
 ```python
 @activity.defn

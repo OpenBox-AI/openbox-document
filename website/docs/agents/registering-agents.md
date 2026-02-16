@@ -17,6 +17,8 @@ Select the workflow engine your agent uses:
 | Engine | Status |
 |--------|--------|
 | **Temporal** | Available |
+| **n8n** | Coming soon |
+| **LangChain** | Coming soon |
 
 ### Agent Information
 
@@ -46,12 +48,12 @@ Expand the **Initial Risk Assessment** section and configure your agent's AIVSS 
 
 Select a preset that matches your agent's intended use:
 
-| Level | Name | Use Cases | Default Governance |
-|-------|------|-----------|-------------------|
-| **Level 1** | Minimal Risk | Read-only access, internal research, no external APIs | Fully autonomous |
-| **Level 2** | Low Risk | Internal automation, limited writes, monitored external calls | Mostly autonomous |
-| **Level 3** | Medium Risk | Customer data access, external API calls, financial reads | Approval for sensitive ops |
-| **Level 4** | High Risk | Production admin, financial writes, PII access | HITL for most operations |
+| Risk Tier | Risk Level | AIVSS Score | Use Cases | Default Governance |
+|-----------|------------|-------------|-----------|-------------------|
+| **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
+| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
+| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
+| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
 
 ### AIVSS Parameters
 
@@ -61,37 +63,37 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 | Parameter | Options |
 |-----------|---------|
-| **Attack Vector** | Physical (1), Local (2), Adjacent (3), Network (4) |
-| **Attack Complexity** | High (1), Medium (2), Low (3) |
-| **Privileges Required** | High (1), Low (2), None (3) |
-| **User Interaction** | Required (1), None (2) |
+| **Attack Vector** | Network (1), Adjacent (2), Local (3), Physical (4) |
+| **Attack Complexity** | Low (1), High (2) |
+| **Privileges Required** | None (1), Low (2), High (3) |
+| **User Interaction** | None (1), Required (2) |
 | **Scope** | Unchanged (1), Changed (2) |
 
 #### AI-Specific (45% weight)
 
 | Parameter | Options |
 |-----------|---------|
-| **Prompt Injection Risk** | Low (1), Medium (2), High (3), Critical (4) |
-| **Data Sensitivity** | Public (1), Internal (2), Confidential (3), Restricted (4) |
-| **Autonomy Level** | Supervised (1), Guided (2), Semi-autonomous (3), Autonomous (4) |
-| **Tool Access** | None (1), Read-only (2), Read-write (3), Admin (4) |
-| **External Connectivity** | None (1), Internal APIs (2), External APIs (3), Internet (4) |
+| **Model Robustness** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
+| **Data Sensitivity** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
+| **Ethical Impact** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
+| **Decision Criticality** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
+| **Adaptability** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
 
 #### Impact (30% weight)
 
 | Parameter | Options |
 |-----------|---------|
-| **Confidentiality Impact** | None (1), Low (2), High (3) |
-| **Integrity Impact** | None (1), Low (2), High (3) |
-| **Availability Impact** | None (1), Low (2), High (3) |
-| **Business Criticality** | Low (1), Medium (2), High (3), Critical (4) |
+| **Confidentiality Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
+| **Integrity Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
+| **Availability Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
+| **Safety Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
 
-### Predicted Trust Tier
+### Predicted Risk Tier
 
 As you configure AIVSS parameters, the form shows a real-time prediction:
 
 ```
-Predicted Trust Tier: TIER 2
+Predicted Risk Tier: TIER 2
 Based on current configuration
 ```
 
@@ -107,18 +109,6 @@ For now, use **AWS KMS** (recommended/default):
 2. Keep the default settings
 
 See **[Attestation](/docs/compliance/attestation)** for how execution evidence is produced and verified.
-
-## Goal Alignment (Goal Drift)
-
-In the **Goal Alignment** section, configure drift detection:
-
-1. Set the **alignment threshold** (e.g., 70%)
-2. Choose what happens on drift detection:
-   - **Alert Only**
-   - **Constrain**
-   - **Terminate**
-
-See **[Verify](/docs/agents/trust-lifecycle/verify)** for how goal alignment and drift detection work.
 
 ## Creating the Agent
 

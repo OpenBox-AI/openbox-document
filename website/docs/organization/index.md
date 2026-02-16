@@ -8,6 +8,9 @@ sidebar_position: 8
 
 Manage your organization's teams, members, API keys, and settings. Access from the sidebar by clicking **Organization**.
 
+![Organization](/img/Organization.png)
+
+
 ## Teams
 
 Organize agents and members into teams for access control.
@@ -57,48 +60,12 @@ Agents are assigned to teams:
 | **Team Member** | Team | View and operate team agents |
 | **Billing Admin** | Org-wide | Billing and invoices only |
 
-### SSO Integration
-
-Enterprise plans support SSO:
-
-- SAML 2.0
-- OAuth 2.0 / OIDC
-- Azure AD
-- Okta
-- Google Workspace
-
-Configure in **Organization → Settings → Security → SSO**.
-
-## API Keys
-
-### Creating API Keys
-
-1. Go to **Organization → API Keys**
-2. Click **Create API Key**
-3. Name the key (e.g., "Production Worker")
-4. Select scope (organization or team)
-5. Copy the key (shown only once)
-
-### Key Types
-
-| Prefix | Environment | Purpose |
-|--------|-------------|---------|
-| `obx_live_` | Production | Production workers |
-| `obx_test_` | Staging | Testing and development |
-
 ### Key Scopes
 
 | Scope | Access |
 |-------|--------|
 | **Organization** | All agents across all teams |
 | **Team** | Agents within specific team only |
-
-### Rotating Keys
-
-1. Create new key
-2. Update your workers with new key
-3. Verify new key works
-4. Delete old key
 
 ## Settings
 
@@ -108,14 +75,7 @@ Configure in **Organization → Settings → Security → SSO**.
 - Default timezone
 - Notification preferences
 
-### Security
-
-- Password policy
-- Session timeout
-- SSO configuration
-- IP allowlisting (Enterprise)
-
-### Integrations
+<!-- ### Integrations
 
 Configure external integrations:
 
@@ -133,7 +93,7 @@ Configure external integrations:
 - Usage metrics
 - Invoice history
 - Payment methods
-- Upgrade/downgrade
+- Upgrade/downgrade -->
 
 ## Audit Log
 
@@ -157,15 +117,6 @@ Filter audit log by:
 - User
 - Agent
 - Team
-
-### Export
-
-Export audit logs for compliance:
-
-- CSV format
-- JSON format
-- Configurable date range
-- Scheduled exports (Enterprise)
 
 See [Audit Log](/docs/organization/audit-log) for details.
 

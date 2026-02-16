@@ -26,7 +26,7 @@ Teams struggle to answer critical questions:
 
 ## The Solution
 
-OpenBox adds a **trust layer** alongside your workflow engine (Temporal, n8n, LangChain, etc.). Your workflow engine remains the system of record for execution, OpenBox adds trust and visibility.
+OpenBox adds a **trust layer** alongside your workflow engine. Currently supports: Temporal Python SDK. Support for n8n, LangChain, and other engines is planned. Your workflow engine remains the system of record for execution, OpenBox adds trust and visibility.
 
 ## Who This Is For
 

@@ -12,11 +12,11 @@ When an agent operation is evaluated, OpenBox returns one of five governance dec
 
 | Decision | Effect | Trust Impact |
 |----------|--------|--------------|
-| **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
-| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
+| **HALT** | Terminates entire agent session | Significant negative |
+| **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
-| **DENY_ACTION** | Specific operation blocked | Negative |
-| **TERMINATE_AGENT** | Entire agent session halted | Significant negative |
+| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
+| **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
 
@@ -31,12 +31,6 @@ The operation is permitted to proceed.
 - Operation executes normally
 - Event logged for audit
 - Behavioral score slightly improves
-
-**SDK behavior:**
-```python
-# Operation proceeds transparently
-result = await my_activity(data)
-```
 
 ## CONSTRAIN
 
@@ -57,12 +51,7 @@ The operation proceeds but with modifications or limitations.
 - Constraint logged
 - Behavioral score neutral
 
-**SDK behavior:**
-```python
-# Operation proceeds with constraints applied
-result = await my_activity(data)
-# Result may be modified (e.g., PII redacted)
-```
+Constraints and the resulting transformed inputs/outputs are visible in session replay.
 
 ## REQUIRE_APPROVAL
 
@@ -74,38 +63,20 @@ The operation is paused pending human approval.
 - Agent trust tier mandates review
 
 **Effect:**
-- Activity raises `ApprovalPending`
-- Temporal retries with backoff
-- Request appears in Approvals queue
-- Once approved/rejected, retry succeeds/fails
-
-**SDK behavior:**
-```python
-try:
-    result = await my_activity(data)
-except ApprovalPending:
-    # Automatic retry handles this
-    raise
-except ApprovalRejected as e:
-    # Human rejected the request
-    logger.error(f"Approval rejected: {e.reason}")
-except ApprovalExpired:
-    # Timeout without decision
-    logger.error("Approval timed out")
-```
+- Request appears in the Approvals queue
+- Session replay shows the operation context and decision timeline
+- Once approved/rejected, the operation proceeds or is blocked
 
 **Approval flow:**
 ```
 1. Operation triggers REQUIRE_APPROVAL
-2. Activity raises ApprovalPending
-3. Temporal schedules retry (with backoff)
-4. Request appears in dashboard queue
-5a. Approved → Next retry succeeds
-5b. Rejected → Next retry raises ApprovalRejected
-5c. Timeout → Next retry raises ApprovalExpired
+2. Request appears in dashboard queue
+3a. Approved → Operation proceeds
+3b. Rejected → Operation blocked
+3c. Timeout → Operation expires
 ```
 
-## DENY_ACTION
+## BLOCK
 
 The specific operation is blocked.
 
@@ -115,23 +86,13 @@ The specific operation is blocked.
 - Behavioral rule violation detected
 
 **Effect:**
-- Activity raises `GovernanceStop`
 - Operation does not execute
 - Event logged with denial reason
 - Behavioral score decreases
 
-**SDK behavior:**
-```python
-try:
-    result = await my_activity(data)
-except GovernanceStop as e:
-    logger.error(f"Operation blocked: {e.reason}")
-    # Handle the denial (retry with different params, alert, etc.)
-```
+## HALT
 
-## TERMINATE_AGENT
-
-The entire agent session is halted.
+The entire agent session is terminated.
 
 **When returned:**
 - Critical policy violation
@@ -147,27 +108,15 @@ The entire agent session is halted.
 - Significant trust score decrease
 - Alert generated
 
-**SDK behavior:**
-```python
-# Workflow level handling
-try:
-    await workflow.execute_activity(...)
-except GovernanceStop as e:
-    if e.termination:
-        # Entire workflow is being terminated
-        logger.critical(f"Agent terminated: {e.reason}")
-        # Cleanup and exit
-```
-
 ## Decision Precedence
 
 When multiple policies apply, decisions follow precedence:
 
 ```
-TERMINATE_AGENT > DENY_ACTION > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
 ```
 
-If any policy returns TERMINATE, the agent is terminated regardless of other policies.
+If any policy returns HALT, the agent session is terminated regardless of other policies.
 
 ## Decision in Session Replay
 
@@ -184,35 +133,16 @@ Session replay shows decisions at each operation:
 
 ## Customizing Decisions
 
-In OPA policies, return the appropriate decision:
+You can tune how decisions are produced in the **Authorize** phase:
 
-```rego
-package openbox.policy
+1. **Policies (OPA/Rego)** - Return `allow`, `deny`, or `require_approval` for specific operations and conditions.
+2. **Behavioral Rules** - Detect multi-step patterns and escalate to `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
+3. **Trust-tier conditions** - Apply stricter decisions for lower-tier agents and relax controls for higher-tier agents.
+4. **Approval timeout settings** - Configure how long `REQUIRE_APPROVAL` requests can remain pending before expiring.
 
-# Default allow
-default decision = "ALLOW"
-
-# Require approval for external calls
-decision = "REQUIRE_APPROVAL" {
-    input.operation.type == "EXTERNAL_API_CALL"
-    input.agent.trust_tier >= 2
-}
-
-# Deny for untrusted agents
-decision = "DENY_ACTION" {
-    input.operation.type == "DATABASE_WRITE"
-    input.agent.trust_tier == 5
-}
-
-# Terminate on critical violation
-decision = "TERMINATE_AGENT" {
-    input.operation.type == "AGENT_ACTION"
-    input.operation.metadata.violation == "critical"
-}
-```
+Use policy and behavioral-rule testing before rollout to confirm expected outcomes.
 
 ## Related
 
 - **[Authorize Phase](/docs/agents/trust-lifecycle/authorize)** - Configure policies that produce these decisions
-- **[SDK Error Handling](/docs/sdk/error-handling)** - Handle decisions in your code
 - **[Approvals](/docs/approvals)** - Process REQUIRE_APPROVAL decisions

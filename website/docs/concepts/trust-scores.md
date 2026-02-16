@@ -11,12 +11,12 @@ The Trust Score is a 0-100 metric representing an agent's trustworthiness based 
 ## Calculation
 
 ```
-Trust Score = (AIVSS × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Weight | Source | Range |
 |-----------|--------|--------|-------|
-| **AIVSS** | 40% | Risk assessment (Assess phase) | 0-100 |
+| **AIVSS Score** | 40% | AIVSS risk scoring (Assess phase) | 0-100 |
 | **Behavioral** | 35% | Policy compliance (Authorize + Monitor) | 0-100 |
 | **Alignment** | 25% | Goal consistency (Verify phase) | 0-100 |
 
@@ -27,7 +27,8 @@ Trust Score = (AIVSS × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 Based on the agent's inherent risk profile:
 
 - Configured at agent creation
-- 14 dimensions across access, capability, impact
+- 14 parameters across three weighted categories: Base Security (25%), AI-Specific (45%), Impact (30%)
+- Produces an **AIVSS Score (0–100)** and a **Risk Tier (1–4)**
 - Static unless re-assessed
 - Higher score = lower inherent risk
 
@@ -35,21 +36,18 @@ Based on the agent's inherent risk profile:
 
 Based on runtime compliance:
 
-- Starts at 100 for new agents
-- Decreases with violations
+- Behavioral Compliance component starts at 100 for new agents
+- Violations affect the Behavioral Compliance component (35% weight), not Trust Score directly
 - Increases with compliant behavior
 - Updated continuously
 
 **Factors:**
 
-| Event | Impact |
-|-------|--------|
-| Compliant operation | +0.01 per 10 operations |
-| HITL approval granted | +0.5 |
-| Policy violation (DENY) | -2 to -5 |
-| TERMINATE triggered | -10 to -15 |
-| Approval rejected | -2 |
-| Approval timeout | -1 |
+Penalty to Behavioral Compliance component:
+
+- Minor violation: -5 pts (→ -1.75 pts Trust Score)
+- Major violation: -15 pts (→ -5.25 pts Trust Score)
+- Critical violation: -25 pts (→ -8.75 pts Trust Score)
 
 ### Alignment Score (25%)
 
@@ -68,13 +66,12 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 
 ## Score Ranges
 
-| Score | Description |
-|-------|-------------|
-| **90-100** | Excellent - highly trusted |
-| **75-89** | Good - standard trust |
-| **50-74** | Moderate - developing trust |
-| **25-49** | Low - requires attention |
-| **0-24** | Untrusted - supervised mode |
+| AIVSS Score | Risk Tier | Risk Level | Description |
+|-------------|-----------|------------|-------------|
+| **0% – 24%** | Tier 1 | Low | Read-only, public data access |
+| **25% – 49%** | Tier 2 | Medium | Internal data, non-critical actions |
+| **50% – 74%** | Tier 3 | High | PII, financial data, critical actions |
+| **75% – 100%** | Tier 4 | Critical | System admin, destructive actions |
 
 ## Score Display
 
@@ -93,11 +90,10 @@ Throughout the UI, Trust Score appears with:
 
 | Tier | Color |
 |------|-------|
-| Tier 1 (90+) | Green |
-| Tier 2 (75-89) | Blue |
-| Tier 3 (50-74) | Yellow |
-| Tier 4 (25-49) | Orange |
-| Untrusted (below 25) | Red |
+| Tier 1 (0% – 24%) | Green |
+| Tier 2 (25% – 49%) | Blue |
+| Tier 3 (50% – 74%) | Yellow |
+| Tier 4 (75% – 100%) | Red |
 
 ## Score Evolution
 
@@ -111,11 +107,10 @@ Initial Trust Score:
 └── Total: varies by risk profile
 ```
 
-Example for Level 2 (Low Risk) profile:
-- AIVSS: 80 × 40% = 32
-- Behavioral: 100 × 35% = 35
-- Alignment: 100 × 25% = 25
-- **Initial Score: 92 (Tier 1)**
+Behavioral and Alignment components start at 100 for new agents. Overall Trust Score depends on the AIVSS score.
+
+Example: AIVSS Score = 98, Behavioral = 100, Alignment = 100
+→ Trust Score = (98 × 0.40) + (100 × 0.35) + (100 × 0.25) = 99.2 → TIER 1
 
 ### Over Time
 
@@ -136,7 +131,9 @@ To improve a degraded score:
 3. **HITL success** - Approved requests
 4. **Goal alignment** - Consistent alignment scores
 
-Recovery rate: typically +0.5 to +1.5 points per day with good behavior.
+Recovery rate:
+- Tier 1-3: +1 pt/day
+- Tier 4: +0.5 pt/day
 
 ## Related
 

@@ -12,11 +12,13 @@ The SDK can be configured via environment variables or function parameters.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `OPENBOX_URL` | Yes | - | OpenBox base URL |
-| `OPENBOX_API_KEY` | Yes | - | API key for authentication |
+| `OPENBOX_URL` | Yes | - | OpenBox Core API URL (HTTPS required for non-localhost) |
+| `OPENBOX_API_KEY` | Yes | - | API key for authentication (`obx_live_*` or `obx_test_*`) |
 | `OPENBOX_ENABLED` | No | `true` | Enable/disable governance |
 | `OPENBOX_GOVERNANCE_TIMEOUT` | No | `30.0` | Seconds to wait for governance evaluation |
 | `OPENBOX_GOVERNANCE_POLICY` | No | `fail_open` | Behavior when API unreachable |
+| `OPENBOX_SEND_START_EVENT` | No | `true` | Send WorkflowStarted events |
+| `OPENBOX_SEND_ACTIVITY_START_EVENT` | No | `true` | Send ActivityStarted events |
 
 ## Function Parameters
 
@@ -28,16 +30,16 @@ See **[Example: Full Configuration](#example-full-configuration)** for a complet
 
 ### openbox_url
 
-OpenBox API endpoint.
+OpenBox Core API URL. HTTPS required for non-localhost.
 
 ```python
-openbox_url="https://api.openbox.ai"  # Production
-openbox_url="https://api.staging.openbox.ai"  # Staging
+openbox_url="https://core.openbox.ai"  # Production
+openbox_url="https://core.staging.openbox.ai"  # Staging
 ```
 
 ### openbox_api_key
 
-Your API key. Always use environment variables in production:
+Your API key (`obx_live_*` or `obx_test_*`). Always use environment variables in production:
 
 ```python
 openbox_api_key=os.environ.get("OPENBOX_API_KEY")
@@ -62,7 +64,7 @@ What happens when OpenBox API is unreachable:
 | Value | Behavior |
 |-------|----------|
 | `fail_open` | Allow operation to proceed (log warning) |
-| `fail_closed` | Block operation (raise GovernanceStop) |
+| `fail_closed` | Block operation |
 
 ```python
 governance_policy="fail_open"   # Default - prioritize availability
@@ -75,7 +77,25 @@ Enable Human-in-the-Loop approvals.
 
 ```python
 hitl_enabled=True   # Default - REQUIRE_APPROVAL triggers HITL
-hitl_enabled=False  # REQUIRE_APPROVAL treated as DENY
+hitl_enabled=False  # REQUIRE_APPROVAL treated as BLOCK
+```
+
+### send_start_event
+
+Send `WORKFLOW_START` / WorkflowStarted events.
+
+```python
+send_start_event=True  # Default
+send_start_event=False
+```
+
+### send_activity_start_event
+
+Send `ACTIVITY_START` / ActivityStarted events.
+
+```python
+send_activity_start_event=True  # Default
+send_activity_start_event=False
 ```
 
 ### skip_workflow_types
@@ -83,7 +103,7 @@ hitl_enabled=False  # REQUIRE_APPROVAL treated as DENY
 Workflow types to exclude from governance:
 
 ```python
-skip_workflow_types=["UtilityWorkflow", "HealthCheckWorkflow"]
+skip_workflow_types={"UtilityWorkflow", "HealthCheckWorkflow"}
 ```
 
 These workflows run without OpenBox interception.
@@ -93,7 +113,7 @@ These workflows run without OpenBox interception.
 Activity types to exclude from governance:
 
 ```python
-skip_activity_types=["internal_helper", "logging_activity"]
+skip_activity_types={"internal_helper", "logging_activity"}
 ```
 
 These activities run without governance evaluation.
@@ -103,7 +123,7 @@ These activities run without governance evaluation.
 Signal names to exclude from governance:
 
 ```python
-skip_signals=["heartbeat", "progress_update"]
+skip_signals={"heartbeat", "progress_update"}
 ```
 
 These signals are not intercepted.
@@ -113,22 +133,34 @@ These signals are not intercepted.
 Enable automatic database operation instrumentation:
 
 ```python
-instrument_databases=True  # Capture DATABASE_READ/WRITE events
-instrument_databases=False # Manual instrumentation only
+instrument_databases=True  # Default - capture database queries
+instrument_databases=False
 ```
 
-Supported libraries:
-- SQLAlchemy
-- asyncpg
-- psycopg2
+### db_libraries
+
+Select which database libraries to instrument.
+
+```python
+db_libraries={"psycopg2", "redis"}
+```
+
+Supported values:
+- `psycopg2`
+- `asyncpg`
+- `mysql`
+- `pymysql`
+- `pymongo`
+- `redis`
+- `sqlalchemy`
 
 ### instrument_file_io
 
 Enable automatic file I/O instrumentation:
 
 ```python
-instrument_file_io=True  # Capture FILE_READ/WRITE events
-instrument_file_io=False # Manual instrumentation only
+instrument_file_io=False  # Default
+instrument_file_io=True   # Capture file operations
 ```
 
 ## Configuration Precedence
@@ -161,18 +193,24 @@ async def main():
         openbox_url=os.environ.get("OPENBOX_URL"),
         openbox_api_key=os.environ.get("OPENBOX_API_KEY"),
 
+        # Event filtering
+        send_start_event=True,
+        send_activity_start_event=True,
+
         # Governance behavior
         governance_timeout=45.0,
         governance_policy="fail_closed",  # High security
         hitl_enabled=True,
 
         # Exclude internal workflows
-        skip_workflow_types=["HealthCheck", "Metrics"],
-        skip_activity_types=["log_event"],
+        skip_workflow_types={"HealthCheck", "Metrics"},
+        skip_activity_types={"log_event"},
+        skip_signals={"heartbeat", "progress_update"},
 
         # Full instrumentation
         instrument_databases=True,
-        instrument_file_io=True,
+        db_libraries={"psycopg2", "redis"},
+        instrument_file_io=False,
     )
 
     await worker.run()
@@ -180,6 +218,7 @@ async def main():
 
 ## Next Steps
 
-1. **[Handle Governance Errors](/docs/sdk/error-handling)** - Learn how to handle `GovernanceStop`, `ApprovalPending`, and other exceptions
-2. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up the policies and guardrails in the dashboard
+1. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review governance decisions and session timelines in the dashboard
+2. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
+3. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up the policies and guardrails in the dashboard
 ```

@@ -12,7 +12,7 @@ OpenBox integrates with your existing workflow engine by wrapping the worker pro
 
 - A workflow engine (currently Temporal Python is supported)
 - An OpenBox account with API key
-- Python 3.9+
+- Python 3.11+
 
 ## Integration Overview
 

@@ -17,7 +17,7 @@ The SDK's primary job is to **wrap your Temporal worker** and send workflow/acti
 The SDK is intentionally minimal:
 
 - **One function call** to wrap your worker (`create_openbox_worker`)
-- **Zero code changes** to your workflows and activities
+- **Zero code changes** to workflow/activity logic. Worker initialization requires adding OpenBox wrapper (~5 lines).
 - **Automatic telemetry** - captures HTTP, database, and file I/O operations
 
 ## Supported Engines
@@ -102,15 +102,8 @@ See **[Configuration](/docs/sdk/configuration)** for all options including:
 - Event filtering (skip workflows/activities)
 - Database and file I/O instrumentation
 
-## Error Handling
-
-See **[Error Handling](/docs/sdk/error-handling)** for how to handle:
-- `GovernanceStop` - Policy blocked the operation
-- `ApprovalPending` - Waiting for human approval
-- `GuardrailsValidationFailed` - Input/output validation failed
-
 ## Next Steps
 
 1. **[Quick Start Guide](/docs/getting-started/quick-start)** - Wrap an existing Temporal agent
 2. **[Configuration](/docs/sdk/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Error Handling](/docs/sdk/error-handling)** - Handle trust decisions in your code
+3. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review decisions, approvals, and session timelines in the dashboard
