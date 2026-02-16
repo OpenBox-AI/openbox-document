@@ -41,7 +41,9 @@ Click **Analytics** to view detailed SLA analytics.
 
 ## Approval Queue
 
-### Queue Tabs
+### Status Filter
+
+Use the status dropdown to filter the queue:
 
 - **Pending** - Requests awaiting action
 - **Approved** - Recently approved requests
