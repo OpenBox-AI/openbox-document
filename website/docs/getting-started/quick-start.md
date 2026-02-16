@@ -66,13 +66,24 @@ uv add openbox-temporal-sdk-python
 
 ## Step 3: Configure Environment Variables
 
-Add OpenBox credentials to your environment:
+Add OpenBox credentials to your environment. You can either export them directly or use a `.env` file:
 
 ```bash
-# .env or export these
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
 ```
+
+:::tip Using a .env file?
+1. Install `python-dotenv`:
+   ```bash
+   pip install python-dotenv
+   ```
+2. Add this to the top of your worker script:
+   ```python
+   from dotenv import load_dotenv
+   load_dotenv()
+   ```
+:::
 
 ---
 
@@ -81,24 +92,26 @@ OPENBOX_API_KEY=obx_live_your_api_key_here
 Replace your standard Temporal `Worker` with OpenBox's `create_openbox_worker`:
 
 **Before (Standard Temporal):**
+
 ```python
 from temporalio.client import Client
 from temporalio.worker import Worker
 
 async def main():
     client = await Client.connect("localhost:7233")
-    
+
     worker = Worker(
         client,
         task_queue="my-task-queue",
         workflows=[MyWorkflow],
         activities=[my_activity],
     )
-    
+
     await worker.run()
 ```
 
 **After (With OpenBox):**
+
 ```python
 import os
 from temporalio.client import Client
@@ -106,19 +119,19 @@ from openbox import create_openbox_worker  # Changed import
 
 async def main():
     client = await Client.connect("localhost:7233")
-    
+
     # Replace Worker with create_openbox_worker
     worker = create_openbox_worker(
         client=client,
         task_queue="my-task-queue",
         workflows=[MyWorkflow],
         activities=[my_activity],
-        
+
         # Add OpenBox configuration
         openbox_url=os.getenv("OPENBOX_URL"),
         openbox_api_key=os.getenv("OPENBOX_API_KEY"),
     )
-    
+
     await worker.run()
 ```
 
@@ -128,10 +141,19 @@ That's it! Your workflows and activities remain **completely unchanged**.
 
 ## Step 5: Run Your Worker
 
+:::warning Temporal Must Be Running
+Make sure the Temporal server is running before starting your worker:
+
+```bash
+temporal server start-dev
+```
+
+:::
+
 Start your worker as usual:
 
 ```bash
-python worker.py
+python3 worker.py
 ```
 
 Your agent now runs with the OpenBox trust layer enabled.
@@ -145,9 +167,9 @@ Trigger a workflow and view it in the dashboard:
 1. **Run a workflow** (using your existing trigger/client code)
 2. **Open the [OpenBox Dashboard](https://platform.openbox.ai)**
 3. Navigate to **Agents** → Click your agent
-4. Go to **Monitor** tab to see:
+4. On the **Overview** tab you can see:
    - Active and completed sessions
-   - Session replay with full event timeline
+   - Click a session to open Session Replay with full event timeline
    - Captured HTTP requests (LLM calls, API requests)
    - Activity inputs/outputs
    - Governance decisions
