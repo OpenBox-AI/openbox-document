@@ -78,7 +78,6 @@ const sidebars = {
       label: 'Approvals',
       items: [
         'approvals/index',
-        'approvals/workflows',
       ],
     },
     {

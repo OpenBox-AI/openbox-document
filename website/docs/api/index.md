@@ -14,7 +14,7 @@ OpenBox is designed to be integrated via the **SDK**. Your workflows and activit
 2. **[Temporal (Python)](/docs/getting-started/workflow-engines/temporal)** - End-to-end setup from scratch
 3. **[SDK Reference](/docs/sdk)** - SDK overview
 4. **[SDK Configuration](/docs/sdk/configuration)** - Timeouts, fail policies, filtering, instrumentation
-5. **[SDK Error Handling](/docs/sdk/error-handling)** - Handle trust decisions in code
+5. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review governance decisions and session timelines in the dashboard
 
 ## Webhooks
 
@@ -22,5 +22,5 @@ To integrate notifications into your systems (Slack, incident response, ticketin
 
 See:
 
-1. **[Approval Workflows](/docs/approvals/workflows)** - Routing and escalation
+1. **[Approvals](/docs/approvals)** - Review and act on pending requests
 2. **[Audit Log](/docs/organization/audit-log)** - Evidence of decisions and actions

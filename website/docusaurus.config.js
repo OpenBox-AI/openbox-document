@@ -60,7 +60,7 @@ const config = {
     ],
   ],
 
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-mermaid', require.resolve('@easyops-cn/docusaurus-search-local')],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -68,7 +68,8 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       colorMode: {
-        respectPrefersColorScheme: true,
+        defaultMode: 'light',
+        respectPrefersColorScheme: false,
         disableSwitch: false,
       },
       navbar: {
@@ -77,7 +78,14 @@ const config = {
           alt: 'OpenBox Logo',
           src: 'img/logo.svg',
         },
-        items: [],
+        items: [{type: 'search', position: 'right'}],
+      },
+      searchLocal: {
+        indexDocs: true,
+        indexBlog: false,
+        docsRouteBasePath: '/docs',
+        hashed: true,
+        language: ['en'],
       },
       prism: {
         theme: prismThemes.github,

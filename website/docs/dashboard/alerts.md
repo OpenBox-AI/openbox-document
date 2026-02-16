@@ -29,8 +29,8 @@ Triggered when the Verify phase detects misalignment:
 
 Triggered when governance blocks an operation:
 
-- **DENY_ACTION** - Specific operation blocked
-- **TERMINATE_AGENT** - Agent execution halted
+- **BLOCK** - Action rejected, agent continues
+- **HALT** - Terminates entire agent session
 - Review details in **Agent Detail → Adapt → Insights**
 
 ### Approval Timeouts
@@ -59,15 +59,6 @@ For each alert, you can:
 | **Acknowledge** | Mark as reviewed (stays in history) |
 | **Create Rule** | Pre-fill a behavioral rule to prevent recurrence |
 | **Dismiss** | Remove from active alerts |
-
-## Alert Configuration
-
-Configure alert thresholds in **Organization → Settings**:
-
-- Trust tier change notifications
-- Goal drift threshold (default: 70%)
-- Approval timeout duration
-- Notification channels (email, Slack, webhook)
 
 ## Next Steps
 

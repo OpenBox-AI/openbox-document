@@ -10,6 +10,8 @@ The Approvals page is the organization-wide Human-in-the-Loop (HITL) queue. Revi
 
 Access from the sidebar by clicking **Approvals**. The badge shows the number of pending requests.
 
+![Approvals](/img/Approvals.png)
+
 ## Real-Time Updates
 
 The page updates in real-time. A green indicator shows "Real-time Updates" / "Live" status. Click **Refresh** to manually reload.
@@ -99,7 +101,7 @@ For each pending request:
 4. Confirm rejection
 
 **Result:**
-- Activity fails with `ApprovalRejected`
+- Operation is rejected
 - Trust score decreases (-2)
 - Event logged in audit trail
 
@@ -107,8 +109,8 @@ For each pending request:
 
 If no action is taken:
 
-- Default timeout: configured per agent (typically 5-60 minutes)
-- Activity fails with `ApprovalExpired`
+- Default timeout: 5 minutes per approval request (configurable per behavioral rule, 5-60 min range)
+- Request expires and the operation does not proceed
 - Trust score slightly decreases (-1)
 - Appears in "Expired Today" stat
 
@@ -121,24 +123,7 @@ Filter the queue by:
 - **Team** - Owning team
 - **SLA Status** - Within, At Risk, Breached
 
-## Bulk Actions
-
-Select multiple approvals and:
-
-- **Bulk Approve** - Approve all selected
-- **Bulk Reject** - Reject all selected (with shared reason)
-
-Use carefully--bulk actions affect all selected items.
-
-## Notifications
-
-Configure how you're notified in **Organisation → Settings**:
-
-- **Email** - Immediate notification on new requests
-- **Slack** - Channel notifications with action buttons
-- **Webhook** - POST to your systems
-
 ## Next Steps
 
-1. **[Configure Approval Workflows](/docs/approvals/workflows)** - Set up routing, escalation, and auto-approve rules
-2. **[Handle Approvals in Code](/docs/sdk/error-handling)** - Learn how to handle `ApprovalPending`, `ApprovalRejected`, and `ApprovalExpired` in your activities
+1. **[Review Approvals](/docs/approvals)** - Manage pending requests and approval history
+2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review the full session context before approving or rejecting

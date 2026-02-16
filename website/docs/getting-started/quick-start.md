@@ -17,8 +17,8 @@ If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities
-- **Python 3.10+** installed
-- **OpenBox Account** - Sign up at [app.openbox.ai](https://app.openbox.ai)
+- **Python 3.11+** installed
+- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 
 ---
 
@@ -26,7 +26,7 @@ If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs
 
 Before wrapping your worker, create an agent in the OpenBox platform:
 
-1. **Log in** to the [OpenBox Dashboard](https://app.openbox.ai)
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **Add Agent**
 3. Configure the agent:
    - **Workflow Engine**: Temporal
@@ -39,9 +39,8 @@ Before wrapping your worker, create an agent in the OpenBox platform:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Level 1-4)
+   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
-   - **Goal Alignment** (**[drift detection](/docs/agents/trust-lifecycle/verify)**) - set an alignment threshold and drift action
 6. Click **Add Agent**
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
@@ -71,7 +70,7 @@ Add OpenBox credentials to your environment:
 
 ```bash
 # .env or export these
-OPENBOX_URL=https://api.openbox.ai
+OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
 ```
 
@@ -144,7 +143,7 @@ Your agent now runs with the OpenBox trust layer enabled.
 Trigger a workflow and view it in the dashboard:
 
 1. **Run a workflow** (using your existing trigger/client code)
-2. **Open the [OpenBox Dashboard](https://app.openbox.ai)**
+2. **Open the [OpenBox Dashboard](https://platform.openbox.ai)**
 3. Navigate to **Agents** → Click your agent
 4. Go to **Monitor** tab to see:
    - Active and completed sessions
@@ -174,7 +173,7 @@ Now that your agent is running with OpenBox:
 
 1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit agent behavior
-3. **[Set Up Approvals](/docs/approvals/workflows)** - Add human-in-the-loop for sensitive operations
+3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 4. **[Advanced Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and event filtering
 
 ---
@@ -183,4 +182,4 @@ Now that your agent is running with OpenBox:
 
 - **[Temporal Integration Guide](/docs/getting-started/workflow-engines/temporal)** - Complete end-to-end setup from scratch
 - **[SDK Reference](/docs/sdk)** - Full SDK documentation and configuration options
-- **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
+- **[Approvals](/docs/approvals)** - Review and act on HITL approvals in the dashboard

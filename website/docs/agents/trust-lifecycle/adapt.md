@@ -6,7 +6,7 @@ sidebar_position: 5
 
 # Adapt (Phase 5)
 
-The Adapt phase enables trust evolution over time. Review policy suggestions, handle approvals, and monitor trust recovery.
+The Adapt phase enables trust evolution over time. Review agent-specific approvals and insights to improve governance over time.
 
 Access via **Agent Detail → Adapt** tab.
 
@@ -14,136 +14,106 @@ Access via **Agent Detail → Adapt** tab.
 
 ### Approvals
 
-Agent-specific pending approval requests:
+The **Approvals** sub-tab shows agent-specific approval status for the last 7 days.
 
-| Field | Description |
-|-------|-------------|
-| **Request ID** | Unique identifier |
-| **Operation** | What needs approval |
-| **Session** | Originating session |
-| **Requested** | Timestamp |
-| **Timeout** | Time remaining |
-| **Trust Impact** | Score change if approved/rejected |
+**Summary Cards**:
+
+- Pending approvals
+- Approved (7d)
+- Rejected (7d)
+- Approval rate
+
+#### Pending Approvals
+
+Pending approval cards show:
+
+- Risk tier
+- Semantic action type (for example: `database_delete`, `external_api_call`)
+- Requested operation description
+- Triggering rule/reason
 
 Actions:
 - **Approve** - Allow operation to proceed
 - **Reject** - Deny operation
-- **View Context** - See full governance decision details
+- **Escalate** - Forward for higher-level review
+
+If there are no approvals waiting, the page shows an empty state ("No pending approvals found").
+
+#### Approval History
+
+Collapsible history of recent decisions for this agent:
+
+| Field | Description |
+|-------|-------------|
+| **Request** | The operation/request that required approval |
+| **Trust Tier** | Trust tier at the time of the request |
+| **Decision** | Approved or rejected |
+| **Decided By** | User who made the decision |
+| **Time** | When the decision was made |
 
 For the organization-wide approval queue, see **[Approvals](/docs/approvals)**.
 
 ### Insights
 
-AI-generated insights for improving governance:
+The **Insights** sub-tab summarizes governance learning signals.
+
+**Summary Cards**:
+
+- Violation patterns
+- Policy suggestions
+- Trust recovery plans
+- Tier changes (last 30 days)
+
+#### Violation Patterns for This Agent
+
+Aggregated patterns derived from this agent's violations, including:
+
+| Field | Description |
+|-------|-------------|
+| **Pattern Name** | Name and type (behavior pattern or guardrail pattern) |
+| **Frequency** | How often it occurred |
+| **Severity** | Relative severity |
+| **Sessions** | Number of sessions involved |
+| **Action** | View Details |
+
+#### Agent Trust Timeline
+
+Chronological history of trust tier changes for this agent, including:
+
+- Promotions
+- Demotions
+- Recovery completions
+- Initial provisioning events with reasons
+
+#### Recent Violations
+
+Shows the most recent violations for this agent, including the event type (for example, `ActivityStarted`), the rule type (for example, `GUARDRAIL`), and the resulting governance decision.
+
+Use **View All Rules** to jump back to Authorize and review the rules that are currently enforcing governance.
+
+#### Trust Recovery Status
+
+Shows whether the agent is currently under a recovery plan after a demotion.
+
+Typical indicators include:
+
+- Compliance rate
+- Days since last violation
+- Promotion eligibility progress/checklist
 
 #### Policy Suggestions
 
-Based on observed patterns, OpenBox suggests new policies or rules:
-
-```
-Suggested Rule: "PII Access + External API"
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Trigger: DATABASE_READ on PII tables
-Condition: EXTERNAL_API_CALL within 60s (without approval)
-Action: REQUIRE_APPROVAL
-
-Confidence: 87%
-Based on: 12 similar violations in past 30 days
-```
+Based on observed patterns, OpenBox can suggest new policies or rules.
 
 For each suggestion:
 - **Accept** - Creates the rule in Authorize tab
 - **Reject** - Dismisses (with reason)
 - **Modify** - Opens in rule editor
 
-#### Violation Patterns
+Other Insights cards:
 
-Detected patterns in governance blocks:
-
-| Pattern | Frequency | Severity | Recommendation |
-|---------|-----------|----------|----------------|
-| External API without approval | 12/month | Medium | Add behavioral rule |
-| PII access during off-hours | 5/month | High | Time-based policy |
-| Bulk database reads | 8/month | Low | Rate limiting guardrail |
-
-#### Trust Recovery Progress
-
-For agents with degraded trust scores, shows recovery path:
-
-```
-Current Trust Score: 62 (Tier 3)
-Target: 75 (Tier 2)
-
-Recovery Progress:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48%
-
-Recent trend: +1.2 points/day
-Estimated recovery: 11 days
-
-Requirements:
-✓ No violations for 7 consecutive days
-✓ 50+ compliant operations
-○ Approval acceptance rate >90%
-```
-
-## Trust Score Evolution
-
-The Trust Score evolves based on behavior:
-
-### Positive Factors
-
-| Factor | Impact |
-|--------|--------|
-| Compliant operations | +0.1 per 10 operations |
-| Approved HITL requests | +0.5 per approval |
-| High alignment scores | +0.2 per session |
-| No violations (streak) | +0.5 per day |
-
-### Negative Factors
-
-| Factor | Impact |
-|--------|--------|
-| Policy violation | -2 to -10 depending on severity |
-| Goal drift detected | -1 to -5 |
-| Approval timeout | -1 |
-| Approval rejection | -2 |
-| TERMINATE_AGENT triggered | -15 |
-
-### Tier Transitions
-
-When Trust Score crosses thresholds:
-
-- **Downgrade**: Immediate upon crossing lower bound
-- **Upgrade**: Requires sustained score above threshold for 7 days
-
-## Trust Timeline
-
-View historical Trust Score changes:
-
-```
-Jan 15  ●━━━ 87 ━━━━━━━━━━━━━━━━━ Tier 2
-Jan 14  ●━━━ 85 ━━━━━━━━━━━━━━━━━ Tier 2
-Jan 13  ●━━━ 72 ━━━━━━━━━━━━━━ Tier 3  ⚠️ Policy violation
-Jan 12  ●━━━ 84 ━━━━━━━━━━━━━━━━━ Tier 2
-Jan 11  ●━━━ 86 ━━━━━━━━━━━━━━━━━ Tier 2
-```
-
-Each entry shows:
-- Score and tier
-- Change reason (if applicable)
-- Link to relevant session or event
-
-## Continuous Improvement Loop
-
-The Adapt phase feeds back into other phases:
-
-1. **Insights** identify patterns
-2. **Suggestions** create new rules in **Authorize**
-3. Improved governance leads to better **Monitor** data
-4. Better alignment in **Verify**
-5. Trust score improves in **Adapt**
-
-This creates a continuous improvement loop for your AI governance.
+- **Trust Recovery** summarizes recovery signals and recommendations when available.
+- **Tier Changes (7d)** shows recent trust tier transitions for the agent.
 
 ## Next Steps
 

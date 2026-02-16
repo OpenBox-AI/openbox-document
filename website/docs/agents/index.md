@@ -10,6 +10,8 @@ Agents are the core entity in OpenBox. Each agent represents an AI system (workf
 
 Access the agent list from the sidebar by clicking **Agents**.
 
+![Agents](/img/Agents.png)
+
 ## Stats Cards
 
 The top of the page shows three key metrics:
@@ -25,7 +27,7 @@ The top of the page shows three key metrics:
 Filter the agent list using:
 
 - **Search** - Find agents by name or ID
-- **Trust Tier** - Filter by Tier 1, 2, 3, 4, or Untrusted
+- **Trust Tier** - Filter by Tier 1, 2, 3, or 4
 - **Status** - Active, Inactive, or Revoked
 - **Team** - Filter by owning team
 
@@ -57,10 +59,10 @@ The main table displays:
 
 | Tier | Color | Description |
 |------|-------|-------------|
-| **TIER 1** | Green | Low risk, minimal constraints |
-| **TIER 2** | Blue | Medium risk, standard policies |
-| **TIER 3** | Orange | High risk, enhanced controls |
-| **TIER 4** | Red | Critical, strict governance |
+| **TIER 1** | Green | Tier 1 (0% – 24%): Trusted — Minimal oversight, broad permissions |
+| **TIER 2** | Blue | Tier 2 (25% – 49%): Confident — Standard controls, approval for sensitive ops |
+| **TIER 3** | Orange | Tier 3 (50% – 74%): Monitor — Strict controls, monitoring required |
+| **TIER 4** | Red | Tier 4 (75% – 100%): Restrict — Minimal permissions, approval for most ops |
 
 ## Agent Actions
 

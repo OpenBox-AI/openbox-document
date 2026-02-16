@@ -1,0 +1,51 @@
+# OpenBox Docs: LLM-Friendly Index
+#
+# This file is intended for agents and scrapers that prefer a plain-text sitemap
+# with human-readable labels.
+#
+# Base URL: https://docs.openbox.ai
+# Docs base: https://docs.openbox.ai/docs/
+
+## Getting Started
+- OpenBox Overview: https://docs.openbox.ai/docs/
+- Getting Started: https://docs.openbox.ai/docs/getting-started
+- Quick Start: https://docs.openbox.ai/docs/getting-started/quick-start
+- Temporal Integration Guide: https://docs.openbox.ai/docs/getting-started/workflow-engines/temporal
+
+## Agents
+- Agents: https://docs.openbox.ai/docs/agents
+- Registering Agents: https://docs.openbox.ai/docs/agents/registering-agents
+- Trust Lifecycle: https://docs.openbox.ai/docs/agents/trust-lifecycle
+- Trust Lifecycle: Assess: https://docs.openbox.ai/docs/agents/trust-lifecycle/assess
+- Trust Lifecycle: Authorize: https://docs.openbox.ai/docs/agents/trust-lifecycle/authorize
+- Trust Lifecycle: Monitor: https://docs.openbox.ai/docs/agents/trust-lifecycle/monitor
+- Trust Lifecycle: Verify: https://docs.openbox.ai/docs/agents/trust-lifecycle/verify
+- Trust Lifecycle: Adapt: https://docs.openbox.ai/docs/agents/trust-lifecycle/adapt
+
+## Dashboard
+- Dashboard: https://docs.openbox.ai/docs/dashboard
+- Trust Overview: https://docs.openbox.ai/docs/dashboard/trust-overview
+- Alerts: https://docs.openbox.ai/docs/dashboard/alerts
+
+## Approvals
+- Approvals: https://docs.openbox.ai/docs/approvals
+
+## Concepts
+- Trust Scores: https://docs.openbox.ai/docs/concepts/trust-scores
+- Trust Tiers: https://docs.openbox.ai/docs/concepts/trust-tiers
+- Event Types: https://docs.openbox.ai/docs/concepts/event-types
+- Governance Decisions: https://docs.openbox.ai/docs/concepts/governance-decisions
+
+## SDK
+- SDK Reference: https://docs.openbox.ai/docs/sdk
+- SDK Configuration: https://docs.openbox.ai/docs/sdk/configuration
+- SDK Error Handling: https://docs.openbox.ai/docs/sdk/error-handling
+
+## Organization
+- Organization: https://docs.openbox.ai/docs/organization
+- Audit Log: https://docs.openbox.ai/docs/organization/audit-log
+
+## Compliance
+- Compliance: https://docs.openbox.ai/docs/compliance
+- Attestation: https://docs.openbox.ai/docs/compliance/attestation
+- Compliance Frameworks: https://docs.openbox.ai/docs/compliance/frameworks

@@ -12,9 +12,13 @@ Access via **Agent Detail → Verify** tab.
 
 ## Sub-tabs
 
-### Goal Alignment (Default)
+### Goal Alignment
 
 Monitor alignment between agent actions and stated goals.
+
+#### Session Selector
+
+A dropdown at the top of the tab to pick which session to inspect, including session metadata such as ID, status, and duration.
 
 #### Alignment Score
 
@@ -37,6 +41,10 @@ The hero component shows:
 - **Check statistics** (e.g., "47/50 aligned")
 - **Actions**: View Trend, Configure
 
+#### Goal Aligned
+
+For a selected session, this card shows how closely actions matched the declared goal. When drift is detected, it highlights the specific violating action for faster investigation.
+
 #### Alignment Trend
 
 Line chart showing alignment over time:
@@ -55,7 +63,7 @@ When alignment drops below threshold, a drift event is logged:
 | **Goal** | Stated goal at time of drift |
 | **Alignment Score** | Score when drift detected |
 | **Reason** | LLM-generated explanation |
-| **Actions** | View Trace, Create Rule, Dismiss |
+| **Actions** | Review event evidence, Dismiss |
 
 #### Session Breakdown
 
@@ -63,11 +71,15 @@ Table of sessions with alignment scores:
 
 - Filter: All / Drift Only / Aligned Only
 - Search by goal keyword
-- Click to view reasoning trace
+- Click to inspect execution evidence for that session
 
 ### Execution Evidence
 
 Cryptographic attestation for tamper-proof audit trails.
+
+#### Integrity Verified
+
+Confirms all events in the selected session have valid cryptographic proofs. Typical details include Merkle root, chain/proof status, and signature verification.
 
 #### Session Integrity
 
@@ -92,38 +104,40 @@ TSA: timestamp.openbox.ai
 
 Use for compliance audits and legal evidence.
 
-## Goal Alignment Configuration
+#### Workflow Metadata
 
-Click **Configure** to set thresholds:
+- **Workflow ID** - Identifier of the Temporal workflow that orchestrated the session
+- **Run ID** - Unique execution instance ID (UUID) for this run
+- **Task Queue** - Temporal worker queue that processed the session
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| **Drift threshold** | 70% | Score below this triggers drift alert |
-| **Auto-block threshold** | 30% | Score below this terminates agent |
-| **LLM model** | gpt-4o-mini | Model for alignment evaluation |
-| **Fallback behavior** | heuristic | When LLM unavailable: heuristic, allow-all, block-all |
+#### Event Log Timeline
 
-## Reasoning Trace
+Timeline view provides a detailed, filterable table of execution events with timestamps, event types, durations, and evidence hashes.
 
-View the LLM's reasoning for alignment scoring:
+In the **Details** column, click the **eye icon** to open the event detail modal.
 
-### Trace Modal
+The modal includes:
 
-When you click "View Trace" on a session:
+- **Cryptographic Proof** - Event index, span count, tree depth, and Merkle-tree position/proof
+- **Input** - Full event input payload
+- **Output** - Full event output payload
+- **Overview** - Core metadata (OpenBox ID, activity type, duration, workflow ID, created timestamp)
 
-1. **Goal Context** - The stated goal
-2. **Operations Timeline** - Each operation with individual scores
-3. **Reasoning Text** - LLM explanation for each score
-4. **Model Info** - Model used, latency, confidence
+Use Timeline view when you need event-by-event inspection.
 
-### Creating Rules from Traces
+#### Workflow Execution Tree
 
-If you identify a pattern that should be enforced:
+Tree view provides a hierarchical breakdown of workflow and activity execution, including nested calls and parent-child relationships.
 
-1. Click **Create Rule** from the trace modal
-2. Wizard pre-fills with the drift context
-3. Define the behavioral rule
-4. Save to [Authorize](/docs/agents/trust-lifecycle/authorize) tab
+Use Tree View when you need execution-path reasoning:
+
+- Follow the order of signals, activity starts, and activity completions
+- Expand nodes to inspect how each step led to the next action
+- Correlate timing and spans to understand why an execution path was taken
+
+#### Watch Replay
+
+Opens a step-by-step replay so you can walk through session execution in order.
 
 ## Integration with Other Phases
 
