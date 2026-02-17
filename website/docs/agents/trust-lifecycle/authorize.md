@@ -110,11 +110,11 @@ Examples:
 
 **How it’s used:** UI and operator context only.
 
-###### 3. Processing Stage
+###### 3. Processing State
 
 **Purpose:** Controls when the guardrail is applied.
 
-**Common stages:**
+**Common states:**
 - **Pre-processing:** Validate/transform incoming inputs before downstream processing.
 - **Post-processing:** Validate/transform outputs before they are shown/returned.
 
@@ -124,41 +124,38 @@ Examples:
 - Pre-processing typically targets `input.*`
 - Post-processing typically targets `output.*`
 
-<details>
-<summary>PII Detection</summary>
-
-Identify and mask personally identifiable information (for example: names, emails, phone numbers, addresses) by replacing them with tags like `<PHONE_NUMBER>`, `<EMAIL>`, `<PERSON>`.
-
-##### 4. Configuration Settings
+###### 4. Guardrail Type
+There are 4 guardrail types — **PII Detection**, **Content Filtering**, **Toxicity**, and **Ban Words**. The following settings are shared across all types:
 
 ###### a) Toggles
-
 - **Block on Violation**: Stop the operation when a violation is detected.
 - **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
 
 > **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
 
 ###### b) Activity Type
-
 Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
 
 ###### c) Fields to Check
-
 Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
-
 Examples: `input.prompt`, `input.*.prompt`, `output.response`, `output.*.response`
 
-##### 5. Advanced Settings
-
-###### a) Timeout (ms)
-
+###### d) Timeout (ms)
 Max time to wait for evaluation.
 
-###### b) Retry Attempts
-
+###### e) Retry Attempts
 How many times to retry transient failures.
 
-###### c) PII Entities to Detect
+Each type also has its own settings. Expand a type below for details and test examples.
+
+<details>
+<summary>PII Detection</summary>
+
+Identify and mask personally identifiable information (for example: names, emails, phone numbers, addresses) by replacing them with tags like `<PHONE_NUMBER>`, `<EMAIL>`, `<PERSON>`.
+
+##### Advanced Settings
+
+###### a) PII Entities to Detect
 
 **Purpose:** Which categories of PII to look for (example: email addresses, phone numbers).
 
@@ -217,42 +214,15 @@ Expected outcomes:
 
 Block inappropriate or off-topic content from user input or output.
 
-##### 4. Configuration Settings
+##### Advanced Settings
 
-###### a) Toggles
-
-- **Block on Violation**: Stop the operation when a violation is detected.
-- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
-
-> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
-
-###### b) Activity Type
-
-Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
-
-###### c) Fields to Check
-
-Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
-
-Examples: `input.prompt`, `input.user_message`, `output.response`, `output.summary`
-
-##### 5. Advanced Settings
-
-###### a) Timeout (ms)
-
-Max time to wait for evaluation.
-
-###### b) Retry Attempts
-
-How many times to retry transient failures.
-
-###### c) Detection Threshold
+###### a) Detection Threshold
 
 **Purpose:** Sensitivity of detection.
 
 **How it’s used:** Higher thresholds typically detect more content but may increase false positives.
 
-###### d) Validation Method
+###### b) Validation Method
 
 **Purpose:** Controls how the content is evaluated.
 
@@ -311,42 +281,15 @@ Expected outcomes:
 
 Block hostile or abusive language from users.
 
-##### 4. Configuration Settings
+##### Advanced Settings
 
-###### a) Toggles
-
-- **Block on Violation**: Stop the operation when a violation is detected.
-- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
-
-> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
-
-###### b) Activity Type
-
-Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
-
-###### c) Fields to Check
-
-Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
-
-Examples: `input.prompt`, `input.user_message`, `output.response`, `output.reply`
-
-##### 5. Advanced Settings
-
-###### a) Timeout (ms)
-
-Max time to wait for evaluation.
-
-###### b) Retry Attempts
-
-How many times to retry transient failures.
-
-###### c) Toxicity Threshold
+###### a) Toxicity Threshold
 
 **Purpose:** Sensitivity of toxicity detection.
 
 **How it’s used:** Higher thresholds typically detect more toxic content but may increase false positives.
 
-###### d) Validation Method
+###### b) Validation Method
 
 **Purpose:** Controls how the content is evaluated.
 
@@ -409,42 +352,15 @@ This feature lets users customize banned words based on their preferences.
 
 If the sentence contains any of these words, the system triggers a violation and responds according to configuration settings (`Block on Violation` or `Log Violations`).
 
-##### 4. Configuration Settings
+##### Advanced Settings
 
-###### a) Toggles
-
-- **Block on Violation**: Stop the operation when a violation is detected.
-- **Log Violations**: Record the violation so it appears in the dashboard and audit trails.
-
-> **Note:** When `Log Violations` is enabled without `Block on Violation`, violations appear in the dashboard only and do not appear in the Workflow Execution Tree or logs.
-
-###### b) Activity Type
-
-Activity Type is a custom text input and must match the activity name defined in your Temporal worker code (for example: `agent_validatePrompt`, `fetch_weather`).
-
-###### c) Fields to Check
-
-Fields to Check uses dot-paths to target which payload fields the guardrail evaluates.
-
-Examples: `input.prompt`, `input.user_message`, `output.response`, `output.reply`
-
-##### 5. Advanced Settings
-
-###### a) Timeout (ms)
-
-Max time to wait for evaluation.
-
-###### b) Retry Attempts
-
-How many times to retry transient failures.
-
-###### c) Banned Words
+###### a) Banned Words
 
 **Purpose:** Words or phrases that must not appear in the target fields.
 
 **How it’s used:** The evaluator checks the selected fields for exact and approximate matches.
 
-###### d) Maximum Levenshtein Distance
+###### b) Maximum Levenshtein Distance
 
 **Purpose:** Fuzzy matching tolerance (0 = exact match).
 
@@ -745,6 +661,10 @@ Stateful rules that detect multi-step patterns:
 
 Behavioral rules are created through a 5-step wizard.
 
+:::tip
+Complete all required fields in each wizard step before proceeding. Skipping a step and clicking **Create Rule** will result in an error.
+:::
+
 ##### Step 1 — Basic Info
 
 - **Rule Name (required):** Human-readable label for the rule.
@@ -772,6 +692,10 @@ This step defines the **Prior State** prerequisite described below.
 - **On Reject Message (required):** Message shown/logged when the verdict is applied.
 
 Finish by clicking **Create Rule**.
+
+:::info Important
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes - see [Error Handling](/docs/sdk/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+:::
 
 #### How Prior State and Trigger Work
 
