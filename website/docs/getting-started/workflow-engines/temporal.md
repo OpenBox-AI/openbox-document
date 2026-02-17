@@ -78,7 +78,13 @@ Extract the archive and add the `temporal` binary to your `PATH` by copying it t
 </TabItem>
 <TabItem value="windows" label="Windows">
 
-Download the version for your architecture:
+Install with [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
+
+```bash
+winget install Temporal.TemporalCLI
+```
+
+Alternatively, download the version for your architecture:
 
 - [Download for Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
 - [Download for Windows arm64](https://temporal.download/cli/archive/latest?platform=windows&arch=arm64)
@@ -156,6 +162,10 @@ Start the Temporal development server:
 temporal server start-dev
 ```
 
+:::tip
+Check the startup output for the Temporal Web UI URL — you can use it to verify the server is running and monitor workflows.
+:::
+
 In separate terminals:
 
 ```bash
@@ -164,15 +174,41 @@ make run-api
 make run-frontend
 ```
 
-Or run everything at once:
-
-```bash
-make run-dev
-```
-
 Open the UI:
 
 - [http://localhost:5173](http://localhost:5173)
+
+### Explore Different Scenarios
+
+The demo ships with a default travel booking scenario, but you can switch to other domains by changing `AGENT_GOAL` in your `.env` file. For example, to try the finance banking assistant:
+
+```bash
+AGENT_GOAL=goal_fin_banking_assistant
+```
+
+After changing the goal, restart the worker (`make run-worker`) to pick up the new value.
+
+#### Available Goals
+
+- **HR**
+  - `goal_hr_check_pto` — Check your available PTO
+  - `goal_hr_check_paycheck_bank_integration_status` — Check employer/financial institution integration
+  - `goal_hr_schedule_pto` — Schedule PTO based on your available balance
+- **E-commerce**
+  - `goal_ecomm_order_status` — Check order status
+  - `goal_ecomm_list_orders` — List all orders for a user
+- **Finance**
+  - `goal_fin_check_account_balances` — Check balances across accounts
+  - `goal_fin_loan_application` — Start a loan application
+  - `goal_fin_move_money` — Initiate a money transfer
+  - `goal_fin_banking_assistant` — Full-service banking (combines balances, transfers, and loans)
+- **Travel**
+  - `goal_event_flight_invoice` — Book a trip to Australia or New Zealand around local events (default)
+  - `goal_match_train_invoice` — Book a trip to a UK city around Premier League match dates
+- **Food ordering**
+  - `goal_food_ordering` — Order food with Stripe payment processing
+- **MCP Integrations**
+  - `goal_mcp_stripe` — Manage Stripe customer and product data
 
 ---
 
