@@ -79,37 +79,12 @@ Click the **Add Agent** button (top right) to register a new agent. See [Registe
 
 ## Agent Detail Page
 
-Click any agent to view its detail page with Trust Lifecycle tabs:
+Click any agent to view its detail page with these tabs:
 
-- **Overview** - Active sessions, recent sessions, trust score widget
+- **[Overview](/docs/agents/overview)** - Active sessions, completed, failed, and halted sessions
 - **[Assess](/docs/agents/trust-lifecycle/assess)** - Risk profile and AIVSS configuration
 - **[Authorize](/docs/agents/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
-- **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Sessions, session replay, telemetry
+- **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Operational dashboard and telemetry
 - **[Verify](/docs/agents/trust-lifecycle/verify)** - Goal alignment and drift detection
 - **[Adapt](/docs/agents/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
-- **Settings** - Agent configuration and danger zone
 
-### Overview Tab
-
-The default tab shows:
-
-- **Trust Score widget** - Current score with tier badge and trend
-- **Active sessions** - Live workflow executions with real-time status
-- **Recent sessions** - Completed sessions with duration, events, status
-- **Quick stats** - Operations count, approval rate, violations
-
-### Session Replay
-
-Click any session (active or completed) to open **Session Replay**:
-
-- **Timeline control** - Play/pause, seek, speed control (0.5x, 1x, 2x)
-- **Event stream** - Chronological list of all events
-- **Event detail** - Click any event to see full context
-- **Goal alignment score** - Session-level alignment percentage
-- **Governance decisions** - See ALLOWED, CONSTRAINED, HALTED verdicts inline
-
-## Next Steps
-
-1. **[Register a New Agent](/docs/agents/registering-agents)** - Add another agent to the trust layer
-2. **[Understand the Trust Lifecycle](/docs/agents/trust-lifecycle)** - Learn how the 5 phases work together
-3. **[Configure Trust Controls (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails and policies for an agent
