@@ -58,6 +58,7 @@ const sidebars = {
       items: [
         'agents/index',
         'agents/registering-agents',
+        'agents/overview',
         {
           type: 'category',
           label: 'Trust Lifecycle',
