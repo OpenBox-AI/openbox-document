@@ -83,7 +83,7 @@ The agent creation form includes:
 
 - **Teams** and **Icon** selection
 - **API Key Generation** (copy once)
-- **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**)
+- **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**)
 - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**)
 
 See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough.

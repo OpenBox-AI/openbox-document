@@ -145,6 +145,7 @@ The Temporal UI will be available at [http://localhost:8233](http://localhost:82
 
 ## Next Steps
 
-1. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
-2. **[Error Handling](/docs/sdk/error-handling)** - Handle trust decisions in your code
-3. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit
+1. **[Dashboard](/docs/dashboard)** - Monitor your agents from the dashboard
+2. **[Agents Overview](/docs/agents)** - View and manage all registered agents
+3. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
+

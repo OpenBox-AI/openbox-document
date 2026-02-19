@@ -88,6 +88,7 @@ const sidebars = {
         'organization/audit-log',
       ],
     },
+    'glossary',
   ],
 };
 
