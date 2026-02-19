@@ -127,5 +127,5 @@ Filter the queue by:
 
 ## Next Steps
 
-1. **[Review Approvals](/docs/approvals)** - Manage pending requests and approval history
+1. **[Organization Settings](/docs/organization)** - Manage teams, roles, and organization configuration
 2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review the full session context before approving or rejecting

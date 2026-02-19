@@ -42,22 +42,22 @@ The key format is: `obx_live_xxxxxxxxxxxx`
 
 ## Initial Risk Assessment
 
-Expand the **Initial Risk Assessment** section and configure your agent's AIVSS risk parameters.
+Expand the **Initial Risk Assessment** section and configure your agent's risk profile parameters
 
 ### Risk Profile Presets
 
 Select a preset that matches your agent's intended use:
 
-| Risk Tier | Risk Level | AIVSS Score | Use Cases | Default Governance |
+| Risk Tier | Risk Level | Risk Profile Score| Use Cases | Default Governance |
 |-----------|------------|-------------|-----------|-------------------|
 | **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
 | **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
 | **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
 | **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
 
-### AIVSS Parameters
+### Risk Profile Parameters
 
-AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
+The Risk Profile evaluates risk across three categories:
 
 #### Base Security (25% weight)
 
@@ -90,14 +90,14 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 ### Predicted Risk Tier
 
-As you configure AIVSS parameters, the form shows a real-time prediction:
+As you configure Risk Profile parameters, the form shows a real-time prediction:
 
 ```
 Predicted Risk Tier: TIER 2
 Based on current configuration
 ```
 
-See **[Assess](/docs/agents/trust-lifecycle/assess)** for how AIVSS impacts Trust Score.
+See **[Assess](/docs/agents/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
 
 ## Attestation
 
@@ -138,6 +138,7 @@ The agent is matched by the API key. When your worker starts, it will appear as 
 
 After creating your agent:
 
-1. **[Configure Trust Controls (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules before running your agent
-2. **[Connect Your Worker](/docs/getting-started/workflow-engines/temporal)** - Configure the SDK with your API key
-3. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Once running, watch your agent's activity in real-time
+1. **[Trust Overview](/docs/dashboard/trust-overview)** - See your agent's trust score on the dashboard
+2. **[View Alerts](/docs/dashboard/alerts)** - Monitor alerts for your agents
+3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
+

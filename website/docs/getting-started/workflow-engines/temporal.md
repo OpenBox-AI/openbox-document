@@ -119,7 +119,7 @@ make setup
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
 6. Click **Add Agent**
 
@@ -379,10 +379,10 @@ The SDK automatically captures and sends to OpenBox:
 
 ## Next Steps
 
-1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit
+1. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
+2. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-4. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
+
 
 ---
 

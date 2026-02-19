@@ -39,7 +39,7 @@ Before wrapping your worker, create an agent in the OpenBox platform:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
 6. Click **Add Agent**
 
@@ -150,13 +150,56 @@ temporal server start-dev
 
 :::
 
+
 Start your worker as usual:
 
 ```bash
-python3 worker.py
+uv run worker.py
 ```
 
+:::tip
+If you are not using `uv`, you can also run with:
+- **macOS / Linux**: `python3 worker.py`
+- **Windows**: `python worker.py`
+:::
+
+
+Expected Output
+```
+Worker will use LLM model: openai/gpt-4o
+Address: localhost:7233, Namespace default
+(If unset, then will try to connect to local server)
+Initializing ToolActivities with LLM model: openai/gpt-4o
+MCP client manager enabled for connection pooling
+ToolActivities initialized with LLM model: openai/gpt-4o
+Worker ready to process tasks!
+Initializing OpenBox SDK with URL: https://core.openbox.ai/
+INFO:openbox.config:OpenBox API key validated successfully
+INFO:openbox.config:OpenBox SDK initialized with API URL: https://core.openbox.ai/
+INFO:openbox.otel_setup:Ignoring URLs with prefixes: {'https://core.openbox.ai/'}
+INFO:openbox.otel_setup:Registered WorkflowSpanProcessor with OTel TracerProvider
+INFO:openbox.otel_setup:Instrumented: requests
+INFO:openbox.otel_setup:Instrumented: httpx
+INFO:openbox.otel_setup:Instrumented: urllib3
+INFO:openbox.otel_setup:Instrumented: urllib
+INFO:openbox.otel_setup:Patched httpx for body capture
+INFO:openbox.otel_setup:OpenTelemetry HTTP instrumentation complete. Instrumented: ['requests', 'httpx', 'urllib3', 'urllib']
+INFO:openbox.otel_setup:Instrumented: psycopg2                                  INFO:openbox.otel_setup:Instrumented: asyncpg
+INFO:openbox.otel_setup:Instrumented: mysql                                     INFO:openbox.otel_setup:Instrumented: pymysql                                   INFO:openbox.otel_setup:Instrumented: pymongo                                   INFO:openbox.otel_setup:Instrumented: redis
+INFO:openbox.otel_setup:Instrumented: sqlalchemy
+INFO:openbox.otel_setup:Database instrumentation complete. Instrumented: ['psycopg2', 'asyncpg', 'mysql', 'pymysql', 'pymongo', 'redis', 'sqlalchemy']
+INFO:openbox.otel_setup:Instrumented: file I/O (builtins.open)                  INFO:openbox.otel_setup:OpenTelemetry governance setup complete. Instrumented: ['requests', 'httpx', 'urllib3', 'urllib', 'psycopg2', 'asyncpg', 'mysql', 'pymysql', 'pymongo', 'redis', 'sqlalchemy', 'file_io']
+OpenBox SDK initialized successfully                                              - Governance policy: fail_open
+  - Governance timeout: 30.0s                                                     - Events: WorkflowStarted, WorkflowCompleted, WorkflowFailed, SignalReceived, ActivityStarted, ActivityCompleted                                                - Database instrumentation: enabled
+  - File I/O instrumentation: enabled
+  - Approval polling: enabled                                                   Starting worker, connecting to task queue: agent-task-queue
+
+```
 Your agent now runs with the OpenBox trust layer enabled.
+
+:::tip Having issues?
+See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)** for common setup problems and solutions.
+:::
 
 ---
 
@@ -185,7 +228,7 @@ The SDK automatically sends these events to OpenBox:
 - **HTTP telemetry**: Request/response bodies, headers, status codes
 - **Database operations** (optional): SQL queries, NoSQL operations
 
-All captured data is evaluated against your governance policies in real-time.
+OpenBox evaluates all captured data against your governance policies in real-time.
 
 ---
 

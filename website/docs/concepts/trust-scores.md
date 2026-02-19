@@ -11,24 +11,24 @@ The Trust Score is a 0-100 metric representing an agent's trustworthiness based 
 ## Calculation
 
 ```
-Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Weight | Source | Range |
 |-----------|--------|--------|-------|
-| **AIVSS Score** | 40% | AIVSS risk scoring (Assess phase) | 0-100 |
+| **Risk Profile Score** | 40% | Risk scoring (Assess phase) | 0-100 |
 | **Behavioral** | 35% | Policy compliance (Authorize + Monitor) | 0-100 |
 | **Alignment** | 25% | Goal consistency (Verify phase) | 0-100 |
 
 ## Components
 
-### AIVSS Score (40%)
+### Risk Profile Score (40%)
 
 Based on the agent's inherent risk profile:
 
 - Configured at agent creation
 - 14 parameters across three weighted categories: Base Security (25%), AI-Specific (45%), Impact (30%)
-- Produces an **AIVSS Score (0–100)** and a **Risk Tier (1–4)**
+- Produces an **Risk Profile Score (0–100)** and a **Risk Tier (1–4)**
 - Static unless re-assessed
 - Higher score = lower inherent risk
 
@@ -66,7 +66,7 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 
 ## Score Ranges
 
-| AIVSS Score | Risk Tier | Risk Level | Description |
+| Risk Profile Score| Risk Tier | Risk Level | Description |
 |-------------|-----------|------------|-------------|
 | **0% – 24%** | Tier 1 | Low | Read-only, public data access |
 | **25% – 49%** | Tier 2 | Medium | Internal data, non-critical actions |
@@ -101,15 +101,15 @@ Throughout the UI, Trust Score appears with:
 
 ```
 Initial Trust Score:
-├── AIVSS: (from risk profile) × 40%
+├── Risk Profile: (from risk profile) × 40%
 ├── Behavioral: 100 × 35% = 35
 ├── Alignment: 100 × 25% = 25
 └── Total: varies by risk profile
 ```
 
-Behavioral and Alignment components start at 100 for new agents. Overall Trust Score depends on the AIVSS score.
+Behavioral and Alignment components start at 100 for new agents. Overall Trust Score depends on the Risk Profile score.
 
-Example: AIVSS Score = 98, Behavioral = 100, Alignment = 100
+Example: Risk Profile Score = 98, Behavioral = 100, Alignment = 100
 → Trust Score = (98 × 0.40) + (100 × 0.35) + (100 × 0.25) = 99.2 → TIER 1
 
 ### Over Time
@@ -138,5 +138,5 @@ Recovery rate:
 ## Related
 
 - **[Trust Tiers](/docs/concepts/trust-tiers)** - How scores map to trust controls
-- **[Assess Phase](/docs/agents/trust-lifecycle/assess)** - Configure the AIVSS component
+- **[Assess Phase](/docs/agents/trust-lifecycle/assess)** - Configure the Risk Profile component
 - **[Adapt Phase](/docs/agents/trust-lifecycle/adapt)** - Watch trust evolve over time

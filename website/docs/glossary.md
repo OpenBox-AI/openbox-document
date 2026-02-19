@@ -1,0 +1,219 @@
+---
+title: Glossary
+description: Definitions of key terms used in OpenBox documentation
+---
+
+# Glossary
+
+This page provides definitions of key terms and concepts used throughout the OpenBox documentation.
+
+---
+
+## Risk Profile
+
+A risk scoring framework that evaluates AI agents across three weighted categories:
+
+| Category | Weight | Parameters |
+|----------|--------|------------|
+| **Base Security** | 25% | Attack vector, attack complexity, privileges required, user interaction, scope |
+| **AI-Specific** | 45% | Model robustness, data sensitivity, ethical impact, decision criticality, adaptability |
+| **Impact** | 30% | Confidentiality, integrity, availability, safety impact |
+
+The resulting score (0–100%) determines the agent's initial [Trust Tier](#trust-tier).
+
+**Learn more:** [Assess Phase](/docs/agents/trust-lifecycle/assess)
+
+---
+
+## Alignment Score
+
+A 0–100% metric measuring how well an agent's actions match its stated goals. Contributes 25% of the overall [Trust Score](#trust-score).
+
+| Range | Rating | Meaning |
+|-------|--------|---------|
+| 90–100% | Excellent | Actions strongly aligned with goals |
+| 70–89% | Good | Minor deviations, acceptable |
+| 50–69% | Warning | Notable drift, review recommended |
+| Below 50% | Misaligned | Significant deviation, action required |
+
+**Learn more:** [Verify Phase](/docs/agents/trust-lifecycle/verify)
+
+---
+
+## Attestation
+
+Cryptographic, tamper-proof evidence for every governance session. Each session's events are hashed into a [Merkle Tree](#merkle-tree) and digitally signed, creating a verifiable [Proof Certificate](#proof-certificate) that confirms no governance data was altered after the fact.
+
+Signing providers:
+- **AWS KMS** — ECDSA NIST P-256 (default)
+- **External Attestation** — Your own signing service (e.g., TEE, HSM)
+
+**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+
+---
+
+## Behavioral Rules
+
+Stateful authorization rules that detect multi-step patterns across an agent's session. Unlike [Policies](#policy-oparego), behavioral rules track prior actions to identify sequences, frequencies, or combinations.
+
+**Pattern examples:**
+- **Sequence:** PII access → External API call (without approval)
+- **Frequency:** More than 10 failed auth attempts in 1 minute
+- **Combination:** Database write + File export + External send
+
+Rules are evaluated in priority order and stop at the first rule that triggers a verdict.
+
+**Learn more:** [Authorize Phase: Behavioral Rules](/docs/agents/trust-lifecycle/authorize#behavioral-rules)
+
+---
+
+## Behavioral Score
+
+A 0–100 runtime compliance metric that starts at 100 for new agents and decreases when policy violations occur. Contributes 35% of the overall [Trust Score](#trust-score).
+
+| Violation Severity | Penalty | Trust Score Impact |
+|--------------------|---------|-------------------|
+| Minor | -5 pts | -1.75 pts |
+| Major | -15 pts | -5.25 pts |
+| Critical | -25 pts | -8.75 pts |
+
+**Learn more:** [Trust Scores](/docs/concepts/trust-scores)
+
+---
+
+## Governance Decision
+
+The outcome produced when OpenBox evaluates an agent operation. There are five possible decisions, listed in precedence order:
+
+| Decision | Effect | Impact |
+|----------|--------|--------|
+| **HALT** | Terminates the entire agent session | Significant negative |
+| **BLOCK** | Action rejected, agent continues | Negative |
+| **REQUIRE_APPROVAL** | Operation paused for [HITL](#hitl-human-in-the-loop) review | Neutral (pending) |
+| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
+| **ALLOW** | Operation proceeds normally | Positive |
+
+**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+
+**Learn more:** [Governance Decisions](/docs/concepts/governance-decisions)
+
+---
+
+## Guardrail
+
+Pre- or post-processing validation and transformation rules applied to agent inputs and outputs. Multiple guardrails execute as a chained pipeline — the output of one feeds into the next.
+
+**Types:**
+- **Input Guardrails** — Validate/transform incoming data (PII detection, rate limiting)
+- **Output Guardrails** — Validate/transform responses (PII redaction, format enforcement)
+
+**Learn more:** [Authorize Phase: Guardrails](/docs/agents/trust-lifecycle/authorize#guardrails)
+
+---
+
+## HITL (Human-in-the-Loop)
+
+A workflow pattern where an agent operation is paused pending human approval before proceeding. Triggered by a [REQUIRE_APPROVAL](#governance-decision) governance decision.
+
+**Approval actions:**
+
+| Action | Result | Trust Score Effect |
+|--------|--------|-------------------|
+| **Approve** | Operation proceeds | No change |
+| **Reject** | Operation blocked (reason required) | -2 pts |
+| **Timeout** | Operation blocked after 5 minutes | -1 pt |
+
+**Learn more:** [Approvals](/docs/approvals)
+
+---
+
+## Merkle Tree
+
+A cryptographic data structure used to combine individual event hashes into a single session root hash. Uses SHA-256 with sorted-pair hashing to ensure consistent tree construction regardless of processing order. Enables tamper-proof verification of governance events.
+
+**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+
+---
+
+## Policy (OPA/Rego)
+
+Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (Open Policy Agent) Rego language. Policies evaluate an input document at runtime and return a governance decision (`CONTINUE` or `REQUIRE_APPROVAL`) with an optional reason.
+
+Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
+
+**Learn more:** [Authorize Phase: Policies](/docs/agents/trust-lifecycle/authorize#policies)
+
+---
+
+## Proof Certificate
+
+A per-session attestation record produced after an agent session completes. Contains:
+
+| Field | Description |
+|-------|-------------|
+| **Merkle Root** | SHA-256 root hash of the session's event [Merkle Tree](#merkle-tree) |
+| **Signature** | Digital signature of the Merkle root (from AWS KMS or external provider) |
+| **Event Count** | Number of governance events included in the attestation |
+
+**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+
+---
+
+## Session Replay
+
+An interactive dashboard view showing the complete execution timeline of an agent session. Allows step-by-step walkthrough of every operation with its governance decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.).
+
+**Learn more:** [Monitor Phase](/docs/agents/trust-lifecycle/monitor)
+
+---
+
+## Trust Layer
+
+The governance layer OpenBox adds alongside your workflow engine. It provides trust scoring, policy enforcement, monitoring, and compliance evidence — without modifying your existing workflow code. Your workflow engine remains the system of record for execution.
+
+**Learn more:** [What is OpenBox?](/docs)
+
+---
+
+## Trust Lifecycle
+
+OpenBox's 5-phase governance model for establishing, maintaining, and evolving trust in AI agents:
+
+1. **[Assess](/docs/agents/trust-lifecycle/assess)** — Establish baseline risk profile
+2. **[Authorize](/docs/agents/trust-lifecycle/authorize)** — Define guardrails, policies, and behavioral rules
+3. **[Monitor](/docs/agents/trust-lifecycle/monitor)** — Observe runtime behavior and telemetry
+4. **[Verify](/docs/agents/trust-lifecycle/verify)** — Check goal alignment and session integrity
+5. **[Adapt](/docs/agents/trust-lifecycle/adapt)** — Evolve trust based on observed patterns
+
+**Learn more:** [Trust Lifecycle Overview](/docs/agents/trust-lifecycle)
+
+---
+
+## Trust Score
+
+A 0–100 metric representing an agent's overall trustworthiness, calculated from three components:
+
+| Component | Weight | Description |
+|-----------|--------|-------------|
+| Risk Profile Score | 40% | Inherent risk profile
+| [Behavioral Score](#behavioral-score) | 35% | Runtime compliance |
+| [Alignment Score](#alignment-score) | 25% | Goal consistency |
+
+**Formula:** `Trust Score = (Risk Profile × 40%) + (Behavioral × 35%) + (Alignment × 25%)`
+
+**Learn more:** [Trust Scores](/docs/concepts/trust-scores)
+
+---
+
+## Trust Tier
+
+One of four trust levels derived from the [Trust Score](#trust-score) that determines how strictly an agent is governed:
+
+| Tier | Risk Profile Range | Risk Level | Description |
+|------|-------------|------------|-------------|
+| **Tier 1** | 0–24% | Low | Minimal oversight, most operations auto-approved |
+| **Tier 2** | 25–49% | Medium | Standard controls, approval for sensitive operations |
+| **Tier 3** | 50–74% | High | Enhanced monitoring, stricter enforcement |
+| **Tier 4** | 75–100% | Critical | Strict controls, frequent HITL, rate limiting |
+
+**Learn more:** [Trust Tiers](/docs/concepts/trust-tiers)
