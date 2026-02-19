@@ -32,7 +32,7 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
 
 | Team / Role | How they use OpenBox | Business outcome |
 |------------|-----------------------|------------------|
-| **Security / Trust & Safety** | Define policies and guardrails, review risky behavior, investigate incidents via Audit Log and Session Replay | Reduce security risk, shorten incident response time, enforce consistent controls |
+| **Security / Trust & Safety** | Define policies and guardrails, review risky behavior, investigate incidents via Audit Log and [Session Replay](/docs/agents/trust-lifecycle/session-replay) | Reduce security risk, shorten incident response time, enforce consistent controls |
 | **Engineering (Platform / AI Infra)** | Integrate the SDK into workers, standardize instrumentation, set trust controls across many agents | Faster rollouts, fewer regressions, consistent enterprise-wide controls |
 | **Product (AI Product Owners)** | Monitor agent reliability, iterate on controls as capabilities change, track approvals and exceptions | Ship AI features faster with clear safety boundaries and measurable reliability |
 | **Compliance / Audit** | Export audit-ready evidence and attestations, review decision trails for audits and reviews | Lower audit friction, repeatable evidence collection, easier stakeholder sign-off |
