@@ -218,8 +218,8 @@ async def main():
 
 ## Next Steps
 
-1. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
-2. **[Event Types](/docs/concepts/event-types)** - Understand the semantic event types captured by the SDK
+1. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
+2. **[Event Types](/docs/developer-guide/event-types)** - Understand the semantic event types captured by the SDK
 3. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
 
 

@@ -119,6 +119,6 @@ Other Insights cards:
 
 The Trust Lifecycle is continuous. From here you can:
 
-1. **[Update Governance (Authorize)](/docs/agents/trust-lifecycle/authorize)** - Accept policy suggestions or create new rules
-2. **[Re-assess Risk (Assess)](/docs/agents/trust-lifecycle/assess)** - If your agent's capabilities have changed
+1. **[Update Governance (Authorize)](/docs/trust-lifecycle/authorize)** - Accept policy suggestions or create new rules
+2. **[Re-assess Risk (Assess)](/docs/trust-lifecycle/assess)** - If your agent's capabilities have changed
 3. **[Handle Approvals](/docs/approvals)** - Review organization-wide approval queue

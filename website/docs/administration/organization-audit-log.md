@@ -118,5 +118,5 @@ Exports are processed in the background and made available for download once com
 
 ## Related
 
-- **[Compliance & Audit](/docs/compliance)** — Overview of audit trails and evidence collection
-- **[Attestation & Cryptographic Proof](/docs/compliance/attestation)** — How session events are cryptographically signed
+- **[Compliance & Audit](/docs/administration/compliance-and-audit)** — Overview of audit trails and evidence collection
+- **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** — How session events are cryptographically signed

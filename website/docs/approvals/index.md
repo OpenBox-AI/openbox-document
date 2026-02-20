@@ -79,7 +79,7 @@ For each pending request:
 |--------|-------------|
 | **Approve** | Allow operation to proceed |
 | **Reject** | Block operation (requires reason) |
-| **View Session** | Open [Session Replay](/docs/agents/trust-lifecycle/session-replay) for full context |
+| **View Session** | Open [Session Replay](/docs/trust-lifecycle/session-replay) for full context |
 
 ## Processing Approvals
 
@@ -127,5 +127,5 @@ Filter the queue by:
 
 ## Next Steps
 
-1. **[Organization Settings](/docs/organization)** - Manage teams, roles, and organization configuration
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/docs/agents/trust-lifecycle/session-replay) before approving or rejecting
+1. **[Organization Settings](/docs/administration/organization)** - Manage teams, roles, and organization configuration
+2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/docs/trust-lifecycle/session-replay) before approving or rejecting

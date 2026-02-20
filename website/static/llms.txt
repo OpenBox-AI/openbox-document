@@ -7,45 +7,48 @@
 # Docs base: https://docs.openbox.ai/docs/
 
 ## Getting Started
-- OpenBox Overview: https://docs.openbox.ai/docs/
+- OpenBox: https://docs.openbox.ai/docs/
 - Getting Started: https://docs.openbox.ai/docs/getting-started
+- Registering Agents: https://docs.openbox.ai/docs/getting-started/registering-agents
 - Quick Start: https://docs.openbox.ai/docs/getting-started/quick-start
-- Temporal Integration Guide: https://docs.openbox.ai/docs/getting-started/workflow-engines/temporal
+- Troubleshooting: https://docs.openbox.ai/docs/getting-started/troubleshooting
 
-## Agents
-- Agents: https://docs.openbox.ai/docs/agents
-- Registering Agents: https://docs.openbox.ai/docs/agents/registering-agents
-- Trust Lifecycle: https://docs.openbox.ai/docs/agents/trust-lifecycle
-- Trust Lifecycle: Assess: https://docs.openbox.ai/docs/agents/trust-lifecycle/assess
-- Trust Lifecycle: Authorize: https://docs.openbox.ai/docs/agents/trust-lifecycle/authorize
-- Trust Lifecycle: Monitor: https://docs.openbox.ai/docs/agents/trust-lifecycle/monitor
-- Trust Lifecycle: Verify: https://docs.openbox.ai/docs/agents/trust-lifecycle/verify
-- Trust Lifecycle: Adapt: https://docs.openbox.ai/docs/agents/trust-lifecycle/adapt
+## Core Concepts
+- Trust Scores: https://docs.openbox.ai/docs/core-concepts/trust-scores
+- Trust Tiers: https://docs.openbox.ai/docs/core-concepts/trust-tiers
+- Governance Decisions: https://docs.openbox.ai/docs/core-concepts/governance-decisions
+
+## Trust Lifecycle
+- Trust Lifecycle: https://docs.openbox.ai/docs/trust-lifecycle
+- Overview: https://docs.openbox.ai/docs/trust-lifecycle/overview
+- Assess: https://docs.openbox.ai/docs/trust-lifecycle/assess
+- Authorize: https://docs.openbox.ai/docs/trust-lifecycle/authorize
+- Monitor: https://docs.openbox.ai/docs/trust-lifecycle/monitor
+- Verify: https://docs.openbox.ai/docs/trust-lifecycle/verify
+- Session Replay: https://docs.openbox.ai/docs/trust-lifecycle/session-replay
+- Adapt: https://docs.openbox.ai/docs/trust-lifecycle/adapt
+
+## Developer Guide
+- SDK Reference: https://docs.openbox.ai/docs/developer-guide/sdk-reference
+- Temporal Integration Guide (Python): https://docs.openbox.ai/docs/developer-guide/temporal-integration-guide-python
+- Configuration: https://docs.openbox.ai/docs/developer-guide/configuration
+- Error Handling: https://docs.openbox.ai/docs/developer-guide/error-handling
+- Event Types: https://docs.openbox.ai/docs/developer-guide/event-types
 
 ## Dashboard
 - Dashboard: https://docs.openbox.ai/docs/dashboard
+- Agents: https://docs.openbox.ai/docs/dashboard/agents
 - Trust Overview: https://docs.openbox.ai/docs/dashboard/trust-overview
 - Alerts: https://docs.openbox.ai/docs/dashboard/alerts
 
 ## Approvals
 - Approvals: https://docs.openbox.ai/docs/approvals
 
-## Concepts
-- Trust Scores: https://docs.openbox.ai/docs/concepts/trust-scores
-- Trust Tiers: https://docs.openbox.ai/docs/concepts/trust-tiers
-- Event Types: https://docs.openbox.ai/docs/concepts/event-types
-- Governance Decisions: https://docs.openbox.ai/docs/concepts/governance-decisions
+## Administration
+- Organization: https://docs.openbox.ai/docs/administration/organization
+- Compliance & Audit: https://docs.openbox.ai/docs/administration/compliance-and-audit
+- Attestation & Cryptographic Proof: https://docs.openbox.ai/docs/administration/attestation-and-cryptographic-proof
+- Audit Log: https://docs.openbox.ai/docs/administration/organization-audit-log
 
-## SDK
-- SDK Reference: https://docs.openbox.ai/docs/sdk
-- SDK Configuration: https://docs.openbox.ai/docs/sdk/configuration
-- SDK Error Handling: https://docs.openbox.ai/docs/sdk/error-handling
-
-## Organization
-- Organization: https://docs.openbox.ai/docs/organization
-- Audit Log: https://docs.openbox.ai/docs/organization/audit-log
-
-## Compliance
-- Compliance: https://docs.openbox.ai/docs/compliance
-- Attestation: https://docs.openbox.ai/docs/compliance/attestation
-- Compliance Frameworks: https://docs.openbox.ai/docs/compliance/frameworks
+## Reference
+- Glossary: https://docs.openbox.ai/docs/glossary

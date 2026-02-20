@@ -97,7 +97,7 @@ Predicted Risk Tier: TIER 2
 Based on current configuration
 ```
 
-See **[Assess](/docs/agents/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
+See **[Assess](/docs/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
 
 ## Attestation
 
@@ -108,7 +108,7 @@ For now, use **AWS KMS** (recommended/default):
 1. Select **AWS KMS**
 2. Keep the default settings
 
-See **[Attestation](/docs/compliance/attestation)** for how execution evidence is produced and verified.
+See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** for how execution evidence is produced and verified.
 
 ## Creating the Agent
 

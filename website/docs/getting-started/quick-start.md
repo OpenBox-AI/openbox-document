@@ -9,7 +9,7 @@ sidebar_position: 1
 Add a trust layer to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for trust, monitoring, and compliance.
 
 :::tip Building from Scratch?
-If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/getting-started/workflow-engines/temporal)** for a complete end-to-end setup.
+If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide)** for a complete end-to-end setup.
 :::
 
 ---
@@ -39,11 +39,11 @@ Before wrapping your worker, create an agent in the OpenBox platform:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
+   - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
 6. Click **Add Agent**
 
-See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
+See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
 
 :::tip
 Your API key format: `obx_live_xxxxxxxxxxxxxxxxxx`
@@ -212,7 +212,7 @@ Trigger a workflow and view it in the dashboard:
 3. Navigate to **Agents** → Click your agent
 4. On the **Overview** tab you can see:
    - Active and completed sessions
-   - Click a session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) with full event timeline
+   - Click a session to open [Session Replay](/docs/trust-lifecycle/session-replay) with full event timeline
    - Captured HTTP requests (LLM calls, API requests)
    - Activity inputs/outputs
    - Governance decisions
@@ -236,15 +236,15 @@ OpenBox evaluates all captured data against your governance policies in real-tim
 
 Now that your agent is running with OpenBox:
 
-1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use [Session Replay](/docs/agents/trust-lifecycle/session-replay) to debug and audit agent behavior
+1. **[Configure Trust Controls](/docs/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
+2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Use [Session Replay](/docs/trust-lifecycle/session-replay) to debug and audit agent behavior
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-4. **[Advanced Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and event filtering
+4. **[Advanced Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and event filtering
 
 ---
 
 ## Need More Details?
 
-- **[Temporal Integration Guide](/docs/getting-started/workflow-engines/temporal)** - Complete end-to-end setup from scratch
-- **[SDK Reference](/docs/sdk)** - Full SDK documentation and configuration options
+- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide)** - Complete end-to-end setup from scratch
+- **[SDK Reference](/docs/developer-guide/sdk-reference)** - Full SDK documentation and configuration options
 - **[Approvals](/docs/approvals)** - Review and act on HITL approvals in the dashboard

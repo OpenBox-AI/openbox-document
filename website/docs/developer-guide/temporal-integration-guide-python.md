@@ -1,5 +1,6 @@
 ---
-title: Temporal (Python)
+title: Temporal Integration Guide (Python)
+sidebar_label: Temporal (Python)
 description: Integrate OpenBox with a Temporal AI agent using the OpenBox demo repo
 sidebar_position: 1
 ---
@@ -7,7 +8,7 @@ sidebar_position: 1
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Temporal Integration Guide
+# Temporal Integration Guide (Python)
 
 Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wraps a real Temporal AI agent worker. You’ll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
 
@@ -119,11 +120,11 @@ make setup
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
+   - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
 6. Click **Add Agent**
 
-See **[Registering Agents](/docs/agents/registering-agents)** for a field-by-field walkthrough of the form.
+See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
 
 ---
 
@@ -250,7 +251,7 @@ The agent’s Temporal code is organized in:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **your agent** (the one you created in Part 2)
-3. On the **Overview** tab, click your session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) and see:
+3. On the **Overview** tab, click your session to open [Session Replay](/docs/trust-lifecycle/session-replay) and see:
    - Complete event timeline
    - LLM request/response capture
    - Activity inputs/outputs
@@ -315,7 +316,7 @@ To investigate failures:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Go to your agent → **Overview** tab
-3. Click a session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) and review:
+3. Click a session to open [Session Replay](/docs/trust-lifecycle/session-replay) and review:
    - Governance decisions
    - Inputs/outputs for activities and tool calls
    - Approval requests and outcomes
@@ -379,8 +380,8 @@ The SDK automatically captures and sends to OpenBox:
 
 ## Next Steps
 
-1. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
-2. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
+1. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
+2. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 
 
