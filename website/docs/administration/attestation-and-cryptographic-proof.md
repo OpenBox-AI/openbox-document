@@ -133,6 +133,6 @@ Each session produces one proof certificate containing:
 
 ## Related
 
-- **[Audit Log](/docs/organization/audit-log)** - View and export the organization-wide audit log
-- **[Compliance & Audit](/docs/compliance)** - Overview of audit trail and evidence collection
+- **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization-wide audit log
+- **[Compliance & Audit](/docs/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
 

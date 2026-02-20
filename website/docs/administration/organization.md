@@ -22,7 +22,7 @@ Organize agents and members into teams for access control.
 3. Enter team name and description
 
 :::note
-Agents are assigned to teams during [agent creation](/docs/agents/registering-agents). Users are assigned to teams by editing their profile (see [Adding Members](#adding-members) below).
+Agents are assigned to teams during [agent creation](/docs/getting-started/registering-agents). Users are assigned to teams by editing their profile (see [Adding Members](#adding-members) below).
 :::
 
 ## Members
@@ -99,9 +99,9 @@ Filter audit log by:
 - Agent
 - Team
 
-See [Audit Log](/docs/organization/audit-log) for details.
+See [Audit Log](/docs/administration/organization-audit-log) for details.
 
 ## Next Steps
 
-1. **[View Audit Log](/docs/organization/audit-log)** - See detailed activity history and export for compliance
-2. **[Compliance](/docs/compliance)** - Use audit trails and attestation evidence for auditors
+1. **[View Audit Log](/docs/administration/organization-audit-log)** - See detailed activity history and export for compliance
+2. **[Compliance](/docs/administration/compliance-and-audit)** - Use audit trails and attestation evidence for auditors

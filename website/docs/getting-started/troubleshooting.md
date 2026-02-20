@@ -54,7 +54,7 @@ To investigate:
 2. Go to your agent → **Overview** tab
 3. Open the session to see which rule triggered the block
 
-See **[Error Handling](/docs/sdk/error-handling)** for how to handle `GovernanceStop` and other trust exceptions in your code.
+See **[Error Handling](/docs/developer-guide/error-handling)** for how to handle `GovernanceStop` and other trust exceptions in your code.
 
 ---
 
@@ -146,6 +146,6 @@ The Temporal UI will be available at [http://localhost:8233](http://localhost:82
 ## Next Steps
 
 1. **[Dashboard](/docs/dashboard)** - Monitor your agents from the dashboard
-2. **[Agents Overview](/docs/agents)** - View and manage all registered agents
+2. **[Agents Overview](/docs/dashboard/agents)** - View and manage all registered agents
 3. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
 

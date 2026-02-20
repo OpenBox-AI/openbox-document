@@ -31,8 +31,8 @@ The SDK is intentionally minimal:
 See:
 
 1. **[Quick Start](/docs/getting-started/quick-start)** - Wrap an existing Temporal worker
-2. **[Temporal (Python)](/docs/getting-started/workflow-engines/temporal)** - End-to-end setup from scratch
-3. **[Configuration](/docs/sdk/configuration)** - All SDK options for `create_openbox_worker`
+2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide)** - End-to-end setup from scratch
+3. **[Configuration](/docs/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
 
 ## What the SDK Captures
 
@@ -96,7 +96,7 @@ All captured data is evaluated against your trust policies on the OpenBox platfo
 
 ## Configuration
 
-See **[Configuration](/docs/sdk/configuration)** for all options including:
+See **[Configuration](/docs/developer-guide/configuration)** for all options including:
 - Environment variables
 - Governance timeout and fail policies
 - Event filtering (skip workflows/activities)
@@ -104,6 +104,6 @@ See **[Configuration](/docs/sdk/configuration)** for all options including:
 
 ## Next Steps
 
-1. **[Temporal Integration](/docs/getting-started/workflow-engines/temporal)** - Wrap an existing Temporal agent with the SDK
-2. **[Configuration](/docs/sdk/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
+1. **[Temporal Integration](/docs/developer-guide/temporal-integration-guide)** - Wrap an existing Temporal agent with the SDK
+2. **[Configuration](/docs/developer-guide/configuration)** - Configure timeouts, fail policies, and exclusions
+3. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code

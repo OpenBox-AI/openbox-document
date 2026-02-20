@@ -123,4 +123,4 @@ Click **Re-assess Risk** to update Risk Profile parameters.
 
 Once you've assessed your agent's risk profile:
 
-→ **[Authorize](/docs/agents/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do
+→ **[Authorize](/docs/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do
