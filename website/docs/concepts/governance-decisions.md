@@ -51,7 +51,7 @@ The operation proceeds but with modifications or limitations.
 - Constraint logged
 - Behavioral score neutral
 
-Constraints and the resulting transformed inputs/outputs are visible in session replay.
+Constraints and the resulting transformed inputs/outputs are visible in [Session Replay](/docs/agents/trust-lifecycle/session-replay).
 
 ## REQUIRE_APPROVAL
 
@@ -64,7 +64,7 @@ OpenBox pauses the operation pending human approval.
 
 **Effect:**
 - Request appears in the Approvals queue
-- Session replay shows the operation context and decision timeline
+- [Session Replay](/docs/agents/trust-lifecycle/session-replay) shows the operation context and decision timeline
 - Once a reviewer approves or rejects, the operation proceeds or stops
 
 **Approval flow:**
@@ -120,7 +120,7 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 
 ## Decision in Session Replay
 
-Session replay shows decisions at each operation:
+[Session Replay](/docs/agents/trust-lifecycle/session-replay) shows decisions at each operation:
 
 ```
 09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW

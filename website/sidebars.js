@@ -46,7 +46,17 @@ const sidebars = {
         'agents/trust-lifecycle/assess',
         'agents/trust-lifecycle/authorize',
         'agents/trust-lifecycle/monitor',
-        'agents/trust-lifecycle/verify',
+        {
+          type: 'category',
+          label: 'Verify',
+          link: {
+            type: 'doc',
+            id: 'agents/trust-lifecycle/verify',
+          },
+          items: [
+            'agents/trust-lifecycle/session-replay',
+          ],
+        },
         'agents/trust-lifecycle/adapt',
       ],
     },
