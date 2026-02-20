@@ -81,13 +81,7 @@ const sidebars = {
         'dashboard/alerts',
       ],
     },
-    {
-      type: 'category',
-      label: 'Approvals',
-      items: [
-        'approvals/index',
-      ],
-    },
+    'approvals/index',
     {
       type: 'category',
       label: 'Administration',
