@@ -4,23 +4,22 @@ description: Add the OpenBox trust layer to your existing Temporal agent in 5 mi
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Quick Start
 
-Add a trust layer to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for trust, monitoring, and compliance.
+Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
 
 :::tip Building from Scratch?
 If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** for a complete end-to-end setup.
 :::
 
----
-
 ## Prerequisites
 
-- **Existing Temporal agent** with workflows and activities
+- **Existing Temporal agent** with workflows and activities, and a running Temporal server
 - **Python 3.11+** installed
-- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
-
----
+- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 
 ## Step 1: Register Your Agent in OpenBox
 
@@ -32,9 +31,9 @@ Before wrapping your worker, create an agent in the OpenBox platform:
    - **Workflow Engine**: Temporal
    - **Agent Name**: Your agent name (e.g., "Customer Support Agent")
    - **Agent ID**: Auto-generated
-   - **Description**: What your agent does
-   - **Teams**: assign the agent to one or more teams
-   - **Icon**: select an icon
+   - **Description**: What your agent does (optional)
+   - **Teams**: assign the agent to one or more teams (optional)
+   - **Icon**: select an icon (optional)
 4. **API Key Generation**:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
@@ -49,83 +48,97 @@ See **[Registering Agents](/docs/getting-started/registering-agents)** for a fie
 Your API key format: `obx_live_xxxxxxxxxxxxxxxxxx`
 :::
 
----
-
 ## Step 2: Install OpenBox SDK
 
 Add the OpenBox SDK to your existing project:
 
+**Package:** `openbox-temporal-sdk-python`
+
 ```bash
-pip install openbox-temporal-sdk-python
-
-# Or with uv
 uv add openbox-temporal-sdk-python
-```
 
----
+# Or with pip
+pip install openbox-temporal-sdk-python
+```
 
 ## Step 3: Configure Environment Variables
 
-Add OpenBox credentials to your environment. You can either export them directly or use a `.env` file:
+Add OpenBox credentials to your environment:
 
 ```bash
+export OPENBOX_URL=https://core.openbox.ai
+export OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+<details>
+<summary>Using an .env file?</summary>
+
+```bash title=".env"
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
 ```
 
-:::tip Using a .env file?
-1. Install `python-dotenv`:
-   ```bash
-   pip install python-dotenv
-   ```
-2. Add this to the top of your worker script:
-   ```python
-   from dotenv import load_dotenv
-   load_dotenv()
-   ```
-:::
+Install `python-dotenv` and load it in your worker script:
 
----
+```bash
+uv add python-dotenv
+```
+
+```python
+from dotenv import load_dotenv
+load_dotenv()
+```
+
+</details>
 
 ## Step 4: Wrap Your Existing Worker
 
-Replace your standard Temporal `Worker` with OpenBox's `create_openbox_worker`:
+Replace the standard Temporal `Worker` with OpenBox's `create_openbox_worker`. Your existing workflows and activities stay exactly as they are:
 
-**Before (Standard Temporal):**
+<Tabs>
+<TabItem value="before" label="Temporal">
 
-```python
+```python title="worker.py"
+import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
+from your_workflows import YourWorkflow
+from your_activities import your_activity
 
 async def main():
     client = await Client.connect("localhost:7233")
 
     worker = Worker(
         client,
-        task_queue="my-task-queue",
-        workflows=[MyWorkflow],
-        activities=[my_activity],
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
     )
 
     await worker.run()
+
+asyncio.run(main())
 ```
 
-**After (With OpenBox):**
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
 
-```python
+```python title="worker.py"
 import os
+import asyncio
 from temporalio.client import Client
-from openbox import create_openbox_worker  # Changed import
+from openbox import create_openbox_worker
+from your_workflows import YourWorkflow
+from your_activities import your_activity
 
 async def main():
     client = await Client.connect("localhost:7233")
 
-    # Replace Worker with create_openbox_worker
     worker = create_openbox_worker(
         client=client,
-        task_queue="my-task-queue",
-        workflows=[MyWorkflow],
-        activities=[my_activity],
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
 
         # Add OpenBox configuration
         openbox_url=os.getenv("OPENBOX_URL"),
@@ -133,38 +146,37 @@ async def main():
     )
 
     await worker.run()
+
+asyncio.run(main())
 ```
 
-That's it! Your workflows and activities remain **completely unchanged**.
-
----
+</TabItem>
+</Tabs>
 
 ## Step 5: Run Your Worker
 
-:::warning Temporal Must Be Running
-Make sure the Temporal server is running before starting your worker:
-
-```bash
-temporal server start-dev
-```
-
-:::
-
-
-Start your worker as usual:
+Start your worker as you normally would, for example:
 
 ```bash
 uv run worker.py
 ```
 
-:::tip
-If you are not using `uv`, you can also run with:
-- **macOS / Linux**: `python3 worker.py`
-- **Windows**: `python worker.py`
-:::
+You should see the OpenBox SDK initialize and connect. Your output will vary depending on your agent's configuration:
 
+```
+Worker will use LLM model: openai/gpt-4o
+Address: localhost:7233, Namespace default
+...
+...
+...
+OpenBox SDK initialized successfully
+  - Governance policy: fail_open
+Starting worker, connecting to task queue: agent-task-queue
+```
 
-Expected Output
+<details>
+<summary>Full initialization output</summary>
+
 ```
 Worker will use LLM model: openai/gpt-4o
 Address: localhost:7233, Namespace default
@@ -184,53 +196,55 @@ INFO:openbox.otel_setup:Instrumented: urllib3
 INFO:openbox.otel_setup:Instrumented: urllib
 INFO:openbox.otel_setup:Patched httpx for body capture
 INFO:openbox.otel_setup:OpenTelemetry HTTP instrumentation complete. Instrumented: ['requests', 'httpx', 'urllib3', 'urllib']
-INFO:openbox.otel_setup:Instrumented: psycopg2                                  INFO:openbox.otel_setup:Instrumented: asyncpg
-INFO:openbox.otel_setup:Instrumented: mysql                                     INFO:openbox.otel_setup:Instrumented: pymysql                                   INFO:openbox.otel_setup:Instrumented: pymongo                                   INFO:openbox.otel_setup:Instrumented: redis
+INFO:openbox.otel_setup:Instrumented: psycopg2
+INFO:openbox.otel_setup:Instrumented: asyncpg
+INFO:openbox.otel_setup:Instrumented: mysql
+INFO:openbox.otel_setup:Instrumented: pymysql
+INFO:openbox.otel_setup:Instrumented: pymongo
+INFO:openbox.otel_setup:Instrumented: redis
 INFO:openbox.otel_setup:Instrumented: sqlalchemy
 INFO:openbox.otel_setup:Database instrumentation complete. Instrumented: ['psycopg2', 'asyncpg', 'mysql', 'pymysql', 'pymongo', 'redis', 'sqlalchemy']
-INFO:openbox.otel_setup:Instrumented: file I/O (builtins.open)                  INFO:openbox.otel_setup:OpenTelemetry governance setup complete. Instrumented: ['requests', 'httpx', 'urllib3', 'urllib', 'psycopg2', 'asyncpg', 'mysql', 'pymysql', 'pymongo', 'redis', 'sqlalchemy', 'file_io']
-OpenBox SDK initialized successfully                                              - Governance policy: fail_open
-  - Governance timeout: 30.0s                                                     - Events: WorkflowStarted, WorkflowCompleted, WorkflowFailed, SignalReceived, ActivityStarted, ActivityCompleted                                                - Database instrumentation: enabled
+INFO:openbox.otel_setup:Instrumented: file I/O (builtins.open)
+INFO:openbox.otel_setup:OpenTelemetry governance setup complete. Instrumented: ['requests', 'httpx', 'urllib3', 'urllib', 'psycopg2', 'asyncpg', 'mysql', 'pymysql', 'pymongo', 'redis', 'sqlalchemy', 'file_io']
+OpenBox SDK initialized successfully
+  - Governance policy: fail_open
+  - Governance timeout: 30.0s
+  - Events: WorkflowStarted, WorkflowCompleted, WorkflowFailed, SignalReceived, ActivityStarted, ActivityCompleted
+  - Database instrumentation: enabled
   - File I/O instrumentation: enabled
-  - Approval polling: enabled                                                   Starting worker, connecting to task queue: agent-task-queue
-
+  - Approval polling: enabled
+Starting worker, connecting to task queue: agent-task-queue
 ```
-Your agent now runs with the OpenBox trust layer enabled.
 
-:::tip Having issues?
-See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)** for common setup problems and solutions.
-:::
+</details>
 
----
+Your agent is now running with the OpenBox trust layer enabled. Having issues? See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)**.
 
-## Step 6: Verify in OpenBox Dashboard
+## Step 6: See It in Action
 
-Trigger a workflow and view it in the dashboard:
+Trigger your agent the same way you normally do — whether that's a client script, an API call, or a scheduled workflow. No changes are needed to your trigger code.
 
-1. **Run a workflow** (using your existing trigger/client code)
-2. **Open the [OpenBox Dashboard](https://platform.openbox.ai)**
-3. Navigate to **Agents** → Click your agent
-4. On the **Overview** tab you can see:
-   - Active and completed sessions
-   - Click a session to open [Session Replay](/docs/trust-lifecycle/session-replay) with full event timeline
-   - Captured HTTP requests (LLM calls, API requests)
-   - Activity inputs/outputs
-   - Governance decisions
+Once the workflow completes:
 
----
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → click your agent
+3. On the **Overview** tab, find the session that just ran
+4. Click **Details** to open the session
 
-## What OpenBox Captures
+The **Event Log Timeline** shows the full execution trace — you should see workflow events, activity events, HTTP requests, and governance decisions for the session. For a full step-by-step playback, click **Watch Replay** to open **[Session Replay](/docs/trust-lifecycle/session-replay)**.
 
-The SDK automatically sends these events to OpenBox:
+If your session doesn't appear, check that your worker is running and connected to OpenBox. See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)** for common issues.
 
-- **Workflow events**: Started, completed, failed, signals
-- **Activity events**: Started (with input), completed (with output), duration
-- **HTTP telemetry**: Request/response bodies, headers, status codes
-- **Database operations** (optional): SQL queries, NoSQL operations
+## What Just Happened?
 
-OpenBox evaluates all captured data against your governance policies in real-time.
+Here's how that data got there. Under the hood, the OpenBox SDK:
 
----
+- **Intercepted workflow events** (started, completed, failed, signals) and **activity events** (started, completed) with their inputs and outputs, sending each to OpenBox for governance evaluation
+- **Captured HTTP calls automatically** — any requests your agent made (LLM APIs, external services) were recorded via OpenTelemetry instrumentation, including full request and response details
+- **Evaluated your governance policies** against each event, determining whether the action should be allowed, blocked, or flagged for approval
+- **Recorded a governance decision** for every event — that's what you see in the Event Log Timeline and Session Replay
+
+This happens on every workflow execution with no changes to your agent code.
 
 ## Next Steps
 
@@ -240,8 +254,6 @@ Now that your agent is running with OpenBox:
 2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Use [Session Replay](/docs/trust-lifecycle/session-replay) to debug and audit agent behavior
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 4. **[Advanced Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and event filtering
-
----
 
 ## Need More Details?
 
