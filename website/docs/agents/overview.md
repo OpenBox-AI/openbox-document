@@ -45,11 +45,10 @@ Sessions terminated by a governance decision. Each card shows:
 - Violation type (e.g., `Validation failed for field with errors`, `Behavioral violation`)
 - Error message
 
-## Next Steps
+### Next Steps
 
-To configure governance for your agent, start with the Trust Lifecycle:
-
-1. **[Understand the Trust Lifecycle](/docs/agents/trust-lifecycle)** - Learn how the 5 phases work together
+1. **[Assess Your Agent's Risk](/docs/agents/trust-lifecycle/assess)** - Configure the risk profile for this agent
+2. **[Understand the Trust Lifecycle](/docs/agents/trust-lifecycle)** - Learn how the 5 phases work together
 
 
 

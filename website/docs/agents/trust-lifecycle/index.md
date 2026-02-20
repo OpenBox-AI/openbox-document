@@ -26,7 +26,7 @@ Access each phase via the tabs in **Agent Detail**.
 
 | Phase | Tab | Purpose | Key Activities |
 |-------|-----|---------|----------------|
-| **[Assess](/docs/agents/trust-lifecycle/assess)** | Assess | Establish baseline risk | AIVSS configuration, risk profiling |
+| **[Assess](/docs/agents/trust-lifecycle/assess)** | Assess | Establish baseline risk | Risk profile configuration, risk profiling |
 | **[Authorize](/docs/agents/trust-lifecycle/authorize)** | Authorize | Define allowed behaviors | Guardrails, policies, behavioral rules |
 | **[Monitor](/docs/agents/trust-lifecycle/monitor)** | Monitor | Observe runtime execution | Sessions, metrics, telemetry |
 | **[Verify](/docs/agents/trust-lifecycle/verify)** | Verify | Validate goal alignment | Drift detection, attestation |
@@ -37,12 +37,12 @@ Access each phase via the tabs in **Agent Detail**.
 The Trust Score (0-100) aggregates across the lifecycle:
 
 ```
-Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = 	(Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Phase | Description |
 |-----------|-------|-------------|
-| **AIVSS** | Assess | Inherent risk based on capabilities and access |
+| **Risk Profile** | Assess | Inherent risk based on capabilities and access |
 | **Behavioral** | Authorize + Monitor | Compliance with policies and rules |
 | **Alignment** | Verify | Consistency with stated goals |
 
@@ -50,7 +50,7 @@ Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 
 The Trust Score maps to Trust Tiers that determine governance strictness:
 
-| Tier | AIVSS Score | Risk Level | Governance Level |
+| Tier | Risk Profile Score | Risk Level | Governance Level |
 |------|-------------|------------|------------------|
 | **Tier 1** | 0% – 24% | Low | Minimal constraints, high autonomy |
 | **Tier 2** | 25% – 49% | Medium | Standard policies, normal monitoring |
@@ -61,7 +61,7 @@ The Trust Score maps to Trust Tiers that determine governance strictness:
 
 ### New Agents
 
-1. **Assess** - Configure AIVSS and risk profile
+1. **Assess** - Configure risk profile
 2. **Authorize** - Set up initial guardrails and policies
 3. Agent begins operation
 4. **Monitor** - Observe sessions and metrics

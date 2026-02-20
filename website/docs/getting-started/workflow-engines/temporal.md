@@ -119,7 +119,7 @@ make setup
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[AIVSS](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Initial Risk Assessment** (**[Risk Profile](/docs/agents/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/docs/compliance/attestation)**) - select **AWS KMS**
 6. Click **Add Agent**
 
@@ -379,53 +379,13 @@ The SDK automatically captures and sends to OpenBox:
 
 ## Next Steps
 
-1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use [Session Replay](/docs/agents/trust-lifecycle/session-replay) to debug and audit
+1. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
+2. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-4. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
+
 
 ---
 
 ## Troubleshooting
 
-### Worker Fails to Start
-
-If `make run-worker` fails with a connection error, the Temporal server is likely not running:
-
-```bash
-temporal server start-dev
-```
-
-Then retry `make run-worker` in a separate terminal.
-
-### Worker Not Connecting to OpenBox
-
-Check your API key:
-```bash
-echo $OPENBOX_API_KEY
-# Should print your OpenBox API key
-```
-
-Verify configuration:
-
-1. Confirm `OPENBOX_URL` and `OPENBOX_API_KEY` are set in the worker environment
-2. Start the worker and check logs for OpenBox initialization errors
-3. Trigger a workflow and confirm a session appears in the OpenBox dashboard
-
-### No Events in Dashboard
-
-1. Ensure worker is running: `make run-worker`
-2. Ensure API and UI are running: `make run-api` and `make run-frontend`
-3. Verify the workflow completed successfully
-
-### LLM API Errors
-
-Test your LLM configuration:
-```python
-from litellm import completion
-response = completion(
-    model="openai/gpt-4o",
-    api_key="your-key",
-    messages=[{"role": "user", "content": "test"}]
-)
-```
+Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.

@@ -104,6 +104,6 @@ See **[Configuration](/docs/sdk/configuration)** for all options including:
 
 ## Next Steps
 
-1. **[Quick Start Guide](/docs/getting-started/quick-start)** - Wrap an existing Temporal agent
+1. **[Temporal Integration](/docs/getting-started/workflow-engines/temporal)** - Wrap an existing Temporal agent with the SDK
 2. **[Configuration](/docs/sdk/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review decisions, approvals, and session timelines in the dashboard
+3. **[Error Handling](/docs/sdk/error-handling)** - Handle governance decisions in your code
