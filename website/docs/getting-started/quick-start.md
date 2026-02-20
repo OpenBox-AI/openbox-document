@@ -232,7 +232,14 @@ Once the workflow completes:
 3. On the **Overview** tab, find the session that just ran
 4. Click **Details** to open the session
 
-The **Event Log Timeline** shows the full execution trace — you should see workflow events, activity events, HTTP requests, and governance decisions for the session. For a full step-by-step playback, click **Watch Replay** to open **[Session Replay](/docs/trust-lifecycle/session-replay)**.
+The **Event Log Timeline** shows the full execution trace. You should see:
+
+- Workflow events
+- Activity events
+- HTTP requests
+- Governance decisions
+
+For a full step-by-step playback, click **Watch Replay** to open **[Session Replay](/docs/trust-lifecycle/session-replay)**.
 
 If your session doesn't appear, check that your worker is running and connected to OpenBox. See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)** for common issues.
 
