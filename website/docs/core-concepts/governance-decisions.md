@@ -51,11 +51,11 @@ The operation proceeds but with modifications or limitations.
 - Constraint logged
 - Behavioral score neutral
 
-Constraints and the resulting transformed inputs/outputs are visible in session replay.
+Constraints and the resulting transformed inputs/outputs are visible in [Session Replay](/docs/trust-lifecycle/session-replay).
 
 ## REQUIRE_APPROVAL
 
-The operation is paused pending human approval.
+OpenBox pauses the operation pending human approval.
 
 **When returned:**
 - Policy explicitly requires HITL
@@ -64,8 +64,8 @@ The operation is paused pending human approval.
 
 **Effect:**
 - Request appears in the Approvals queue
-- Session replay shows the operation context and decision timeline
-- Once approved/rejected, the operation proceeds or is blocked
+- [Session Replay](/docs/trust-lifecycle/session-replay) shows the operation context and decision timeline
+- Once a reviewer approves or rejects, the operation proceeds or stops
 
 **Approval flow:**
 ```
@@ -78,7 +78,7 @@ The operation is paused pending human approval.
 
 ## BLOCK
 
-The specific operation is blocked.
+OpenBox blocks the specific operation.
 
 **When returned:**
 - Policy explicitly blocks this operation
@@ -120,7 +120,7 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 
 ## Decision in Session Replay
 
-Session replay shows decisions at each operation:
+[Session Replay](/docs/trust-lifecycle/session-replay) shows decisions at each operation:
 
 ```
 09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW
@@ -133,7 +133,7 @@ Session replay shows decisions at each operation:
 
 ## Customizing Decisions
 
-You can tune how decisions are produced in the **Authorize** phase:
+You can tune how the **Authorize** phase produces decisions:
 
 1. **Policies (OPA/Rego)** - Return `allow`, `deny`, or `require_approval` for specific operations and conditions.
 2. **Behavioral Rules** - Detect multi-step patterns and escalate to `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
@@ -144,5 +144,5 @@ Use policy and behavioral-rule testing before rollout to confirm expected outcom
 
 ## Related
 
-- **[Authorize Phase](/docs/agents/trust-lifecycle/authorize)** - Configure policies that produce these decisions
+- **[Authorize Phase](/docs/trust-lifecycle/authorize)** - Configure policies that produce these decisions
 - **[Approvals](/docs/approvals)** - Process REQUIRE_APPROVAL decisions

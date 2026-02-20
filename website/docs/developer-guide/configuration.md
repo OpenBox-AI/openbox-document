@@ -218,7 +218,8 @@ async def main():
 
 ## Next Steps
 
-1. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review governance decisions and session timelines in the dashboard
-2. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
-3. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up the policies and guardrails in the dashboard
-```
+1. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
+2. **[Event Types](/docs/developer-guide/event-types)** - Understand the semantic event types captured by the SDK
+3. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
+
+

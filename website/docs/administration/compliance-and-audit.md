@@ -14,11 +14,11 @@ OpenBox records all AI agent governance decisions in an immutable audit trail. T
 
 ## Immutable Audit Trail
 
-Every governance decision is recorded with full context and cannot be modified after creation.
+OpenBox records every governance decision with full context. Records cannot be modified after creation.
 
 ### Governance Events
 
-Each time an agent session is evaluated, a governance event is recorded containing:
+Each time OpenBox evaluates an agent session, it records a governance event containing:
 
 | Data Point | Description |
 |------------|-------------|
@@ -32,7 +32,7 @@ Each time an agent session is evaluated, a governance event is recorded containi
 
 ### Trust Score History
 
-Every change to an agent's trust score is recorded:
+OpenBox records every change to an agent's trust score:
 
 | Data Point | Description |
 |------------|-------------|
@@ -45,7 +45,7 @@ Every change to an agent's trust score is recorded:
 
 ### Cryptographic Attestation
 
-Each session's governance events are cryptographically signed, producing a tamper-proof proof certificate. See [Attestation & Cryptographic Proof](./attestation.md) for details.
+Each session's governance events are cryptographically signed, producing a tamper-proof proof certificate. See [Attestation & Cryptographic Proof](./attestation-and-cryptographic-proof.md) for details.
 
 ---
 
@@ -60,7 +60,7 @@ The organization audit log tracks administrative and operational events across y
 | Policy Change | OPA policy created, updated, or deleted |
 | Guardrail Change | Guardrail configuration modified |
 | Agent Session | Agent session lifecycle events |
-| Risk Configuration Change | AIVSS risk profile updated |
+| Risk Configuration Change | Risk profile updated |
 | Goal Alignment Change | Goal alignment settings changed |
 | Role Change | User role assignments modified |
 | Security Event | Security-related actions |
@@ -104,7 +104,7 @@ Export is **on-demand** via the export modal in the Audit Log UI.
 5. Select event types to include
 6. Click **Queue Export**
 
-Exports are processed in the background and made available for download once complete.
+OpenBox processes exports in the background and makes them available for download once complete.
 
 ### Supported Formats
 
@@ -124,3 +124,9 @@ Guidance for maintaining compliance readiness:
 3. **Control Validation** — Periodically test that governance controls produce expected verdicts for known-good and known-bad inputs
 4. **Evidence Backups** — Export audit logs regularly and store them in your organization's document management system
 5. **Team Training** — Ensure team members understand how trust scores, verdicts, and approval workflows function before operating in production
+
+## Next Steps
+
+1. **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
+2. **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization audit log
+

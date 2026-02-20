@@ -10,9 +10,9 @@ The Assess phase establishes baseline trust by evaluating the agent's inherent r
 
 Access via **Agent Detail → Assess** tab.
 
-## AIVSS Configuration
+## Risk Profile Configuration
 
-AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
+The Risk Profile evaluates risk across three categories:
 
 ### Categories
 
@@ -28,9 +28,9 @@ AIVSS (AI Vulnerability Scoring System) evaluates risk across three categories:
 
 ## Risk Profiles
 
-Pre-configured profiles simplify AIVSS setup:
+Pre-configured profiles simplify Risk Profile setup:
 
-| Risk Tier | Risk Level | AIVSS Score | Use Cases |
+| Risk Tier | Risk Level | 	Risk Profile Score | Use Cases |
 |-----------|------------|-------------|-----------|
 | **Tier 1** | Low | 0% – 24% | Read-only, public data access |
 | **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions |
@@ -45,13 +45,13 @@ The Assess tab shows:
 
 The Assess tab displays the **Predicted Trust Tier** card with:
 
-- **Sub-scores** for each AIVSS category (shown as weighted contributions):
+- **Sub-scores** for each Risk Profile category (shown as weighted contributions):
   - Base Security (out of 0.25)
   - AI-Specific (out of 0.45)
   - Impact (out of 0.30)
-- **AIVSS Score** — the combined score out of 100
-- **Trust Score Calculation** — shows how the AIVSS score feeds into the overall Trust Score:
-  - Risk Profile (AIVSS) × 40%
+- **Risk Profile Score** — the combined score out of 100
+- **Trust Score Calculation** — shows how the Risk Profile score feeds into the overall Trust Score:
+  - Risk Profile × 40%
   - Behavioral (Initial) × 35%
   - Alignment (Initial) × 25%
 - **Trust Score** and **Trust Tier** classification
@@ -72,10 +72,10 @@ Example from the UI (low-risk agent):
 Base Security:    0.00 / 0.25
 AI-Specific:      0.05 / 0.45
 Impact:           0.00 / 0.30
-AIVSS Score:      98 / 100
+Risk Profile Score: 98 / 100
 
 Trust Score Calculation:
-  Risk Profile (AIVSS):   98 × 40% = 39.2
+  Risk Profile:   98 × 40% = 39.2
   Behavioral (Initial):  100 × 35% = 35.0
   Alignment (Initial):   100 × 25% = 25.0
   ─────────────────────────────────
@@ -86,7 +86,7 @@ New agents start with 100% behavioral and alignment scores. Trust tier may decre
 
 ### Assessment History
 
-Timeline of AIVSS changes with:
+Timeline of Risk Profile changes with:
 - Change date
 - Previous vs. new values
 - Change reason
@@ -117,10 +117,10 @@ Trigger a re-assessment when:
 - Compliance requirements change
 - After significant incidents
 
-Click **Re-assess Risk** to update AIVSS parameters.
+Click **Re-assess Risk** to update Risk Profile parameters.
 
 ## Next Phase
 
 Once you've assessed your agent's risk profile:
 
-→ **[Authorize](/docs/agents/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do
+→ **[Authorize](/docs/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do

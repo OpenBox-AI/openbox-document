@@ -6,9 +6,23 @@ sidebar_position: 3
 
 # Monitor (Phase 3)
 
-The Monitor phase provides visibility into agent runtime behavior. Observe sessions, view session replays, and track telemetry.
+The Monitor phase provides visibility into agent runtime behavior. Track performance, cost, errors, and goal alignment across sessions.
 
 Access via **Agent Detail → Monitor** tab.
+
+### Time Range Selector
+
+Use the time range selector in the top-right corner to control the reporting period for all dashboard widgets.
+
+| Option | Period |
+|--------|--------|
+| **24H** | Last 24 hours |
+| **7D** | Last 7 days |
+| **30D** | Last 30 days |
+| **90D** | Last 90 days |
+| **Custom** | Select a custom date range |
+
+The default view is **7D**. Changing the time range updates all metrics, charts, and issue lists on the dashboard.
 
 ## Operational Dashboard
 
@@ -16,23 +30,53 @@ The Monitor tab provides operational observability into performance, cost, and h
 
 ### Total Invocations
 
-Total number of agent invocations, with trend and average response time.
+Displays the total number of agent invocations for the selected period.
+- **Trend** — percentage change compared to the previous period (e.g. -87.9%)
+- **Avg response** — average response time across all invocations (e.g. Avg 1.1s response)
+
 
 ### Token Consumption
 
-Total tokens consumed, with trend and associated cost for the current day.
+Displays the total tokens consumed across all invocations for the selected period.
+
+- **Trend** — percentage change compared to the previous period (e.g. +8%)
+- **Today's cost** — estimated spend for the current day (e.g. $3.83 today)
+
 
 ### Total Errors
+Displays the total error count for the selected period.
 
-Total error count, with today's error count and overall success rate.
+- **Today's errors** — number of errors recorded today (e.g. +5 today)
+- **Success rate** — overall success rate across all invocations (e.g. 97.8%)
+
 
 ### Goal Alignment Trend
+Line chart showing goal alignment scores across all sessions over time.
 
-Trend chart of alignment across sessions over time.
+- **Threshold line** — 70% alignment threshold shown as a dashed line
+- **Color bands:**
+
+| Color | Range | Meaning |
+|-------|-------|---------|
+| Green | 70% and above | Aligned |
+| Orange | 50% – 69% | Warning |
+| Red | Below 50% | Misaligned |
+
 
 ### Recent Drift Events
+Lists recent sessions where goal drift was detected. A count badge shows the total number of drift events.
 
-Recent sessions where goal drift was detected, including session ID, score, and drift summary.
+Each entry displays:
+
+| Field | Description |
+|-------|-------------|
+| **Session ID** | Truncated session identifier |
+| **Score** | Alignment score as a percentage (e.g. 89%) |
+| **Summary** | Brief description of the detected drift |
+| **Timestamp** | Relative time (e.g. 5 days ago) |
+
+Click an event to view session details.
+
 
 ### Tool Health Matrix
 
@@ -40,7 +84,8 @@ Health table for tools/MCP servers (success rate, latency, status) to identify d
 
 ### Request Volume
 
-Request volume chart (last 24h) with total requests, peak per hour, and average per hour.
+Request volume chart for the selected time range, with total requests, peak per hour, average per hour, and success rate.
+
 
 ### Model Usage
 
@@ -52,7 +97,7 @@ Response-time distribution with percentiles (P50, P95, P99, Max).
 
 ### Error Breakdown
 
-Error categories with counts/percentages (for example: timeout, rate limit, server error, policy violation).
+Donut chart of error categories with counts and percentages (for example: Span Failed, Other Error, Workflow Failed, Guardrail Block).
 
 ### Cost Analytics
 
@@ -60,88 +105,22 @@ Spending view with today's spend, projection, and budget utilization split by in
 
 ### Recent Issues
 
-Latest issues requiring action (policy violations, workflow failures, timeouts), with links to details.
+List of recent issues requiring attention. Click **Refresh** to reload the list.
 
-## Sessions
-
-View active and completed workflow sessions.
-
-### Active Sessions
-
-Real-time view of running sessions:
+Each entry displays:
 
 | Field | Description |
 |-------|-------------|
-| **Session ID** | Unique identifier (e.g., sess_20241207_143215_abc123) |
-| **Started** | Start timestamp |
-| **Duration** | Running time |
-| **Events** | Event count |
-| **Status** | Running, Waiting (HITL), Error |
+| **Type** | Issue tag — `workflow_failed` (red) or `guardrail_violation` (orange) |
+| **Description** | Summary of the issue (e.g. "Workflow execution failed" or blocked validation details) |
+| **Source** | Originating activity and workflow |
+| **Timestamp** | Relative time (e.g. 5 days ago) |
+| **Session Status** | Current session state (e.g. halted) |
 
-Click any active session to watch it in real-time via Session Replay.
+Click an issue row to view the full session details.
 
-### Recent Sessions
-
-Completed sessions showing:
-
-- Session ID and timestamps
-- Duration and event count
-- Goal alignment score
-- Final status (Completed, Failed, Terminated)
-- Governance verdicts summary
-
-## Session Replay
-
-Click any session to open the full replay view.
-
-### Header
-
-- **Session ID** - Unique identifier
-- **Duration** - Total session time
-- **Events** - Total event count
-- **Goal Alignment** - Session alignment score with visual bar
-- **Status** - Completed, Failed, or Terminated
-
-### Timeline Control
-
-Interactive timeline with:
-
-- **Play/Pause** - Animate through the session
-- **Seek** - Click anywhere on the timeline to jump
-- **Speed** - 0.5x, 1x, 2x playback speed
-- **Timestamps** - Start and end times
-
-### Event Stream
-
-Chronological list of all events in the session:
-
-```
-00:00  Session Started       User initiated support request
-00:02  User Input Received   "I need help with my recent order"
-00:05  LLM Inference         Intent classification (gpt-4)
-00:08  Database Query        SELECT * FROM orders WHERE...
-00:12  LLM Inference         Response generation
-00:15  Output Generated      Response to user
-```
-
-Each event shows:
-- **Timestamp** - Relative time in session
-- **Event type** - Icon and name
-- **Description** - What happened
-- **Governance verdict** - ALLOWED, CONSTRAINED, HALTED badges
-
-### Event Detail
-
-Click any event to see full details:
-
-- **Event metadata** - Type, timestamp, duration
-- **Input/Output** - What went in/out (with sensitive data redacted)
-- **Governance decision** - Which policies evaluated, what was the result
-- **Trust impact** - How this event affected the trust score
 
 ### Goal Alignment Badge
-
-The session header shows alignment:
 
 Goal Alignment tracks whether your agent's actions and outputs match the user's original request. OpenBox compares the user's goal (sent via Temporal signal) against the agent's LLM responses and tool outputs.
 
@@ -227,9 +206,9 @@ Notes:
 - The signal name can be anything (it does not have to be `user_prompt`).
 - If your activities do file operations, ensure your worker has `instrument_file_io=True` enabled.
 
-## Observability Metrics
+## Observability Metrics Reference
 
-Aggregated metrics across sessions:
+The dashboard widgets above surface the following underlying metrics. This reference describes the full set of metrics OpenBox tracks for each agent.
 
 ### Performance
 
@@ -257,26 +236,8 @@ Charts showing:
 - Governance decision distribution
 - Trust score changes
 
-## Event Types in Replay
-
-Session replay shows events with semantic types:
-
-| Type | Icon | Example |
-|------|------|---------|
-| Session Started | Play | User initiated support request |
-| User Input | Message | "I need help with my order" |
-| LLM Inference | CPU/Brain | Intent classification with gpt-4 |
-| Database Query | Database | SELECT * FROM orders |
-| External API | Globe | POST to stripe.com/charges |
-| Tool Call | Wrench | execute_refund() |
-| Output Generated | MessageSquare | Response sent to user |
-| Approval Requested | Clock | Waiting for human approval |
-| Approval Granted | CheckCircle | Approved by sarah@company.com |
-| Session Completed | CheckCircle | Success |
-
-
 ## Next Phase
 
 As sessions complete and data accumulates:
 
-→ **[Verify](/docs/agents/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift
+→ **[Verify](/docs/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift

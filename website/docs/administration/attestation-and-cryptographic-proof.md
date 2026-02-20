@@ -130,3 +130,9 @@ Each session produces one proof certificate containing:
 - **Merkle tree visualization** — interactive tree showing event hashes and the verification path
 - **Digital signature section** — signing algorithm, signature value, and signing timestamp
 - **Hash chain section** — individual event hashes with their Merkle proofs
+
+## Related
+
+- **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization-wide audit log
+- **[Compliance & Audit](/docs/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
+

@@ -10,7 +10,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 ## Tier Definitions
 
-| Tier | AIVSS Score | Risk Level | Description |
+| Tier | Risk Profile Score | Risk Level | Description |
 |------|-------------|------------|-------------|
 | **Tier 1** | 0% – 24% | Low | Read-only, public data access |
 | **Tier 2** | 25% – 49% | Medium | Internal data, non-critical actions |
@@ -134,6 +134,6 @@ require_approval {
 
 ## Related
 
-- **[Trust Scores](/docs/concepts/trust-scores)** - How the 0-100 score is calculated
-- **[Governance Decisions](/docs/concepts/governance-decisions)** - What happens at each tier
+- **[Trust Scores](/docs/core-concepts/trust-scores)** - How the 0-100 score is calculated
+- **[Governance Decisions](/docs/core-concepts/governance-decisions)** - What happens at each tier
 - **[Dashboard](/docs/dashboard)** - View organization-wide tier distribution

@@ -387,3 +387,7 @@
     max-width: min(280px, calc(100vw - 1rem));
   }
 }
+
+.markdown h6 {
+  font-size: 1rem;
+}

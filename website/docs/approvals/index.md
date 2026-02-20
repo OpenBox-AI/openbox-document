@@ -41,7 +41,9 @@ Click **Analytics** to view detailed SLA analytics.
 
 ## Approval Queue
 
-### Queue Tabs
+### Status Filter
+
+Use the status dropdown to filter the queue:
 
 - **Pending** - Requests awaiting action
 - **Approved** - Recently approved requests
@@ -75,9 +77,10 @@ For each pending request:
 
 | Action | Description |
 |--------|-------------|
-| **Approve** | Allow operation to proceed |
+| **View Agent** | Open the agent detail page in a new tab |
+| **Details** | View full details of the approval request |
 | **Reject** | Block operation (requires reason) |
-| **View Session** | Open session replay for full context |
+| **Approve** | Allow operation to proceed |
 
 ## Processing Approvals
 
@@ -125,5 +128,5 @@ Filter the queue by:
 
 ## Next Steps
 
-1. **[Review Approvals](/docs/approvals)** - Manage pending requests and approval history
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Review the full session context before approving or rejecting
+1. **[Organization Settings](/docs/administration/organization)** - Manage teams, roles, and organization configuration
+2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/docs/trust-lifecycle/session-replay) before approving or rejecting

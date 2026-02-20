@@ -26,23 +26,23 @@ Access each phase via the tabs in **Agent Detail**.
 
 | Phase | Tab | Purpose | Key Activities |
 |-------|-----|---------|----------------|
-| **[Assess](/docs/agents/trust-lifecycle/assess)** | Assess | Establish baseline risk | AIVSS configuration, risk profiling |
-| **[Authorize](/docs/agents/trust-lifecycle/authorize)** | Authorize | Define allowed behaviors | Guardrails, policies, behavioral rules |
-| **[Monitor](/docs/agents/trust-lifecycle/monitor)** | Monitor | Observe runtime execution | Sessions, metrics, telemetry |
-| **[Verify](/docs/agents/trust-lifecycle/verify)** | Verify | Validate goal alignment | Drift detection, attestation |
-| **[Adapt](/docs/agents/trust-lifecycle/adapt)** | Adapt | Evolve trust over time | Policy suggestions, trust recovery |
+| **[Assess](/docs/trust-lifecycle/assess)** | Assess | Establish baseline risk | Risk profile configuration, risk profiling |
+| **[Authorize](/docs/trust-lifecycle/authorize)** | Authorize | Define allowed behaviors | Guardrails, policies, behavioral rules |
+| **[Monitor](/docs/trust-lifecycle/monitor)** | Monitor | Observe runtime execution | Sessions, metrics, telemetry |
+| **[Verify](/docs/trust-lifecycle/verify)** | Verify | Validate goal alignment | Drift detection, attestation |
+| **[Adapt](/docs/trust-lifecycle/adapt)** | Adapt | Evolve trust over time | Policy suggestions, trust recovery |
 
 ## Trust Score
 
 The Trust Score (0-100) aggregates across the lifecycle:
 
 ```
-Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = 	(Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Phase | Description |
 |-----------|-------|-------------|
-| **AIVSS** | Assess | Inherent risk based on capabilities and access |
+| **Risk Profile** | Assess | Inherent risk based on capabilities and access |
 | **Behavioral** | Authorize + Monitor | Compliance with policies and rules |
 | **Alignment** | Verify | Consistency with stated goals |
 
@@ -50,7 +50,7 @@ Trust Score = (AIVSS Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 
 The Trust Score maps to Trust Tiers that determine governance strictness:
 
-| Tier | AIVSS Score | Risk Level | Governance Level |
+| Tier | Risk Profile Score | Risk Level | Governance Level |
 |------|-------------|------------|------------------|
 | **Tier 1** | 0% – 24% | Low | Minimal constraints, high autonomy |
 | **Tier 2** | 25% – 49% | Medium | Standard policies, normal monitoring |
@@ -61,7 +61,7 @@ The Trust Score maps to Trust Tiers that determine governance strictness:
 
 ### New Agents
 
-1. **Assess** - Configure AIVSS and risk profile
+1. **Assess** - Configure risk profile
 2. **Authorize** - Set up initial guardrails and policies
 3. Agent begins operation
 4. **Monitor** - Observe sessions and metrics
@@ -91,8 +91,8 @@ In Agent Detail, click the phase tabs:
 
 Follow the Trust Lifecycle phases in order:
 
-1. **[Assess](/docs/agents/trust-lifecycle/assess)** - Start here to understand your agent's risk profile
-2. **[Authorize](/docs/agents/trust-lifecycle/authorize)** - Then configure what your agent is allowed to perform
-3. **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Watch your agent operate in real-time
-4. **[Verify](/docs/agents/trust-lifecycle/verify)** - Validate goal alignment
-5. **[Adapt](/docs/agents/trust-lifecycle/adapt)** - Evolve trust based on behavior
+1. **[Assess](/docs/trust-lifecycle/assess)** - Start here to understand your agent's risk profile
+2. **[Authorize](/docs/trust-lifecycle/authorize)** - Then configure what your agent is allowed to perform
+3. **[Monitor](/docs/trust-lifecycle/monitor)** - Watch your agent operate in real-time
+4. **[Verify](/docs/trust-lifecycle/verify)** - Validate goal alignment
+5. **[Adapt](/docs/trust-lifecycle/adapt)** - Evolve trust based on behavior

@@ -18,93 +18,88 @@ const sidebars = {
     {
       type: 'category',
       label: 'Getting Started',
-      collapsed: false,
+      link: {
+        type: 'doc',
+        id: 'getting-started/index',
+      },
       items: [
-        'getting-started/index',
+        'getting-started/registering-agents',
         'getting-started/quick-start',
-        {
-          type: 'category',
-          label: 'Workflow Engines',
-          items: [
-            'getting-started/workflow-engines/temporal',
-          ],
-        },
+        'getting-started/troubleshooting',
       ],
     },
     {
       type: 'category',
-      label: 'Concepts',
+      label: 'Core Concepts',
       collapsed: true,
       items: [
-        'concepts/trust-scores',
-        'concepts/trust-tiers',
-        'concepts/event-types',
-        'concepts/governance-decisions',
+        'core-concepts/trust-scores',
+        'core-concepts/trust-tiers',
+        'core-concepts/governance-decisions',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Trust Lifecycle',
+      link: {
+        type: 'doc',
+        id: 'trust-lifecycle/index',
+      },
+      items: [
+        'trust-lifecycle/overview',
+        'trust-lifecycle/assess',
+        'trust-lifecycle/authorize',
+        'trust-lifecycle/monitor',
+        {
+          type: 'category',
+          label: 'Verify',
+          link: {
+            type: 'doc',
+            id: 'trust-lifecycle/verify',
+          },
+          items: [
+            'trust-lifecycle/session-replay',
+          ],
+        },
+        'trust-lifecycle/adapt',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Developer Guide',
+      items: [
+        'developer-guide/sdk-reference',
+        'developer-guide/temporal-integration-guide-python',
+        'developer-guide/configuration',
+        'developer-guide/error-handling',
+        'developer-guide/event-types',
       ],
     },
     {
       type: 'category',
       label: 'Dashboard',
+      link: {
+        type: 'doc',
+        id: 'dashboard/index',
+      },
       items: [
-        'dashboard/index',
+        'dashboard/agents',
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],
     },
+    'approvals/index',
     {
       type: 'category',
-      label: 'Agents',
-      collapsed: false,
+      label: 'Administration',
       items: [
-        'agents/index',
-        'agents/registering-agents',
-        {
-          type: 'category',
-          label: 'Trust Lifecycle',
-          collapsed: false,
-          items: [
-            'agents/trust-lifecycle/index',
-            'agents/trust-lifecycle/assess',
-            'agents/trust-lifecycle/authorize',
-            'agents/trust-lifecycle/monitor',
-            'agents/trust-lifecycle/verify',
-            'agents/trust-lifecycle/adapt',
-          ],
-        },
+        'administration/organization',
+        'administration/compliance-and-audit',
+        'administration/attestation-and-cryptographic-proof',
+        'administration/organization-audit-log',
       ],
     },
-    {
-      type: 'category',
-      label: 'Approvals',
-      items: [
-        'approvals/index',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Organization',
-      items: [
-        'organization/index',
-        'organization/audit-log',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Compliance',
-      items: [
-        'compliance/index',
-        'compliance/attestation',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'SDK',
-      items: [
-        'sdk/index',
-        'sdk/configuration',
-        'sdk/error-handling',
-      ],
-    },
+    'glossary',
   ],
 };
 
