@@ -77,9 +77,10 @@ For each pending request:
 
 | Action | Description |
 |--------|-------------|
-| **Approve** | Allow operation to proceed |
+| **View Agent** | Open the agent detail page in a new tab |
+| **Details** | View full details of the approval request |
 | **Reject** | Block operation (requires reason) |
-| **View Session** | Open [Session Replay](/docs/trust-lifecycle/session-replay) for full context |
+| **Approve** | Allow operation to proceed |
 
 ## Processing Approvals
 
