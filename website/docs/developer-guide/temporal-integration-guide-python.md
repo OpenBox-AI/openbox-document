@@ -29,11 +29,36 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
 - **[Node.js](https://nodejs.org/)** — Required for the frontend
 - **[uv](https://docs.astral.sh/uv/)** — Python package manager
 - **`make`** — Required to run setup and dev scripts:
-  - **macOS**: `xcode-select --install`
-  - **Linux**:
-    - **Debian/Ubuntu**: `sudo apt install make`
-    - **Fedora/RHEL**: `sudo dnf install make`
-  - **Windows**: `winget install GnuWin32.Make` or `choco install make`
+
+<Tabs>
+<TabItem value="mac" label="macOS" default>
+
+```bash
+xcode-select --install
+```
+
+</TabItem>
+<TabItem value="linux" label="Linux">
+
+```bash
+# Debian/Ubuntu
+sudo apt install make
+
+# Fedora/RHEL
+sudo dnf install make
+```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+```bash
+winget install GnuWin32.Make
+# or
+choco install make
+```
+
+</TabItem>
+</Tabs>
 
 ## Part 1: Clone and Set Up the Demo
 
