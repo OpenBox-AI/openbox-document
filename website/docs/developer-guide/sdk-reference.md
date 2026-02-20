@@ -31,7 +31,7 @@ The SDK is intentionally minimal:
 See:
 
 1. **[Quick Start](/docs/getting-started/quick-start)** - Wrap an existing Temporal worker
-2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide)** - End-to-end setup from scratch
+2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
 3. **[Configuration](/docs/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
 
 ## What the SDK Captures
@@ -104,6 +104,6 @@ See **[Configuration](/docs/developer-guide/configuration)** for all options inc
 
 ## Next Steps
 
-1. **[Temporal Integration](/docs/developer-guide/temporal-integration-guide)** - Wrap an existing Temporal agent with the SDK
+1. **[Temporal Integration](/docs/developer-guide/temporal-integration-guide-python)** - Wrap an existing Temporal agent with the SDK
 2. **[Configuration](/docs/developer-guide/configuration)** - Configure timeouts, fail policies, and exclusions
 3. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code

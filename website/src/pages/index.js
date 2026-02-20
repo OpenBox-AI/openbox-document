@@ -14,7 +14,7 @@ const ExploreSections = [
     links: [
       {label: 'Introduction', to: '/docs/'},
       {label: 'Quick start', to: '/docs/getting-started/quick-start'},
-      {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide'},
+      {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
     ],
   },
   {

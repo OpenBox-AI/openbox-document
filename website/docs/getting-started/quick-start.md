@@ -9,7 +9,7 @@ sidebar_position: 1
 Add a trust layer to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for trust, monitoring, and compliance.
 
 :::tip Building from Scratch?
-If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide)** for a complete end-to-end setup.
+If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** for a complete end-to-end setup.
 :::
 
 ---
@@ -245,6 +245,6 @@ Now that your agent is running with OpenBox:
 
 ## Need More Details?
 
-- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide)** - Complete end-to-end setup from scratch
+- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** - Complete end-to-end setup from scratch
 - **[SDK Reference](/docs/developer-guide/sdk-reference)** - Full SDK documentation and configuration options
 - **[Approvals](/docs/approvals)** - Review and act on HITL approvals in the dashboard
