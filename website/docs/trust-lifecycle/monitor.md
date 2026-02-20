@@ -240,4 +240,4 @@ Charts showing:
 
 As sessions complete and data accumulates:
 
-→ **[Verify](/docs/agents/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift
+→ **[Verify](/docs/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift

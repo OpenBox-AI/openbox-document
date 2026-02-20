@@ -45,7 +45,7 @@ OpenBox records every change to an agent's trust score:
 
 ### Cryptographic Attestation
 
-Each session's governance events are cryptographically signed, producing a tamper-proof proof certificate. See [Attestation & Cryptographic Proof](./attestation.md) for details.
+Each session's governance events are cryptographically signed, producing a tamper-proof proof certificate. See [Attestation & Cryptographic Proof](./attestation-and-cryptographic-proof.md) for details.
 
 ---
 
@@ -127,6 +127,6 @@ Guidance for maintaining compliance readiness:
 
 ## Next Steps
 
-1. **[Attestation & Cryptographic Proof](/docs/compliance/attestation)** - Learn how session events are cryptographically signed
-2. **[Audit Log](/docs/organization/audit-log)** - View and export the organization audit log
+1. **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
+2. **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization audit log
 

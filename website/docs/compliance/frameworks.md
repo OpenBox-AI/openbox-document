@@ -8,5 +8,5 @@ sidebar_position: 2
 
 OpenBox provides audit-ready evidence through:
 
-- **[Attestation](/docs/compliance/attestation)** - Cryptographic proof of agent behavior
-- **[Audit Log](/docs/organization/audit-log)** - Organization-wide activity trail
+- **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** - Cryptographic proof of agent behavior
+- **[Audit Log](/docs/administration/organization-audit-log)** - Organization-wide activity trail

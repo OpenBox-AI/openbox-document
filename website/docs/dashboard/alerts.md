@@ -64,6 +64,6 @@ For each alert, you can:
 
 When you see an alert:
 
-1. **[View Agent Details](/docs/agents)** - Click the agent to investigate
-2. **[Check Goal Alignment (Verify)](/docs/agents/trust-lifecycle/verify)** - If drift is detected
+1. **[View Agent Details](/docs/dashboard/agents)** - Click the agent to investigate
+2. **[Check Goal Alignment (Verify)](/docs/trust-lifecycle/verify)** - If drift is detected
 3. **[Review Approvals](/docs/approvals)** - If approvals have timed out

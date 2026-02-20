@@ -21,7 +21,7 @@ A risk scoring framework that evaluates AI agents across three weighted categori
 
 The resulting score (0–100%) determines the agent's initial [Trust Tier](#trust-tier).
 
-**Learn more:** [Assess Phase](/docs/agents/trust-lifecycle/assess)
+**Learn more:** [Assess Phase](/docs/trust-lifecycle/assess)
 
 ---
 
@@ -36,7 +36,7 @@ A 0–100% metric measuring how well an agent's actions match its stated goals. 
 | 50–69% | Warning | Notable drift, review recommended |
 | Below 50% | Misaligned | Significant deviation, action required |
 
-**Learn more:** [Verify Phase](/docs/agents/trust-lifecycle/verify)
+**Learn more:** [Verify Phase](/docs/trust-lifecycle/verify)
 
 ---
 
@@ -48,7 +48,7 @@ Signing providers:
 - **AWS KMS** — ECDSA NIST P-256 (default)
 - **External Attestation** — Your own signing service (e.g., TEE, HSM)
 
-**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+**Learn more:** [Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)
 
 ---
 
@@ -63,7 +63,7 @@ Stateful authorization rules that detect multi-step patterns across an agent's s
 
 Rules are evaluated in priority order and stop at the first rule that triggers a verdict.
 
-**Learn more:** [Authorize Phase: Behavioral Rules](/docs/agents/trust-lifecycle/authorize#behavioral-rules)
+**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize#behavioral-rules)
 
 ---
 
@@ -77,7 +77,7 @@ A 0–100 runtime compliance metric that starts at 100 for new agents and decrea
 | Major | -15 pts | -5.25 pts |
 | Critical | -25 pts | -8.75 pts |
 
-**Learn more:** [Trust Scores](/docs/concepts/trust-scores)
+**Learn more:** [Trust Scores](/docs/core-concepts/trust-scores)
 
 ---
 
@@ -95,7 +95,7 @@ The outcome produced when OpenBox evaluates an agent operation. There are five p
 
 **Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
 
-**Learn more:** [Governance Decisions](/docs/concepts/governance-decisions)
+**Learn more:** [Governance Decisions](/docs/core-concepts/governance-decisions)
 
 ---
 
@@ -107,7 +107,7 @@ Pre- or post-processing validation and transformation rules applied to agent inp
 - **Input Guardrails** — Validate/transform incoming data (PII detection, rate limiting)
 - **Output Guardrails** — Validate/transform responses (PII redaction, format enforcement)
 
-**Learn more:** [Authorize Phase: Guardrails](/docs/agents/trust-lifecycle/authorize#guardrails)
+**Learn more:** [Authorize Phase: Guardrails](/docs/trust-lifecycle/authorize#guardrails)
 
 ---
 
@@ -131,7 +131,7 @@ A workflow pattern where an agent operation is paused pending human approval bef
 
 A cryptographic data structure used to combine individual event hashes into a single session root hash. Uses SHA-256 with sorted-pair hashing to ensure consistent tree construction regardless of processing order. Enables tamper-proof verification of governance events.
 
-**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+**Learn more:** [Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)
 
 ---
 
@@ -141,7 +141,7 @@ Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (
 
 Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
 
-**Learn more:** [Authorize Phase: Policies](/docs/agents/trust-lifecycle/authorize#policies)
+**Learn more:** [Authorize Phase: Policies](/docs/trust-lifecycle/authorize#policies)
 
 ---
 
@@ -155,7 +155,7 @@ A per-session attestation record produced after an agent session completes. Cont
 | **Signature** | Digital signature of the Merkle root (from AWS KMS or external provider) |
 | **Event Count** | Number of governance events included in the attestation |
 
-**Learn more:** [Attestation & Cryptographic Proof](/docs/compliance/attestation)
+**Learn more:** [Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)
 
 ---
 
@@ -163,7 +163,7 @@ A per-session attestation record produced after an agent session completes. Cont
 
 An interactive dashboard view showing the complete execution timeline of an agent session. Allows step-by-step walkthrough of every operation with its governance decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.).
 
-**Learn more:** [Monitor Phase](/docs/agents/trust-lifecycle/monitor)
+**Learn more:** [Session Replay](/docs/trust-lifecycle/session-replay)
 
 ---
 
@@ -179,13 +179,13 @@ The governance layer OpenBox adds alongside your workflow engine. It provides tr
 
 OpenBox's 5-phase governance model for establishing, maintaining, and evolving trust in AI agents:
 
-1. **[Assess](/docs/agents/trust-lifecycle/assess)** — Establish baseline risk profile
-2. **[Authorize](/docs/agents/trust-lifecycle/authorize)** — Define guardrails, policies, and behavioral rules
-3. **[Monitor](/docs/agents/trust-lifecycle/monitor)** — Observe runtime behavior and telemetry
-4. **[Verify](/docs/agents/trust-lifecycle/verify)** — Check goal alignment and session integrity
-5. **[Adapt](/docs/agents/trust-lifecycle/adapt)** — Evolve trust based on observed patterns
+1. **[Assess](/docs/trust-lifecycle/assess)** — Establish baseline risk profile
+2. **[Authorize](/docs/trust-lifecycle/authorize)** — Define guardrails, policies, and behavioral rules
+3. **[Monitor](/docs/trust-lifecycle/monitor)** — Observe runtime behavior and telemetry
+4. **[Verify](/docs/trust-lifecycle/verify)** — Check goal alignment and session integrity
+5. **[Adapt](/docs/trust-lifecycle/adapt)** — Evolve trust based on observed patterns
 
-**Learn more:** [Trust Lifecycle Overview](/docs/agents/trust-lifecycle)
+**Learn more:** [Trust Lifecycle Overview](/docs/trust-lifecycle)
 
 ---
 
@@ -201,7 +201,7 @@ A 0–100 metric representing an agent's overall trustworthiness, calculated fro
 
 **Formula:** `Trust Score = (Risk Profile × 40%) + (Behavioral × 35%) + (Alignment × 25%)`
 
-**Learn more:** [Trust Scores](/docs/concepts/trust-scores)
+**Learn more:** [Trust Scores](/docs/core-concepts/trust-scores)
 
 ---
 
@@ -216,4 +216,4 @@ One of four trust levels derived from the [Trust Score](#trust-score) that deter
 | **Tier 3** | 50–74% | High | Enhanced monitoring, stricter enforcement |
 | **Tier 4** | 75–100% | Critical | Strict controls, frequent HITL, rate limiting |
 
-**Learn more:** [Trust Tiers](/docs/concepts/trust-tiers)
+**Learn more:** [Trust Tiers](/docs/core-concepts/trust-tiers)

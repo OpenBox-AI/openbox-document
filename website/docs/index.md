@@ -32,7 +32,7 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
 
 | Team / Role | How they use OpenBox | Business outcome |
 |------------|-----------------------|------------------|
-| **Security / Trust & Safety** | Define policies and guardrails, review risky behavior, investigate incidents via Audit Log and [Session Replay](/docs/agents/trust-lifecycle/session-replay) | Reduce security risk, shorten incident response time, enforce consistent controls |
+| **Security / Trust & Safety** | Define policies and guardrails, review risky behavior, investigate incidents via Audit Log and [Session Replay](/docs/trust-lifecycle/session-replay) | Reduce security risk, shorten incident response time, enforce consistent controls |
 | **Engineering (Platform / AI Infra)** | Integrate the SDK into workers, standardize instrumentation, set trust controls across many agents | Faster rollouts, fewer regressions, consistent enterprise-wide controls |
 | **Product (AI Product Owners)** | Monitor agent reliability, iterate on controls as capabilities change, track approvals and exceptions | Ship AI features faster with clear safety boundaries and measurable reliability |
 | **Compliance / Audit** | Export audit-ready evidence and attestations, review decision trails for audits and reviews | Lower audit friction, repeatable evidence collection, easier stakeholder sign-off |
@@ -59,7 +59,7 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
     </div>
     <span className="linear-card__chevron" aria-hidden="true">›</span>
   </Link>
-  <Link className="linear-card" to="/docs/agents/trust-lifecycle">
+  <Link className="linear-card" to="/docs/trust-lifecycle">
     <div className="linear-card__content">
       <h3 className="linear-card__title">Trust Lifecycle</h3>
       <p className="linear-card__description">Learn the 5 phases: Assess, Authorize, Monitor, Verify, and Adapt.</p>
@@ -80,7 +80,7 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
     </div>
     <span className="linear-card__chevron" aria-hidden="true">›</span>
   </Link>
-  <Link className="linear-card" to="/docs/agents">
+  <Link className="linear-card" to="/docs/dashboard/agents">
     <div className="linear-card__content">
       <h3 className="linear-card__title">Agents</h3>
       <p className="linear-card__description">Register agents, configure trust lifecycle phases, and monitor behavior.</p>
@@ -94,14 +94,14 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
     </div>
     <span className="linear-card__chevron" aria-hidden="true">›</span>
   </Link>
-  <Link className="linear-card" to="/docs/sdk">
+  <Link className="linear-card" to="/docs/developer-guide/sdk-reference">
     <div className="linear-card__content">
       <h3 className="linear-card__title">SDK</h3>
       <p className="linear-card__description">Minimal SDK integration - just wrap your workflow worker.</p>
     </div>
     <span className="linear-card__chevron" aria-hidden="true">›</span>
   </Link>
-  <Link className="linear-card" to="/docs/compliance">
+  <Link className="linear-card" to="/docs/administration/compliance-and-audit">
     <div className="linear-card__content">
       <h3 className="linear-card__title">Compliance</h3>
       <p className="linear-card__description">Attestation and audit trails for auditors.</p>

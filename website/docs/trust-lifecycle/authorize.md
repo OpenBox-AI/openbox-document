@@ -694,7 +694,7 @@ This step defines the **Prior State** prerequisite described below.
 Finish by clicking **Create Rule**.
 
 :::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes - see [Error Handling](/docs/sdk/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes - see [Error Handling](/docs/developer-guide/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
 :::
 
 #### How Prior State and Trigger Work
@@ -841,4 +841,4 @@ Lower trust tiers receive stricter defaults:
 
 Once you've configured governance controls:
 
-→ **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Start your agent and observe its runtime behavior with [Session Replay](/docs/agents/trust-lifecycle/session-replay)
+→ **[Monitor](/docs/trust-lifecycle/monitor)** - Start your agent and observe its runtime behavior with [Session Replay](/docs/trust-lifecycle/session-replay)
