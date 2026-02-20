@@ -38,4 +38,4 @@ OpenBox integrates with your existing workflow engine by wrapping the worker pro
 ## Next Steps
 
 1. **[Quick Start](/docs/getting-started/quick-start)** - Register your first agent and see it in the dashboard
-2. **[Temporal Integration](/docs/getting-started/workflow-engines/temporal)** - Detailed SDK configuration options
+2. **[Temporal Integration](/docs/developer-guide/temporal-integration-guide-python)** - Detailed SDK configuration options

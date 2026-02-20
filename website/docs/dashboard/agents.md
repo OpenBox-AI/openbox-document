@@ -75,20 +75,20 @@ Or click anywhere on the row to view the agent detail.
 
 ## Adding Agents
 
-Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/docs/agents/registering-agents) for details.
+Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/docs/getting-started/registering-agents) for details.
 
 ## Agent Detail Page
 
 Click any agent to view its detail page with these tabs:
 
-- **[Overview](/docs/agents/overview)** - Active sessions, completed, failed, and halted sessions
-- **[Assess](/docs/agents/trust-lifecycle/assess)** - Risk profile configuration
-- **[Authorize](/docs/agents/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
-- **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Operational dashboard and telemetry
-- **[Verify](/docs/agents/trust-lifecycle/verify)** - Goal alignment and drift detection
-- **[Adapt](/docs/agents/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
+- **[Overview](/docs/trust-lifecycle/overview)** - Active sessions, completed, failed, and halted sessions
+- **[Assess](/docs/trust-lifecycle/assess)** - Risk profile configuration
+- **[Authorize](/docs/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
+- **[Monitor](/docs/trust-lifecycle/monitor)** - Operational dashboard and telemetry
+- **[Verify](/docs/trust-lifecycle/verify)** - Goal alignment and drift detection
+- **[Adapt](/docs/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
 
 ## Next Steps
 
-1. **[Register a New Agent](/docs/agents/registering-agents)** - Add a new agent to OpenBox
+1. **[Register a New Agent](/docs/getting-started/registering-agents)** - Add a new agent to OpenBox
 2. **[Trust Overview](/docs/dashboard/trust-overview)** - View trust scores and trends across all agents

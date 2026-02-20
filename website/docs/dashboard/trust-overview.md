@@ -44,9 +44,9 @@ Export dashboard data for reporting:
 
 - **PDF Report** - Formatted for stakeholders
 - **CSV** - Raw data for analysis
-- **Compliance Report** - Formatted for auditors (see [Compliance](/docs/compliance))
+- **Compliance Report** - Formatted for auditors (see [Compliance](/docs/administration/compliance-and-audit))
 
 ## Next Steps
 
 1. **[View Alerts](/docs/dashboard/alerts)** - See agents that need attention
-2. **[Drill into Agents](/docs/agents)** - Click any agent to view details and configure trust controls
+2. **[Drill into Agents](/docs/dashboard/agents)** - Click any agent to view details and configure trust controls
