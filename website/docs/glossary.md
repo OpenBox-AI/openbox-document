@@ -163,7 +163,7 @@ A per-session attestation record produced after an agent session completes. Cont
 
 An interactive dashboard view showing the complete execution timeline of an agent session. Allows step-by-step walkthrough of every operation with its governance decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.).
 
-**Learn more:** [Monitor Phase](/docs/trust-lifecycle/monitor)
+**Learn more:** [Session Replay](/docs/trust-lifecycle/session-replay)
 
 ---
 
