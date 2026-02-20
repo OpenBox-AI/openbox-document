@@ -841,4 +841,4 @@ Lower trust tiers receive stricter defaults:
 
 Once you've configured governance controls:
 
-→ **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Start your agent and observe its runtime behavior with Session Replay
+→ **[Monitor](/docs/agents/trust-lifecycle/monitor)** - Start your agent and observe its runtime behavior with [Session Replay](/docs/agents/trust-lifecycle/session-replay)

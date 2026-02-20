@@ -212,7 +212,7 @@ Trigger a workflow and view it in the dashboard:
 3. Navigate to **Agents** → Click your agent
 4. On the **Overview** tab you can see:
    - Active and completed sessions
-   - Click a session to open Session Replay with full event timeline
+   - Click a session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) with full event timeline
    - Captured HTTP requests (LLM calls, API requests)
    - Activity inputs/outputs
    - Governance decisions
@@ -237,7 +237,7 @@ OpenBox evaluates all captured data against your governance policies in real-tim
 Now that your agent is running with OpenBox:
 
 1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit agent behavior
+2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use [Session Replay](/docs/agents/trust-lifecycle/session-replay) to debug and audit agent behavior
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 4. **[Advanced Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and event filtering
 
