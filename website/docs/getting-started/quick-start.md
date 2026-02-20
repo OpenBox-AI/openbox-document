@@ -127,13 +127,14 @@ asyncio.run(main())
 import os
 import asyncio
 from temporalio.client import Client
-from openbox import create_openbox_worker
+from openbox import create_openbox_worker  # Changed import
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 
 async def main():
     client = await Client.connect("localhost:7233")
 
+    # Replace Worker with create_openbox_worker
     worker = create_openbox_worker(
         client=client,
         task_queue="agent-task-queue",
