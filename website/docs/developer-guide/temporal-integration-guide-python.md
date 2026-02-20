@@ -10,13 +10,11 @@ import TabItem from '@theme/TabItem';
 
 # Temporal Integration Guide (Python)
 
-Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wraps a real Temporal AI agent worker. You’ll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
+Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wrap a real Temporal AI agent worker. You'll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
 
 :::tip Already Have a Temporal Agent?
 If you already have a working Temporal agent, see the **[Quick Start](/docs/getting-started/quick-start)** for a faster integration path.
 :::
-
----
 
 ## Prerequisites
 
@@ -31,13 +29,36 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
 - **[Node.js](https://nodejs.org/)** — Required for the frontend
 - **[uv](https://docs.astral.sh/uv/)** — Python package manager
 - **`make`** — Required to run setup and dev scripts:
-  - **macOS**: `xcode-select --install`
-  - **Linux**:
-    - **Debian/Ubuntu**: `sudo apt install make`
-    - **Fedora/RHEL**: `sudo dnf install make`
-  - **Windows**: `winget install GnuWin32.Make` or `choco install make`
 
----
+<Tabs>
+<TabItem value="mac" label="macOS" default>
+
+```bash
+xcode-select --install
+```
+
+</TabItem>
+<TabItem value="linux" label="Linux">
+
+```bash
+# Debian/Ubuntu
+sudo apt install make
+
+# Fedora/RHEL
+sudo dnf install make
+```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+```bash
+winget install GnuWin32.Make
+# or
+choco install make
+```
+
+</TabItem>
+</Tabs>
 
 ## Part 1: Clone and Set Up the Demo
 
@@ -103,8 +124,6 @@ From the repo root:
 make setup
 ```
 
----
-
 ## Part 2: Register Your Agent in OpenBox
 
 1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
@@ -113,9 +132,9 @@ make setup
    - **Workflow Engine**: Temporal
    - **Agent Name**: Temporal AI Agent
    - **Agent ID**: Auto-generated
-   - **Description**: Temporal AI agent demo
-   - **Teams**: assign the agent to one or more teams
-   - **Icon**: select an icon
+   - **Description** *(optional)*: Temporal AI agent demo
+   - **Teams** *(optional)*: assign the agent to one or more teams
+   - **Icon** *(optional)*: select an icon
 4. **API Key Generation**:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
@@ -126,27 +145,18 @@ make setup
 
 See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
 
----
-
 ## Part 3: Configure Environment
 
-Copy the example env file:
+1. Copy `.env.example` to `.env`
+2. Open `.env` in your editor and set your LLM and OpenBox values:
 
 ```bash
-cp .env.example .env
-```
+# LLM
+LLM_MODEL=openai/gpt-4o
+LLM_KEY=your-llm-api-key
+TEMPORAL_ADDRESS=localhost:7233
 
-Edit `.env` and set at minimum:
-
-- `LLM_MODEL`
-- `LLM_KEY`
-- `TEMPORAL_ADDRESS` (defaults to `localhost:7233`)
-
-### Enable OpenBox
-
-Add your OpenBox Core URL and API key (from [Part 2](#part-2-register-your-agent-in-openbox)):
-
-```bash
+# OpenBox (use the API key from Part 2)
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=your-openbox-api-key
 OPENBOX_GOVERNANCE_ENABLED=true
@@ -167,19 +177,119 @@ temporal server start-dev
 Check the startup output for the Temporal Web UI URL — you can use it to verify the server is running and monitor workflows.
 :::
 
-In separate terminals:
+In separate terminals, start each process:
 
 ```bash
 make run-worker
+```
+
+```bash
 make run-api
+```
+
+```bash
 make run-frontend
 ```
 
-Open the UI:
+You should see `OpenBox SDK initialized successfully` in the worker terminal.
 
-- [http://localhost:5173](http://localhost:5173)
+Open the UI at [http://localhost:5173](http://localhost:5173):
 
-### Explore Different Scenarios
+1. Send a message to the agent — the default scenario is a travel booking assistant
+2. Let it run through the workflow
+3. Once it completes, move on to [See It in Action](#see-it-in-action)
+
+## See It in Action
+
+1. Open the **[OpenBox Dashboard](https://platform.openbox.ai)**
+2. Navigate to **Agents** → Click your agent (the one you created in Part 2)
+3. On the **Overview** tab, find the session that corresponds to your workflow run
+4. Click **Details** to open it — you'll land on the **Overview** tab which shows the **Event Log Timeline**
+5. Scroll through the timeline — you'll see every event the trust layer captured: workflow start/complete, each activity with its inputs and outputs, the HTTP requests to your LLM, and the governance decision OpenBox made for each one
+6. Switch to the **Tree View** to see the same data as a hierarchy — workflows at the top, activities nested underneath, tool calls within those
+7. Click **Watch Replay** to open [Session Replay](/docs/trust-lifecycle/session-replay) — this plays back the entire session step-by-step, showing exactly what the agent did and how OpenBox evaluated it
+
+## What Just Happened?
+
+When you ran the demo, the OpenBox trust layer:
+
+1. **Intercepted workflow and activity events** — every workflow start, activity execution, and signal was captured and sent to OpenBox for governance evaluation
+2. **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded all outbound HTTP requests (LLM calls, external APIs) with full request/response bodies
+3. **Evaluated governance policies** — each captured event was evaluated against your agent's configured governance policies in real-time
+4. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+5. **Captured database operations and file I/O** — the demo configures `instrument_databases=True` and `instrument_file_io=True`, so SQL queries, NoSQL operations, and file read/write operations were also recorded
+
+## How the Integration Works
+
+The OpenBox integration point is the worker bootstrap script: `scripts/run_worker.py`. The only change is replacing `Worker` with `create_openbox_worker` and adding the OpenBox configuration:
+
+<Tabs>
+<TabItem value="before" label="Temporal">
+
+```python title="worker.py"
+import asyncio
+from temporalio.client import Client
+from temporalio.worker import Worker
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    worker = Worker(
+        client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+    )
+
+    await worker.run()
+
+asyncio.run(main())
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="worker.py"
+import os
+import asyncio
+from temporalio.client import Client
+from openbox import create_openbox_worker  # Changed import
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    # Replace Worker with create_openbox_worker
+    worker = create_openbox_worker(
+        client=client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+
+        # Add OpenBox configuration
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+    )
+
+    await worker.run()
+
+asyncio.run(main())
+```
+
+</TabItem>
+</Tabs>
+
+The agent's Temporal code is organized in:
+
+- **`workflows/`** — [Workflows](https://docs.temporal.io/workflows) define the high-level orchestration logic. In this demo, `AgentGoalWorkflow` is the main workflow that coordinates the agent's execution — it receives a goal, plans a sequence of steps, and executes them. OpenBox intercepts workflow started, completed, and failed events for governance evaluation.
+- **`activities/`** — [Activities](https://docs.temporal.io/activities) are the individual units of work that a workflow executes — things like calling an LLM, querying a database, or making an API request. OpenBox captures each activity's inputs, outputs, and duration, and evaluates them against your governance policies.
+- **`tools/`** — Tools are the capabilities available to the agent (e.g., search flights, check balances, process payments). Each tool is implemented as a Temporal activity, so OpenBox automatically captures and governs tool usage.
+- **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
+
+## Explore Different Scenarios
 
 The demo ships with a default travel booking scenario, but you can switch to other domains by changing `AGENT_GOAL` in your `.env` file. For example, to try the finance banking assistant:
 
@@ -189,7 +299,7 @@ AGENT_GOAL=goal_fin_banking_assistant
 
 After changing the goal, restart the worker (`make run-worker`) to pick up the new value.
 
-#### Available Goals
+### Available Goals
 
 - **HR**
   - `goal_hr_check_pto` — Check your available PTO
@@ -211,53 +321,31 @@ After changing the goal, restart the worker (`make run-worker`) to pick up the n
 - **MCP Integrations**
   - `goal_mcp_stripe` — Manage Stripe customer and product data
 
----
+## Human-in-the-Loop Approvals
 
-## How It Works (Where to Look in the Repo)
+Some operations are too sensitive to run without a human sign-off — for example, initiating a money transfer, processing a payment, or modifying a customer's account. You can configure governance policies in OpenBox to require approval for these kinds of activities. See **[Authorize](/docs/trust-lifecycle/authorize)** to set up guardrails, policies, and behavioral rules.
 
-The OpenBox integration point is the worker bootstrap script:
+When governance requires approval:
 
-- `scripts/run_worker.py`
+1. OpenBox creates an approval request
+2. Approval request appears in the [OpenBox dashboard](/docs/approvals)
+3. Human approves/rejects
+4. Temporal proceeds or fails based on the decision
 
-That script wraps a standard Temporal worker with OpenBox:
+While waiting for a human to approve or reject, the Temporal activity will retry. Set longer timeouts and more retries than usual to allow time for the decision:
 
 ```python
-from openbox import create_openbox_worker
-
-worker = create_openbox_worker(
-    client=client,
-    task_queue=TEMPORAL_TASK_QUEUE,
-    workflows=[AgentGoalWorkflow],
-    activities=[...],
-
-    openbox_url=os.getenv("OPENBOX_URL"),
-    openbox_api_key=os.getenv("OPENBOX_API_KEY"),
-    governance_timeout=float(os.getenv("OPENBOX_GOVERNANCE_TIMEOUT", "30.0")),
-    governance_policy=os.getenv("OPENBOX_GOVERNANCE_POLICY", "fail_open"),
-
-    instrument_databases=True,
-    instrument_file_io=True,
+result = await workflow.execute_activity(
+    sensitive_operation,
+    data,
+    start_to_close_timeout=timedelta(minutes=10),
+    retry_policy=RetryPolicy(
+        initial_interval=timedelta(seconds=10),
+        maximum_interval=timedelta(minutes=5),
+        maximum_attempts=20,  # Allow time for approval
+    ),
 )
 ```
-
-The agent’s Temporal code is organized in:
-
-- `workflows/`
-- `activities/`
-- `tools/`
-- `goals/`
-
-### View in OpenBox Dashboard
-
-1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Navigate to **Agents** → Click **your agent** (the one you created in Part 2)
-3. On the **Overview** tab, click your session to open [Session Replay](/docs/trust-lifecycle/session-replay) and see:
-   - Complete event timeline
-   - LLM request/response capture
-   - Activity inputs/outputs
-   - Governance decisions
-
----
 
 ## Configuration Options
 
@@ -278,7 +366,7 @@ worker = create_openbox_worker(
     task_queue="my-task-queue",
     workflows=[AgentGoalWorkflow, UtilityWorkflow],
     activities=[...],
-    
+
     # Skip these from governance
     skip_workflow_types={"UtilityWorkflow"},
     skip_activity_types={"internal_activity"},
@@ -296,97 +384,28 @@ worker = create_openbox_worker(
     task_queue="my-task-queue",
     workflows=[AgentGoalWorkflow],
     activities=[...],
-    
+
     # Optional: Capture database operations
     instrument_databases=True,
     db_libraries={"psycopg2", "redis"},  # Or None for all
-    
+
     # Optional: Capture file I/O
     instrument_file_io=True,
 )
 ```
 
----
+See **[SDK Configuration](/docs/developer-guide/configuration)** for the full list of options.
 
 ## Error Handling
 
-In this demo, the SDK’s role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
+In this demo, the SDK's role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
 
-To investigate failures:
-
-1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Go to your agent → **Overview** tab
-3. Click a session to open [Session Replay](/docs/trust-lifecycle/session-replay) and review:
-   - Governance decisions
-   - Inputs/outputs for activities and tool calls
-   - Approval requests and outcomes
-
----
-
-## Human-in-the-Loop Approvals
-
-When governance requires approval:
-
-1. OpenBox creates an approval request
-2. Approval request appears in the OpenBox dashboard
-3. Human approves/rejects
-4. Temporal proceeds or fails based on the decision
-
-Configure retry behavior in your activity options:
-
-```python
-result = await workflow.execute_activity(
-    sensitive_operation,
-    data,
-    start_to_close_timeout=timedelta(minutes=10),
-    retry_policy=RetryPolicy(
-        initial_interval=timedelta(seconds=10),
-        maximum_interval=timedelta(minutes=5),
-        maximum_attempts=20,  # Allow time for approval
-    ),
-)
-```
-
----
-
-## What OpenBox Captures
-
-The SDK automatically captures and sends to OpenBox:
-
-### Workflow Events
-- Workflow started/completed/failed
-- Signals received
-- Queries executed
-
-### Activity Events
-- Activity started (with input)
-- Activity completed (with output and duration)
-- Activity failed (with error)
-
-### HTTP Telemetry
-- Request/response bodies (LLM calls, API requests)
-- Headers and status codes
-- Request duration and timing
-
-### Database Operations (Optional)
-- SQL queries (PostgreSQL, MySQL)
-- NoSQL operations (MongoDB, Redis)
-
-### File I/O (Optional)
-- File read/write operations
-- File paths and sizes
-
----
+To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and look for governance decisions that were blocked or flagged, failed activity outputs, and approval requests that were rejected.
 
 ## Next Steps
 
 1. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
 2. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-
-
----
-
-## Troubleshooting
 
 Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.
