@@ -188,4 +188,4 @@ result := {"decision": "REQUIRE_APPROVAL", "reason": "High-value payment process
 
 - **[Governance Decisions](/docs/concepts/governance-decisions)** - What decisions can be made for each event
 - **[Authorize Phase](/docs/agents/trust-lifecycle/authorize)** - Write policies that reference event types
-- **[Monitor Phase](/docs/agents/trust-lifecycle/monitor)** - See events in Session Replay
+- **[Monitor Phase](/docs/agents/trust-lifecycle/monitor)** - See events in [Session Replay](/docs/agents/trust-lifecycle/session-replay)
