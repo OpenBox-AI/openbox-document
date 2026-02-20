@@ -14,15 +14,15 @@ const ExploreSections = [
     links: [
       {label: 'Introduction', to: '/docs/'},
       {label: 'Quick start', to: '/docs/getting-started/quick-start'},
-      {label: 'Workflow engines', to: '/docs/getting-started/workflow-engines/temporal'},
+      {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
     ],
   },
   {
     title: 'Agents',
     links: [
-      {label: 'Overview', to: '/docs/agents'},
-      {label: 'Registering agents', to: '/docs/agents/registering-agents'},
-      {label: 'Trust lifecycle', to: '/docs/agents/trust-lifecycle'},
+      {label: 'Overview', to: '/docs/dashboard/agents'},
+      {label: 'Registering agents', to: '/docs/getting-started/registering-agents'},
+      {label: 'Trust lifecycle', to: '/docs/trust-lifecycle'},
     ],
   },
   {
@@ -30,7 +30,7 @@ const ExploreSections = [
     links: [
       {label: 'Dashboard', to: '/docs/dashboard'},
       {label: 'Approvals', to: '/docs/approvals'},
-      {label: 'Compliance', to: '/docs/compliance'},
+      {label: 'Compliance', to: '/docs/administration/compliance-and-audit'},
     ],
   },
 ];

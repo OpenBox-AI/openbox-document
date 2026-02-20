@@ -1,0 +1,59 @@
+---
+title: Session Replay
+description: Step-by-step playback of agent session execution
+sidebar_position: 1
+---
+
+# Session Replay
+
+Session Replay provides a step-by-step walkthrough of an agent's session execution. Inspect every event, tool call, governance decision, and full JSON payload to understand exactly what happened and why.
+
+## Accessing Session Replay
+
+- **Agent Detail → Verify → Watch Replay** — opens replay for the selected session
+
+![Session Replay](/img/SessionReplay.png)
+
+## Session Header
+
+The header bar at the top of the replay summarizes the session:
+
+| Field | Description |
+|-------|-------------|
+| **Session ID** | Unique session identifier |
+| **Duration** | Total wall-clock time for the session |
+| **Events** | Total number of events recorded |
+| **Status** | Badge showing current state — Completed, Failed, Halted, or In Progress |
+
+## Playback Controls
+
+Controls beneath the header let you navigate through the session timeline:
+
+| Control | Description |
+|---------|-------------|
+| **Play / Pause** | Start or pause automatic playback through events |
+| **Progress bar** | Scrub to any point in the session timeline |
+| **Timestamps** | Current position and total duration |
+| **Speed toggle** | Switch between 0.5x, 1x, and 2x playback speed |
+
+## Event Stream
+
+The event stream on the left lists all events that occurred during the session in chronological order, including user prompts and tool calls. Each event shows its name and a timestamp offset from the start of the session. Some events include a summary line (e.g. "Transfer exceeds $5,000 threshold — requires approval").
+
+Click any event to view its full details.
+
+## Event Details
+
+The event details panel on the right shows the full information for the selected event:
+
+- **Activity type and timestamp** — the event name and when it occurred
+- **Event ID** — unique identifier for the event
+- **Context** — the full JSON payload, including fields such as prompt, agent goal, tools, and arguments
+
+## Related
+
+- **[Verify](/docs/trust-lifecycle/verify)** — Goal alignment scoring and execution evidence
+- **[Monitor](/docs/trust-lifecycle/monitor)** — Operational metrics and session overview
+- **[Governance Decisions](/docs/core-concepts/governance-decisions)** — The five decision types shown in replay
+- **[Event Types](/docs/developer-guide/event-types)** — Semantic event types that appear in the stream
+- **[Approvals](/docs/approvals)** — Human-in-the-loop approval queue

@@ -231,6 +231,6 @@ class MyAgentWorkflow:
 
 Now that you understand how to handle trust decisions in code:
 
-1. **[Configure Policies](/docs/agents/trust-lifecycle/authorize)** - Set up the guardrails, policies, and behavioral rules that trigger these decisions
-2. **[Monitor Your Agent](/docs/agents/trust-lifecycle/monitor)** - Watch how decisions appear in Session Replay
+1. **[Event Types](/docs/developer-guide/event-types)** - Understand the semantic event types that trigger these decisions
+2. **[Troubleshooting](/docs/getting-started/troubleshooting)** - Common issues and solutions
 3. **[Handle Approvals](/docs/approvals)** - Review and process HITL requests in the dashboard

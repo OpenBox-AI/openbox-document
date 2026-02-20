@@ -116,7 +116,7 @@ Exports are processed in the background and made available for download once com
 
 ---
 
-## Next Steps
+## Related
 
-1. **[Compliance & Audit](/docs/compliance)** — Use audit trails and attestation evidence for auditors
-2. **[Attestation & Cryptographic Proof](/docs/compliance/attestation)** — View cryptographic proof of agent behavior
+- **[Compliance & Audit](/docs/administration/compliance-and-audit)** — Overview of audit trails and evidence collection
+- **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** — How session events are cryptographically signed
