@@ -250,7 +250,7 @@ The agent’s Temporal code is organized in:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → Click **your agent** (the one you created in Part 2)
-3. On the **Overview** tab, click your session to open Session Replay and see:
+3. On the **Overview** tab, click your session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) and see:
    - Complete event timeline
    - LLM request/response capture
    - Activity inputs/outputs
@@ -315,7 +315,7 @@ To investigate failures:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Go to your agent → **Overview** tab
-3. Click a session to open Session Replay and review:
+3. Click a session to open [Session Replay](/docs/agents/trust-lifecycle/session-replay) and review:
    - Governance decisions
    - Inputs/outputs for activities and tool calls
    - Approval requests and outcomes
@@ -380,7 +380,7 @@ The SDK automatically captures and sends to OpenBox:
 ## Next Steps
 
 1. **[Configure Trust Controls](/docs/agents/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use Session Replay to debug and audit
+2. **[Monitor Sessions](/docs/agents/trust-lifecycle/monitor)** - Use [Session Replay](/docs/agents/trust-lifecycle/session-replay) to debug and audit
 3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 4. **[SDK Configuration](/docs/sdk/configuration)** - Fine-tune timeouts, fail policies, and filtering
 
