@@ -11,7 +11,7 @@ OpenBox is designed to be integrated via the **SDK**. Your workflows and activit
 ## Recommended Integration Paths
 
 1. **[Quick Start](/docs/getting-started/quick-start)** - Wrap an existing Temporal agent
-2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide)** - End-to-end setup from scratch
+2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
 3. **[SDK Reference](/docs/developer-guide/sdk-reference)** - SDK overview
 4. **[SDK Configuration](/docs/developer-guide/configuration)** - Timeouts, fail policies, filtering, instrumentation
 5. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Review governance decisions and session timelines in the dashboard
