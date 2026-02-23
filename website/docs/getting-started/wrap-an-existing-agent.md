@@ -1,15 +1,15 @@
 ---
-title: Quick Start
-description: Add the OpenBox trust layer to your existing Temporal agent in 5 minutes
-sidebar_position: 1
+title: Wrap an Existing Agent
+description: Add the OpenBox trust layer to your existing Temporal agent
+sidebar_position: 4
 ---
 
-# Quick Start
+# Wrap an Existing Agent
 
 Add a trust layer to your existing Temporal agent with OpenBox. This guide assumes you already have a working Temporal agent and shows you how to wrap it with OpenBox for trust, monitoring, and compliance.
 
-:::tip Building from Scratch?
-If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** for a complete end-to-end setup.
+:::tip New to Temporal?
+If you haven't used Temporal before, start with **[New to Temporal?](/docs/getting-started/new-to-temporal)** to set up your local environment, then run the **[Quick Start](/docs/getting-started/guardrails-demo)** to see OpenBox in action.
 :::
 
 ---
@@ -17,33 +17,15 @@ If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities
+- **Temporal CLI** running (`temporal server start-dev`)
 - **Python 3.11+** installed
-- **OpenBox Account** - Sign up at [platform.openbox.ai](https://platform.openbox.ai)
+- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 
 ---
 
-## Step 1: Register Your Agent in OpenBox
+## Step 1: Register Your Agent
 
-Before wrapping your worker, create an agent in the OpenBox platform:
-
-1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Navigate to **Agents** → Click **Add Agent**
-3. Configure the agent:
-   - **Workflow Engine**: Temporal
-   - **Agent Name**: Your agent name (e.g., "Customer Support Agent")
-   - **Agent ID**: Auto-generated
-   - **Description**: What your agent does
-   - **Teams**: assign the agent to one or more teams
-   - **Icon**: select an icon
-4. **API Key Generation**:
-   - Click **Generate API Key**
-   - Copy and store the key (shown only once)
-5. Configure platform settings:
-   - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
-6. Click **Add Agent**
-
-See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
+Register your agent and get an API key — see **[Registering Agents](/docs/getting-started/registering-agents)** for a walkthrough.
 
 :::tip
 Your API key format: `obx_live_xxxxxxxxxxxxxxxxxx`

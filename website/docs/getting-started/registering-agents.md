@@ -1,14 +1,34 @@
 ---
 title: Registering Agents
 description: Create and configure new agents
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Registering Agents
 
-Register an agent to begin governance. Navigate to **Agents** and click the **Add Agent** button in the top right corner.
+Register an agent to begin governance.
 
-## Agent Creation Form
+## Quick Steps
+
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → Click **Add Agent**
+3. Configure the agent:
+   - **Workflow Engine**: Temporal
+   - **Agent Name**: Your agent name (e.g., "Customer Support Agent")
+   - **Description**: What your agent does
+   - **Teams**: Assign to one or more teams
+   - **Icon**: Select an icon
+4. **Generate API Key** — Click **Generate API Key**, copy and store it (shown only once)
+5. Configure **Initial Risk Assessment** and **Attestation** (see details below)
+6. Click **Add Agent**
+
+:::tip
+Your API key format: `obx_live_xxxxxxxxxxxx` — store it securely, you won't see it again.
+:::
+
+## Detailed Configuration
+
+Navigate to **Agents** and click the **Add Agent** button in the top right corner.
 
 ### Workflow Engine
 
@@ -136,9 +156,8 @@ The agent is matched by the API key. When your worker starts, it will appear as 
 
 ## Next Steps
 
-After creating your agent:
+Now that you have an agent and API key, continue with the path that fits your situation:
 
-1. **[Trust Overview](/docs/dashboard/trust-overview)** - See your agent's trust score on the dashboard
-2. **[View Alerts](/docs/dashboard/alerts)** - Monitor alerts for your agents
-3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
+- **[Quick Start](/docs/getting-started/guardrails-demo)** — New to OpenBox? Run a minimal guardrails demo to see it in action
+- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
 

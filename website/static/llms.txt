@@ -9,8 +9,10 @@
 ## Getting Started
 - OpenBox: https://docs.openbox.ai/docs/
 - Getting Started: https://docs.openbox.ai/docs/getting-started
+- New to Temporal?: https://docs.openbox.ai/docs/getting-started/new-to-temporal
 - Registering Agents: https://docs.openbox.ai/docs/getting-started/registering-agents
-- Quick Start: https://docs.openbox.ai/docs/getting-started/quick-start
+- Quick Start: https://docs.openbox.ai/docs/getting-started/guardrails-demo
+- Wrap an Existing Agent: https://docs.openbox.ai/docs/getting-started/wrap-an-existing-agent
 - Troubleshooting: https://docs.openbox.ai/docs/getting-started/troubleshooting
 
 ## Core Concepts

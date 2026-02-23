@@ -23,8 +23,10 @@ const sidebars = {
         id: 'getting-started/index',
       },
       items: [
+        'getting-started/new-to-temporal',
         'getting-started/registering-agents',
-        'getting-started/quick-start',
+        'getting-started/guardrails-demo',
+        'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
       ],
     },

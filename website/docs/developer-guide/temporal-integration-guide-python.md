@@ -12,8 +12,12 @@ import TabItem from '@theme/TabItem';
 
 Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wrap a real Temporal AI agent worker. You'll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
 
+:::tip New to Temporal?
+If you haven't used Temporal before, start with **[New to Temporal?](/docs/getting-started/new-to-temporal)** to set up your local development environment first.
+:::
+
 :::tip Already Have a Temporal Agent?
-If you already have a working Temporal agent, see the **[Quick Start](/docs/getting-started/quick-start)** for a faster integration path.
+If you already have a working Temporal agent, see **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** for a faster integration path.
 :::
 
 ## Prerequisites
