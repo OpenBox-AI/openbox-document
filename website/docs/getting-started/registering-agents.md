@@ -60,11 +60,11 @@ Every agent needs an API key to authenticate with OpenBox:
 
 The key format is: `obx_live_xxxxxxxxxxxx`
 
-## Initial Risk Assessment
+### Initial Risk Assessment
 
 Expand the **Initial Risk Assessment** section and configure your agent's risk profile parameters
 
-### Risk Profile Presets
+#### Risk Profile Presets
 
 Select a preset that matches your agent's intended use:
 
@@ -75,11 +75,11 @@ Select a preset that matches your agent's intended use:
 | **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
 | **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
 
-### Risk Profile Parameters
+#### Risk Profile Parameters
 
 The Risk Profile evaluates risk across three categories:
 
-#### Base Security (25% weight)
+##### Base Security (25% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -89,7 +89,7 @@ The Risk Profile evaluates risk across three categories:
 | **User Interaction** | None (1), Required (2) |
 | **Scope** | Unchanged (1), Changed (2) |
 
-#### AI-Specific (45% weight)
+##### AI-Specific (45% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -99,7 +99,7 @@ The Risk Profile evaluates risk across three categories:
 | **Decision Criticality** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
 | **Adaptability** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
 
-#### Impact (30% weight)
+##### Impact (30% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -108,7 +108,7 @@ The Risk Profile evaluates risk across three categories:
 | **Availability Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
 | **Safety Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
 
-### Predicted Risk Tier
+#### Predicted Risk Tier
 
 As you configure Risk Profile parameters, the form shows a real-time prediction:
 
@@ -119,7 +119,7 @@ Based on current configuration
 
 See **[Assess](/docs/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
 
-## Attestation
+### Attestation
 
 In the **Attestation** section, configure cryptographic signing for audit-grade evidence.
 
@@ -130,7 +130,7 @@ For now, use **AWS KMS** (recommended/default):
 
 See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** for how execution evidence is produced and verified.
 
-## Creating the Agent
+### Creating the Agent
 
 1. Review all fields
 2. Ensure you've copied the API key
@@ -138,26 +138,10 @@ See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** 
 
 You'll be redirected to the new agent's detail page.
 
-## Connecting Your Worker
-
-Update your worker code to use the agent's API key:
-
-```python
-worker = create_openbox_worker(
-    client=temporal_client,
-    task_queue="my-task-queue",  # Should match your Temporal task queue
-    workflows=[MyAgentWorkflow],
-    activities=[my_activity],
-    openbox_api_key=os.environ.get("OPENBOX_API_KEY"),  # The key you generated
-)
-```
-
-The agent is matched by the API key. When your worker starts, it will appear as "Active" in the dashboard.
-
 ## Next Steps
 
 Now that you have an agent and API key, continue with the path that fits your situation:
 
-- **[Quick Start](/docs/getting-started/guardrails-demo)** — New to OpenBox? Run a minimal guardrails demo to see it in action
+- **[Quick Start](/docs/getting-started/quick-start)** — New to OpenBox? Run a minimal guardrails demo to see it in action
 - **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
 

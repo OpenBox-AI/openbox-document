@@ -37,7 +37,7 @@ Never used Temporal before? Follow the newcomer path to set up your environment,
 
 1. **[New to Temporal?](/docs/getting-started/new-to-temporal)** — Install Temporal and understand the basics
 2. **[Registering Agents](/docs/getting-started/registering-agents)** — Create your agent and get an API key
-3. **[Quick Start](/docs/getting-started/guardrails-demo)** — Run a minimal demo to see OpenBox in action
+3. **[Quick Start](/docs/getting-started/quick-start)** — Run a minimal demo to see OpenBox in action
 
 ### Already have a Temporal agent?
 
