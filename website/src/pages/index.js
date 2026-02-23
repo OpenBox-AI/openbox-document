@@ -13,7 +13,7 @@ const ExploreSections = [
     title: 'Try it out',
     links: [
       {label: 'Introduction', to: '/docs/'},
-      {label: 'Quick start', to: '/docs/getting-started/quick-start'},
+      {label: 'Quick start', to: '/docs/getting-started/wrap-an-existing-agent'},
       {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
     ],
   },
@@ -313,7 +313,7 @@ export default function Home() {
             <div className={styles.tryHeader}>
               <div className={styles.tryTitleRow}>
                 <div className={styles.tryTitle}>Try it out</div>
-                <Link className={styles.tryLink} to="/docs/getting-started/quick-start">
+                <Link className={styles.tryLink} to="/docs/getting-started/wrap-an-existing-agent">
                   Open Quick Start →
                 </Link>
               </div>
