@@ -6,7 +6,13 @@ sidebar_position: 3
 
 # Quick Start
 
-Now that you have Temporal running and an OpenBox API key, run a minimal demo to see guardrails in action. You'll create a simple workflow that passes text through the OpenBox trust layer.
+Run a minimal demo to see guardrails in action. You'll create a simple workflow that passes text through the OpenBox trust layer.
+
+## Prerequisites
+
+- **Temporal dev server running** — see [New to Temporal?](/docs/getting-started/new-to-temporal) if you need to set this up
+- **Python 3.11+** installed
+- **OpenBox API Key** — [Register your agent](/docs/getting-started/registering-agents) to get one
 
 ## Add OpenBox to Your Project
 
@@ -24,10 +30,6 @@ Create a `.env` file in your project root with your OpenBox credentials:
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=your_key_here
 ```
-
-:::tip Don't have an API key yet?
-Sign up at [platform.openbox.ai](https://platform.openbox.ai) and register an agent — see **[Registering Agents](/docs/getting-started/registering-agents)** for a walkthrough.
-:::
 
 ## Replace Your Workflow
 

@@ -25,7 +25,7 @@ const sidebars = {
       items: [
         'getting-started/new-to-temporal',
         'getting-started/registering-agents',
-        'getting-started/guardrails-demo',
+        'getting-started/quick-start',
         'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
       ],
