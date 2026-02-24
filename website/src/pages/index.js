@@ -265,11 +265,6 @@ const HelpfulLinks = [
     href: 'mailto:support@openbox.ai',
   },
   {
-    labelPrefix: 'Product updates:',
-    labelLink: 'View changelog',
-    href: 'https://openbox.ai/changelog',
-  },
-  {
     labelPrefix: 'Talk to us:',
     labelLink: 'Email sales',
     href: 'mailto:sales@openbox.ai',
