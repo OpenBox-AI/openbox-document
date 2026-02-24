@@ -215,6 +215,8 @@ The agent's Temporal code is organized in:
 - **`tools/`** — Tools are the capabilities available to the agent (e.g., search flights, check balances, process payments). Each tool is implemented as a Temporal activity, so OpenBox automatically captures and governs tool usage.
 - **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
 
+See **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure.
+
 ## Explore Different Scenarios
 
 The demo ships with a default travel booking scenario, but you can switch to other domains by changing `AGENT_GOAL` in your `.env` file. For example, to try the finance banking assistant:
@@ -246,6 +248,10 @@ After changing the goal, restart the worker (`make run-worker`) to pick up the n
   - `goal_food_ordering` — Order food with Stripe payment processing
 - **MCP Integrations**
   - `goal_mcp_stripe` — Manage Stripe customer and product data
+
+:::tip Add Your Own
+These are the built-in scenarios. You can create your own goals with custom tools — see **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)**.
+:::
 
 ## Human-in-the-Loop Approvals
 
@@ -330,8 +336,9 @@ To investigate failures, open a session in the dashboard using the same steps fr
 
 ## Next Steps
 
-1. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
-2. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
-3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
+1. **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** - Add your own goals, native tools, and MCP integrations
+2. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
+3. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
+4. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
 
 Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.
