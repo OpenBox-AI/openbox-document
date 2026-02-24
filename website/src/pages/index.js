@@ -21,7 +21,7 @@ const ExploreSections = [
     title: 'Agents',
     links: [
       {label: 'Overview', to: '/docs/dashboard/agents'},
-      {label: 'Registering agents', to: '/docs/getting-started/registering-agents'},
+      {label: 'Registering agents', to: '/docs/dashboard/agents/registering-agents'},
       {label: 'Trust lifecycle', to: '/docs/trust-lifecycle'},
     ],
   },

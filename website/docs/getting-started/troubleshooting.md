@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 description: Common issues and solutions when setting up OpenBox
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 import Tabs from '@theme/Tabs';
@@ -18,11 +18,8 @@ Common issues and solutions when integrating with OpenBox.
 Check that your environment variables are set:
 
 ```bash
-echo $OPENBOX_URL
-# Should print https://core.openbox.ai
-
-echo $OPENBOX_API_KEY
-# Should print your OpenBox API key
+[ -n "$OPENBOX_URL" ] && echo "OPENBOX_URL is set" || echo "OPENBOX_URL is NOT set"
+[ -n "$OPENBOX_API_KEY" ] && echo "OPENBOX_API_KEY is set" || echo "OPENBOX_API_KEY is NOT set"
 ```
 
 Verify step by step:
@@ -37,10 +34,9 @@ Verify step by step:
 
 If sessions don't appear after running a workflow:
 
-1. Ensure the worker is running (`make run-worker` for the demo)
+1. Ensure the worker is running and connected to OpenBox (check for `OpenBox SDK initialized successfully` in the worker logs)
 2. Confirm the workflow completed — check the Temporal UI at [http://localhost:8233](http://localhost:8233)
 3. Verify the API key matches the agent registered in OpenBox
-4. Check that `OPENBOX_GOVERNANCE_ENABLED` is set to `true` in your `.env`
 
 ---
 
@@ -91,10 +87,13 @@ To test your LLM configuration, run this from your project directory:
 
 ```bash
 uv run python3 -c "
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from litellm import completion
 response = completion(
-    model='your-llm-model',
-    api_key='your-llm-key',
+    model=os.getenv('LLM_MODEL'),
+    api_key=os.getenv('LLM_KEY'),
     messages=[{'role': 'user', 'content': 'test'}]
 )
 print(response.choices[0].message.content)
@@ -108,10 +107,13 @@ print(response.choices[0].message.content)
 # Activate your virtual environment first
 # source .venv/bin/activate
 python3 -c "
+import os
+from dotenv import load_dotenv
+load_dotenv()
 from litellm import completion
 response = completion(
-    model='your-llm-model',
-    api_key='your-llm-key',
+    model=os.getenv('LLM_MODEL'),
+    api_key=os.getenv('LLM_KEY'),
     messages=[{'role': 'user', 'content': 'test'}]
 )
 print(response.choices[0].message.content)
