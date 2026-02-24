@@ -55,12 +55,13 @@ OPENBOX_API_KEY=your-openbox-api-key
 
 :::tip LLM Provider
 The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
+
 - `openai/gpt-4o`
 - `anthropic/claude-sonnet-4-5-20250929`
 - `gemini/gemini-2.0-flash`
-:::
+  :::
 
-## Run
+## Run the Demo
 
 Start each process in a separate terminal:
 
