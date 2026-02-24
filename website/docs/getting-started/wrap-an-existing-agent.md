@@ -196,7 +196,9 @@ Starting worker, connecting to task queue: agent-task-queue
 
 </details>
 
+:::tip You're done!
 Your agent is now running with the OpenBox trust layer enabled. Having issues? See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)**.
+:::
 
 ## Step 5: See It in Action
 
