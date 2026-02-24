@@ -1,54 +1,27 @@
 ---
-title: Quick Start
-description: Add the OpenBox trust layer to your existing Temporal agent in 5 minutes
-sidebar_position: 1
+title: Wrap an Existing Agent
+description: Add the OpenBox trust layer to your existing Temporal agent
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Quick Start
+# Wrap an Existing Agent
 
 Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
 
-:::tip Building from Scratch?
-If you don't have a Temporal agent yet, see **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** for a complete end-to-end setup.
+:::tip New to OpenBox?
+If you haven't seen OpenBox in action yet, start with **[Run the Demo](/docs/getting-started/run-the-demo)** to clone the demo agent and see governance working end-to-end.
 :::
 
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities, and a running Temporal server
 - **Python 3.11+** installed
-- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
+- **OpenBox API Key** — [Register your agent](/docs/dashboard/agents/registering-agents) in the dashboard to get one
 
-## Step 1: Register Your Agent in OpenBox
-
-Before wrapping your worker, create an agent in the OpenBox platform:
-
-1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
-2. Navigate to **Agents** → Click **Add Agent**
-3. Configure the agent:
-   - **Workflow Engine**: Temporal
-   - **Agent Name**: Your agent name (e.g., "Customer Support Agent")
-   - **Agent ID**: Auto-generated
-   - **Description**: What your agent does (optional)
-   - **Teams**: assign the agent to one or more teams (optional)
-   - **Icon**: select an icon (optional)
-4. **API Key Generation**:
-   - Click **Generate API Key**
-   - Copy and store the key (shown only once)
-5. Configure platform settings:
-   - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
-6. Click **Add Agent**
-
-See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
-
-:::tip
-Your API key format: `obx_live_xxxxxxxxxxxxxxxxxx`
-:::
-
-## Step 2: Install OpenBox SDK
+## Step 1: Install OpenBox SDK
 
 Add the OpenBox SDK to your existing project:
 
@@ -61,7 +34,7 @@ uv add openbox-temporal-sdk-python
 pip install openbox-temporal-sdk-python
 ```
 
-## Step 3: Configure Environment Variables
+## Step 2: Configure Environment Variables
 
 Add OpenBox credentials to your environment:
 
@@ -91,7 +64,11 @@ load_dotenv()
 
 </details>
 
-## Step 4: Wrap Your Existing Worker
+:::warning Production environments
+Never commit `.env` files to version control. Use your platform's secret management (e.g., AWS Secrets Manager, Vault, Kubernetes secrets) to inject `OPENBOX_API_KEY` in production.
+:::
+
+## Step 3: Wrap Your Existing Worker
 
 Replace the standard Temporal `Worker` with OpenBox's `create_openbox_worker`. Your existing workflows and activities stay exactly as they are:
 
@@ -154,7 +131,7 @@ asyncio.run(main())
 </TabItem>
 </Tabs>
 
-## Step 5: Run Your Worker
+## Step 4: Run Your Worker
 
 Start your worker as you normally would, for example:
 
@@ -221,7 +198,7 @@ Starting worker, connecting to task queue: agent-task-queue
 
 Your agent is now running with the OpenBox trust layer enabled. Having issues? See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)**.
 
-## Step 6: See It in Action
+## Step 5: See It in Action
 
 Trigger your agent the same way you normally do — whether that's a client script, an API call, or a scheduled workflow. No changes are needed to your trigger code.
 

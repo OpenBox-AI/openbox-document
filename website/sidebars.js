@@ -23,8 +23,8 @@ const sidebars = {
         id: 'getting-started/index',
       },
       items: [
-        'getting-started/registering-agents',
-        'getting-started/quick-start',
+        'getting-started/run-the-demo',
+        'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
       ],
     },
@@ -83,7 +83,17 @@ const sidebars = {
         id: 'dashboard/index',
       },
       items: [
-        'dashboard/agents',
+        {
+          type: 'category',
+          label: 'Agents',
+          link: {
+            type: 'doc',
+            id: 'dashboard/agents/index',
+          },
+          items: [
+            'dashboard/agents/registering-agents',
+          ],
+        },
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],

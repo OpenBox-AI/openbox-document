@@ -12,12 +12,17 @@ import TabItem from '@theme/TabItem';
 
 Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wrap a real Temporal AI agent worker. You'll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
 
+:::tip New to OpenBox?
+If you haven't seen OpenBox in action yet, start with **[Getting Started](/docs/getting-started)** to set up your environment and run the demo.
+:::
+
 :::tip Already Have a Temporal Agent?
-If you already have a working Temporal agent, see the **[Quick Start](/docs/getting-started/quick-start)** for a faster integration path.
+If you already have a working Temporal agent, see **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** for a faster integration path.
 :::
 
 ## Prerequisites
 
+- **[Tools & dependencies](/docs/getting-started#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
   - `openai/gpt-4o`
@@ -25,40 +30,6 @@ If you already have a working Temporal agent, see the **[Quick Start](/docs/gett
   - `gemini/gemini-2.0-flash`
 
   See [LiteLLM Supported Providers](https://docs.litellm.ai/docs/providers) for the full list.
-- **[Python 3.11+](https://www.python.org/downloads/)**
-- **[Node.js](https://nodejs.org/)** — Required for the frontend
-- **[uv](https://docs.astral.sh/uv/)** — Python package manager
-- **`make`** — Required to run setup and dev scripts:
-
-<Tabs>
-<TabItem value="mac" label="macOS" default>
-
-```bash
-xcode-select --install
-```
-
-</TabItem>
-<TabItem value="linux" label="Linux">
-
-```bash
-# Debian/Ubuntu
-sudo apt install make
-
-# Fedora/RHEL
-sudo dnf install make
-```
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-```bash
-winget install GnuWin32.Make
-# or
-choco install make
-```
-
-</TabItem>
-</Tabs>
 
 ## Part 1: Clone and Set Up the Demo
 
@@ -68,53 +39,6 @@ This guide uses the public demo repo:
 git clone https://github.com/OpenBox-AI/poc-temporal-agent
 cd poc-temporal-agent
 ```
-
-### Install Temporal CLI
-
-<Tabs>
-<TabItem value="mac" label="macOS" default>
-
-Install with [Homebrew](https://brew.sh/):
-
-```bash
-brew install temporal
-```
-
-To manually install, download the version for your architecture:
-
-- [Download for Intel Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
-- [Download for Apple Silicon Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64)
-
-Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
-
-</TabItem>
-<TabItem value="linux" label="Linux">
-
-Download the version for your architecture:
-
-- [Download for Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
-- [Download for Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
-
-Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-Install with [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
-
-```bash
-winget install Temporal.TemporalCLI
-```
-
-Alternatively, download the version for your architecture:
-
-- [Download for Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
-- [Download for Windows arm64](https://temporal.download/cli/archive/latest?platform=windows&arch=arm64)
-
-Extract the archive and add `temporal.exe` to your `PATH`.
-
-</TabItem>
-</Tabs>
 
 ### Install Dependencies
 
@@ -132,9 +56,9 @@ make setup
    - **Workflow Engine**: Temporal
    - **Agent Name**: Temporal AI Agent
    - **Agent ID**: Auto-generated
-   - **Description** *(optional)*: Temporal AI agent demo
-   - **Teams** *(optional)*: assign the agent to one or more teams
-   - **Icon** *(optional)*: select an icon
+   - **Description** _(optional)_: Temporal AI agent demo
+   - **Teams** _(optional)_: assign the agent to one or more teams
+   - **Icon** _(optional)_: select an icon
 4. **API Key Generation**:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
@@ -143,7 +67,7 @@ make setup
    - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
 6. Click **Add Agent**
 
-See **[Registering Agents](/docs/getting-started/registering-agents)** for a field-by-field walkthrough of the form.
+See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
 
 ## Part 3: Configure Environment
 
@@ -151,9 +75,11 @@ See **[Registering Agents](/docs/getting-started/registering-agents)** for a fie
 2. Open `.env` in your editor and set your LLM and OpenBox values:
 
 ```bash
-# LLM
+# LLM — use the format provider/model-name
 LLM_MODEL=openai/gpt-4o
 LLM_KEY=your-llm-api-key
+
+# Temporal
 TEMPORAL_ADDRESS=localhost:7233
 
 # OpenBox (use the API key from Part 2)
@@ -351,10 +277,10 @@ result = await workflow.execute_activity(
 
 ### Governance Settings
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `governance_timeout` | `30.0` | Max seconds to wait for governance evaluation |
-| `governance_policy` | `fail_closed` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+| Option               | Default       | Description                                                            |
+| -------------------- | ------------- | ---------------------------------------------------------------------- |
+| `governance_timeout` | `30.0`        | Max seconds to wait for governance evaluation                          |
+| `governance_policy`  | `fail_closed` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
 
 ### Event Filtering
 

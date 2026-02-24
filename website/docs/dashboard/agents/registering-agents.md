@@ -1,14 +1,34 @@
 ---
 title: Registering Agents
-description: Create and configure new agents
-sidebar_position: 1
+description: Create and configure new agents in the OpenBox dashboard
+sidebar_position: 2
 ---
 
 # Registering Agents
 
-Register an agent to begin governance. Navigate to **Agents** and click the **Add Agent** button in the top right corner.
+Every AI agent you want to govern with OpenBox needs to be registered first. Registration creates the agent entity in the platform, generates an API key for SDK authentication, and sets the initial risk profile that determines how strictly OpenBox governs the agent's behavior.
 
-## Agent Creation Form
+## Quick Steps
+
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → Click **Add Agent**
+3. Configure the agent:
+   - **Workflow Engine**: Temporal
+   - **Agent Name**: Your agent name (e.g., "Customer Support Agent")
+   - **Description**: What your agent does
+   - **Teams**: Assign to one or more teams
+   - **Icon**: Select an icon
+4. **Generate API Key** — Click **Generate API Key**, copy and store it (shown only once)
+5. Configure **Initial Risk Assessment** and **Attestation** (see details below)
+6. Click **Add Agent**
+
+:::tip
+Your API key format: `obx_live_xxxxxxxxxxxx` — store it securely, you won't see it again.
+:::
+
+## Detailed Configuration
+
+Navigate to **Agents** and click the **Add Agent** button in the top right corner.
 
 ### Workflow Engine
 
@@ -24,7 +44,7 @@ Select the workflow engine your agent uses:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| **Agent Name** | Yes | Human-readable name (e.g., "Customer Support Bot") |
+| **Agent Name** | Yes | Human-readable name (e.g., "Customer Support Agent") |
 | **Agent ID** | Auto | Auto-generated unique identifier (e.g., "CSB-001") |
 | **Description** | No | What does this agent do? |
 | **Teams** | No | Assign to teams for access control |
@@ -40,11 +60,11 @@ Every agent needs an API key to authenticate with OpenBox:
 
 The key format is: `obx_live_xxxxxxxxxxxx`
 
-## Initial Risk Assessment
+### Initial Risk Assessment
 
 Expand the **Initial Risk Assessment** section and configure your agent's risk profile parameters
 
-### Risk Profile Presets
+#### Risk Profile Presets
 
 Select a preset that matches your agent's intended use:
 
@@ -55,11 +75,11 @@ Select a preset that matches your agent's intended use:
 | **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
 | **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
 
-### Risk Profile Parameters
+#### Risk Profile Parameters
 
 The Risk Profile evaluates risk across three categories:
 
-#### Base Security (25% weight)
+##### Base Security (25% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -69,7 +89,7 @@ The Risk Profile evaluates risk across three categories:
 | **User Interaction** | None (1), Required (2) |
 | **Scope** | Unchanged (1), Changed (2) |
 
-#### AI-Specific (45% weight)
+##### AI-Specific (45% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -79,7 +99,7 @@ The Risk Profile evaluates risk across three categories:
 | **Decision Criticality** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
 | **Adaptability** | Very High (1), High (2), Medium (3), Low (4), Very Low (5) |
 
-#### Impact (30% weight)
+##### Impact (30% weight)
 
 | Parameter | Options |
 |-----------|---------|
@@ -88,7 +108,7 @@ The Risk Profile evaluates risk across three categories:
 | **Availability Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
 | **Safety Impact** | None (1), Low (2), Medium (3), High (4), Critical (5) |
 
-### Predicted Risk Tier
+#### Predicted Risk Tier
 
 As you configure Risk Profile parameters, the form shows a real-time prediction:
 
@@ -99,7 +119,7 @@ Based on current configuration
 
 See **[Assess](/docs/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
 
-## Attestation
+### Attestation
 
 In the **Attestation** section, configure cryptographic signing for audit-grade evidence.
 
@@ -110,35 +130,18 @@ For now, use **AWS KMS** (recommended/default):
 
 See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** for how execution evidence is produced and verified.
 
-## Creating the Agent
+### Creating the Agent
 
 1. Review all fields
 2. Ensure you've copied the API key
-3. Click **Create Agent**
+3. Click **Add Agent**
 
 You'll be redirected to the new agent's detail page.
 
-## Connecting Your Worker
-
-Update your worker code to use the agent's API key:
-
-```python
-worker = create_openbox_worker(
-    client=temporal_client,
-    task_queue="my-task-queue",  # Should match your Temporal task queue
-    workflows=[MyAgentWorkflow],
-    activities=[my_activity],
-    openbox_api_key=os.environ.get("OPENBOX_API_KEY"),  # The key you generated
-)
-```
-
-The agent is matched by the API key. When your worker starts, it will appear as "Active" in the dashboard.
-
 ## Next Steps
 
-After creating your agent:
+Now that you have an agent and API key:
 
-1. **[Trust Overview](/docs/dashboard/trust-overview)** - See your agent's trust score on the dashboard
-2. **[View Alerts](/docs/dashboard/alerts)** - Monitor alerts for your agents
-3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-
+- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
+- **[Run the Demo](/docs/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Agents](/docs/dashboard/agents)** — View and manage all registered agents
