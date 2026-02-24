@@ -23,7 +23,7 @@ See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a fi
 
 ## Install Prerequisites
 
-Make sure you have all the required tools installed before continuing. The **[Prerequisites](/docs/getting-started#prerequisites)** section lists everything you need — Python 3.11+, Node.js, `make`, the Temporal CLI, and `uv`.
+Make sure you have all the required tools installed before continuing — see **[Prerequisites](/docs/getting-started#prerequisites)**.
 
 ## Clone and Configure
 
