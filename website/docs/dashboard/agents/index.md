@@ -75,7 +75,7 @@ Or click anywhere on the row to view the agent detail.
 
 ## Adding Agents
 
-Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/docs/getting-started/registering-agents) for details.
+Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/docs/dashboard/agents/registering-agents) for details.
 
 ## Agent Detail Page
 
@@ -90,5 +90,5 @@ Click any agent to view its detail page with these tabs:
 
 ## Next Steps
 
-1. **[Register a New Agent](/docs/getting-started/registering-agents)** - Add a new agent to OpenBox
+1. **[Register a New Agent](/docs/dashboard/agents/registering-agents)** - Add a new agent to OpenBox
 2. **[Trust Overview](/docs/dashboard/trust-overview)** - View trust scores and trends across all agents

@@ -1,7 +1,7 @@
 ---
 title: Wrap an Existing Agent
 description: Add the OpenBox trust layer to your existing Temporal agent
-sidebar_position: 4
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
@@ -11,15 +11,15 @@ import TabItem from '@theme/TabItem';
 
 Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
 
-:::tip New to Temporal?
-If you haven't used Temporal before, start with **[New to Temporal?](/docs/getting-started/new-to-temporal)** to set up your local environment, then run the **[Quick Start](/docs/getting-started/quick-start)** to see OpenBox in action.
+:::tip New to OpenBox?
+If you haven't seen OpenBox in action yet, start with **[Run the Demo](/docs/getting-started/run-the-demo)** to clone the demo agent and see governance working end-to-end.
 :::
 
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities, and a running Temporal server
 - **Python 3.11+** installed
-- **OpenBox API Key** — [Register your agent](/docs/getting-started/registering-agents) to get one
+- **OpenBox API Key** — [Register your agent](/docs/dashboard/agents/registering-agents) in the dashboard to get one
 
 ## Step 1: Install OpenBox SDK
 
@@ -63,6 +63,10 @@ load_dotenv()
 ```
 
 </details>
+
+:::warning Production environments
+Never commit `.env` files to version control. Use your platform's secret management (e.g., AWS Secrets Manager, Vault, Kubernetes secrets) to inject `OPENBOX_API_KEY` in production.
+:::
 
 ## Step 3: Wrap Your Existing Worker
 

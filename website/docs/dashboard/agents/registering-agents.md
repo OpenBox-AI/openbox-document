@@ -1,12 +1,12 @@
 ---
 title: Registering Agents
-description: Create and configure new agents
+description: Create and configure new agents in the OpenBox dashboard
 sidebar_position: 2
 ---
 
 # Registering Agents
 
-Register an agent to begin governance.
+Every AI agent you want to govern with OpenBox needs to be registered first. Registration creates the agent entity in the platform, generates an API key for SDK authentication, and sets the initial risk profile that determines how strictly OpenBox governs the agent's behavior.
 
 ## Quick Steps
 
@@ -44,7 +44,7 @@ Select the workflow engine your agent uses:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| **Agent Name** | Yes | Human-readable name (e.g., "Customer Support Bot") |
+| **Agent Name** | Yes | Human-readable name (e.g., "Customer Support Agent") |
 | **Agent ID** | Auto | Auto-generated unique identifier (e.g., "CSB-001") |
 | **Description** | No | What does this agent do? |
 | **Teams** | No | Assign to teams for access control |
@@ -134,14 +134,14 @@ See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** 
 
 1. Review all fields
 2. Ensure you've copied the API key
-3. Click **Create Agent**
+3. Click **Add Agent**
 
 You'll be redirected to the new agent's detail page.
 
 ## Next Steps
 
-Now that you have an agent and API key, continue with the path that fits your situation:
+Now that you have an agent and API key:
 
-- **[Quick Start](/docs/getting-started/quick-start)** — New to OpenBox? Run a minimal guardrails demo to see it in action
 - **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
-
+- **[Run the Demo](/docs/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Agents](/docs/dashboard/agents)** — View and manage all registered agents
