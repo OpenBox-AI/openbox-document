@@ -125,5 +125,6 @@ All of this happened through the single integration point: `create_openbox_worke
 ## Next Steps
 
 - **[How the Integration Works](/docs/developer-guide/temporal-integration-guide-python#how-the-integration-works)** — Understand the single code change that connects your agent to OpenBox
+- **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** — Add your own goals, tools, and MCP integrations to the demo
 - **[Configure Trust Controls](/docs/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules for LLM interactions
 - **[Monitor Sessions](/docs/trust-lifecycle/monitor)** — Use [Session Replay](/docs/trust-lifecycle/session-replay) to debug and audit agent behavior

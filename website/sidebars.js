@@ -70,6 +70,7 @@ const sidebars = {
       items: [
         'developer-guide/sdk-reference',
         'developer-guide/temporal-integration-guide-python',
+        'developer-guide/customizing-your-agent',
         'developer-guide/configuration',
         'developer-guide/error-handling',
         'developer-guide/event-types',
