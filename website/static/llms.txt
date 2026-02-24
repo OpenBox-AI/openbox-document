@@ -31,6 +31,7 @@
 ## Developer Guide
 - SDK Reference: https://docs.openbox.ai/docs/developer-guide/sdk-reference
 - Temporal Integration Guide (Python): https://docs.openbox.ai/docs/developer-guide/temporal-integration-guide-python
+- Extending the Demo Agent: https://docs.openbox.ai/docs/developer-guide/customizing-your-agent
 - Configuration: https://docs.openbox.ai/docs/developer-guide/configuration
 - Error Handling: https://docs.openbox.ai/docs/developer-guide/error-handling
 - Event Types: https://docs.openbox.ai/docs/developer-guide/event-types
