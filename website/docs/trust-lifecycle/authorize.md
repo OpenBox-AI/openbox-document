@@ -14,27 +14,15 @@ Access via **Agent Detail → Authorize** tab.
 
 Operations flow through three layers:
 
-```
-Incoming Operation
-       │
-       ▼
-┌─────────────┐
-│ Guardrails  │  Input/output validation and transformation
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│ OPA Policy  │  Stateless permission checks
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│ Behavioral  │  Stateful multi-step pattern detection
-│ Rules       │
-└─────────────┘
-       │
-       ▼
-  Governance Decision
+```mermaid
+flowchart TD
+    incoming["<b>Incoming Operation</b>"]
+    guardrails["<b>Guardrails</b><br/>Input/output validation<br/>and transformation"]
+    opa["<b>OPA Policy</b><br/>Stateless permission checks"]
+    behavioral["<b>Behavioral Rules</b><br/>Stateful multi-step<br/>pattern detection"]
+    decision["<b>Governance Decision</b>"]
+
+    incoming --> guardrails --> opa --> behavioral --> decision
 ```
 
 ### How Multiple Rules Execute
