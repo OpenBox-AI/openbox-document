@@ -391,3 +391,8 @@
 .markdown h6 {
   font-size: 1rem;
 }
+
+/* Centre-align all Mermaid diagrams */
+.docusaurus-mermaid-container {
+  text-align: center;
+}
