@@ -41,6 +41,7 @@
 - Dashboard: https://docs.openbox.ai/docs/dashboard
 - Agents: https://docs.openbox.ai/docs/dashboard/agents
   - Registering Agents: https://docs.openbox.ai/docs/dashboard/agents/registering-agents
+  - Agent Settings: https://docs.openbox.ai/docs/dashboard/agents/agent-settings
 - Trust Overview: https://docs.openbox.ai/docs/dashboard/trust-overview
 - Alerts: https://docs.openbox.ai/docs/dashboard/alerts
 

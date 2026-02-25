@@ -50,6 +50,10 @@ Select the workflow engine your agent uses:
 | **Teams** | No | Assign to teams for access control |
 | **Icon** | No | Visual identifier (headphones, code, trending-up, file-search, bot) |
 
+:::tip
+All of these fields can be edited after creation from the [Agent Settings](/docs/dashboard/agents/agent-settings#general-settings) page.
+:::
+
 ### API Key Generation
 
 Every agent needs an API key to authenticate with OpenBox:

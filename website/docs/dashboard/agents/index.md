@@ -69,7 +69,7 @@ The main table displays:
 Click the **⋮** menu on any row to:
 
 - **View Details** - Navigate to agent detail page
-- **Settings** - Go directly to agent settings
+- **[Settings](/docs/dashboard/agents/agent-settings)** - Go directly to agent settings
 
 Or click anywhere on the row to view the agent detail.
 
@@ -87,6 +87,7 @@ Click any agent to view its detail page with these tabs:
 - **[Monitor](/docs/trust-lifecycle/monitor)** - Operational dashboard and telemetry
 - **[Verify](/docs/trust-lifecycle/verify)** - Goal alignment and drift detection
 - **[Adapt](/docs/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
+- **[Settings](/docs/dashboard/agents/agent-settings)** - Agent configuration, risk profile, API keys, and lifecycle management
 
 ## Next Steps
 
