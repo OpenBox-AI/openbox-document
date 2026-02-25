@@ -35,6 +35,7 @@
 - Configuration: https://docs.openbox.ai/docs/developer-guide/configuration
 - Error Handling: https://docs.openbox.ai/docs/developer-guide/error-handling
 - Event Types: https://docs.openbox.ai/docs/developer-guide/event-types
+- Demo Architecture Reference: https://docs.openbox.ai/docs/developer-guide/demo-architecture
 
 ## Dashboard
 - Dashboard: https://docs.openbox.ai/docs/dashboard

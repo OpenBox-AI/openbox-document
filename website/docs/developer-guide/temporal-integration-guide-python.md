@@ -215,7 +215,7 @@ The agent's Temporal code is organized in:
 - **`tools/`** — Tools are the capabilities available to the agent (e.g., search flights, check balances, process payments). Each tool is implemented as a Temporal activity, so OpenBox automatically captures and governs tool usage.
 - **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
 
-See **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure.
+See **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/docs/developer-guide/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
 
 ## Explore Different Scenarios
 
@@ -340,5 +340,6 @@ To investigate failures, open a session in the dashboard using the same steps fr
 2. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
 3. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
 4. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
+5. **[Demo Architecture Reference](/docs/developer-guide/demo-architecture)** - Signals, activities, endpoints, and message flow
 
 Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.
