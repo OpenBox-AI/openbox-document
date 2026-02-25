@@ -12,7 +12,7 @@ The demo agent ships with built-in scenarios like travel booking and banking, bu
 OpenBox automatically governs all tool calls regardless of type. You don't need any extra configuration to get governance coverage for new goals or tools.
 
 :::tip Prerequisites
-This guide assumes you've completed [Run the Demo](/docs/getting-started/run-the-demo) or the [Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python) and have the demo running locally.
+This guide assumes you've completed [Run the Demo](/docs/getting-started/run-the-demo) or the [Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python) and have the demo running locally. See the [Demo Architecture Reference](/docs/developer-guide/demo-architecture) for a full breakdown of signals, activities, and endpoints.
 :::
 
 ## How Goals and Tools Work
