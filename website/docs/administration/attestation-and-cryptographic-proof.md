@@ -30,33 +30,15 @@ OpenBox supports two signing providers:
 
 When an agent session completes, OpenBox constructs a cryptographic proof through the following pipeline:
 
-```
-Session Events
-    │
-    ▼
-┌─────────────────────────┐
-│  1. Event Hashing       │  SHA-256 hash of each governance event
-│     (per event)         │
-└────────┬────────────────┘
-         │
-         ▼
-┌─────────────────────────┐
-│  2. Merkle Tree         │  Multi-level tree with SHA-256 hashing
-│     Construction        │  Leaf = event hash, Root = session digest
-└────────┬────────────────┘
-         │
-         ▼
-┌─────────────────────────┐
-│  3. Digital Signing     │  AWS KMS (ECDSA P-256)
-│                         │  — or —
-│                         │  External attestation endpoint
-└────────┬────────────────┘
-         │
-         ▼
-┌─────────────────────────┐
-│  4. Proof Certificate   │  Stored per session with merkle root,
-│                         │  signature, and event count
-└─────────────────────────┘
+```mermaid
+flowchart TD
+    events["<b>Session Events</b>"]
+    hashing["<b>1. Event Hashing</b><br/>SHA-256 hash of each<br/>governance event"]
+    merkle["<b>2. Merkle Tree Construction</b><br/>Multi-level tree with SHA-256 hashing<br/>Leaf = event hash, Root = session digest"]
+    signing["<b>3. Digital Signing</b><br/>AWS KMS (ECDSA P-256)<br/>or external attestation endpoint"]
+    cert["<b>4. Proof Certificate</b><br/>Stored per session with merkle root,<br/>signature, and event count"]
+
+    events --> hashing --> merkle --> signing --> cert
 ```
 
 ### Components
