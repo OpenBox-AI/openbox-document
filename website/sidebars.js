@@ -74,6 +74,7 @@ const sidebars = {
         'developer-guide/configuration',
         'developer-guide/error-handling',
         'developer-guide/event-types',
+        'developer-guide/demo-architecture',
       ],
     },
     {
