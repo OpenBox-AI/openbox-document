@@ -10,16 +10,16 @@ The Trust Lifecycle is OpenBox's governance model. It provides a structured appr
 
 Access each phase via the tabs in **Agent Detail**.
 
-```
-┌─────────┐    ┌───────────┐    ┌─────────┐    ┌────────┐    ┌───────┐
-│ ASSESS  │ →  │ AUTHORIZE │ →  │ MONITOR │ →  │ VERIFY │ →  │ ADAPT │
-│         │    │           │    │         │    │        │    │       │
-│ Initial │    │ Configure │    │ Runtime │    │ Goal   │    │ Trust │
-│ Risk    │    │ Controls  │    │ Observe │    │ Check  │    │ Evolve│
-└─────────┘    └───────────┘    └─────────┘    └────────┘    └───────┘
-     ↑                                                            │
-     └────────────────────────────────────────────────────────────┘
-                         Continuous Improvement
+```mermaid
+flowchart LR
+    assess["<b>ASSESS</b><br/>Initial<br/>Risk"]
+    authorize["<b>AUTHORIZE</b><br/>Configure<br/>Controls"]
+    monitor["<b>MONITOR</b><br/>Runtime<br/>Observe"]
+    verify["<b>VERIFY</b><br/>Goal<br/>Check"]
+    adapt["<b>ADAPT</b><br/>Trust<br/>Evolve"]
+
+    assess --> authorize --> monitor --> verify --> adapt
+    adapt -- "Continuous Improvement" --> assess
 ```
 
 ## Phase Overview
