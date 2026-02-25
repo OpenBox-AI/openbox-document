@@ -1,12 +1,12 @@
 ---
 title: Event Types
-description: The 21 semantic event types for agent operations
+description: The 24 semantic event types for agent operations
 sidebar_position: 3
 ---
 
 # Event Types
 
-OpenBox classifies agent operations into 21 semantic event types. These types enable precise policy writing and meaningful analytics.
+OpenBox classifies agent operations into 24 semantic event types. These types enable precise policy writing and meaningful analytics.
 
 ## Event Categories
 
@@ -78,6 +78,8 @@ Reference event types in OPA policies:
 ```rego
 package openbox
 
+import rego.v1
+
 default result := {"decision": "CONTINUE", "reason": ""}
 
 # Allow all read operations
@@ -95,25 +97,6 @@ result := {"decision": "BLOCK", "reason": "File writes blocked for lower-tier ag
     input.operation.type == "FILE_WRITE"
     input.agent.trust_tier >= 3
 }
-```
-
-### In Behavioral Rules
-
-Detect patterns across event types:
-
-```yaml
-rule:
-  name: "PII Exfiltration Pattern"
-  trigger:
-    type: DATABASE_READ
-    target: "*.pii_*"
-  condition:
-    within: 60s
-    followed_by:
-      - type: EXTERNAL_API_CALL
-      - type: WEBHOOK_SEND
-      - type: EMAIL_SEND
-  action: REQUIRE_APPROVAL
 ```
 
 ### In Monitoring
@@ -153,34 +136,6 @@ Each event includes:
     "duration_ms": 45,
     "trace_id": "abc123def456"
   }
-}
-```
-
-## Custom Event Types
-
-For operations not covered by the 21 standard types, use `AGENT_ACTION` with custom metadata:
-
-```python
-# In your activity
-openbox.emit_event(
-    type="AGENT_ACTION",
-    metadata={
-        "custom_type": "payment_processing",
-        "amount": 99.99,
-        "currency": "USD"
-    }
-)
-```
-
-Then reference in policies:
-
-```rego
-default result := {"decision": "CONTINUE", "reason": ""}
-
-result := {"decision": "REQUIRE_APPROVAL", "reason": "High-value payment processing requires approval"} if {
-    input.operation.type == "AGENT_ACTION"
-    input.operation.metadata.custom_type == "payment_processing"
-    object.get(input.operation.metadata, "amount", 0) > 100
 }
 ```
 

@@ -6,31 +6,36 @@ sidebar_position: 3
 
 # Error Handling
 
-Trust decisions surface as exceptions in your activities. Handle them appropriately for robust agent behavior.
+Trust decisions surface as Temporal `ApplicationError` exceptions in your activities. The SDK uses `ApplicationError.type` to distinguish between different governance outcomes.
 
-## Exception Types
+## Governance Error Types
 
-| Exception | Governance Decision | Description |
-|-----------|-------------------|-------------|
-| `GovernanceStop` | BLOCK or HALT | Operation blocked |
-| `ApprovalPending` | REQUIRE_APPROVAL | Awaiting human review |
-| `ApprovalRejected` | REQUIRE_APPROVAL (rejected) | Human rejected request |
-| `ApprovalExpired` | REQUIRE_APPROVAL (timeout) | No response before timeout |
-| `GuardrailsValidationFailed` | CONSTRAIN (validation failed) | Input/output validation failed |
+The SDK raises `ApplicationError` with one of these type strings:
 
-## Import Exceptions
+| Error Type           | Decision                    | Retryable | Description                |
+| -------------------- | --------------------------- | --------- | -------------------------- |
+| `"GovernanceStop"`   | BLOCK or HALT               | No        | Operation blocked          |
+| `"ApprovalPending"`  | REQUIRE_APPROVAL            | Yes       | Awaiting human review      |
+| `"ApprovalRejected"` | REQUIRE_APPROVAL (rejected) | No        | Human rejected request     |
+| `"ApprovalExpired"`  | REQUIRE_APPROVAL (timeout)  | No        | No response before timeout |
+
+All governance errors are standard Temporal `ApplicationError` instances with these properties:
+
+| Property        | Type   | Description                                                             |
+| --------------- | ------ | ----------------------------------------------------------------------- |
+| `message`       | `str`  | Human-readable description (e.g., `"Governance blocked: PII detected"`) |
+| `type`          | `str`  | The governance type string from the table above                         |
+| `non_retryable` | `bool` | If `True`, Temporal will not retry the activity                         |
+
+## Import
 
 ```python
-from openbox.errors import (
-    GovernanceStop,
-    ApprovalPending,
-    ApprovalRejected,
-    ApprovalExpired,
-    GuardrailsValidationFailed,
-)
+from temporalio.exceptions import ApplicationError
 ```
 
-## Handling Each Exception
+## Handling Each Type
+
+These patterns apply inside your existing Temporal activity functions. The SDK intercepts activity execution automatically — you only need to add error handling if you want custom behavior beyond the default (which is to let the exception propagate and fail the activity).
 
 ### GovernanceStop
 
@@ -42,41 +47,27 @@ async def sensitive_operation(data: dict) -> str:
     try:
         result = await perform_action(data)
         return result
-    except GovernanceStop as e:
-        logger.error(f"Operation blocked: {e.reason}")
+    except ApplicationError as e:
+        if e.type == "GovernanceStop":
+            logger.error(f"Operation blocked: {e.message}")
 
-        if e.termination:
-            # Agent is being terminated
-            logger.critical("Agent terminated by trust policy")
-            # Perform cleanup
+            # Option 1: Raise to fail the activity
             raise
 
-        # Operation denied but agent continues
-        # Option 1: Raise to fail the activity
+            # Option 2: Return alternative result
+            return "Operation not permitted"
         raise
-
-        # Option 2: Return alternative result
-        return "Operation not permitted"
 ```
-
-**GovernanceStop properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `reason` | str | Why the operation was blocked |
-| `policy` | str | Policy that triggered the block |
-| `termination` | bool | Whether agent is being terminated |
-| `trust_impact` | float | Trust score change |
 
 ### ApprovalPending
 
-Raised when operation requires human approval. The SDK handles this automatically - Temporal retries until approval is granted or rejected.
+Raised when the operation requires human approval. Because `non_retryable=False`, Temporal automatically retries the activity — the SDK polls for an approval decision on each retry.
 
 ```python
 @activity.defn
 async def requires_approval_operation(data: dict) -> str:
-    # No special handling needed - SDK manages retries
-    # Activity will retry until approved/rejected/expired
+    # No special handling needed - SDK manages retries.
+    # Activity will retry until approved/rejected/expired.
     result = await perform_action(data)
     return result
 ```
@@ -89,19 +80,13 @@ async def custom_approval_handling(data: dict) -> str:
     try:
         result = await perform_action(data)
         return result
-    except ApprovalPending as e:
-        logger.info(f"Awaiting approval: {e.approval_id}")
-        # Re-raise to trigger retry
+    except ApplicationError as e:
+        if e.type == "ApprovalPending":
+            logger.info(f"Awaiting approval: {e.message}")
+            # Re-raise to trigger retry
+            raise
         raise
 ```
-
-**ApprovalPending properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `approval_id` | str | Approval request ID |
-| `timeout` | datetime | When approval expires |
-| `approvers` | list[str] | Who can approve |
 
 ### ApprovalRejected
 
@@ -113,24 +98,17 @@ async def handle_rejection(data: dict) -> str:
     try:
         result = await perform_action(data)
         return result
-    except ApprovalRejected as e:
-        logger.warning(f"Approval rejected: {e.reason}")
-        logger.info(f"Rejected by: {e.rejected_by}")
+    except ApplicationError as e:
+        if e.type == "ApprovalRejected":
+            logger.warning(f"Approval rejected: {e.message}")
 
-        # Option 1: Fail the activity
+            # Option 1: Fail the activity
+            raise
+
+            # Option 2: Handle gracefully
+            return f"Operation rejected: {e.message}"
         raise
-
-        # Option 2: Handle gracefully
-        return f"Operation rejected: {e.reason}"
 ```
-
-**ApprovalRejected properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `reason` | str | Rejection reason provided by approver |
-| `rejected_by` | str | User who rejected |
-| `approval_id` | str | Approval request ID |
 
 ### ApprovalExpired
 
@@ -142,53 +120,16 @@ async def handle_timeout(data: dict) -> str:
     try:
         result = await perform_action(data)
         return result
-    except ApprovalExpired as e:
-        logger.warning(f"Approval timed out after {e.timeout_duration}")
-
-        # Option 1: Fail
-        raise
-
-        # Option 2: Retry with escalation
-        # (would require workflow-level logic)
+    except ApplicationError as e:
+        if e.type == "ApprovalExpired":
+            logger.warning(f"Approval timed out: {e.message}")
+            raise
         raise
 ```
-
-**ApprovalExpired properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `approval_id` | str | Approval request ID |
-| `timeout_duration` | timedelta | How long it waited |
-
-### GuardrailsValidationFailed
-
-Raised when input/output fails guardrail validation.
-
-```python
-@activity.defn
-async def validated_operation(data: dict) -> str:
-    try:
-        result = await perform_action(data)
-        return result
-    except GuardrailsValidationFailed as e:
-        logger.error(f"Guardrail failed: {e.guardrail_name}")
-        logger.error(f"Violations: {e.violations}")
-
-        # Typically should fail - data doesn't meet requirements
-        raise
-```
-
-**GuardrailsValidationFailed properties:**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `guardrail_name` | str | Which guardrail failed |
-| `violations` | list[str] | Specific validation failures |
-| `stage` | str | "input" or "output" |
 
 ## Workflow-Level Handling
 
-For workflow-level trust handling:
+For workflow-level trust handling, catch `ApplicationError` and check the type:
 
 ```python
 @workflow.defn
@@ -203,20 +144,20 @@ class MyAgentWorkflow:
             )
             return WorkflowOutput(result=result)
 
-        except GovernanceStop as e:
-            if e.termination:
-                # Workflow is being terminated
+        except ApplicationError as e:
+            if e.type == "GovernanceStop":
+                # Workflow is being blocked or terminated
                 await self.cleanup()
-                raise
-            # Handle denied operation at workflow level
-            return WorkflowOutput(error=e.reason)
+                return WorkflowOutput(error=e.message)
 
-        except ApprovalRejected as e:
-            # Human rejected - may want different handling
-            return WorkflowOutput(
-                status="rejected",
-                reason=e.reason
-            )
+            if e.type == "ApprovalRejected":
+                # Human rejected - may want different handling
+                return WorkflowOutput(
+                    status="rejected",
+                    reason=e.message,
+                )
+
+            raise
 ```
 
 ## Best Practices
@@ -224,8 +165,19 @@ class MyAgentWorkflow:
 1. **Let ApprovalPending propagate** - The SDK handles retries
 2. **Log GovernanceStop with context** - Helps debugging
 3. **Consider fallback behavior** - Not all denials should crash
-4. **Handle termination specially** - Clean up resources
+4. **Clean up on GovernanceStop** - Release resources before re-raising
 5. **Don't catch and ignore** - These exceptions are intentional
+
+## Configuration Exceptions
+
+The SDK raises configuration exceptions from `openbox.config` during `create_openbox_worker()` calls — not during activity execution. Handle these where you initialize your worker.
+
+| Exception                 | Cause                                   |
+| ------------------------- | --------------------------------------- |
+| `OpenBoxConfigError`      | Base class for all configuration errors |
+| `OpenBoxAuthError`        | Invalid or missing API key              |
+| `OpenBoxNetworkError`     | Cannot reach OpenBox Core               |
+| `OpenBoxInsecureURLError` | HTTP used for a non-localhost URL       |
 
 ## Next Steps
 
