@@ -14,27 +14,15 @@ Access via **Agent Detail → Authorize** tab.
 
 Operations flow through three layers:
 
-```
-Incoming Operation
-       │
-       ▼
-┌─────────────┐
-│ Guardrails  │  Input/output validation and transformation
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│ OPA Policy  │  Stateless permission checks
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│ Behavioral  │  Stateful multi-step pattern detection
-│ Rules       │
-└─────────────┘
-       │
-       ▼
-  Governance Decision
+```mermaid
+flowchart TD
+    incoming["<b>Incoming Operation</b>"]
+    guardrails["<b>Guardrails</b><br/>Input/output validation<br/>and transformation"]
+    opa["<b>OPA Policy</b><br/>Stateless permission checks"]
+    behavioral["<b>Behavioral Rules</b><br/>Stateful multi-step<br/>pattern detection"]
+    decision["<b>Governance Decision</b>"]
+
+    incoming --> guardrails --> opa --> behavioral --> decision
 ```
 
 ### How Multiple Rules Execute
@@ -677,7 +665,7 @@ Select the **Trigger semantic type**. This is the action that will be checked (f
 
 ##### Step 3 — States (Required Prior States)
 
-Select one or more **Required Prior States**. These semantic types must occur before the trigger.
+Select one or more **Required Prior States**. These semantic types must occur before the trigger. When multiple prior states are selected, **all** of them must have occurred (AND logic) for the prerequisite to be met.
 
 This step defines the **Prior State** prerequisite described below.
 
@@ -702,9 +690,9 @@ Governance decisions from behavioral rules (and all authorization layers) surfac
 A behavioral rule has two key fields:
 
 - **Trigger:** the action being checked (example: `llm_completion`)
-- **Prior State:** the action that must have happened before the trigger (example: `http_get`)
+- **Prior State:** the action(s) that must have happened before the trigger (example: `http_get`)
 
-The rule is simple: the prior state acts as a prerequisite. If the prerequisite is met, the action continues. If not, the configured verdict is applied.
+The rule is simple: the prior state acts as a prerequisite. If the prerequisite is met, the action continues. If not, the configured verdict is applied. When a rule has multiple prior states, all of them must have occurred for the prerequisite to be satisfied.
 
 This applies to all verdicts:
 
