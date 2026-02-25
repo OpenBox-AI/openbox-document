@@ -113,34 +113,19 @@ with create_span("my-operation", {"input": data}) as span:
 
 ## How It Works
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Your Temporal Worker                     │
-│                                                              │
-│  ┌────────────────────┐      ┌──────────────────────────┐  │
-│  │   Your Workflow    │      │    Your Activity         │  │
-│  │   (unchanged)      │      │    (unchanged)           │  │
-│  └────────────────────┘      └──────────────────────────┘  │
-│           │                              │                  │
-│           ▼                              ▼                  │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │         OpenBox SDK (Interceptors)                 │    │
-│  │  - Captures events                                 │    │
-│  │  - Collects HTTP/DB/File telemetry                │    │
-│  │  - Sends events to OpenBox                        │    │
-│  └────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌────────────────────────────┐
-              │        OpenBox             │
-              │       Trust Engine        │
-              │                            │
-              │   Verdicts:                │
-              │   ALLOW | CONSTRAIN        │
-              │   REQUIRE_APPROVAL         │
-              │   BLOCK | HALT             │
-              └────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph worker["Your Temporal Worker"]
+        workflow["Your Workflow<br/>(unchanged)"]
+        activity["Your Activity<br/>(unchanged)"]
+        sdk["<b>OpenBox SDK (Interceptors)</b><br/>Captures events<br/>Collects HTTP/DB/File telemetry<br/>Sends events to OpenBox"]
+        workflow --> sdk
+        activity --> sdk
+    end
+
+    sdk --> engine
+
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN<br/>REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
 
 ## Configuration
