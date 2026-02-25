@@ -94,6 +94,7 @@ const sidebars = {
           },
           items: [
             'dashboard/agents/registering-agents',
+            'dashboard/agents/agent-settings',
           ],
         },
         'dashboard/trust-overview',

@@ -392,6 +392,12 @@
   font-size: 1rem;
 }
 
+/* Let doc images render at their natural size instead of stretching to fill the container */
+.markdown img {
+  width: auto;
+  max-width: 100%;
+}
+
 /* Centre-align all Mermaid diagrams */
 .docusaurus-mermaid-container {
   text-align: center;

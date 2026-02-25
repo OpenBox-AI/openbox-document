@@ -22,7 +22,7 @@ Organize agents and members into teams for access control.
 3. Enter team name and description
 
 :::note
-Agents are assigned to teams during [agent creation](/docs/dashboard/agents/registering-agents). Users are assigned to teams by editing their profile (see [Adding Members](#adding-members) below).
+Agents are assigned to teams during [agent creation](/docs/dashboard/agents/registering-agents) and can be reassigned at any time from [Agent Settings](/docs/dashboard/agents/agent-settings#general-settings). Users are assigned to teams by editing their profile (see [Adding Members](#adding-members) below).
 :::
 
 ## Members
