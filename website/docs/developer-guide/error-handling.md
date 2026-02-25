@@ -12,21 +12,20 @@ Trust decisions surface as Temporal `ApplicationError` exceptions in your activi
 
 The SDK raises `ApplicationError` with one of these type strings:
 
-| Error Type | Decision | Retryable | Description |
-|------------|----------|-----------|-------------|
-| `"GovernanceStop"` | BLOCK or HALT | No | Operation blocked |
-| `"ApprovalPending"` | REQUIRE_APPROVAL | Yes | Awaiting human review |
-| `"ApprovalRejected"` | REQUIRE_APPROVAL (rejected) | No | Human rejected request |
-| `"ApprovalExpired"` | REQUIRE_APPROVAL (timeout) | No | No response before timeout |
-| `"GuardrailsValidationFailed"` | CONSTRAIN (validation failed) | No | Input/output validation failed |
+| Error Type           | Decision                    | Retryable | Description                |
+| -------------------- | --------------------------- | --------- | -------------------------- |
+| `"GovernanceStop"`   | BLOCK or HALT               | No        | Operation blocked          |
+| `"ApprovalPending"`  | REQUIRE_APPROVAL            | Yes       | Awaiting human review      |
+| `"ApprovalRejected"` | REQUIRE_APPROVAL (rejected) | No        | Human rejected request     |
+| `"ApprovalExpired"`  | REQUIRE_APPROVAL (timeout)  | No        | No response before timeout |
 
 All governance errors are standard Temporal `ApplicationError` instances with these properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `message` | `str` | Human-readable description (e.g., `"Governance blocked: PII detected"`) |
-| `type` | `str` | The governance type string from the table above |
-| `non_retryable` | `bool` | If `True`, Temporal will not retry the activity |
+| Property        | Type   | Description                                                             |
+| --------------- | ------ | ----------------------------------------------------------------------- |
+| `message`       | `str`  | Human-readable description (e.g., `"Governance blocked: PII detected"`) |
+| `type`          | `str`  | The governance type string from the table above                         |
+| `non_retryable` | `bool` | If `True`, Temporal will not retry the activity                         |
 
 ## Import
 
@@ -128,24 +127,6 @@ async def handle_timeout(data: dict) -> str:
         raise
 ```
 
-### GuardrailsValidationFailed
-
-Raised when input or output fails guardrail validation.
-
-```python
-@activity.defn
-async def validated_operation(data: dict) -> str:
-    try:
-        result = await perform_action(data)
-        return result
-    except ApplicationError as e:
-        if e.type == "GuardrailsValidationFailed":
-            logger.error(f"Guardrail failed: {e.message}")
-            # Typically should fail - data doesn't meet requirements
-            raise
-        raise
-```
-
 ## Workflow-Level Handling
 
 For workflow-level trust handling, catch `ApplicationError` and check the type:
@@ -191,12 +172,12 @@ class MyAgentWorkflow:
 
 The SDK raises configuration exceptions from `openbox.config` during `create_openbox_worker()` calls — not during activity execution. Handle these where you initialize your worker.
 
-| Exception | Cause |
-|-----------|-------|
-| `OpenBoxConfigError` | Base class for all configuration errors |
-| `OpenBoxAuthError` | Invalid or missing API key |
-| `OpenBoxNetworkError` | Cannot reach OpenBox Core |
-| `OpenBoxInsecureURLError` | HTTP used for a non-localhost URL |
+| Exception                 | Cause                                   |
+| ------------------------- | --------------------------------------- |
+| `OpenBoxConfigError`      | Base class for all configuration errors |
+| `OpenBoxAuthError`        | Invalid or missing API key              |
+| `OpenBoxNetworkError`     | Cannot reach OpenBox Core               |
+| `OpenBoxInsecureURLError` | HTTP used for a non-localhost URL       |
 
 ## Next Steps
 
