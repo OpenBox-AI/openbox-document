@@ -59,7 +59,7 @@ The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routin
 - `openai/gpt-4o`
 - `anthropic/claude-sonnet-4-5-20250929`
 - `gemini/gemini-2.0-flash`
-  :::
+:::
 
 ## Run the Demo
 
