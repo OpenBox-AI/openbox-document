@@ -2,7 +2,7 @@
 title: Temporal Integration Guide (Python)
 sidebar_label: Temporal (Python)
 description: Integrate OpenBox with a Temporal AI agent using the OpenBox demo repo
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 import Tabs from '@theme/Tabs';
