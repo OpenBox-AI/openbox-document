@@ -290,7 +290,8 @@ export default function Home() {
   return (
     <Layout
       title={siteConfig.title}
-      description="OpenBox documentation">
+      description="OpenBox documentation"
+      wrapperClassName="homepage-no-footer">
       <HomepageHeader />
       <main>
         <section className={styles.exploreSection}>
