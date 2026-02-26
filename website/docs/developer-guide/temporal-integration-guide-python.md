@@ -20,7 +20,7 @@ This is the end-to-end guide for integrating OpenBox with a Temporal AI agent. Y
 
 ## Prerequisites
 
-- **[Tools & dependencies](/docs/getting-started#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
+- **[Tools & dependencies](/docs/getting-started/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
   - `openai/gpt-4o`

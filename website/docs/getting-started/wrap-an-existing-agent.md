@@ -11,10 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
 
-:::tip New to OpenBox?
-If you haven't seen OpenBox in action yet, start with **[Run the Demo](/docs/getting-started/run-the-demo)** to clone the demo agent and see governance working end-to-end.
-:::
-
 ## Prerequisites
 
 - **Existing Temporal agent** with workflows and activities, and a running Temporal server
@@ -64,13 +60,13 @@ load_dotenv()
 
 </details>
 
-:::warning Production environments
-Never commit `.env` files to version control. Use your platform's secret management (e.g., AWS Secrets Manager, Vault, Kubernetes secrets) to inject `OPENBOX_API_KEY` in production.
+:::warning
+In production, inject `OPENBOX_API_KEY` via your platform's secret management rather than `.env` files.
 :::
 
 ## Step 3: Wrap Your Existing Worker
 
-Replace the standard Temporal `Worker` with OpenBox's `create_openbox_worker`. Your existing workflows and activities stay exactly as they are:
+Replace `Worker` with `create_openbox_worker`:
 
 <Tabs>
 <TabItem value="before" label="Temporal">
@@ -189,15 +185,11 @@ Starting worker, connecting to task queue: agent-task-queue
 
 </details>
 
-:::tip You're done!
-Your agent is now running with the OpenBox trust layer enabled. Having issues? See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)**.
-:::
+Having issues? See the **[Troubleshooting Guide](/docs/getting-started/troubleshooting)**.
 
 ## Step 5: See It in Action
 
-Trigger your agent the same way you normally do — whether that's a client script, an API call, or a scheduled workflow. No changes are needed to your trigger code.
-
-Once the workflow completes:
+Trigger a workflow the way you normally would. Once it completes:
 
 1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents** → click your agent
@@ -217,26 +209,17 @@ If your session doesn't appear, check that your worker is running and connected 
 
 ## What Just Happened?
 
-Here's how that data got there. Under the hood, the OpenBox SDK:
+Under the hood, the OpenBox SDK:
 
 - **Intercepted workflow events** (started, completed, failed, signals) and **activity events** (started, completed) with their inputs and outputs, sending each to OpenBox for governance evaluation
 - **Captured HTTP calls automatically** — any requests your agent made (LLM APIs, external services) were recorded via OpenTelemetry instrumentation, including full request and response details
 - **Evaluated your governance policies** against each event, determining whether the action should be allowed, blocked, or flagged for approval
 - **Recorded a governance decision** for every event — that's what you see in the Event Log Timeline and Session Replay
 
-This happens on every workflow execution with no changes to your agent code.
+This runs on every workflow execution automatically.
 
 ## Next Steps
 
-Now that your agent is running with OpenBox:
-
-1. **[Configure Trust Controls](/docs/trust-lifecycle/authorize)** - Set up guardrails, policies, and behavioral rules
-2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Use [Session Replay](/docs/trust-lifecycle/session-replay) to debug and audit agent behavior
-3. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-4. **[Advanced Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and event filtering
-
-## Need More Details?
-
-- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** - Complete end-to-end setup from scratch
-- **[SDK Reference](/docs/developer-guide/sdk-reference)** - Full SDK documentation and configuration options
-- **[Approvals](/docs/approvals)** - Review and act on HITL approvals in the dashboard
+- **[Configure Trust Controls](/docs/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
+- **[Monitor Sessions](/docs/trust-lifecycle/monitor)** — Use [Session Replay](/docs/trust-lifecycle/session-replay) to debug and audit agent behavior
+- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** — Deep dive into configuration options, HITL approvals, and advanced scenarios
