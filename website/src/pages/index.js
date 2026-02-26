@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState, useRef, useCallback} from 'react';
 
 import CodeBlock from '@theme/CodeBlock';
 import Heading from '@theme/Heading';
@@ -171,15 +171,21 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
 
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const pendingIndexRef = useRef(null);
 
-  const handleStepChange = (newIndex) => {
-    if (newIndex === index || isTransitioning) return;
+  const handleStepChange = useCallback((newIndex) => {
+    if (newIndex === index || pendingIndexRef.current !== null) return;
+    pendingIndexRef.current = newIndex;
     setIsTransitioning(true);
-    setTimeout(() => {
-      setIndex(newIndex);
+  }, [index]);
+
+  const handleTransitionEnd = useCallback((e) => {
+    if (e.propertyName === 'opacity' && pendingIndexRef.current !== null) {
+      setIndex(pendingIndexRef.current);
+      pendingIndexRef.current = null;
       setIsTransitioning(false);
-    }, 200);
-  };
+    }
+  }, []);
 
   const goPrev = () => handleStepChange((index - 1 + slides.length) % slides.length);
   const goNext = () => handleStepChange((index + 1) % slides.length);
@@ -213,10 +219,13 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
         </div>
       </div>
 
-      <div className={clsx(
-        styles.tryStepRow,
-        isTransitioning && styles.tryStepRowHidden
-      )}>
+      <div
+        className={clsx(
+          styles.tryStepRow,
+          isTransitioning && styles.tryStepRowHidden
+        )}
+        onTransitionEnd={handleTransitionEnd}
+      >
         <div className={styles.tryStepText}>
           <div className={styles.tryStepTitle}>{slide.title}</div>
           <div className={styles.tryStepBody}>{slide.body}</div>

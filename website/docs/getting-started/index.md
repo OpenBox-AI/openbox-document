@@ -21,12 +21,29 @@ OpenBox integrates with your existing workflow engine by wrapping the worker pro
 | **Activities** | Captures inputs, outputs, and duration for each unit of work — tool calls, LLM requests, database queries |
 | **Workers** | Wraps the worker process as a single integration point — one change to your bootstrap code connects everything |
 
+:::tip New to Temporal?
+If you haven't worked with Temporal before, read **[Temporal 101](/docs/getting-started/temporal-101)** for a quick primer on Workflows, Activities, Workers, and how OpenBox uses them.
+:::
+
+## How OpenBox Maps to Temporal
+
+This table shows exactly when governance happens during a Temporal execution:
+
+| What happens in Temporal | What OpenBox does | When |
+|---|---|---|
+| Workflow starts | Creates a governance session, evaluates startup policies | `WorkflowStarted` event |
+| Activity executes | Captures inputs/outputs, evaluates policies per activity | `ActivityStarted` / `ActivityCompleted` |
+| HTTP call inside an activity | Automatically captured via OpenTelemetry | During activity execution |
+| Signal received | Captures signal data, evaluates governance | `SignalReceived` event |
+| Workflow completes/fails | Closes session, triggers attestation | `WorkflowCompleted` / `WorkflowFailed` |
+
 ## Prerequisites
 
-### You'll Need
+### All Paths
+
+These are required regardless of which getting started path you choose:
 
 - **[Python 3.11+](https://www.python.org/downloads/)**
-- **[Node.js](https://nodejs.org/)** — Required for the demo frontend
 - **[uv](https://docs.astral.sh/uv/)** — Python package manager
 - **`make`** — Required to run setup and dev scripts:
 
@@ -60,9 +77,11 @@ choco install make
 </TabItem>
 </Tabs>
 
-### Install
+<details>
+<summary><strong>Running the Demo?</strong> You'll also need these</summary>
 
-#### Temporal CLI
+- **[Node.js](https://nodejs.org/)** — Required for the demo frontend
+- **Temporal CLI** — Local development server for Temporal
 
 <Tabs>
 <TabItem value="mac" label="macOS" default>
@@ -108,6 +127,16 @@ Extract the archive and add `temporal.exe` to your `PATH`.
 
 </TabItem>
 </Tabs>
+
+</details>
+
+<details>
+<summary><strong>Wrapping an existing agent?</strong> You'll also need these</summary>
+
+- **Existing Temporal agent** — A working Temporal agent with Workflows and Activities
+- **Running Temporal server** — Either [Temporal Cloud](https://temporal.io/cloud) or a self-hosted Temporal server
+
+</details>
 
 ### Accounts & Keys
 
