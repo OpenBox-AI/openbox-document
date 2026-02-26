@@ -49,7 +49,19 @@ const sidebars = {
       items: [
         'trust-lifecycle/overview',
         'trust-lifecycle/assess',
-        'trust-lifecycle/authorize',
+        {
+          type: 'category',
+          label: 'Authorize',
+          link: {
+            type: 'doc',
+            id: 'trust-lifecycle/authorize/index',
+          },
+          items: [
+            'trust-lifecycle/authorize/guardrails',
+            'trust-lifecycle/authorize/policies',
+            'trust-lifecycle/authorize/behaviours',
+          ],
+        },
         'trust-lifecycle/monitor',
         {
           type: 'category',

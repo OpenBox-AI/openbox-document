@@ -73,7 +73,7 @@ Stateful authorization rules that detect multi-step patterns across an agent's s
 
 Rules are evaluated in priority order and stop at the first rule that triggers a verdict.
 
-**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize#behavioral-rules)
+**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize/behaviours)
 
 ---
 
@@ -117,7 +117,7 @@ Pre- or post-processing validation and transformation rules applied to agent inp
 - **Input Guardrails** — Validate/transform incoming data (PII detection, rate limiting)
 - **Output Guardrails** — Validate/transform responses (PII redaction, format enforcement)
 
-**Learn more:** [Authorize Phase: Guardrails](/docs/trust-lifecycle/authorize#guardrails)
+**Learn more:** [Authorize Phase: Guardrails](/docs/trust-lifecycle/authorize/guardrails)
 
 ---
 
@@ -151,7 +151,7 @@ Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (
 
 Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
 
-**Learn more:** [Authorize Phase: Policies](/docs/trust-lifecycle/authorize#policies)
+**Learn more:** [Authorize Phase: Policies](/docs/trust-lifecycle/authorize/policies)
 
 ---
 
