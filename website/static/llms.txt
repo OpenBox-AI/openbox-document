@@ -24,6 +24,9 @@
 - Overview: https://docs.openbox.ai/docs/trust-lifecycle/overview
 - Assess: https://docs.openbox.ai/docs/trust-lifecycle/assess
 - Authorize: https://docs.openbox.ai/docs/trust-lifecycle/authorize
+  - Guardrails: https://docs.openbox.ai/docs/trust-lifecycle/authorize/guardrails
+  - Policies: https://docs.openbox.ai/docs/trust-lifecycle/authorize/policies
+  - Behaviours: https://docs.openbox.ai/docs/trust-lifecycle/authorize/behaviours
 - Monitor: https://docs.openbox.ai/docs/trust-lifecycle/monitor
 - Verify: https://docs.openbox.ai/docs/trust-lifecycle/verify
 - Session Replay: https://docs.openbox.ai/docs/trust-lifecycle/session-replay
