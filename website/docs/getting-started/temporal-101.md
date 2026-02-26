@@ -6,10 +6,6 @@ sidebar_position: 1
 
 # Temporal 101
 
-:::tip Already familiar with Temporal?
-Skip straight to **[Run the Demo](/docs/getting-started/run-the-demo)** or **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)**.
-:::
-
 OpenBox plugs into [Temporal](https://temporal.io/) — a workflow engine that provides durable execution for distributed applications. This page explains the Temporal concepts you'll encounter in the OpenBox docs and shows how each one connects to governance.
 
 ## Concepts at a Glance
@@ -80,4 +76,3 @@ flowchart LR
 
 - **[Run the Demo](/docs/getting-started/run-the-demo)** — See these concepts in action with a working agent
 - **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Add the trust layer to your own Temporal agent
-- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** — Deep dive into the integration architecture
