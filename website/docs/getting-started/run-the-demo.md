@@ -109,31 +109,21 @@ OPENBOX_API_KEY=your-openbox-api-key
 
 Start each process in a separate terminal:
 
-**Terminal 1** — Temporal dev server:
-
 ```bash
+# Terminal 1 — Temporal dev server
 temporal server start-dev
-```
 
-**Terminal 2** — OpenBox worker:
-
-```bash
+# Terminal 2 — OpenBox worker
 make run-worker
-```
 
-You should see `OpenBox SDK initialized successfully` in the output.
-
-**Terminal 3** — API server:
-
-```bash
+# Terminal 3 — API server
 make run-api
-```
 
-**Terminal 4** — Frontend:
-
-```bash
+# Terminal 4 — Frontend
 make run-frontend
 ```
+
+You should see `OpenBox SDK initialized successfully` in the worker output.
 
 ## Chat with the Agent
 
@@ -166,5 +156,5 @@ Open the **[OpenBox Dashboard](https://platform.openbox.ai)**:
 
 ## Next Steps
 
-- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Add the trust layer to your own Temporal agent
+- **[How the Integration Works](/docs/developer-guide/temporal-integration-guide-python#how-the-integration-works)** — Understand the single code change that connects your agent to OpenBox
 - **[Configure Trust Controls](/docs/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules for LLM interactions
