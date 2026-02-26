@@ -125,7 +125,7 @@ flowchart TD
 
     sdk --> engine
 
-    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN<br/>REQUIRE_APPROVAL<br/>BLOCK · HALT"]
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
 
 ## Configuration
