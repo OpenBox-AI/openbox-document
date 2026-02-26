@@ -144,7 +144,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} OpenBox AI. All rights reserved.`,
+        copyright: `<div class="footer__copyright-inner"><span>© ${new Date().getFullYear()} OpenBox AI. All rights reserved.</span><span class="footer__legal-links"><a href="https://www.openbox.ai/t-c/terms" target="_blank" rel="noopener noreferrer">Terms</a><a href="https://www.openbox.ai/t-c/privacy" target="_blank" rel="noopener noreferrer">Privacy</a><a href="https://www.openbox.ai/t-c/cookies-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a></span></div>`,
       },
       prism: {
         theme: prismThemes.github,
