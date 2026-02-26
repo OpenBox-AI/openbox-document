@@ -156,13 +156,6 @@ Starting worker, connecting to task queue: agent-task-queue
 <summary>Full initialization output</summary>
 
 ```
-Worker will use LLM model: openai/gpt-4o
-Address: localhost:7233, Namespace default
-(If unset, then will try to connect to local server)
-Initializing ToolActivities with LLM model: openai/gpt-4o
-MCP client manager enabled for connection pooling
-ToolActivities initialized with LLM model: openai/gpt-4o
-Worker ready to process tasks!
 Initializing OpenBox SDK with URL: https://core.openbox.ai/
 INFO:openbox.config:OpenBox API key validated successfully
 INFO:openbox.config:OpenBox SDK initialized with API URL: https://core.openbox.ai/
