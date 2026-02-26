@@ -1,7 +1,7 @@
 ---
 title: Event Types
 description: The 24 semantic event types for agent operations
-sidebar_position: 3
+sidebar_position: 6
 ---
 
 # Event Types
