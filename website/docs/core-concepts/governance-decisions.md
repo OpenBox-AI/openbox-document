@@ -1,12 +1,12 @@
 ---
 title: Governance Decisions
-description: The 5 governance decision types
+description: The 4 governance decision types
 sidebar_position: 4
 ---
 
 # Governance Decisions
 
-When an agent operation is evaluated, OpenBox returns one of five governance decisions.
+When an agent operation is evaluated, OpenBox returns one of four governance decisions.
 
 ## Decision Types
 
@@ -15,7 +15,6 @@ When an agent operation is evaluated, OpenBox returns one of five governance dec
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
-| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
 | **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
@@ -31,27 +30,6 @@ The operation is permitted to proceed.
 - Operation executes normally
 - Event logged for audit
 - Behavioral score slightly improves
-
-## CONSTRAIN
-
-The operation proceeds but with modifications or limitations.
-
-**When returned:**
-- Operation allowed but needs transformation
-- Rate limiting applied
-- Data redaction required
-
-**Examples:**
-- PII automatically redacted from output
-- API call rate limited
-- Response truncated
-
-**Effect:**
-- Modified operation executes
-- Constraint logged
-- Behavioral score neutral
-
-Constraints and the resulting transformed inputs/outputs are visible in [Session Replay](/docs/trust-lifecycle/session-replay).
 
 ## REQUIRE_APPROVAL
 
@@ -113,7 +91,7 @@ The entire agent session is terminated.
 When multiple policies apply, decisions follow precedence:
 
 ```
-HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+HALT > BLOCK > REQUIRE_APPROVAL > ALLOW
 ```
 
 If any policy returns HALT, the agent session is terminated regardless of other policies.

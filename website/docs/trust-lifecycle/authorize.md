@@ -690,7 +690,7 @@ This applies to all verdicts:
 - `BLOCK`
 - `REQUIRE_APPROVAL`
 - `HALT`
-- `CONSTRAIN`
+- `CONSTRAIN` — *coming soon*
 
 **Prior State → Trigger Order**
 
@@ -729,22 +729,23 @@ Use these two sample rules to make runtime behavior obvious while testing. Enabl
 
 ##### Rule 1 — `HALT`
 
-- **Rule Name:** `Halt LLM Without GET`
-- **Trigger:** `llm_completion`
-- **Prior State:** `http_get`
+- **Rule Name:** `Query Data Before Generating Reports`
+- **Trigger:** `file_write`
+- **Prior State:** `database_select`
 - **Verdict:** `HALT`
 - **Priority:** `50`
-- **Reject Message:** `LLM call halted: no prior HTTP GET detected`
+- **Reject Message:** `File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
+
+A reporting agent skips the database query and goes straight to file generation. LLM fills in convincing figures from its own knowledge. Properly formatted, realistic numbers, but entirely fabricated. The output looks correct. Nobody notices. This rule ensures the agent has queried real data before producing any file output.
 
 Why this fires in this agent:
-
-- The agent performs `http_post` requests (OpenAI API).
-- It does not perform `http_get`.
-- The prerequisite is never met, so each `llm_completion` is halted.
+- The agent does not perform `database_select` before `file_write`.
+- Without this rule, the agent generates reports using LLM-fabricated data instead of real query results.
+- The prerequisite is never met, so each `file_write` is halted.
 
 Result in terminal:
 
-`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: LLM call halted: no prior HTTP GET detected`
+`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
 The chat/session ends immediately after the halt.
 
@@ -763,17 +764,6 @@ Why this fires in this agent:
 - This agent path does not produce `file_read` before `llm_completion`.
 - Therefore the rule triggers on each `llm_completion`.
 
-Example path:
-
-`User sends message → agent_validatePrompt → llm_completion → (no file_read) → REQUIRE_APPROVAL`
-
-In practice, each message may trigger multiple `llm_completion` calls (for example validate + plan), so approval requests can appear repeatedly.
-
-Result in OpenBox platform:
-
-- Appears under **Approvals** (main sidebar)
-- Appears under **Adapt → Approvals** on the agent page
-
 #### REQUIRE_APPROVAL visibility
 
 When a behavioral rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the approval request appears in two places:
@@ -788,21 +778,19 @@ Note: the Approvals page does not update in real time. If you don’t see an app
 | Action | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Apply additional limits |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
 
 ## Governance Decisions
 
-The authorization pipeline produces one of five decisions:
+The authorization pipeline produces one of four decisions:
 
 | Decision | Effect | Trust Impact |
 |----------|--------|--------------|
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Pauses for HITL | Neutral (pending) |
-| **CONSTRAIN** | Proceeds with limits | Neutral |
 | **ALLOW** | Operation proceeds | Positive (compliance) |
 
 ## Trust Tier-Based Defaults
