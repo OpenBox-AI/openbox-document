@@ -75,7 +75,7 @@ Common models:
 | Provider | Example `LLM_MODEL` value |
 |----------|--------------------------|
 | OpenAI | `openai/gpt-4o` |
-| Anthropic | `anthropic/claude-sonnet-4-5-20250514` |
+| Anthropic | `anthropic/claude-sonnet-4-5-20250929` |
 | Google AI | `gemini/gemini-2.0-flash` |
 
 If you're seeing LLM errors, check that `LLM_MODEL` and `LLM_KEY` are correct in your `.env`.
