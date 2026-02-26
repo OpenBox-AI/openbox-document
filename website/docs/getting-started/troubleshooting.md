@@ -75,7 +75,7 @@ Common models:
 | Provider | Example `LLM_MODEL` value |
 |----------|--------------------------|
 | OpenAI | `openai/gpt-4o` |
-| Anthropic | `anthropic/claude-sonnet-4-5-20250514` |
+| Anthropic | `anthropic/claude-sonnet-4-5-20250929` |
 | Google AI | `gemini/gemini-2.0-flash` |
 
 If you're seeing LLM errors, check that `LLM_MODEL` and `LLM_KEY` are correct in your `.env`.
@@ -143,11 +143,4 @@ temporal server start-dev
 
 The Temporal UI will be available at [http://localhost:8233](http://localhost:8233).
 
----
-
-## Next Steps
-
-1. **[Dashboard](/docs/dashboard)** - Monitor your agents from the dashboard
-2. **[Agents Overview](/docs/dashboard/agents)** - View and manage all registered agents
-3. **[Approvals](/docs/approvals)** - Review and act on HITL approval requests
 

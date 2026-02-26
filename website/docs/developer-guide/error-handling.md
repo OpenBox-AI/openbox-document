@@ -1,7 +1,7 @@
 ---
 title: Error Handling
 description: Handle trust decisions in your code
-sidebar_position: 3
+sidebar_position: 5
 ---
 
 # Error Handling

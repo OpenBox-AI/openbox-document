@@ -1,7 +1,7 @@
 ---
 title: Event Types
 description: The 24 semantic event types for agent operations
-sidebar_position: 3
+sidebar_position: 6
 ---
 
 # Event Types
@@ -115,7 +115,7 @@ Each event includes:
 {
   "event_id": "evt_abc123",
   "type": "DATABASE_WRITE",
-  "timestamp": "2024-01-15T09:14:32.001Z",
+  "timestamp": "2026-02-26T09:14:32.001Z",
   "session_id": "ses_xyz789",
   "agent_id": "agt_def456",
 
