@@ -268,8 +268,13 @@
   display: none;
 }
 
-.navbar__search [class*='searchBar'] [class*='hitFooter'] {
+.navbar__search [class*='searchBar'] [class*='hitFooter'],
+.navbar__search [class*='searchBar'] [class*='hitFooter'] a {
   font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.navbar__search [class*='searchBar'] [class*='hitFooter'] {
   margin-top: 4px;
   padding-top: 6px;
   border-top: 1px solid var(--ifm-color-emphasis-200);
