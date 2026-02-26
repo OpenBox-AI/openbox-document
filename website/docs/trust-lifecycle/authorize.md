@@ -740,11 +740,6 @@ Why this matters:
 
 A reporting agent skips the database query and goes straight to file generation. LLM fills in convincing figures from its own knowledge. Properly formatted, realistic numbers, but entirely fabricated. The output looks correct. Nobody notices. This rule ensures the agent has queried real data before producing any file output.
 
-Why this fires in this agent:
-- The agent does not perform `database_select` before `file_write`.
-- Without this rule, the agent generates reports using LLM-fabricated data instead of real query results.
-- The prerequisite is never met, so each `file_write` is halted.
-
 Result in terminal:
 
 `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
@@ -763,12 +758,6 @@ The chat/session ends immediately after the halt.
 Why this matters:
 
 An accounts payable agent attempts to submit a payment without reading the invoice first. A finance controller reviews the payment amount and recipient, and decides whether to approve or reject it.
-
-Why this fires in this agent:
-- The agent attempts `http_post` without a prior `file_read`.
-- Without this rule, the agent submits payments without verifying invoice details.
-- The prerequisite is never met, so each `http_post` is paused for human approval.
-
 
 #### REQUIRE_APPROVAL visibility
 
