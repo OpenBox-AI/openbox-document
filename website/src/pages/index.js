@@ -58,11 +58,13 @@ function GettingStartedCarousel() {
           </div>
         ),
         media: (
-          <img
+          <video
             className={styles.tryMediaImage}
-            src="/img/step_1.gif"
-            alt="Step 1: Register your agent in the OpenBox dashboard"
-            loading="lazy"
+            src="/img/step_1.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
           />
         ),
         mediaLabel: (
@@ -89,11 +91,13 @@ function GettingStartedCarousel() {
           </div>
         ),
         media: (
-          <img
+          <video
             className={styles.tryMediaImage}
-            src="/img/step_2.gif"
-            alt="Step 2: Install the OpenBox SDK"
-            loading="lazy"
+            src="/img/step_2.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
           />
         ),
         mediaLabel: <>GIF: installation command</>,
@@ -125,11 +129,13 @@ function GettingStartedCarousel() {
           </div>
         ),
         media: (
-          <img
+          <video
             className={styles.tryMediaImage}
-            src="/img/step_3.gif"
-            alt="Step 3: Wrap your Temporal worker with create_openbox_worker"
-            loading="lazy"
+            src="/img/step_3.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
           />
         ),
         mediaLabel: <>GIF: Code change walkthrough</>,
@@ -156,11 +162,13 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
           </div>
         ),
         media: (
-          <img
+          <video
             className={styles.tryMediaImage}
-            src="/img/step_4.gif"
-            alt="Step 4: Set environment variables for OpenBox"
-            loading="lazy"
+            src="/img/step_4.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
           />
         ),
         mediaLabel: <>GIF: env setup</>,
