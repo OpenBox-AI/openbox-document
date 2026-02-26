@@ -86,7 +86,7 @@ OPENBOX_API_KEY=your-openbox-api-key
 OPENBOX_GOVERNANCE_ENABLED=true
 OPENBOX_GOVERNANCE_TIMEOUT=30.0
 OPENBOX_GOVERNANCE_MAX_RETRIES=1
-OPENBOX_GOVERNANCE_POLICY=fail_closed
+OPENBOX_GOVERNANCE_POLICY=fail_open
 ```
 
 ## Part 4: Run the Demo
@@ -284,7 +284,7 @@ result = await workflow.execute_activity(
 | Option               | Default       | Description                                                            |
 | -------------------- | ------------- | ---------------------------------------------------------------------- |
 | `governance_timeout` | `30.0`        | Max seconds to wait for governance evaluation                          |
-| `governance_policy`  | `fail_closed` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+| `governance_policy`  | `fail_open`   | `fail_open` = continue on API error, `fail_closed` = stop on API error |
 
 ### Event Filtering
 
