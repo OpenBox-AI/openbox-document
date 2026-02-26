@@ -647,7 +647,7 @@ Stateful rules that detect multi-step patterns:
 
 **Creating a Behavioral Rule:**
 
-Behavioral rules are created through a 5-step wizard.
+Behavioral rules are created through a 4-step wizard.
 
 :::tip
 Complete all required fields in each wizard step before proceeding. Skipping a step and clicking **Create Rule** will result in an error.
@@ -669,21 +669,13 @@ Select one or more **Required Prior States**. These semantic types must occur be
 
 This step defines the **Prior State** prerequisite described below.
 
-##### Step 4 — Advanced
-
-- **Time Window (minutes):** Prior states must have occurred within this window before the trigger.
-- **Apply to all agents:** Apply this rule globally (instead of only the current agent).
-
-##### Step 5 — Enforcement
+##### Step 4 — Enforcement
 
 - **Verdict:** What to do when the prerequisite is not met.
 - **On Reject Message (required):** Message shown/logged when the verdict is applied.
 
 Finish by clicking **Create Rule**.
 
-:::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes - see [Error Handling](/docs/developer-guide/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
-:::
 
 #### How Prior State and Trigger Work
 
