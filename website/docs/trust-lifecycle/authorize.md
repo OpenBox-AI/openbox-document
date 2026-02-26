@@ -736,6 +736,8 @@ Use these two sample rules to make runtime behavior obvious while testing. Enabl
 - **Priority:** `50`
 - **Reject Message:** `File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
+Why this matters:
+
 A reporting agent skips the database query and goes straight to file generation. LLM fills in convincing figures from its own knowledge. Properly formatted, realistic numbers, but entirely fabricated. The output looks correct. Nobody notices. This rule ensures the agent has queried real data before producing any file output.
 
 Why this fires in this agent:
@@ -751,18 +753,22 @@ The chat/session ends immediately after the halt.
 
 ##### Rule 2 — `REQUIRE_APPROVAL`
 
-- **Rule Name:** `Approve LLM Without File Read`
-- **Trigger:** `llm_completion`
+- **Rule Name:** `Review Payment Before Processing`
+- **Trigger:** `http_post`
 - **Prior State:** `file_read`
 - **Verdict:** `REQUIRE_APPROVAL`
 - **Priority:** `50`
-- **Reject Message:** `LLM call requires approval: no prior file read detected`
+- **Reject Message:** `Payment submission paused: the agent has not read the invoice document before attempting payment. Review required before funds are released`
+
+Why this matters:
+
+An accounts payable agent attempts to submit a payment without reading the invoice first. A finance controller reviews the payment amount and recipient, and decides whether to approve or reject it.
 
 Why this fires in this agent:
+- The agent attempts `http_post` without a prior `file_read`.
+- Without this rule, the agent submits payments without verifying invoice details.
+- The prerequisite is never met, so each `http_post` is paused for human approval.
 
-- Every user message triggers LLM activity.
-- This agent path does not produce `file_read` before `llm_completion`.
-- Therefore the rule triggers on each `llm_completion`.
 
 #### REQUIRE_APPROVAL visibility
 
