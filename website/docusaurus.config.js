@@ -108,6 +108,44 @@ const config = {
         hashed: true,
         language: ['en'],
       },
+      footer: {
+        style: 'light',
+        links: [
+          {
+            title: 'Developers',
+            items: [
+              {label: 'Getting Started', to: '/docs/getting-started/'},
+              {label: 'SDK Reference', to: '/docs/developer-guide/sdk-reference'},
+              {label: 'Configuration', to: '/docs/developer-guide/configuration'},
+            ],
+          },
+          {
+            title: 'Operations',
+            items: [
+              {label: 'Dashboard', to: '/docs/dashboard/'},
+              {label: 'Trust Lifecycle', to: '/docs/trust-lifecycle/'},
+              {label: 'Approvals', to: '/docs/approvals/'},
+            ],
+          },
+          {
+            title: 'Compliance',
+            items: [
+              {label: 'Audit & Evidence', to: '/docs/administration/compliance-and-audit'},
+              {label: 'Attestation & Proof', to: '/docs/administration/attestation-and-cryptographic-proof'},
+              {label: 'Audit Log', to: '/docs/administration/organization-audit-log'},
+            ],
+          },
+          {
+            title: 'Product',
+            items: [
+              {label: 'Get Access', href: 'https://www.openbox.ai/#waitlist'},
+              {label: 'Dashboard', href: 'https://platform.openbox.ai'},
+              {label: 'GitHub', href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python'},
+            ],
+          },
+        ],
+        copyright: `<div class="footer__copyright-inner"><span>© ${new Date().getFullYear()} OpenBox AI. All rights reserved.</span><span class="footer__legal-links"><a href="https://www.openbox.ai/t-c/terms" target="_blank" rel="noopener noreferrer">Terms</a><a href="https://www.openbox.ai/t-c/privacy" target="_blank" rel="noopener noreferrer">Privacy</a><a href="https://www.openbox.ai/t-c/cookies-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a></span></div>`,
+      },
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
