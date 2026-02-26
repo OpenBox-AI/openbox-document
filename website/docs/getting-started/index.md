@@ -9,165 +9,96 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started
 
-OpenBox integrates with your existing workflow engine by wrapping the worker process. All trust configuration happens in the OpenBox dashboard — your agent code stays unchanged.
+OpenBox adds governance, compliance, and audit-grade evidence to your AI agents. It integrates with your existing workflow engine by wrapping the worker process — all trust configuration happens in the OpenBox dashboard, and your agent code stays unchanged.
 
-## Why OpenBox Uses Temporal
+## One Code Change
 
-[Temporal](https://temporal.io/) is a workflow engine that provides durable execution — retries, timeouts, and failure recovery — making it well-suited for orchestrating AI agents. OpenBox hooks into Temporal's execution model to provide governance and observability:
-
-| Temporal Concept | What OpenBox Does |
-|---|---|
-| **Workflows** | Intercepts start, complete, and fail events to track agent sessions and evaluate governance policies |
-| **Activities** | Captures inputs, outputs, and duration for each unit of work — tool calls, LLM requests, database queries |
-| **Workers** | Wraps the worker process as a single integration point — one change to your bootstrap code connects everything |
-
-:::tip New to Temporal?
-If you haven't worked with Temporal before, read **[Temporal 101](/docs/getting-started/temporal-101)** for a quick primer on Workflows, Activities, Workers, and how OpenBox uses them.
-:::
-
-## How OpenBox Maps to Temporal
-
-This table shows exactly when governance happens during a Temporal execution:
-
-| What happens in Temporal | What OpenBox does | When |
-|---|---|---|
-| Workflow starts | Creates a governance session, evaluates startup policies | `WorkflowStarted` event |
-| Activity executes | Captures inputs/outputs, evaluates policies per activity | `ActivityStarted` / `ActivityCompleted` |
-| HTTP call inside an activity | Automatically captured via OpenTelemetry | During activity execution |
-| Signal received | Captures signal data, evaluates governance | `SignalReceived` event |
-| Workflow completes/fails | Closes session, triggers attestation | `WorkflowCompleted` / `WorkflowFailed` |
-
-## Prerequisites
-
-### All Paths
-
-These are required regardless of which getting started path you choose:
-
-- **[Python 3.11+](https://www.python.org/downloads/)**
-- **[uv](https://docs.astral.sh/uv/)** — Python package manager
-- **`make`** — Required to run setup and dev scripts:
+The entire integration is a single import swap. Your workflows, activities, and agent logic stay exactly as they are:
 
 <Tabs>
-<TabItem value="mac" label="macOS" default>
+<TabItem value="before" label="Temporal">
 
-```bash
-xcode-select --install
+```python title="worker.py"
+import asyncio
+from temporalio.client import Client
+from temporalio.worker import Worker
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    worker = Worker(
+        client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+    )
+
+    await worker.run()
+
+asyncio.run(main())
 ```
 
 </TabItem>
-<TabItem value="linux" label="Linux">
+<TabItem value="after" label="OpenBox" default>
 
-```bash
-# Debian/Ubuntu
-sudo apt install make
+```python title="worker.py"
+import os
+import asyncio
+from temporalio.client import Client
+from openbox import create_openbox_worker  # Changed import
+from your_workflows import YourWorkflow
+from your_activities import your_activity
 
-# Fedora/RHEL
-sudo dnf install make
-```
+async def main():
+    client = await Client.connect("localhost:7233")
 
-</TabItem>
-<TabItem value="windows" label="Windows">
+    # Replace Worker with create_openbox_worker
+    worker = create_openbox_worker(
+        client=client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
 
-```bash
-winget install GnuWin32.Make
-# or
-choco install make
+        # Add OpenBox configuration
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+    )
+
+    await worker.run()
+
+asyncio.run(main())
 ```
 
 </TabItem>
 </Tabs>
 
-<details>
-<summary><strong>Running the Demo?</strong> You'll also need these</summary>
+## What OpenBox Captures
 
-- **[Node.js](https://nodejs.org/)** — Required for the demo frontend
-- **Temporal CLI** — Local development server for Temporal
+From that single integration point, every workflow execution is automatically governed:
 
-<Tabs>
-<TabItem value="mac" label="macOS" default>
-
-Install with [Homebrew](https://brew.sh/):
-
-```bash
-brew install temporal
-```
-
-To manually install, download the version for your architecture:
-
-- [Download for Intel Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=amd64)
-- [Download for Apple Silicon Macs](https://temporal.download/cli/archive/latest?platform=darwin&arch=arm64)
-
-Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
-
-</TabItem>
-<TabItem value="linux" label="Linux">
-
-Download the version for your architecture:
-
-- [Download for Linux amd64](https://temporal.download/cli/archive/latest?platform=linux&arch=amd64)
-- [Download for Linux arm64](https://temporal.download/cli/archive/latest?platform=linux&arch=arm64)
-
-Extract the archive and add the `temporal` binary to your `PATH` by copying it to `/usr/local/bin`.
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-Install with [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
-
-```bash
-winget install Temporal.TemporalCLI
-```
-
-Alternatively, download the version for your architecture:
-
-- [Download for Windows amd64](https://temporal.download/cli/archive/latest?platform=windows&arch=amd64)
-- [Download for Windows arm64](https://temporal.download/cli/archive/latest?platform=windows&arch=arm64)
-
-Extract the archive and add `temporal.exe` to your `PATH`.
-
-</TabItem>
-</Tabs>
-
-</details>
-
-<details>
-<summary><strong>Wrapping an existing agent?</strong> You'll also need these</summary>
-
-- **Existing Temporal agent** — A working Temporal agent with Workflows and Activities
-- **Running Temporal server** — Either [Temporal Cloud](https://temporal.io/cloud) or a self-hosted Temporal server
-
-</details>
-
-### Accounts & Keys
-
-- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
-- **OpenBox API Key** — Generated when you [register an agent](/docs/dashboard/agents/registering-agents)
-- **LLM API Key** — From any [LiteLLM-supported provider](https://docs.litellm.ai/docs/providers) (OpenAI, Anthropic, Google, etc.)
+- **Event timeline** — workflow starts, completions, failures, and signals captured in sequence
+- **Activity tracking** — every activity execution with full inputs and outputs
+- **HTTP call recording** — all outbound requests (LLM calls, external APIs) with request and response bodies
+- **Governance decisions** — each event evaluated against your policies in real-time: approved, blocked, or flagged
+- **Session replay** — step-by-step playback of the entire agent session for debugging and audit
 
 ## Choose Your Path
 
 <div className="row">
 <div className="col col--6">
 
-### [Run the Demo](/docs/getting-started/run-the-demo)
+### [I already use Temporal](/docs/getting-started/wrap-an-existing-agent)
 
-Clone the demo agent, configure your keys, and see OpenBox governance capture and evaluate every workflow event, activity, and LLM call.
-
-**Best for:** First-time users who want to see OpenBox in action before integrating.
+Add the trust layer to your existing agent in 5 minutes. Install the SDK, swap one import, and your agent is governed.
 
 </div>
 <div className="col col--6">
 
-### [Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)
+### [I'm new to Temporal](/docs/getting-started/temporal-101)
 
-Already have a Temporal agent? Replace `Worker` with `create_openbox_worker` — one code change to add the trust layer.
-
-**Best for:** Teams with an existing Temporal agent ready to govern.
+Learn the core concepts (Workflows, Activities, Workers), then [run the demo](/docs/getting-started/run-the-demo) to see OpenBox in action.
 
 </div>
 </div>
-
-## Want to Go Deeper?
-
-- **[Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python)** — Full demo walkthrough with configuration options, HITL approvals, and multiple scenarios
-- **[SDK Reference](/docs/developer-guide/sdk-reference)** — Full SDK documentation and configuration options

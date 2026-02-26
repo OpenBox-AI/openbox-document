@@ -2,7 +2,7 @@
 title: Temporal Integration Guide (Python)
 sidebar_label: Temporal (Python)
 description: Integrate OpenBox with a Temporal AI agent using the OpenBox demo repo
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 import Tabs from '@theme/Tabs';
@@ -10,19 +10,17 @@ import TabItem from '@theme/TabItem';
 
 # Temporal Integration Guide (Python)
 
-Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wrap a real Temporal AI agent worker. You'll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
+This is the end-to-end guide for integrating OpenBox with a Temporal AI agent. You'll set up the demo repo, register your agent, run it with governance enabled, then walk through the integration architecture, available scenarios, human-in-the-loop approvals, and configuration options.
 
-:::tip New to OpenBox?
-If you haven't seen OpenBox in action yet, start with **[Getting Started](/docs/getting-started)** to set up your environment and run the demo.
-:::
+:::tip Skip ahead
 
-:::tip Already Have a Temporal Agent?
-If you already have a working Temporal agent, see **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** for a faster integration path.
-:::
+- **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
+- **Already have an agent?** See the **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** page.
+  :::
 
 ## Prerequisites
 
-- **[Tools & dependencies](/docs/getting-started#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
+- **[Tools & dependencies](/docs/getting-started/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
   - `openai/gpt-4o`
@@ -64,7 +62,7 @@ make setup
    - Copy and store the key (shown only once)
 5. Configure platform settings:
    - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
+   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select an attestation provider
 6. Click **Add Agent**
 
 See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
@@ -88,7 +86,7 @@ OPENBOX_API_KEY=your-openbox-api-key
 OPENBOX_GOVERNANCE_ENABLED=true
 OPENBOX_GOVERNANCE_TIMEOUT=30.0
 OPENBOX_GOVERNANCE_MAX_RETRIES=1
-OPENBOX_GOVERNANCE_POLICY=fail_closed
+OPENBOX_GOVERNANCE_POLICY=fail_open
 ```
 
 ## Part 4: Run the Demo
@@ -286,7 +284,7 @@ result = await workflow.execute_activity(
 | Option               | Default       | Description                                                            |
 | -------------------- | ------------- | ---------------------------------------------------------------------- |
 | `governance_timeout` | `30.0`        | Max seconds to wait for governance evaluation                          |
-| `governance_policy`  | `fail_closed` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+| `governance_policy`  | `fail_open`   | `fail_open` = continue on API error, `fail_closed` = stop on API error |
 
 ### Event Filtering
 

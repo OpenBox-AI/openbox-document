@@ -252,12 +252,13 @@ function HomepageHeader() {
     <header className={styles.hero}>
       <div className={clsx('container', styles.heroInner)}>
         <div className={styles.heroLeft}>
+          <span className={styles.heroLabel}>AI Trust Platform</span>
           <Heading as="h1" className={styles.heroTitle}>
-            Documentation
+            Verify Every Action
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
-            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/">
+            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/getting-started">
               Get started
             </Link>
           </div>

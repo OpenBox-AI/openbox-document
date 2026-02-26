@@ -52,10 +52,10 @@ OpenBox adds a **trust layer** alongside your workflow engine. Currently support
 ## Start Here
 
 <div className="linear-cards">
-  <Link className="linear-card" to="/docs/getting-started/wrap-an-existing-agent">
+  <Link className="linear-card" to="/docs/getting-started">
     <div className="linear-card__content">
-      <h3 className="linear-card__title">Wrap an Existing Agent</h3>
-      <p className="linear-card__description">Wrap your worker, run your first trusted agent, and view events in the dashboard.</p>
+      <h3 className="linear-card__title">Getting Started</h3>
+      <p className="linear-card__description">Set up your environment, run the demo, or wrap your existing agent.</p>
     </div>
     <span className="linear-card__chevron" aria-hidden="true">›</span>
   </Link>

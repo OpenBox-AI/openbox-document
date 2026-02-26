@@ -1,7 +1,7 @@
 ---
 title: SDK Reference
 description: Thin wrapper for Temporal workflow integration
-sidebar_position: 6
+sidebar_position: 1
 ---
 
 # SDK Reference
@@ -33,6 +33,25 @@ See:
 1. **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** - Wrap an existing Temporal worker
 2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
 3. **[Configuration](/docs/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
+
+## Function Signature
+
+```python
+def create_openbox_worker(
+    client: Client,
+    task_queue: str,
+    *,
+    workflows: Sequence[Type] = (),
+    activities: Sequence[Callable] = (),
+    openbox_url: str,
+    openbox_api_key: str,
+    # + governance, instrumentation, and Temporal Worker options
+)
+```
+
+Returns a standard Temporal `Worker` with OpenBox interceptors, telemetry, and governance configured. All [Temporal Worker options](https://python.temporal.io/temporalio.worker.Worker.html) are passed through.
+
+See **[Configuration](/docs/developer-guide/configuration)** for the full parameter list.
 
 ## What the SDK Captures
 
@@ -125,7 +144,7 @@ flowchart TD
 
     sdk --> engine
 
-    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN<br/>REQUIRE_APPROVAL<br/>BLOCK · HALT"]
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
 
 ## Configuration
