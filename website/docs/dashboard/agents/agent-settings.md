@@ -16,14 +16,14 @@ Settings is divided into four sections: [General](#general-settings), [Risk Conf
 
 Use this section to update the core identity and organizational assignment of the agent.
 
-| Field | Description |
-|-------|-------------|
-| **Agent Icon** | Change the icon from the built-in library or upload a custom image |
-| **Agent Name** | Editable display name shown throughout the dashboard |
-| **Description** | Free-text summary of what the agent does |
-| **Teams** | Multi-select dropdown to assign the agent to one or more teams |
-| **Agent DID** | Read-only decentralized identifier (`did:openbox:agent:...`). Click to copy |
-| **Tags** | Add freeform tags for filtering and organization |
+| Field           | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------- |
+| **Agent Icon**  | Change the icon from the built-in library or upload a custom image          |
+| **Agent Name**  | Editable display name shown throughout the dashboard                        |
+| **Description** | Free-text summary of what the agent does                                    |
+| **Teams**       | Multi-select dropdown to assign the agent to one or more teams              |
+| **Agent DID**   | Read-only decentralized identifier (`did:openbox:agent:...`). Click to copy |
+| **Tags**        | Add freeform tags for filtering and organization                            |
 
 Click **Save Changes** to persist any edits.
 
@@ -33,9 +33,7 @@ You can reassign an agent to different teams at any time from this section — y
 
 ## Risk Configuration
 
-![Risk Configuration](/img/agents/settings-risk-configuration.png)
-
-This section displays the agent's current risk posture as determined by the [AIVSS (AI Vulnerability Severity Scoring System)](/docs/trust-lifecycle/assess) parameters.
+This section displays the agent's current risk posture as determined by the [Risk Profile](/docs/trust-lifecycle/assess) parameters.
 
 At a glance you can see:
 
@@ -61,11 +59,11 @@ Manage the API key that the agent uses to authenticate with the OpenBox SDK.
 
 The panel shows:
 
-| Detail | Description |
-|--------|-------------|
-| **Primary API Key** | Masked key value with an **Active** status badge |
-| **Created** | Date the key was generated |
-| **Last used** | Timestamp of the most recent API call made with this key |
+| Detail              | Description                                              |
+| ------------------- | -------------------------------------------------------- |
+| **Primary API Key** | Masked key value with an **Active** status badge         |
+| **Created**         | Date the key was generated                               |
+| **Last used**       | Timestamp of the most recent API call made with this key |
 
 ### Rotate Key
 
