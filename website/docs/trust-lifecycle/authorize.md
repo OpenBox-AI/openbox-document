@@ -649,10 +649,6 @@ Stateful rules that detect multi-step patterns:
 
 Behavioral rules are created through a 4-step wizard.
 
-:::tip
-Complete all required fields in each wizard step before proceeding. Skipping a step and clicking **Create Rule** will result in an error.
-:::
-
 ##### Step 1 — Basic Info
 
 - **Rule Name (required):** Human-readable label for the rule.
@@ -676,6 +672,9 @@ This step defines the **Prior State** prerequisite described below.
 
 Finish by clicking **Create Rule**.
 
+:::info Important
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes - see [Error Handling](/docs/developer-guide/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+:::
 
 #### How Prior State and Trigger Work
 
