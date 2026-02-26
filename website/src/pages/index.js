@@ -258,7 +258,7 @@ function HomepageHeader() {
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
-            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/">
+            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/getting-started">
               Get started
             </Link>
           </div>
