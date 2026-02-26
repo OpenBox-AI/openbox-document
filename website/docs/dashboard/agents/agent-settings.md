@@ -33,8 +33,6 @@ You can reassign an agent to different teams at any time from this section — y
 
 ## Risk Configuration
 
-![Risk Configuration](/img/agents/settings-risk-configuration.png)
-
 This section displays the agent's current risk posture as determined by the [Risk Profile](/docs/trust-lifecycle/assess) parameters.
 
 At a glance you can see:
