@@ -10,15 +10,13 @@ import TabItem from '@theme/TabItem';
 
 # Temporal Integration Guide (Python)
 
-Use the OpenBox Temporal demo repo to understand how OpenBox governance and observability wrap a real Temporal AI agent worker. You'll run the demo locally, then walk through the exact integration point where `create_openbox_worker` is configured.
+This is the end-to-end guide for integrating OpenBox with a Temporal AI agent. You'll set up the demo repo, register your agent, run it with governance enabled, then walk through the integration architecture, available scenarios, human-in-the-loop approvals, and configuration options.
 
-:::tip New to OpenBox?
-If you haven't seen OpenBox in action yet, start with **[Getting Started](/docs/getting-started)** to set up your environment and run the demo.
-:::
+:::tip Skip ahead
 
-:::tip Already Have a Temporal Agent?
-If you already have a working Temporal agent, see **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** for a faster integration path.
-:::
+- **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
+- **Already have an agent?** See the **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** page.
+  :::
 
 ## Prerequisites
 
@@ -64,7 +62,7 @@ make setup
    - Copy and store the key (shown only once)
 5. Configure platform settings:
    - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select **AWS KMS**
+   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select an attestation provider
 6. Click **Add Agent**
 
 See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
