@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenBox Docs',
-  tagline: 'The AI Trust Platform for Enterprise',
+  tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
   favicon: 'img/favicon.ico',
 
   markdown: {
