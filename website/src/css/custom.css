@@ -652,6 +652,46 @@
   font-size: 1.05rem;
 }
 
+/* Hide Docusaurus external link icons in navbar */
+.navbar__items a[href] svg[class*='iconExternalLink'] {
+  display: none;
+}
+
+/* Navbar text links */
+.navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary) !important;
+  display: flex;
+  align-items: center;
+}
+
+.navbar__items--right .navbar__link:not(.navbar-dashboard-link):hover {
+  color: var(--ifm-color-primary-dark) !important;
+}
+
+/* Dashboard button in navbar */
+.navbar-dashboard-link {
+  background: rgb(0, 140, 255);
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 0.4rem 1rem !important;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.navbar-dashboard-link:hover {
+  background: rgb(0, 124, 226);
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+.navbar-dashboard-link:active {
+  background: rgb(0, 112, 204);
+  transform: translateY(0);
+}
+
 .menu__link {
   font-size: 0.875rem;
   font-weight: 400;

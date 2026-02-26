@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenBox Docs',
-  tagline: 'Documentation for OpenBox components.',
+  tagline: 'The AI Trust Platform for Enterprise',
   favicon: 'img/favicon.ico',
 
   markdown: {
@@ -81,7 +81,25 @@ const config = {
           alt: 'OpenBox Logo',
           src: 'img/logo.svg',
         },
-        items: [{type: 'search', position: 'right'}],
+        items: [
+          {
+            href: 'https://www.openbox.ai/#waitlist',
+            label: 'Get Access',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python',
+            label: 'GitHub',
+            position: 'right',
+          },
+          {
+            href: 'https://platform.openbox.ai',
+            label: 'Dashboard',
+            position: 'right',
+            className: 'navbar-dashboard-link',
+          },
+          {type: 'search', position: 'right'},
+        ],
       },
       searchLocal: {
         indexDocs: true,
