@@ -6,7 +6,7 @@ sidebar_position: 2
 
 # Run the Demo
 
-Clone the OpenBox demo agent, plug in your keys, and see governance capture and evaluate every workflow event, activity, and LLM call — in under 10 minutes.
+Clone the OpenBox demo agent, plug in your keys, and see governance capture and evaluate every workflow event, activity, and LLM call.
 
 ## Register Your Agent
 
