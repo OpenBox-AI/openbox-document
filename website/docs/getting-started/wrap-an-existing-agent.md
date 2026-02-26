@@ -60,10 +60,6 @@ load_dotenv()
 
 </details>
 
-:::warning
-In production, inject `OPENBOX_API_KEY` via your platform's secret management rather than `.env` files.
-:::
-
 ## Step 3: Wrap Your Existing Worker
 
 Replace `Worker` with `create_openbox_worker`:
