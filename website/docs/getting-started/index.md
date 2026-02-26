@@ -41,6 +41,10 @@ These are required regardless of which getting started path you choose:
 
 - **[Python 3.11+](https://www.python.org/downloads/)**
 - **[uv](https://docs.astral.sh/uv/)** — Python package manager
+
+<details>
+<summary><strong>Running the Demo?</strong> You'll also need these</summary>
+
 - **`make`** — Required to run setup and dev scripts:
 
 <Tabs>
@@ -72,9 +76,6 @@ choco install make
 
 </TabItem>
 </Tabs>
-
-<details>
-<summary><strong>Running the Demo?</strong> You'll also need these</summary>
 
 - **[Node.js](https://nodejs.org/)** — Required for the demo frontend
 - **Temporal CLI** — Local development server for Temporal
@@ -127,10 +128,9 @@ Extract the archive and add `temporal.exe` to your `PATH`.
 </details>
 
 <details>
-<summary><strong>Wrapping an existing agent?</strong> You'll also need these</summary>
+<summary><strong>Wrapping an existing agent?</strong> You'll also need this</summary>
 
-- **Existing Temporal agent** — A working Temporal agent with Workflows and Activities
-- **Running Temporal server** — Either [Temporal Cloud](https://temporal.io/cloud) or a self-hosted Temporal server
+- **Existing Temporal agent** — A working agent with Workflows, Activities, and a running Temporal server
 
 </details>
 
@@ -138,7 +138,7 @@ Extract the archive and add `temporal.exe` to your `PATH`.
 
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **OpenBox API Key** — Generated when you [register an agent](/docs/dashboard/agents/registering-agents)
-- **LLM API Key** — From any [LiteLLM-supported provider](https://docs.litellm.ai/docs/providers) (OpenAI, Anthropic, Google, etc.)
+- **LLM API Key** _(demo only)_ — From any [LiteLLM-supported provider](https://docs.litellm.ai/docs/providers) (OpenAI, Anthropic, Google, etc.)
 
 ## Choose Your Path
 
