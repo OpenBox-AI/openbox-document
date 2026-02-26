@@ -690,7 +690,7 @@ This applies to all verdicts:
 - `BLOCK`
 - `REQUIRE_APPROVAL`
 - `HALT`
-- `CONSTRAIN`
+- `CONSTRAIN` — *coming soon*
 
 **Prior State → Trigger Order**
 
@@ -729,50 +729,35 @@ Use these two sample rules to make runtime behavior obvious while testing. Enabl
 
 ##### Rule 1 — `HALT`
 
-- **Rule Name:** `Halt LLM Without GET`
-- **Trigger:** `llm_completion`
-- **Prior State:** `http_get`
+- **Rule Name:** `Query Data Before Generating Reports`
+- **Trigger:** `file_write`
+- **Prior State:** `database_select`
 - **Verdict:** `HALT`
 - **Priority:** `50`
-- **Reject Message:** `LLM call halted: no prior HTTP GET detected`
+- **Reject Message:** `File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
-Why this fires in this agent:
+Why this matters:
 
-- The agent performs `http_post` requests (OpenAI API).
-- It does not perform `http_get`.
-- The prerequisite is never met, so each `llm_completion` is halted.
+A reporting agent skips the database query and goes straight to file generation. LLM fills in convincing figures from its own knowledge. Properly formatted, realistic numbers, but entirely fabricated. The output looks correct. Nobody notices. This rule ensures the agent has queried real data before producing any file output.
 
 Result in terminal:
 
-`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: LLM call halted: no prior HTTP GET detected`
+`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
 The chat/session ends immediately after the halt.
 
 ##### Rule 2 — `REQUIRE_APPROVAL`
 
-- **Rule Name:** `Approve LLM Without File Read`
-- **Trigger:** `llm_completion`
+- **Rule Name:** `Review Payment Before Processing`
+- **Trigger:** `http_post`
 - **Prior State:** `file_read`
 - **Verdict:** `REQUIRE_APPROVAL`
 - **Priority:** `50`
-- **Reject Message:** `LLM call requires approval: no prior file read detected`
+- **Reject Message:** `Payment submission paused: the agent has not read the invoice document before attempting payment. Review required before funds are released`
 
-Why this fires in this agent:
+Why this matters:
 
-- Every user message triggers LLM activity.
-- This agent path does not produce `file_read` before `llm_completion`.
-- Therefore the rule triggers on each `llm_completion`.
-
-Example path:
-
-`User sends message → agent_validatePrompt → llm_completion → (no file_read) → REQUIRE_APPROVAL`
-
-In practice, each message may trigger multiple `llm_completion` calls (for example validate + plan), so approval requests can appear repeatedly.
-
-Result in OpenBox platform:
-
-- Appears under **Approvals** (main sidebar)
-- Appears under **Adapt → Approvals** on the agent page
+An accounts payable agent attempts to submit a payment without reading the invoice first. A finance controller reviews the payment amount and recipient, and decides whether to approve or reject it.
 
 #### REQUIRE_APPROVAL visibility
 
@@ -788,21 +773,19 @@ Note: the Approvals page does not update in real time. If you don’t see an app
 | Action | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Apply additional limits |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
 
 ## Governance Decisions
 
-The authorization pipeline produces one of five decisions:
+The authorization pipeline produces one of four decisions:
 
 | Decision | Effect | Trust Impact |
 |----------|--------|--------------|
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Pauses for HITL | Neutral (pending) |
-| **CONSTRAIN** | Proceeds with limits | Neutral |
 | **ALLOW** | Operation proceeds | Positive (compliance) |
 
 ## Trust Tier-Based Defaults
