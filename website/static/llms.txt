@@ -9,6 +9,7 @@
 ## Getting Started
 - OpenBox: https://docs.openbox.ai/docs/
 - Getting Started: https://docs.openbox.ai/docs/getting-started
+- Temporal 101: https://docs.openbox.ai/docs/getting-started/temporal-101
 - Run the Demo: https://docs.openbox.ai/docs/getting-started/run-the-demo
 - Wrap an Existing Agent: https://docs.openbox.ai/docs/getting-started/wrap-an-existing-agent
 - Troubleshooting: https://docs.openbox.ai/docs/getting-started/troubleshooting
