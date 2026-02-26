@@ -609,6 +609,10 @@
   border-bottom-color: var(--ifm-color-emphasis-300);
 }
 
+[data-theme='dark'] .navbar__logo img {
+  filter: brightness(0) invert(1);
+}
+
 .navbar__title {
   font-weight: 700;
   font-size: 1.05rem;
