@@ -21,10 +21,6 @@ OpenBox integrates with your existing workflow engine by wrapping the worker pro
 | **Activities** | Captures inputs, outputs, and duration for each unit of work — tool calls, LLM requests, database queries |
 | **Workers** | Wraps the worker process as a single integration point — one change to your bootstrap code connects everything |
 
-:::tip New to Temporal?
-If you haven't worked with Temporal before, read **[Temporal 101](/docs/getting-started/temporal-101)** for a quick primer on Workflows, Activities, Workers, and how OpenBox uses them.
-:::
-
 ## How OpenBox Maps to Temporal
 
 This table shows exactly when governance happens during a Temporal execution:
@@ -147,20 +143,29 @@ Extract the archive and add `temporal.exe` to your `PATH`.
 ## Choose Your Path
 
 <div className="row">
-<div className="col col--6">
+<div className="col col--4">
+
+### [New to Temporal?](/docs/getting-started/temporal-101)
+
+Quick primer on Workflows, Activities, and Workers — the concepts you'll see throughout the docs.
+
+**Best for:** Teams evaluating Temporal or encountering it for the first time.
+
+</div>
+<div className="col col--4">
 
 ### [Run the Demo](/docs/getting-started/run-the-demo)
 
-Clone the demo agent, configure your keys, and see OpenBox governance capture and evaluate every workflow event, activity, and LLM call.
+Clone the demo agent, configure your keys, and see OpenBox governance in action.
 
-**Best for:** First-time users who want to see OpenBox in action before integrating.
+**Best for:** First-time users who want to see OpenBox before integrating.
 
 </div>
-<div className="col col--6">
+<div className="col col--4">
 
 ### [Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)
 
-Already have a Temporal agent? Replace `Worker` with `create_openbox_worker` — one code change to add the trust layer.
+Replace `Worker` with `create_openbox_worker` — one code change to add the trust layer.
 
 **Best for:** Teams with an existing Temporal agent ready to govern.
 
