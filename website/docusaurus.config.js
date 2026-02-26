@@ -72,6 +72,11 @@ const config = {
         respectPrefersColorScheme: false,
         disableSwitch: false,
       },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       navbar: {
         title: 'Docs',
         logo: {

@@ -23,6 +23,7 @@ const sidebars = {
         id: 'getting-started/index',
       },
       items: [
+        'getting-started/temporal-101',
         'getting-started/run-the-demo',
         'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
