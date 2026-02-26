@@ -6,13 +6,13 @@ All notable changes to this documentation site are recorded in this file.
 
 ### Changed
 
-- Aligned risk scoring and tier documentation to percentage-based **AIVSS Score (0-100)** language across trust and lifecycle docs.
+- Aligned risk scoring and tier documentation to percentage-based **Risk Profile Score (0-100)** language across trust and lifecycle docs.
 - Updated trust/risk tier tables to a 4-tier model:
   - Tier 1: 0%-24%
   - Tier 2: 25%-49%
   - Tier 3: 50%-74%
   - Tier 4: 75%-100%
-- Updated Trust Scores examples to reflect UI-style calculation output (including AIVSS contribution).
+- Updated Trust Scores examples to reflect UI-style calculation output (including Risk Profile contribution).
 - Refreshed dashboard and agents docs to reflect updated trust tier ranges and labels.
 - Updated Authorize defaults table to remove deprecated "Untrusted" row.
 
@@ -43,6 +43,6 @@ All notable changes to this documentation site are recorded in this file.
 
 ### Removed
 
-- Removed stale references to normalized/baseline AIVSS wording in score/tier docs.
+- Removed stale references to normalized/baseline Risk Profile wording in score/tier docs.
 - Removed obsolete tier definitions (Tier 5 / Untrusted) from pages now aligned to the 4-tier model.
 - Removed references to deprecated approval-workflows navigation in related docs and pointers.
