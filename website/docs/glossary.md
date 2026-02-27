@@ -93,17 +93,16 @@ A 0–100 runtime compliance metric that starts at 100 for new agents and decrea
 
 ## Governance Decision
 
-The outcome produced when OpenBox evaluates an agent operation. There are five possible decisions, listed in precedence order:
+The outcome produced when OpenBox evaluates an agent operation. There are four possible decisions, listed in precedence order:
 
 | Decision | Effect | Impact |
 |----------|--------|--------|
 | **HALT** | Terminates the entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for [HITL](#hitl-human-in-the-loop) review | Neutral (pending) |
-| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
 | **ALLOW** | Operation proceeds normally | Positive |
 
-**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > ALLOW
 
 **Learn more:** [Governance Decisions](/docs/core-concepts/governance-decisions)
 
