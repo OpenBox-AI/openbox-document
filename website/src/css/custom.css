@@ -656,6 +656,21 @@ svg[class*='iconExternalLink'] {
   transform: translateY(0);
 }
 
+/* Hide right-side nav text links on mobile (they crowd the search bar) */
+@media (max-width: 996px) {
+  .navbar__items--right .navbar__link,
+  .navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
+    display: none;
+  }
+}
+
+/* "Docs" link visible only in the mobile hamburger menu */
+@media (min-width: 997px) {
+  .navbar-docs-link-mobile-only {
+    display: none;
+  }
+}
+
 .menu__link {
   font-size: 0.875rem;
   font-weight: 400;
