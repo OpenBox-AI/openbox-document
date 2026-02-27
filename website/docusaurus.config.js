@@ -35,7 +35,6 @@ const config = {
   projectName: 'openbox-docs',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -68,14 +67,14 @@ const config = {
     {tagName: 'link', attributes: {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap'}},
   ],
 
-  themes: ['@docusaurus/theme-mermaid', require.resolve('@easyops-cn/docusaurus-search-local')],
+  themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
         defaultMode: 'light',
-        respectPrefersColorScheme: false,
+        respectPrefersColorScheme: true,
         disableSwitch: false,
       },
       docs: {
@@ -157,7 +156,6 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
-        additionalLanguages: ['mermaid'],
       },
     }),
 };
