@@ -50,7 +50,7 @@
   font-size: 3rem;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  font-weight: 800;
+  font-weight: 700;
   background: linear-gradient(to bottom right, var(--ifm-color-emphasis-900) 30%, var(--ifm-color-emphasis-700));
   background-clip: text;
   -webkit-background-clip: text;
@@ -63,7 +63,7 @@
   line-height: 1.5;
   color: var(--ifm-color-emphasis-700);
   max-width: 46rem;
-  font-weight: 450;
+  font-weight: 400;
 }
 
 [data-theme='dark'] .heroSubtitle {
@@ -407,7 +407,7 @@
 
 .visualField span {
   color: var(--ifm-color-emphasis-900);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .visualKey {
@@ -493,7 +493,7 @@
   align-items: center;
   justify-content: center;
   color: var(--ifm-color-emphasis-600);
-  font-weight: 800;
+  font-weight: 700;
   padding: 0 0.25rem;
 }
 
@@ -537,7 +537,7 @@
 
 .envKey {
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--ifm-color-emphasis-600);
   letter-spacing: 0.04em;
 }
