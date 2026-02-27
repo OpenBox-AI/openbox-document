@@ -107,7 +107,16 @@ OPENBOX_API_KEY=your-openbox-api-key
 
 ## Run the Demo
 
-Start each process in a separate terminal:
+The demo runs four processes that work together:
+
+| Terminal | Command | What it does |
+|----------|---------|-------------|
+| 1 | `temporal server start-dev` | Starts a local Temporal server that orchestrates workflows — it schedules activities, manages retries, and maintains workflow state |
+| 2 | `make run-worker` | Runs the Temporal worker that executes your agent's workflow and activity code. The OpenBox SDK is initialized here, intercepting every event for governance |
+| 3 | `make run-api` | Starts the backend API that the frontend calls to trigger workflows and relay messages to the agent |
+| 4 | `make run-frontend` | Serves the chat UI at `localhost:5173` where you interact with the agent |
+
+Start each in a separate terminal:
 
 ```bash
 # Terminal 1 — Temporal dev server
