@@ -127,7 +127,7 @@
    font-weight: 600;
    font-size: 0.875rem;
    line-height: 1;
-   background: rgb(0, 140, 255);
+   background: var(--ifm-color-primary);
    border: 0;
    box-shadow: none;
    will-change: transform;
@@ -135,12 +135,12 @@
  }
 
 .button.button--primary:hover {
-  background: rgb(0, 124, 226);
+  background: var(--ifm-color-primary-dark);
   transform: translateY(-1px);
 }
 
 .button.button--primary:active {
-  background: rgb(0, 112, 204);
+  background: var(--ifm-color-primary-darker);
   transform: translateY(0);
 }
 
@@ -307,6 +307,65 @@
   }
 }
 
+.doc-content-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-content-flex > header {
+  order: -2;
+}
+
+.doc-meta-row {
+  order: -1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.doc-meta-row__updated {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.doc-meta-row > .doc-page-actions-row {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.doc-meta-row__tags {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+@media (max-width: 480px) {
+  .doc-meta-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .doc-meta-row > .doc-page-actions-row {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+.doc-meta-row__tags {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.doc-meta-row__tags ul {
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
 .doc-page-title-row {
   display: flex;
   align-items: center;
@@ -315,13 +374,7 @@
 }
 
 .doc-page-title-row h1 {
-  margin: 0;
-}
-
-.doc-page-actions-inline {
-  float: right;
-  margin-left: 1rem;
-  margin-top: 0.1rem;
+  margin: 0 0 0.75rem;
 }
 
 .doc-page-actions-row {
@@ -542,6 +595,15 @@
   }
 }
 
+@media (max-width: 480px) {
+  .doc-page-action-menu-list {
+    right: auto;
+    left: 0;
+    width: calc(100vw - 2rem);
+    max-width: 320px;
+  }
+}
+
 .markdown h6 {
   font-size: 1rem;
 }
@@ -562,9 +624,8 @@
    typography, and vertical rhythm
    ─────────────────────────────────────────────── */
 
-/* 1. Heading spacing */
 .markdown h2 {
-  margin-top: 2.5rem;
+  margin-top: 1.25rem;
 }
 
 .markdown h2:first-child {
@@ -572,8 +633,12 @@
 }
 
 .markdown h3 {
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.markdown hr {
+  margin: 0.25rem 0 1rem;
 }
 
 /* 2. Inline code styling (exclude code blocks) */
@@ -636,7 +701,7 @@ svg[class*='iconExternalLink'] {
 
 /* Dashboard button in navbar */
 .navbar-dashboard-link {
-  background: rgb(0, 140, 255);
+  background: var(--ifm-color-primary);
   color: #fff !important;
   border-radius: 8px;
   padding: 0.4rem 1rem !important;
@@ -646,13 +711,13 @@ svg[class*='iconExternalLink'] {
 }
 
 .navbar-dashboard-link:hover {
-  background: rgb(0, 124, 226);
+  background: var(--ifm-color-primary-dark);
   color: #fff !important;
   transform: translateY(-1px);
 }
 
 .navbar-dashboard-link:active {
-  background: rgb(0, 112, 204);
+  background: var(--ifm-color-primary-darker);
   transform: translateY(0);
 }
 
@@ -854,5 +919,12 @@ svg[class*='iconExternalLink'] {
     flex: unset !important;
     justify-content: start;
     padding: 0;
+  }
+}
+
+/* Docs navbar link — visible only in mobile hamburger menu */
+@media (min-width: 997px) {
+  .navbar-docs-link-mobile-only {
+    display: none;
   }
 }

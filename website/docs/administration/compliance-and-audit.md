@@ -2,6 +2,10 @@
 title: "Compliance & Audit"
 description: "Audit trail, evidence collection, and export capabilities for regulatory readiness"
 sidebar_position: 9
+tags:
+  - compliance
+  - audit
+  - governance
 ---
 
 # Compliance & Audit

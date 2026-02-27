@@ -2,6 +2,10 @@
 title: Governance Decisions
 description: The 4 governance decision types
 sidebar_position: 4
+tags:
+  - governance
+  - policy-authoring
+  - hitl
 ---
 
 # Governance Decisions
@@ -80,7 +84,7 @@ The entire agent session is terminated.
 
 **Effect:**
 - Current activity fails
-- Workflow is cancelled
+- Workflow is canceled
 - All pending operations abandoned
 - Agent may be blocked from further execution
 - Significant trust score decrease
