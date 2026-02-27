@@ -25,6 +25,16 @@ flowchart TD
     incoming --> guardrails --> opa --> behavioral --> decision
 ```
 
+### Choosing the Right Layer
+
+Each layer solves a different class of problem. Use the table below to decide which layer fits your use case.
+
+| Layer | Reach for this when… | Example |
+|-------|----------------------|---------|
+| **Guardrails** | You need to validate or transform data flowing in/out — content safety, PII, banned terms | Mask credit-card numbers before they reach the LLM |
+| **Policies** | You need a stateless permission check on a single operation — field-level conditions, thresholds, role gates | Block invoice creation above $1,000 without approval |
+| **Behavioral Rules** | You need to detect multi-step patterns across a session — sequences, frequencies, combinations | Halt file generation if the agent never queried the database |
+
 ### How Multiple Rules Execute
 
 Guardrails, Policies, and Behavioral Rules can all have multiple rules active at the same time. The key difference is how they execute.
