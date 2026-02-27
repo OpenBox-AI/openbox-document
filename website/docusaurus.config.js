@@ -52,6 +52,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
+          showLastUpdateTime: true,
         },
         blog: false,
         theme: {
