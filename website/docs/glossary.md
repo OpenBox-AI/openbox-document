@@ -77,7 +77,7 @@ Stateful authorization rules that detect multi-step patterns across an agent's s
 
 Rules are evaluated in priority order and stop at the first rule that triggers a verdict.
 
-**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize/behaviours)
+**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize/behaviors)
 
 ---
 

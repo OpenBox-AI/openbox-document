@@ -11,7 +11,7 @@ tags:
 
 Complete activity history across all agents and users.
 
-Access via **Organisation Management → Audit Log** tab.
+Access via **Organization Management → Audit Log** tab.
 
 ---
 
