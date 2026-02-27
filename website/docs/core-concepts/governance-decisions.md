@@ -84,7 +84,7 @@ The entire agent session is terminated.
 
 **Effect:**
 - Current activity fails
-- Workflow is cancelled
+- Workflow is canceled
 - All pending operations abandoned
 - Agent may be blocked from further execution
 - Significant trust score decrease
