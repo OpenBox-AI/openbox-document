@@ -231,7 +231,7 @@ function HomepageHeader() {
   return (
     <header className={styles.hero}>
       <div className={clsx('container', styles.heroInner)}>
-        <div className={styles.heroLeft}>
+        <div>
           <span className={styles.heroLabel}>AI Trust Platform</span>
           <Heading as="h1" className={styles.heroTitle}>
             Verify Every Action
