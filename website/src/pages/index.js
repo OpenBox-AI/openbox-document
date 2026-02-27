@@ -57,16 +57,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <video
-            className={styles.tryMediaImage}
-            src="/img/step_1.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        ),
+        videoSrc: '/img/step_1.mp4',
         mediaLabel: (
           <>
             GIF: Dashboard walkthrough
@@ -90,16 +81,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <video
-            className={styles.tryMediaImage}
-            src="/img/step_2.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        ),
+        videoSrc: '/img/step_2.mp4',
         mediaLabel: <>GIF: installation command</>,
       },
       {
@@ -128,16 +110,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <video
-            className={styles.tryMediaImage}
-            src="/img/step_3.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        ),
+        videoSrc: '/img/step_3.mp4',
         mediaLabel: <>GIF: Code change walkthrough</>,
       },
       {
@@ -161,16 +134,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
             </div>
           </div>
         ),
-        media: (
-          <video
-            className={styles.tryMediaImage}
-            src="/img/step_4.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        ),
+        videoSrc: '/img/step_4.mp4',
         mediaLabel: <>GIF: env setup</>,
       },
     ],
@@ -240,8 +204,16 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
           {slide.visual ? slide.visual : <div className={styles.tryStepCode}>{slide.code}</div>}
         </div>
         <div className={styles.tryStepMedia}>
-          {slide.media ? (
-            slide.media
+          {slide.videoSrc ? (
+            <video
+              className={styles.tryMediaImage}
+              src={slide.videoSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="none"
+            />
           ) : (
             <div className={styles.tryMediaPlaceholder}>
               {slide.mediaLabel}
@@ -299,7 +271,7 @@ export default function Home() {
   return (
     <Layout
       title={siteConfig.title}
-      description="OpenBox documentation"
+      description="OpenBox Documentation — Enterprise AI governance platform. Attest every agent action so behavior is provable, auditable, and defensible by default."
       wrapperClassName="homepage-no-footer">
       <HomepageHeader />
       <main>
