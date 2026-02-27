@@ -126,6 +126,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Administration',
+      link: {
+        type: 'doc',
+        id: 'administration/index',
+      },
       items: [
         'administration/organization',
         'administration/compliance-and-audit',
