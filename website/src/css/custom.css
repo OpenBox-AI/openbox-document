@@ -396,7 +396,7 @@
 
 .doc-page-action-text {
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -485,7 +485,7 @@
 
 .doc-page-action-link-title {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ifm-font-color-base);
 }
 
@@ -624,7 +624,7 @@ svg[class*='iconExternalLink'] {
 /* Navbar text links */
 .navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ifm-color-primary) !important;
   display: flex;
   align-items: center;
