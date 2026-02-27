@@ -2,6 +2,11 @@
 title: Adapt
 description: Phase 5 - Evolve trust and improve policies over time
 sidebar_position: 5
+tags:
+  - trust-scoring
+  - hitl
+  - policy-authoring
+  - observability
 ---
 
 # Adapt (Phase 5)

@@ -2,6 +2,10 @@
 title: Governance Decisions
 description: The 4 governance decision types
 sidebar_position: 4
+tags:
+  - governance
+  - policy-authoring
+  - hitl
 ---
 
 # Governance Decisions

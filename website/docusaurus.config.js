@@ -52,6 +52,7 @@ const config = {
         docs: {
           sidebarPath: './sidebars.js',
           showLastUpdateTime: true,
+          onInlineTags: 'throw',
         },
         blog: false,
         theme: {
@@ -89,6 +90,13 @@ const config = {
           src: 'img/logo.svg',
         },
         items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'docs',
+            label: 'Docs',
+            position: 'left',
+            className: 'navbar-docs-link-mobile-only',
+          },
           {
             href: 'https://www.openbox.ai/#waitlist',
             label: 'Get Access',

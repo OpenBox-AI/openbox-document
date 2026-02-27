@@ -2,6 +2,8 @@
 title: Agents
 description: Managing AI agents in OpenBox
 sidebar_position: 4
+tags:
+  - agent-management
 ---
 
 # Agents

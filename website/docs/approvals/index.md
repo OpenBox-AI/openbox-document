@@ -2,6 +2,10 @@
 title: Approvals
 description: Human-in-the-Loop approval queue
 sidebar_position: 5
+tags:
+  - hitl
+  - governance
+  - audit
 ---
 
 # Approvals

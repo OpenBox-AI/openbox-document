@@ -2,6 +2,9 @@
 title: Dashboard
 description: Trust Overview and organization-wide monitoring
 sidebar_position: 3
+tags:
+  - agent-management
+  - observability
 ---
 
 # Dashboard

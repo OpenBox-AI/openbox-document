@@ -2,6 +2,9 @@
 title: Guardrails
 description: Pre/post-processing validation and transformation rules
 sidebar_position: 1
+tags:
+  - guardrails
+  - governance
 ---
 
 # Guardrails

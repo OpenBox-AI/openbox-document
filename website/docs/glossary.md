@@ -1,6 +1,10 @@
 ---
 title: Glossary
 description: Definitions of key terms used in OpenBox documentation
+tags:
+  - reference
+  - trust-scoring
+  - cryptography
 ---
 
 # Glossary

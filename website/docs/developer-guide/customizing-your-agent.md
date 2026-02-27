@@ -3,6 +3,10 @@ title: Extending the Demo Agent
 sidebar_label: Extending the Demo Agent
 description: Add custom goals, native tools, and MCP tools to the OpenBox demo agent
 sidebar_position: 3
+tags:
+  - sdk
+  - temporal
+  - mcp
 ---
 
 # Extending the Demo Agent

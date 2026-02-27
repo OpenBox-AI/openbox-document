@@ -2,6 +2,9 @@
 title: Organization
 description: Manage teams, members, and settings
 sidebar_position: 8
+tags:
+  - agent-management
+  - audit
 ---
 
 # Organization
