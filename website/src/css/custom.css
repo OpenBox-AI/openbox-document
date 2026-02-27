@@ -307,6 +307,72 @@
   }
 }
 
+/* ── Flex ordering: title → meta row → content ────────────── */
+
+.doc-content-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title (synthetic <header> or MDX-rendered <header>) */
+.doc-content-flex > header {
+  order: -2;
+}
+
+/* Meta row always sits between title and body */
+.doc-meta-row {
+  order: -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.doc-meta-row__updated {
+  flex-shrink: 0;
+}
+
+.doc-meta-row__right {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.doc-meta-row__right > .doc-page-actions-row {
+  display: none;
+}
+
+@media (min-width: 997px) {
+  .doc-meta-row__right > .doc-page-actions-row {
+    display: block;
+  }
+}
+
+.doc-meta-row__tags {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.doc-meta-row__tags ul {
+  flex-wrap: wrap;
+}
+
+@media (min-width: 997px) {
+  .doc-meta-row {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .doc-meta-row__right {
+    flex-shrink: 0;
+  }
+}
+
 .doc-page-title-row {
   display: flex;
   align-items: center;
@@ -316,12 +382,6 @@
 
 .doc-page-title-row h1 {
   margin: 0;
-}
-
-.doc-page-actions-inline {
-  float: right;
-  margin-left: 1rem;
-  margin-top: 0.1rem;
 }
 
 .doc-page-actions-row {
@@ -656,6 +716,14 @@ svg[class*='iconExternalLink'] {
   transform: translateY(0);
 }
 
+/* Hide navbar right-side links on mobile — they're in the hamburger menu */
+@media (max-width: 996px) {
+  .navbar__items--right .navbar__link,
+  .navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
+    display: none;
+  }
+}
+
 .menu__link {
   font-size: 0.875rem;
   font-weight: 400;
@@ -839,5 +907,12 @@ svg[class*='iconExternalLink'] {
     flex: unset !important;
     justify-content: start;
     padding: 0;
+  }
+}
+
+/* Docs navbar link — visible only in mobile hamburger menu */
+@media (min-width: 997px) {
+  .navbar-docs-link-mobile-only {
+    display: none;
   }
 }

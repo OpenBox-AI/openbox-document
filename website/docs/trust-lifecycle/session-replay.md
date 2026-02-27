@@ -2,6 +2,10 @@
 title: Session Replay
 description: Step-by-step playback of agent session execution
 sidebar_position: 1
+tags:
+  - session
+  - observability
+  - audit
 ---
 
 # Session Replay

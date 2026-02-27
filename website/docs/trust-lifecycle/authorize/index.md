@@ -2,6 +2,10 @@
 title: Authorize
 description: Phase 2 - Configure guardrails, policies, and behavioral rules
 sidebar_position: 2
+tags:
+  - governance
+  - policy-authoring
+  - guardrails
 ---
 
 # Authorize (Phase 2)

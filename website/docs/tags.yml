@@ -1,0 +1,89 @@
+trust-scoring:
+  label: Trust Scoring
+  permalink: /trust-scoring
+  description: How trust scores are calculated and evolve at runtime
+
+risk-assessment:
+  label: Risk Assessment
+  permalink: /risk-assessment
+  description: Static risk profiling and tier classification
+
+goal-alignment:
+  label: Goal Alignment
+  permalink: /goal-alignment
+  description: Goal tracking, alignment scoring, and drift detection
+
+governance:
+  label: Governance
+  permalink: /governance
+  description: Governance framework, decision types, and enforcement
+
+policy-authoring:
+  label: Policy Authoring
+  permalink: /policy-authoring
+  description: Writing OPA/Rego policies and behavioral rules
+
+guardrails:
+  label: Guardrails
+  permalink: /guardrails
+  description: Input/output validation and transformation rules
+
+hitl:
+  label: Human-in-the-Loop
+  permalink: /hitl
+  description: Approval workflows and human review processes
+
+sdk:
+  label: SDK
+  permalink: /sdk
+  description: Python SDK installation, config, and API
+
+temporal:
+  label: Temporal
+  permalink: /temporal
+  description: Temporal workflow engine concepts and integration
+
+mcp:
+  label: MCP
+  permalink: /mcp
+  description: Model Context Protocol tool integrations
+
+compliance:
+  label: Compliance
+  permalink: /compliance
+  description: Regulatory readiness and evidence collection
+
+audit:
+  label: Audit
+  permalink: /audit
+  description: Audit trails and activity logging
+
+cryptography:
+  label: Cryptography
+  permalink: /cryptography
+  description: Merkle trees, digital signatures, and proof certificates
+
+observability:
+  label: Observability
+  permalink: /observability
+  description: Monitoring, metrics, and telemetry
+
+session:
+  label: Sessions
+  permalink: /sessions
+  description: Session lifecycle, replay, and inspection
+
+agent-management:
+  label: Agent Management
+  permalink: /agent-management
+  description: Registering, configuring, and managing agents
+
+getting-started:
+  label: Getting Started
+  permalink: /getting-started
+  description: Onboarding tutorials and first-time setup
+
+reference:
+  label: Reference
+  permalink: /reference
+  description: Specifications, glossary, and lookup tables
