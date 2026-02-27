@@ -50,14 +50,13 @@ A timeline of recent governance events from Tier 3 and Tier 4 agents:
 Each activity shows:
 - **Agent name and icon**
 - **Trust Tier badge** (TIER 3, TIER 4)
-- **Verdict badge** (ALLOWED, CONSTRAINED, HALTED, APPROVED)
+- **Verdict badge** (ALLOWED, HALTED, APPROVED)
 - **Description** of what triggered the governance event
 - **Timestamp**
 - **Link to approvals** (if pending)
 
 Example events:
 - "Attempted database_delete without prior backup_create" → HALTED
-- "Bulk email operation rate-limited to 10/hour" → CONSTRAINED
 - "Large transaction ($5,000+) approved by admin" → APPROVED
 
 ## Trust Tier Trends
