@@ -45,6 +45,24 @@ Sessions terminated by a governance decision. Each card shows:
 - Violation type (e.g., `Validation failed for field with errors`, `Behavioral violation`)
 - Error message
 
+### Terminating a Session
+
+Each active session card includes a **Terminate** link alongside the Details link.
+
+![Active session card showing the Terminate link](/img/overview/terminate-session-button.png)
+
+Clicking **Terminate** opens a confirmation dialog warning that this is a **destructive, irreversible action**.
+
+![Terminate Session confirmation dialog](/img/overview/terminate-session-dialog.png)
+
+Before confirming, you must acknowledge a checkbox confirming that terminating the session will:
+
+- **Permanently stop the agent's execution**
+- **Halt all in-progress operations immediately**
+- **Be logged for audit purposes**
+
+Click **Terminate Session** to proceed, or **Cancel** to return to the Overview page. Once terminated, the session moves to the [Halted Sessions](#halted-sessions) section.
+
 ### Next Steps
 
 1. **[Assess Your Agent's Risk](/docs/trust-lifecycle/assess)** - Configure the risk profile for this agent
