@@ -10,6 +10,15 @@ Guardrails are pre- and post-processing rules that validate and transform agent 
 
 Agents process untrusted user input and generate unpredictable output. Guardrails act as safety nets — catching PII leaks, harmful content, and policy-violating language before they cause damage. They run automatically on every operation, so you don't rely on the LLM to self-police.
 
+| Guardrail Type | Use when… |
+|----------------|----------------------|
+| **PII Detection** | User data may contain personal information (names, emails, phone numbers) that must not leak downstream or into logs |
+| **Content Filtering** | The agent could receive or generate harmful, violent, or NSFW content that must never reach end users |
+| **Toxicity** | End users interact directly with the agent and you need to block abusive or hostile language |
+| **Ban Words** | Your domain has specific terms that must never appear — competitor names, internal codenames, or regulated terms |
+
+Each guardrail type can run on input, output, or both — depending on where in the pipeline you need protection.
+
 | Type | Purpose | Examples |
 |------|---------|----------|
 | **Input Guardrails** | Validate/transform incoming data | PII detection, rate limiting |
