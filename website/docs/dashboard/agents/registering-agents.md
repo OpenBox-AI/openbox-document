@@ -2,6 +2,9 @@
 title: Registering Agents
 description: Create and configure new agents in the OpenBox dashboard
 sidebar_position: 2
+tags:
+  - agent-management
+  - getting-started
 ---
 
 # Registering Agents

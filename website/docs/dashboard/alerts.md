@@ -2,6 +2,9 @@
 title: Alerts
 description: Agents requiring attention
 sidebar_position: 2
+tags:
+  - observability
+  - agent-management
 ---
 
 # Alerts

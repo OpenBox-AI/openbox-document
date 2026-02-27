@@ -2,6 +2,10 @@
 title: Trust Overview
 description: Understanding the organization-wide trust health view
 sidebar_position: 1
+tags:
+  - trust-scoring
+  - observability
+  - agent-management
 ---
 
 # Trust Overview

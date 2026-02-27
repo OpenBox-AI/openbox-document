@@ -2,6 +2,9 @@
 title: Configuration
 description: SDK configuration options
 sidebar_position: 4
+tags:
+  - sdk
+  - reference
 ---
 
 # Configuration

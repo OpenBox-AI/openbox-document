@@ -2,6 +2,10 @@
 title: Behavioral Rules
 description: Stateful multi-step pattern detection rules
 sidebar_position: 3
+tags:
+  - policy-authoring
+  - governance
+  - hitl
 ---
 
 # Behavioral Rules

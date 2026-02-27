@@ -2,6 +2,9 @@
 title: "Temporal 101"
 description: A quick primer on Temporal concepts and how OpenBox uses them for AI governance
 sidebar_position: 1
+tags:
+  - getting-started
+  - temporal
 ---
 
 # Temporal 101
