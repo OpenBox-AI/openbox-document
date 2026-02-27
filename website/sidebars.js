@@ -63,7 +63,7 @@ const sidebars = {
           items: [
             'trust-lifecycle/authorize/guardrails',
             'trust-lifecycle/authorize/policies',
-            'trust-lifecycle/authorize/behaviours',
+            'trust-lifecycle/authorize/behaviors',
           ],
         },
         'trust-lifecycle/monitor',
