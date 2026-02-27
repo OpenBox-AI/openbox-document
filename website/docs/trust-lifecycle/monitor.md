@@ -2,6 +2,11 @@
 title: Monitor
 description: Phase 3 - Observe runtime behavior and telemetry
 sidebar_position: 3
+tags:
+  - observability
+  - goal-alignment
+  - trust-scoring
+  - session
 ---
 
 # Monitor (Phase 3)

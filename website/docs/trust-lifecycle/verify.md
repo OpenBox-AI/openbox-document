@@ -2,6 +2,12 @@
 title: Verify
 description: Phase 4 - Validate goal alignment and detect drift
 sidebar_position: 4
+tags:
+  - goal-alignment
+  - cryptography
+  - compliance
+  - session
+  - audit
 ---
 
 # Verify (Phase 4)

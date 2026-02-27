@@ -2,6 +2,10 @@
 title: "Attestation & Cryptographic Proof"
 description: "Tamper-proof evidence chain using SHA-256 Merkle trees and digital signing via AWS KMS or external attestation providers"
 sidebar_position: 1
+tags:
+  - cryptography
+  - compliance
+  - audit
 ---
 
 # Attestation & Cryptographic Proof

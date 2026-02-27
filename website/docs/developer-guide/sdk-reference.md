@@ -2,6 +2,9 @@
 title: SDK Reference
 description: Thin wrapper for Temporal workflow integration
 sidebar_position: 1
+tags:
+  - sdk
+  - reference
 ---
 
 # SDK Reference

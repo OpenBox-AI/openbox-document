@@ -2,6 +2,9 @@
 title: Trust Scores
 description: How Trust Scores are calculated and used
 sidebar_position: 1
+tags:
+  - trust-scoring
+  - risk-assessment
 ---
 
 # Trust Scores
