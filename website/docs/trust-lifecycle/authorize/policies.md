@@ -6,9 +6,13 @@ sidebar_position: 2
 
 # Policies
 
-Policies are stateless permission checks written in [OPA](https://www.openpolicyagent.org/) Rego. Each policy evaluates a single input document at runtime and returns a governance decision. Unlike [behavioral rules](./behaviours), policies evaluate each operation independently without tracking prior actions.
+Policies are stateless permission checks written in [OPA](https://www.openpolicyagent.org/) Rego. Each policy evaluates a single input document at runtime and returns a governance decision. Policies evaluate each operation independently — they don't track prior actions or session history.
 
 Create and manage policies under **Agent → Authorize → Policies**.
+
+### When to use policies
+
+Policies give you fine-grained, field-level control over individual operations. Use them when the decision depends on properties of a single request — what tool is being called, what value a field contains, or what risk tier the agent belongs to. Where guardrails validate and transform content, policies answer a different question: "is this specific operation allowed right now?"
 
 ## Create Policy
 
@@ -65,6 +69,8 @@ Your policy should be written defensively:
 
 ### Require approval for invoice creation
 
+When every invoice must go through a human reviewer regardless of amount — a common requirement for newly deployed agents or regulated workflows.
+
 Although behavioral rules can also enforce approvals, policies let you define more customized, field-level approval logic.
 
 ```rego
@@ -119,6 +125,8 @@ Approval visibility in OpenBox platform:
 
 ### Require approval for high-value invoices only
 
+When low-value operations can proceed automatically but high-value ones need human sign-off — balancing speed with risk control.
+
 This variant keeps normal invoice creation automatic while routing high-value invoices to human approval.
 
 ```rego
@@ -168,6 +176,8 @@ Runtime result:
 `temporalio.exceptions.ApplicationError: ApprovalPending: Approval required for output: High-value invoice requires human approval before proceeding`
 
 ### Risk-tier-driven approvals
+
+When different agents carry different risk profiles and you want to tighten or relax controls based on the agent's assessed risk tier.
 
 This example uses restricted semantic types to require approval based on the agent's risk tier.
 
