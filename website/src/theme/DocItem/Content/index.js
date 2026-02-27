@@ -35,14 +35,12 @@ function DocMetaRow() {
           />
         )}
       </div>
-      <div className="doc-meta-row__right">
-        {hasTags && (
-          <div className="doc-meta-row__tags">
-            <TagsListInline tags={tags} />
-          </div>
-        )}
-        <DocPageActions />
-      </div>
+      {hasTags && (
+        <div className="doc-meta-row__tags">
+          <TagsListInline tags={tags} />
+        </div>
+      )}
+      <DocPageActions />
     </div>
   );
 }
