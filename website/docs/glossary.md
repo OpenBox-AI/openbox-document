@@ -9,6 +9,16 @@ This page provides definitions of key terms and concepts used throughout the Ope
 
 ---
 
+## Activity
+
+A single unit of work inside a [Workflow](#workflow) — calling an LLM, querying a database, invoking a tool, or making an HTTP request. Activities are where side effects happen in Temporal.
+
+**OpenBox connection:** OpenBox captures the inputs and outputs of every Activity execution, evaluates governance policies against them, and records a [Governance Decision](#governance-decision) for each one.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101#activity)
+
+---
+
 ## Risk Profile
 
 A risk scoring framework that evaluates AI agents across three weighted categories:
@@ -63,7 +73,7 @@ Stateful authorization rules that detect multi-step patterns across an agent's s
 
 Rules are evaluated in priority order and stop at the first rule that triggers a verdict.
 
-**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize#behavioral-rules)
+**Learn more:** [Authorize Phase: Behavioral Rules](/docs/trust-lifecycle/authorize/behaviours)
 
 ---
 
@@ -83,17 +93,16 @@ A 0–100 runtime compliance metric that starts at 100 for new agents and decrea
 
 ## Governance Decision
 
-The outcome produced when OpenBox evaluates an agent operation. There are five possible decisions, listed in precedence order:
+The outcome produced when OpenBox evaluates an agent operation. There are four possible decisions, listed in precedence order:
 
 | Decision | Effect | Impact |
 |----------|--------|--------|
 | **HALT** | Terminates the entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for [HITL](#hitl-human-in-the-loop) review | Neutral (pending) |
-| **CONSTRAIN** | Operation proceeds with modifications | Neutral |
 | **ALLOW** | Operation proceeds normally | Positive |
 
-**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > ALLOW
 
 **Learn more:** [Governance Decisions](/docs/core-concepts/governance-decisions)
 
@@ -107,7 +116,7 @@ Pre- or post-processing validation and transformation rules applied to agent inp
 - **Input Guardrails** — Validate/transform incoming data (PII detection, rate limiting)
 - **Output Guardrails** — Validate/transform responses (PII redaction, format enforcement)
 
-**Learn more:** [Authorize Phase: Guardrails](/docs/trust-lifecycle/authorize#guardrails)
+**Learn more:** [Authorize Phase: Guardrails](/docs/trust-lifecycle/authorize/guardrails)
 
 ---
 
@@ -141,7 +150,7 @@ Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (
 
 Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
 
-**Learn more:** [Authorize Phase: Policies](/docs/trust-lifecycle/authorize#policies)
+**Learn more:** [Authorize Phase: Policies](/docs/trust-lifecycle/authorize/policies)
 
 ---
 
@@ -159,11 +168,41 @@ A per-session attestation record produced after an agent session completes. Cont
 
 ---
 
+## Query
+
+A synchronous, read-only request to inspect a running [Workflow's](#workflow) state without affecting its execution. Queries return a value but never change the Workflow.
+
+**OpenBox connection:** OpenBox uses Queries to inspect governance state during execution — for example, checking whether an approval is still pending. Queries do not trigger governance evaluation since they are read-only.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101)
+
+---
+
 ## Session Replay
 
 An interactive dashboard view showing the complete execution timeline of an agent session. Allows step-by-step walkthrough of every operation with its governance decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.).
 
 **Learn more:** [Session Replay](/docs/trust-lifecycle/session-replay)
+
+---
+
+## Signal
+
+An asynchronous message sent to a running [Workflow](#workflow) from the outside. Signals let external systems inject data or trigger decisions mid-execution — for example, delivering a human approval result back to a paused agent.
+
+**OpenBox connection:** OpenBox captures Signal data and evaluates governance policies on every Signal received. This is how [HITL](#hitl-human-in-the-loop) approvals flow back into the Workflow when a REQUIRE_APPROVAL decision pauses execution.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101)
+
+---
+
+## Task Queue
+
+A named channel that connects [Workflow](#workflow)/[Activity](#activity) starters to [Workers](#worker). When you start a Workflow on a Task Queue, only Workers listening on that same queue will pick it up.
+
+**OpenBox connection:** OpenBox preserves your existing Task Queue configuration. The wrapped Worker polls the same queue your original Worker used — governance is transparent to task routing.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101)
 
 ---
 
@@ -217,3 +256,23 @@ One of four trust levels derived from the [Trust Score](#trust-score) that deter
 | **Tier 4** | 75–100% | Critical | Strict controls, frequent HITL, rate limiting |
 
 **Learn more:** [Trust Tiers](/docs/core-concepts/trust-tiers)
+
+---
+
+## Worker
+
+A process that hosts your [Workflow](#workflow) and [Activity](#activity) code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
+
+**OpenBox connection:** The Worker is the single integration point. You replace Temporal's `Worker` with `create_openbox_worker` — one code change that wraps the Worker with the [Trust Layer](#trust-layer). No changes to your Workflows or Activities.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101#worker)
+
+---
+
+## Workflow
+
+A durable function that orchestrates a sequence of steps. If the process crashes mid-execution, Temporal replays the Workflow from its event history so it can resume exactly where it left off.
+
+**OpenBox connection:** When a Workflow starts, OpenBox creates a governance session. When it completes or fails, OpenBox closes the session and triggers [Attestation](#attestation). Every Workflow execution maps 1:1 to a governance session in your dashboard.
+
+**Learn more:** [Temporal 101](/docs/getting-started/temporal-101#workflow)

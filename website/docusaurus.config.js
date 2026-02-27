@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenBox Docs',
-  tagline: 'Documentation for OpenBox components.',
+  tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
   favicon: 'img/favicon.ico',
 
   markdown: {
@@ -24,7 +24,7 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://openbox.local',
+  url: 'https://docs.openbox.ai',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -32,9 +32,10 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'openbox',
-  projectName: 'opebox-docs',
+  projectName: 'openbox-docs',
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -51,6 +52,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
+          showLastUpdateTime: true,
         },
         blog: false,
         theme: {
@@ -60,17 +62,26 @@ const config = {
     ],
   ],
 
+  headTags: [
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'}},
+    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous'}},
+    {tagName: 'link', attributes: {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap'}},
+  ],
+
   themes: ['@docusaurus/theme-mermaid', require.resolve('@easyops-cn/docusaurus-search-local')],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
       colorMode: {
         defaultMode: 'light',
         respectPrefersColorScheme: false,
         disableSwitch: false,
+      },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
       },
       navbar: {
         title: 'Docs',
@@ -78,7 +89,25 @@ const config = {
           alt: 'OpenBox Logo',
           src: 'img/logo.svg',
         },
-        items: [{type: 'search', position: 'right'}],
+        items: [
+          {
+            href: 'https://www.openbox.ai/#waitlist',
+            label: 'Get Access',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python',
+            label: 'GitHub',
+            position: 'right',
+          },
+          {
+            href: 'https://platform.openbox.ai',
+            label: 'Dashboard',
+            position: 'right',
+            className: 'navbar-dashboard-link',
+          },
+          {type: 'search', position: 'right'},
+        ],
       },
       searchLocal: {
         indexDocs: true,
@@ -86,6 +115,44 @@ const config = {
         docsRouteBasePath: '/docs',
         hashed: true,
         language: ['en'],
+      },
+      footer: {
+        style: 'light',
+        links: [
+          {
+            title: 'Developers',
+            items: [
+              {label: 'Getting Started', to: '/docs/getting-started/'},
+              {label: 'SDK Reference', to: '/docs/developer-guide/sdk-reference'},
+              {label: 'Configuration', to: '/docs/developer-guide/configuration'},
+            ],
+          },
+          {
+            title: 'Operations',
+            items: [
+              {label: 'Dashboard', to: '/docs/dashboard/'},
+              {label: 'Trust Lifecycle', to: '/docs/trust-lifecycle/'},
+              {label: 'Approvals', to: '/docs/approvals/'},
+            ],
+          },
+          {
+            title: 'Compliance',
+            items: [
+              {label: 'Audit & Evidence', to: '/docs/administration/compliance-and-audit'},
+              {label: 'Attestation & Proof', to: '/docs/administration/attestation-and-cryptographic-proof'},
+              {label: 'Audit Log', to: '/docs/administration/organization-audit-log'},
+            ],
+          },
+          {
+            title: 'Product',
+            items: [
+              {label: 'Get Access', href: 'https://www.openbox.ai/#waitlist'},
+              {label: 'Dashboard', href: 'https://platform.openbox.ai'},
+              {label: 'GitHub', href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python'},
+            ],
+          },
+        ],
+        copyright: `<div class="footer__copyright-inner"><span>© ${new Date().getFullYear()} OpenBox AI. All rights reserved.</span><span class="footer__legal-links"><a href="https://www.openbox.ai/t-c/terms" target="_blank" rel="noopener noreferrer">Terms</a><a href="https://www.openbox.ai/t-c/privacy" target="_blank" rel="noopener noreferrer">Privacy</a><a href="https://www.openbox.ai/t-c/cookies-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a></span></div>`,
       },
       prism: {
         theme: prismThemes.github,

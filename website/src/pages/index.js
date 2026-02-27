@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState, useRef, useCallback} from 'react';
 
 import CodeBlock from '@theme/CodeBlock';
 import Heading from '@theme/Heading';
@@ -13,7 +13,7 @@ const ExploreSections = [
     title: 'Try it out',
     links: [
       {label: 'Introduction', to: '/docs/'},
-      {label: 'Quick start', to: '/docs/getting-started/quick-start'},
+      {label: 'Run the Demo', to: '/docs/getting-started/run-the-demo'},
       {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
     ],
   },
@@ -21,7 +21,7 @@ const ExploreSections = [
     title: 'Agents',
     links: [
       {label: 'Overview', to: '/docs/dashboard/agents'},
-      {label: 'Registering agents', to: '/docs/getting-started/registering-agents'},
+      {label: 'Registering agents', to: '/docs/dashboard/agents/registering-agents'},
       {label: 'Trust lifecycle', to: '/docs/trust-lifecycle'},
     ],
   },
@@ -57,14 +57,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <img
-            className={styles.tryMediaImage}
-            src="/img/step_1.gif"
-            alt="Step 1: Register your agent in the OpenBox dashboard"
-            loading="lazy"
-          />
-        ),
+        videoSrc: '/img/step_1.mp4',
         mediaLabel: (
           <>
             GIF: Dashboard walkthrough
@@ -88,14 +81,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <img
-            className={styles.tryMediaImage}
-            src="/img/step_2.gif"
-            alt="Step 2: Install the OpenBox SDK"
-            loading="lazy"
-          />
-        ),
+        videoSrc: '/img/step_2.mp4',
         mediaLabel: <>GIF: installation command</>,
       },
       {
@@ -124,14 +110,7 @@ function GettingStartedCarousel() {
             </div>
           </div>
         ),
-        media: (
-          <img
-            className={styles.tryMediaImage}
-            src="/img/step_3.gif"
-            alt="Step 3: Wrap your Temporal worker with create_openbox_worker"
-            loading="lazy"
-          />
-        ),
+        videoSrc: '/img/step_3.mp4',
         mediaLabel: <>GIF: Code change walkthrough</>,
       },
       {
@@ -155,14 +134,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
             </div>
           </div>
         ),
-        media: (
-          <img
-            className={styles.tryMediaImage}
-            src="/img/step_4.gif"
-            alt="Step 4: Set environment variables for OpenBox"
-            loading="lazy"
-          />
-        ),
+        videoSrc: '/img/step_4.mp4',
         mediaLabel: <>GIF: env setup</>,
       },
     ],
@@ -171,15 +143,21 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
 
   const [index, setIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const pendingIndexRef = useRef(null);
 
-  const handleStepChange = (newIndex) => {
-    if (newIndex === index || isTransitioning) return;
+  const handleStepChange = useCallback((newIndex) => {
+    if (newIndex === index || pendingIndexRef.current !== null) return;
+    pendingIndexRef.current = newIndex;
     setIsTransitioning(true);
-    setTimeout(() => {
-      setIndex(newIndex);
+  }, [index]);
+
+  const handleTransitionEnd = useCallback((e) => {
+    if (e.propertyName === 'opacity' && pendingIndexRef.current !== null) {
+      setIndex(pendingIndexRef.current);
+      pendingIndexRef.current = null;
       setIsTransitioning(false);
-    }, 200);
-  };
+    }
+  }, []);
 
   const goPrev = () => handleStepChange((index - 1 + slides.length) % slides.length);
   const goNext = () => handleStepChange((index + 1) % slides.length);
@@ -213,18 +191,29 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
         </div>
       </div>
 
-      <div className={clsx(
-        styles.tryStepRow,
-        isTransitioning && styles.tryStepRowHidden
-      )}>
+      <div
+        className={clsx(
+          styles.tryStepRow,
+          isTransitioning && styles.tryStepRowHidden
+        )}
+        onTransitionEnd={handleTransitionEnd}
+      >
         <div className={styles.tryStepText}>
           <div className={styles.tryStepTitle}>{slide.title}</div>
           <div className={styles.tryStepBody}>{slide.body}</div>
           {slide.visual ? slide.visual : <div className={styles.tryStepCode}>{slide.code}</div>}
         </div>
         <div className={styles.tryStepMedia}>
-          {slide.media ? (
-            slide.media
+          {slide.videoSrc ? (
+            <video
+              className={styles.tryMediaImage}
+              src={slide.videoSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="none"
+            />
           ) : (
             <div className={styles.tryMediaPlaceholder}>
               {slide.mediaLabel}
@@ -243,12 +232,13 @@ function HomepageHeader() {
     <header className={styles.hero}>
       <div className={clsx('container', styles.heroInner)}>
         <div className={styles.heroLeft}>
+          <span className={styles.heroLabel}>AI Trust Platform</span>
           <Heading as="h1" className={styles.heroTitle}>
-            Documentation
+            Verify Every Action
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
-            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/">
+            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/getting-started">
               Get started
             </Link>
           </div>
@@ -263,11 +253,6 @@ const HelpfulLinks = [
     labelPrefix: 'Need help with the docs?',
     labelLink: 'Email support',
     href: 'mailto:support@openbox.ai',
-  },
-  {
-    labelPrefix: 'Product updates:',
-    labelLink: 'View changelog',
-    href: 'https://openbox.ai/changelog',
   },
   {
     labelPrefix: 'Talk to us:',
@@ -286,7 +271,8 @@ export default function Home() {
   return (
     <Layout
       title={siteConfig.title}
-      description="OpenBox documentation">
+      description="OpenBox Documentation — Enterprise AI governance platform. Attest every agent action so behavior is provable, auditable, and defensible by default."
+      wrapperClassName="homepage-no-footer">
       <HomepageHeader />
       <main>
         <section className={styles.exploreSection}>
@@ -313,8 +299,8 @@ export default function Home() {
             <div className={styles.tryHeader}>
               <div className={styles.tryTitleRow}>
                 <div className={styles.tryTitle}>Try it out</div>
-                <Link className={styles.tryLink} to="/docs/getting-started/quick-start">
-                  Open Quick Start →
+                <Link className={styles.tryLink} to="/docs/getting-started/wrap-an-existing-agent">
+                  Wrap an Existing Agent →
                 </Link>
               </div>
               <div className={styles.trySubtitle}>

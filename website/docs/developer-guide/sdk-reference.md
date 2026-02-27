@@ -1,7 +1,7 @@
 ---
 title: SDK Reference
 description: Thin wrapper for Temporal workflow integration
-sidebar_position: 6
+sidebar_position: 1
 ---
 
 # SDK Reference
@@ -30,9 +30,28 @@ The SDK is intentionally minimal:
 
 See:
 
-1. **[Quick Start](/docs/getting-started/quick-start)** - Wrap an existing Temporal worker
+1. **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** - Wrap an existing Temporal worker
 2. **[Temporal (Python)](/docs/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
 3. **[Configuration](/docs/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
+
+## Function Signature
+
+```python
+def create_openbox_worker(
+    client: Client,
+    task_queue: str,
+    *,
+    workflows: Sequence[Type] = (),
+    activities: Sequence[Callable] = (),
+    openbox_url: str,
+    openbox_api_key: str,
+    # + governance, instrumentation, and Temporal Worker options
+)
+```
+
+Returns a standard Temporal `Worker` with OpenBox interceptors, telemetry, and governance configured. All [Temporal Worker options](https://python.temporal.io/temporalio.worker.Worker.html) are passed through.
+
+See **[Configuration](/docs/developer-guide/configuration)** for the full parameter list.
 
 ## What the SDK Captures
 
@@ -63,35 +82,69 @@ The SDK automatically captures and sends to OpenBox:
 
 All captured data is evaluated against your trust policies on the OpenBox platform.
 
+## Tracing
+
+The `@traced` decorator wraps any function in an OpenTelemetry span so it appears in session replay. It works on both sync and async functions.
+
+### Import
+
+```python
+from openbox.tracing import traced
+```
+
+### Basic Usage
+
+```python
+@traced
+def process_data(input_data):
+    return transform(input_data)
+
+@traced
+async def fetch_data(url):
+    return await http_get(url)
+```
+
+### With Options
+
+```python
+@traced(
+    name="custom-span-name",
+    capture_args=True,       # Capture function arguments (default: True)
+    capture_result=True,     # Capture return value (default: True)
+    capture_exception=True,  # Capture exception details on error (default: True)
+    max_arg_length=2000,     # Max length for serialized arguments (default: 2000)
+)
+async def process_sensitive_data(data):
+    return await handle(data)
+```
+
+### Manual Spans
+
+For more control, use `create_span` as a context manager:
+
+```python
+from openbox.tracing import create_span
+
+with create_span("my-operation", {"input": data}) as span:
+    result = do_something()
+    span.set_attribute("output", result)
+```
+
 ## How It Works
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Your Temporal Worker                     │
-│                                                              │
-│  ┌────────────────────┐      ┌──────────────────────────┐  │
-│  │   Your Workflow    │      │    Your Activity         │  │
-│  │   (unchanged)      │      │    (unchanged)           │  │
-│  └────────────────────┘      └──────────────────────────┘  │
-│           │                              │                  │
-│           ▼                              ▼                  │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │         OpenBox SDK (Interceptors)                 │    │
-│  │  - Captures events                                 │    │
-│  │  - Collects HTTP/DB/File telemetry                │    │
-│  │  - Sends events to OpenBox                        │    │
-│  └────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌────────────────────────────┐
-              │        OpenBox             │
-              │       Trust Engine        │
-              │                            │
-              │   Returns:                 │
-              │   - continue/stop          │
-              │   - guardrails_result      │
-              └────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph worker["Your Temporal Worker"]
+        workflow["Your Workflow<br/>(unchanged)"]
+        activity["Your Activity<br/>(unchanged)"]
+        sdk["<b>OpenBox SDK (Interceptors)</b><br/>Captures events<br/>Collects HTTP/DB/File telemetry<br/>Sends events to OpenBox"]
+        workflow --> sdk
+        activity --> sdk
+    end
+
+    sdk --> engine
+
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
 
 ## Configuration
