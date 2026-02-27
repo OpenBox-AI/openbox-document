@@ -307,46 +307,51 @@
   }
 }
 
-/* ── Flex ordering: title → meta row → content ────────────── */
-
 .doc-content-flex {
   display: flex;
   flex-direction: column;
 }
 
-/* Title (synthetic <header> or MDX-rendered <header>) */
 .doc-content-flex > header {
   order: -2;
 }
 
-/* Meta row always sits between title and body */
 .doc-meta-row {
   order: -1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
   font-size: 0.85rem;
   color: var(--ifm-color-emphasis-600);
 }
 
 .doc-meta-row__updated {
-  flex-shrink: 0;
+  grid-column: 1;
+  grid-row: 1;
 }
 
-.doc-meta-row__right {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
+.doc-meta-row > .doc-page-actions-row {
+  grid-column: 2;
+  grid-row: 1;
 }
 
-.doc-meta-row__right > .doc-page-actions-row {
-  display: none;
+.doc-meta-row__tags {
+  grid-column: 1 / -1;
+  grid-row: 2;
 }
 
-@media (min-width: 997px) {
-  .doc-meta-row__right > .doc-page-actions-row {
-    display: block;
+@media (max-width: 480px) {
+  .doc-meta-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .doc-meta-row > .doc-page-actions-row {
+    grid-column: 1;
+    grid-row: 3;
   }
 }
 
@@ -358,19 +363,7 @@
 
 .doc-meta-row__tags ul {
   flex-wrap: wrap;
-}
-
-@media (min-width: 997px) {
-  .doc-meta-row {
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .doc-meta-row__right {
-    flex-shrink: 0;
-  }
+  margin-bottom: 0;
 }
 
 .doc-page-title-row {
@@ -381,7 +374,7 @@
 }
 
 .doc-page-title-row h1 {
-  margin: 0;
+  margin: 0 0 0.75rem;
 }
 
 .doc-page-actions-row {
@@ -602,6 +595,15 @@
   }
 }
 
+@media (max-width: 480px) {
+  .doc-page-action-menu-list {
+    right: auto;
+    left: 0;
+    width: calc(100vw - 2rem);
+    max-width: 320px;
+  }
+}
+
 .markdown h6 {
   font-size: 1rem;
 }
@@ -622,9 +624,8 @@
    typography, and vertical rhythm
    ─────────────────────────────────────────────── */
 
-/* 1. Heading spacing */
 .markdown h2 {
-  margin-top: 2.5rem;
+  margin-top: 1.25rem;
 }
 
 .markdown h2:first-child {
@@ -632,8 +633,12 @@
 }
 
 .markdown h3 {
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.markdown hr {
+  margin: 0.25rem 0 1rem;
 }
 
 /* 2. Inline code styling (exclude code blocks) */
