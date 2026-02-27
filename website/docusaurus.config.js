@@ -73,7 +73,7 @@ const config = {
     ({
       colorMode: {
         defaultMode: 'light',
-        respectPrefersColorScheme: false,
+        respectPrefersColorScheme: true,
         disableSwitch: false,
       },
       docs: {
