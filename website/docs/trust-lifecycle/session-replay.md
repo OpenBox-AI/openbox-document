@@ -54,6 +54,6 @@ The event details panel on the right shows the full information for the selected
 
 - **[Verify](/docs/trust-lifecycle/verify)** — Goal alignment scoring and execution evidence
 - **[Monitor](/docs/trust-lifecycle/monitor)** — Operational metrics and session overview
-- **[Governance Decisions](/docs/core-concepts/governance-decisions)** — The five decision types shown in replay
+- **[Governance Decisions](/docs/core-concepts/governance-decisions)** — The four decision types shown in replay
 - **[Event Types](/docs/developer-guide/event-types)** — Semantic event types that appear in the stream
 - **[Approvals](/docs/approvals)** — Human-in-the-loop approval queue

@@ -23,8 +23,9 @@ const sidebars = {
         id: 'getting-started/index',
       },
       items: [
-        'getting-started/registering-agents',
-        'getting-started/quick-start',
+        'getting-started/temporal-101',
+        'getting-started/run-the-demo',
+        'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
       ],
     },
@@ -48,7 +49,19 @@ const sidebars = {
       items: [
         'trust-lifecycle/overview',
         'trust-lifecycle/assess',
-        'trust-lifecycle/authorize',
+        {
+          type: 'category',
+          label: 'Authorize',
+          link: {
+            type: 'doc',
+            id: 'trust-lifecycle/authorize/index',
+          },
+          items: [
+            'trust-lifecycle/authorize/guardrails',
+            'trust-lifecycle/authorize/policies',
+            'trust-lifecycle/authorize/behaviours',
+          ],
+        },
         'trust-lifecycle/monitor',
         {
           type: 'category',
@@ -70,9 +83,11 @@ const sidebars = {
       items: [
         'developer-guide/sdk-reference',
         'developer-guide/temporal-integration-guide-python',
+        'developer-guide/customizing-your-agent',
         'developer-guide/configuration',
         'developer-guide/error-handling',
         'developer-guide/event-types',
+        'developer-guide/demo-architecture',
       ],
     },
     {
@@ -83,7 +98,18 @@ const sidebars = {
         id: 'dashboard/index',
       },
       items: [
-        'dashboard/agents',
+        {
+          type: 'category',
+          label: 'Agents',
+          link: {
+            type: 'doc',
+            id: 'dashboard/agents/index',
+          },
+          items: [
+            'dashboard/agents/registering-agents',
+            'dashboard/agents/agent-settings',
+          ],
+        },
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],
