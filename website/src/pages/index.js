@@ -166,11 +166,15 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
   return (
     <div className={styles.carousel}>
       <div className={styles.carouselTop}>
-        <div className={styles.carouselTabs}>
+        <div className={styles.carouselTabs} role="tablist" aria-label="Getting started steps">
           {slides.map((_, i) => (
             <button
               key={i}
+              id={`step-tab-${i}`}
               type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-controls="step-panel"
               className={clsx(
                 styles.carouselTab,
                 i === index && styles.carouselTabActive
@@ -192,6 +196,10 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
       </div>
 
       <div
+        id="step-panel"
+        role="tabpanel"
+        aria-labelledby={`step-tab-${index}`}
+        aria-live="polite"
         className={clsx(
           styles.tryStepRow,
           isTransitioning && styles.tryStepRowHidden
@@ -231,7 +239,7 @@ function HomepageHeader() {
   return (
     <header className={styles.hero}>
       <div className={clsx('container', styles.heroInner)}>
-        <div className={styles.heroLeft}>
+        <div>
           <span className={styles.heroLabel}>AI Trust Platform</span>
           <Heading as="h1" className={styles.heroTitle}>
             Verify Every Action

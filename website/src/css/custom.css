@@ -127,7 +127,7 @@
    font-weight: 600;
    font-size: 0.875rem;
    line-height: 1;
-   background: rgb(0, 140, 255);
+   background: var(--ifm-color-primary);
    border: 0;
    box-shadow: none;
    will-change: transform;
@@ -135,12 +135,12 @@
  }
 
 .button.button--primary:hover {
-  background: rgb(0, 124, 226);
+  background: var(--ifm-color-primary-dark);
   transform: translateY(-1px);
 }
 
 .button.button--primary:active {
-  background: rgb(0, 112, 204);
+  background: var(--ifm-color-primary-darker);
   transform: translateY(0);
 }
 
@@ -636,7 +636,7 @@ svg[class*='iconExternalLink'] {
 
 /* Dashboard button in navbar */
 .navbar-dashboard-link {
-  background: rgb(0, 140, 255);
+  background: var(--ifm-color-primary);
   color: #fff !important;
   border-radius: 8px;
   padding: 0.4rem 1rem !important;
@@ -646,13 +646,13 @@ svg[class*='iconExternalLink'] {
 }
 
 .navbar-dashboard-link:hover {
-  background: rgb(0, 124, 226);
+  background: var(--ifm-color-primary-dark);
   color: #fff !important;
   transform: translateY(-1px);
 }
 
 .navbar-dashboard-link:active {
-  background: rgb(0, 112, 204);
+  background: var(--ifm-color-primary-darker);
   transform: translateY(0);
 }
 

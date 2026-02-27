@@ -33,6 +33,10 @@ const sidebars = {
       type: 'category',
       label: 'Core Concepts',
       collapsed: true,
+      link: {
+        type: 'doc',
+        id: 'core-concepts/index',
+      },
       items: [
         'core-concepts/trust-scores',
         'core-concepts/trust-tiers',
@@ -80,6 +84,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Developer Guide',
+      link: {
+        type: 'doc',
+        id: 'developer-guide/index',
+      },
       items: [
         'developer-guide/sdk-reference',
         'developer-guide/temporal-integration-guide-python',
@@ -118,6 +126,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Administration',
+      link: {
+        type: 'doc',
+        id: 'administration/index',
+      },
       items: [
         'administration/organization',
         'administration/compliance-and-audit',

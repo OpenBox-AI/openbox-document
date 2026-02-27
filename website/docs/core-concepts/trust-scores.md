@@ -8,12 +8,6 @@ sidebar_position: 1
 
 The Trust Score is a 0-100 metric representing an agent's trustworthiness based on its configuration and behavior.
 
-:::info How the key terms relate
-- **Risk Profile Score** — initial assessment score (0-100) based on your agent's risk questionnaire. Set during the [Assess phase](/docs/trust-lifecycle/assess).
-- **Trust Score** — ongoing score (0-100) combining Risk Profile (40%) + Behavioral (35%) + Alignment (25%)
-- **Trust Tier** — tier label (1-4) derived from the Risk Profile Score ranges
-:::
-
 ## Calculation
 
 ```
