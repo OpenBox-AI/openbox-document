@@ -8,6 +8,8 @@ sidebar_position: 1
 
 Guardrails are pre- and post-processing rules that validate and transform agent inputs and outputs. Multiple guardrails execute as a chained pipeline — the output of one feeds into the next.
 
+Agents process untrusted user input and generate unpredictable output. Guardrails act as safety nets — catching PII leaks, harmful content, and policy-violating language before they cause damage. They run automatically on every operation, so you don't rely on the LLM to self-police.
+
 | Type | Purpose | Examples |
 |------|---------|----------|
 | **Input Guardrails** | Validate/transform incoming data | PII detection, rate limiting |
@@ -83,6 +85,8 @@ Each type also has its own settings. Expand a type below for details and test ex
 
 Identify and mask personally identifiable information (for example: names, emails, phone numbers, addresses) by replacing them with tags like `<PHONE_NUMBER>`, `<EMAIL>`, `<PERSON>`.
 
+**Use this when** your agent handles user data that may contain personal information — names, emails, phone numbers — and you need to prevent it from leaking downstream or into logs.
+
 ##### Advanced Settings
 
 **PII Entities to Detect**
@@ -143,6 +147,8 @@ Expected outcomes:
 <summary>Content Filtering</summary>
 
 Block inappropriate or off-topic content from user input or output.
+
+**Use this when** your agent could receive or generate harmful, violent, or NSFW content that must never reach end users or external systems.
 
 ##### Advanced Settings
 
@@ -211,6 +217,8 @@ Expected outcomes:
 
 Block hostile or abusive language from users.
 
+**Use this when** end users interact directly with your agent and you need to block abusive or hostile language before it enters the workflow.
+
 ##### Advanced Settings
 
 **Toxicity Threshold**
@@ -277,6 +285,8 @@ Expected outcomes:
 <summary>Ban Words</summary>
 
 Censor banned words by replacing them with their initial letters.
+
+**Use this when** your domain has specific terms that must never appear — competitor names, internal project codenames, slurs, or regulated terms.
 
 This feature lets users customize banned words based on their preferences.
 
