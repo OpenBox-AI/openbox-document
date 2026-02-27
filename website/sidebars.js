@@ -33,6 +33,10 @@ const sidebars = {
       type: 'category',
       label: 'Core Concepts',
       collapsed: true,
+      link: {
+        type: 'doc',
+        id: 'core-concepts/index',
+      },
       items: [
         'core-concepts/trust-scores',
         'core-concepts/trust-tiers',
