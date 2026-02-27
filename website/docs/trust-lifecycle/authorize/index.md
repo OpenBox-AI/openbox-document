@@ -49,7 +49,7 @@ Guardrails, Policies, and Behavioral Rules can all have multiple rules active at
 
 **[Policies](./policies)** execute based on the logic defined in your Rego file. Multiple rules can exist within a single policy.
 
-**[Behavioral Rules](./behaviours)** are checked one by one in priority order and stop at the first rule that triggers a verdict. Remaining rules are not evaluated.
+**[Behavioral Rules](./behaviors)** are checked one by one in priority order and stop at the first rule that triggers a verdict. Remaining rules are not evaluated.
 
 `Rule 1 (not triggered) → Rule 2 (triggered → REQUIRE_APPROVAL) → STOP` — Rule 3, 4, 5... are skipped.
 
@@ -57,7 +57,7 @@ Guardrails, Policies, and Behavioral Rules can all have multiple rules active at
 |--------|------------------|----------|
 | [Guardrails](./guardrails) | Yes | Runs all in order (chained) |
 | [Policies](./policies) | Yes | Executes based on Rego logic |
-| [Behavioral Rules](./behaviours) | Yes | Stops at first triggered verdict |
+| [Behavioral Rules](./behaviors) | Yes | Stops at first triggered verdict |
 
 ## Governance Decisions
 
