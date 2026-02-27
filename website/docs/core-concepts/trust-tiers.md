@@ -2,6 +2,10 @@
 title: Trust Tiers
 description: Trust Tier levels and how they affect trust controls
 sidebar_position: 2
+tags:
+  - trust-scoring
+  - risk-assessment
+  - governance
 ---
 
 # Trust Tiers

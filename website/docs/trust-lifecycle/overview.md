@@ -2,6 +2,10 @@
 title: Overview
 description: Overview of all the sessions and agent behavior
 sidebar_position: 1
+tags:
+  - session
+  - agent-management
+  - observability
 ---
 
 # Overview

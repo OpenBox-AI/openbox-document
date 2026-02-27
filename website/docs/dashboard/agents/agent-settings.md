@@ -2,6 +2,8 @@
 title: Agent Settings
 description: Configure agent details, risk profile, API keys, and lifecycle status
 sidebar_position: 3
+tags:
+  - agent-management
 ---
 
 # Agent Settings

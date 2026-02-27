@@ -2,6 +2,9 @@
 title: Organization
 description: Manage teams, members, and settings
 sidebar_position: 8
+tags:
+  - agent-management
+  - audit
 ---
 
 # Organization
@@ -37,12 +40,12 @@ Team assignment is only available for non-administrator roles (e.g., Developer, 
 
 ### Permissions
 
-Configure what each role can access and modify within the organisation. Go to **Organization → Permissions**.
+Configure what each role can access and modify within the organization. Go to **Organization → Permissions**.
 
 | Role | Permissions |
 |------|-------------|
-| **Admin** | Can manage all teams, agents, policies, and organisation settings |
-| **Developer** | Can create and manage agents within assigned teams. Cannot modify organisation settings |
+| **Admin** | Can manage all teams, agents, policies, and organization settings |
+| **Developer** | Can create and manage agents within assigned teams. Cannot modify organization settings |
 | **Viewer** | Can view agents, logs, and reports. Cannot make any modifications |
 
 ## Settings

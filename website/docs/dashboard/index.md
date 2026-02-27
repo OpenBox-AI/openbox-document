@@ -2,6 +2,9 @@
 title: Dashboard
 description: Trust Overview and organization-wide monitoring
 sidebar_position: 3
+tags:
+  - agent-management
+  - observability
 ---
 
 # Dashboard
@@ -17,7 +20,7 @@ The sidebar navigation includes:
 - **Dashboard** - Organization overview (this page)
 - **Agents** - Manage and monitor agents
 - **Approvals** - Human-in-the-loop queue (shows pending count badge)
-- **Organisation** - Teams, members, API keys, settings
+- **Organization** - Teams, members, API keys, settings
 
 ## Hero Stats
 

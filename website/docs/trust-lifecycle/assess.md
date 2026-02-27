@@ -2,6 +2,10 @@
 title: Assess
 description: Phase 1 - Establish baseline trust through risk assessment
 sidebar_position: 1
+tags:
+  - risk-assessment
+  - trust-scoring
+  - agent-management
 ---
 
 # Assess (Phase 1)

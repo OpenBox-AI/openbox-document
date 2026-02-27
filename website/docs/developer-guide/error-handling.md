@@ -2,6 +2,10 @@
 title: Error Handling
 description: Handle trust decisions in your code
 sidebar_position: 5
+tags:
+  - sdk
+  - reference
+  - governance
 ---
 
 # Error Handling

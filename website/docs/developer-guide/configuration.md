@@ -2,6 +2,9 @@
 title: Configuration
 description: SDK configuration options
 sidebar_position: 4
+tags:
+  - sdk
+  - reference
 ---
 
 # Configuration
@@ -172,6 +175,7 @@ instrument_file_io=True   # Capture file operations
 ## Example: Full Configuration
 
 ```python
+import asyncio
 import os
 from temporalio.client import Client
 from openbox import create_openbox_worker
@@ -214,6 +218,9 @@ async def main():
     )
 
     await worker.run()
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
 ## Next Steps

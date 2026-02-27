@@ -2,13 +2,16 @@
 title: Audit Log
 description: Organization activity audit trail
 sidebar_position: 1
+tags:
+  - audit
+  - compliance
 ---
 
 # Organization Audit Log
 
 Complete activity history across all agents and users.
 
-Access via **Organisation Management → Audit Log** tab.
+Access via **Organization Management → Audit Log** tab.
 
 ---
 
