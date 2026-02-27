@@ -91,6 +91,13 @@ const config = {
         },
         items: [
           {
+            type: 'docSidebar',
+            sidebarId: 'docs',
+            label: 'Docs',
+            position: 'left',
+            className: 'navbar-docs-link-mobile-only',
+          },
+          {
             href: 'https://www.openbox.ai/#waitlist',
             label: 'Get Access',
             position: 'right',
