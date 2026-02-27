@@ -84,6 +84,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Developer Guide',
+      link: {
+        type: 'doc',
+        id: 'developer-guide/index',
+      },
       items: [
         'developer-guide/sdk-reference',
         'developer-guide/temporal-integration-guide-python',
