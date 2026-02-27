@@ -25,7 +25,7 @@ Each time OpenBox evaluates an agent session, it records a governance event cont
 | **Timestamp** | UTC timestamp of the event |
 | **Agent** | The agent that triggered the governance evaluation |
 | **Event Type** | The type of governance event |
-| **Verdict** | Decision issued: ALLOW, BLOCK, HALT, REQUIRE_APPROVAL, or CONSTRAIN |
+| **Verdict** | Decision issued: ALLOW, BLOCK, HALT, or REQUIRE_APPROVAL |
 | **Reason** | Explanation for the verdict |
 | **Workflow/Run ID** | Identifiers for tracing the governance workflow execution |
 | **Approval Metadata** | Who approved/denied, when, and expiration (for approval workflows) |
