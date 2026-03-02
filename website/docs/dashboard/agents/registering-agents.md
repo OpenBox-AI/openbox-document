@@ -63,7 +63,7 @@ Every agent needs an API key to authenticate with OpenBox:
 
 1. Click **Generate API Key**
 2. Copy the key immediately
-3. Store it securely - you won't see it again
+3. Store it securely — you won't see it again
 
 The key format is: `obx_live_xxxxxxxxxxxx`
 
