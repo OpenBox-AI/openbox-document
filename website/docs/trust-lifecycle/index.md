@@ -40,7 +40,7 @@ flowchart LR
 The Trust Score (0-100) aggregates across the lifecycle:
 
 ```
-Trust Score = 	(Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
+Trust Score = (Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 25%)
 ```
 
 | Component | Phase | Description |

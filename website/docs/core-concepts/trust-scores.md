@@ -69,7 +69,7 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 
 ## Score Ranges
 
-| Risk Profile Score| Risk Tier | Risk Level | Description |
+| Risk Profile Score | Risk Tier | Risk Level | Description |
 |-------------|-----------|------------|-------------|
 | **0% – 24%** | Tier 1 | Low | Read-only, public data access |
 | **25% – 49%** | Tier 2 | Medium | Internal data, non-critical actions |
