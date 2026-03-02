@@ -34,7 +34,7 @@ The Risk Profile evaluates risk across three categories:
 
 Pre-configured profiles simplify Risk Profile setup:
 
-| Risk Tier | Risk Level | 	Risk Profile Score | Use Cases |
+| Risk Tier | Risk Level | Risk Profile Score | Use Cases |
 |-----------|------------|-------------|-----------|
 | **Tier 1** | Low | 0% – 24% | Read-only, public data access |
 | **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions |

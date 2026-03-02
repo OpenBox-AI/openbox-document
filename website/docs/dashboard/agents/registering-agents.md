@@ -75,7 +75,7 @@ Expand the **Initial Risk Assessment** section and configure your agent's risk p
 
 Select a preset that matches your agent's intended use:
 
-| Risk Tier | Risk Level | Risk Profile Score| Use Cases | Default Governance |
+| Risk Tier | Risk Level | Risk Profile Score | Use Cases | Default Governance |
 |-----------|------------|-------------|-----------|-------------------|
 | **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
 | **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
