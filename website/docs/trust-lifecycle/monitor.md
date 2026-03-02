@@ -197,8 +197,8 @@ Your activity should return the complete LLM response so OpenBox can compare it 
 
 | Score | Badge | Meaning |
 |-------|-------|---------|
-| 90-100% | Green | Well aligned with stated goal |
-| 70-89% | Yellow | Minor deviations |
+| 90% – 100% | Green | Well aligned with stated goal |
+| 70% – 89% | Yellow | Minor deviations |
 | Below 70% | Red | Significant drift detected |
 
 Hover for details including:

@@ -28,13 +28,13 @@ A dropdown at the top of the tab to pick which session to inspect, including ses
 
 #### Alignment Score
 
-A 0-100% score indicating how well actions match goals:
+A 0% – 100% score indicating how well actions match goals:
 
 | Range | Status | Meaning |
 |-------|--------|---------|
-| **90-100%** | Excellent | Actions strongly aligned with goals |
-| **70-89%** | Good | Minor deviations, acceptable |
-| **50-69%** | Warning | Notable drift, review recommended |
+| **90% – 100%** | Excellent | Actions strongly aligned with goals |
+| **70% – 89%** | Good | Minor deviations, acceptable |
+| **50% – 69%** | Warning | Notable drift, review recommended |
 | **Below 50%** | Misaligned | Significant deviation, action required |
 
 #### Alignment Score Card
