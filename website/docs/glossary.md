@@ -33,7 +33,7 @@ A risk scoring framework that evaluates AI agents across three weighted categori
 | **AI-Specific** | 45% | Model robustness, data sensitivity, ethical impact, decision criticality, adaptability |
 | **Impact** | 30% | Confidentiality, integrity, availability, safety impact |
 
-The resulting score (0–100%) determines the agent's initial [Trust Tier](#trust-tier).
+The resulting score (0% – 100%) determines the agent's initial [Trust Tier](#trust-tier).
 
 **Learn more:** [Assess Phase](/docs/trust-lifecycle/assess)
 
@@ -41,13 +41,13 @@ The resulting score (0–100%) determines the agent's initial [Trust Tier](#trus
 
 ## Alignment Score
 
-A 0–100% metric measuring how well an agent's actions match its stated goals. Contributes 25% of the overall [Trust Score](#trust-score).
+A 0% – 100% metric measuring how well an agent's actions match its stated goals. Contributes 25% of the overall [Trust Score](#trust-score).
 
 | Range | Rating | Meaning |
 |-------|--------|---------|
-| 90–100% | Excellent | Actions strongly aligned with goals |
-| 70–89% | Good | Minor deviations, acceptable |
-| 50–69% | Warning | Notable drift, review recommended |
+| 90% – 100% | Excellent | Actions strongly aligned with goals |
+| 70% – 89% | Good | Minor deviations, acceptable |
+| 50% – 69% | Warning | Notable drift, review recommended |
 | Below 50% | Misaligned | Significant deviation, action required |
 
 **Learn more:** [Verify Phase](/docs/trust-lifecycle/verify)
@@ -238,7 +238,7 @@ A 0–100 metric representing an agent's overall trustworthiness, calculated fro
 
 | Component | Weight | Description |
 |-----------|--------|-------------|
-| Risk Profile Score | 40% | Inherent risk profile
+| Risk Profile Score | 40% | Inherent risk profile |
 | [Behavioral Score](#behavioral-score) | 35% | Runtime compliance |
 | [Alignment Score](#alignment-score) | 25% | Goal consistency |
 
@@ -254,10 +254,10 @@ One of four trust levels derived from the [Trust Score](#trust-score) that deter
 
 | Tier | Risk Profile Range | Risk Level | Description |
 |------|-------------|------------|-------------|
-| **Tier 1** | 0–24% | Low | Minimal oversight, most operations auto-approved |
-| **Tier 2** | 25–49% | Medium | Standard controls, approval for sensitive operations |
-| **Tier 3** | 50–74% | High | Enhanced monitoring, stricter enforcement |
-| **Tier 4** | 75–100% | Critical | Strict controls, frequent HITL, rate limiting |
+| **Tier 1** | 0% – 24% | Low | Minimal oversight, most operations auto-approved |
+| **Tier 2** | 25% – 49% | Medium | Standard controls, approval for sensitive operations |
+| **Tier 3** | 50% – 74% | High | Enhanced monitoring, stricter enforcement |
+| **Tier 4** | 75% – 100% | Critical | Strict controls, frequent HITL, rate limiting |
 
 **Learn more:** [Trust Tiers](/docs/core-concepts/trust-tiers)
 
