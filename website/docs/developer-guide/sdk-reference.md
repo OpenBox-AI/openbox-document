@@ -12,7 +12,7 @@ tags:
 The OpenBox SDK integrates with Temporal workflows. It handles event capture, telemetry collection, and trust evaluation with a single function call.
 
 :::info What the SDK Does
-The SDK's primary job is to **wrap your Temporal worker** and send workflow/activity events to the OpenBox platform. All trust logic, policies, and UI management happens on the platform - not in the SDK.
+The SDK's primary job is to **wrap your Temporal worker** and send workflow/activity events to the OpenBox platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
 :::
 
 ## Philosophy
