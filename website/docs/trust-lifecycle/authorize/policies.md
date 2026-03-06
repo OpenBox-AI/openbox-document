@@ -68,6 +68,19 @@ Your policy should be written defensively:
 - Prefer `default result = ...` so the policy always produces a decision
 - Avoid assumptions about optional fields being present
 
+## Policy Input Fields
+
+Before diving into examples, here are the key fields available in the policy input document:
+
+| Field | Source | Description |
+|---|---|---|
+| `activity_type` | Agent-defined | The type of Temporal activity being evaluated. Your agent defines its own activity types based on how you've structured your workflow. In the demo agent, `agent_toolPlanner` is the activity that calls the LLM and returns a structured tool call. |
+| `activity_output.tool` | Agent-defined | The name of the tool the agent is planning to call. Tools are custom functions that your agent registers. For example, `CreateInvoice` or `CurrentPTO`. |
+| `activity_output.args` | Agent-defined | The arguments being passed to the tool. These are tool-specific and defined by your agent's tool schema. |
+| `event_type` | Platform | The Temporal event type (e.g., `ActivityCompleted`). Provided by the platform. |
+| `risk_tier` | Platform | The agent's assessed risk tier (1–4). Assigned in the platform under agent settings. |
+| `spans` | Platform | Operation-level classifications attached to activity execution. Each span has a `semantic_type` (e.g., `database_select`, `file_read`, `llm_completion`) that describes what kind of operation occurred. |
+
 ## Examples
 
 ### Require approval for invoice creation
@@ -75,6 +88,10 @@ Your policy should be written defensively:
 When every invoice must go through a human reviewer regardless of amount — a common requirement for newly deployed agents or regulated workflows.
 
 Although behavioral rules can also enforce approvals, policies let you define more customized, field-level approval logic.
+
+:::tip Substitute your own names
+This example uses `agent_toolPlanner` (the demo agent's activity type for tool-call decisions) and `CreateInvoice` (a custom tool name from the demo's tool registry). Replace these with your own activity type and tool names.
+:::
 
 ```rego
 package openbox
@@ -130,7 +147,7 @@ Approval visibility in OpenBox platform:
 
 When low-value operations can proceed automatically but high-value ones need human sign-off — balancing speed with risk control.
 
-This variant keeps normal invoice creation automatic while routing high-value invoices to human approval.
+This variant keeps normal invoice creation automatic while routing high-value invoices to human approval. As with the previous example, replace `agent_toolPlanner` and `CreateInvoice` with your own activity type and tool names.
 
 ```rego
 package openbox
@@ -182,7 +199,7 @@ Runtime result:
 
 When different agents carry different risk profiles and you want to tighten or relax controls based on the agent's assessed risk tier.
 
-This example uses restricted semantic types to require approval based on the agent's risk tier.
+This example uses `spans` — operation-level classifications the platform attaches to activity execution. Each span carries a `semantic_type` (e.g., `database_select`, `file_read`, `llm_completion`) that describes the kind of operation that occurred. The policy restricts different semantic types at each risk tier.
 
 ```rego
 package org.openboxai.policy_564f9d9cc31b408c9947e04d64dbb7aa
