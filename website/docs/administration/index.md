@@ -1,6 +1,10 @@
 ---
 title: Administration
 description: Organization management, compliance, attestation, and audit capabilities
+tags:
+  - compliance
+  - audit
+  - organization
 ---
 
 # Administration

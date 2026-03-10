@@ -1,6 +1,10 @@
 ---
 title: Developer Guide
 description: SDK reference, integration guides, and configuration for OpenBox
+tags:
+  - sdk
+  - integration
+  - configuration
 ---
 
 # Developer Guide
