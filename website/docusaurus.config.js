@@ -13,6 +13,7 @@ const config = {
   title: 'OpenBox Docs',
   tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
   favicon: 'img/favicon.ico',
+  image: 'img/social_preview.png',
 
   markdown: {
     mermaid: true,
