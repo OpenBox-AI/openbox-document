@@ -78,6 +78,26 @@ agent-management:
   permalink: /agent-management
   description: Registering, configuring, and managing agents
 
+overview:
+  label: Overview
+  permalink: /overview
+  description: High-level platform overview and key capabilities
+
+integration:
+  label: Integration
+  permalink: /integration
+  description: Integrating OpenBox with workflow engines and tools
+
+configuration:
+  label: Configuration
+  permalink: /configuration
+  description: SDK and agent configuration options
+
+organization:
+  label: Organization
+  permalink: /organization
+  description: Organization settings and team management
+
 getting-started:
   label: Getting Started
   permalink: /getting-started
