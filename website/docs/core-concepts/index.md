@@ -1,6 +1,10 @@
 ---
 title: Core Concepts
 description: The foundational concepts behind OpenBox governance
+tags:
+  - trust-scoring
+  - governance
+  - risk-assessment
 ---
 
 # Core Concepts
