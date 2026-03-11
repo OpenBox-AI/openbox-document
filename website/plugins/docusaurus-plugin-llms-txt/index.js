@@ -51,7 +51,7 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
 
       const url = siteUrl + doc.permalink;
       const indent = '  '.repeat(depth);
-      indexLines.push(`${indent}- ${doc.title}: ${url}`);
+      indexLines.push(`${indent}- [${doc.title}](${url})`);
 
       const content = extractContent(resolveSourcePath(siteDir, doc.source));
       fullSections.push(`## ${doc.title}\n\nSource: ${url}\n\n${content}`);
@@ -68,7 +68,7 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
         if (doc) {
           const url = siteUrl + doc.permalink;
           const indent = '  '.repeat(depth);
-          indexLines.push(`${indent}- ${doc.title}: ${url}`);
+          indexLines.push(`${indent}- [${doc.title}](${url})`);
 
           const content = extractContent(resolveSourcePath(siteDir, doc.source));
           const heading = depth === 0 ? `# ${doc.title}` : `## ${doc.title}`;
@@ -164,7 +164,6 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       }
 
       const siteUrl = siteConfig.url.replace(/\/$/, '');
-      const docsBase = `${siteUrl}/docs/`;
 
       const indexLines = [];
       const fullSections = [];
@@ -183,14 +182,11 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       // llms.txt
       const header = [
         '# OpenBox Docs: LLM-Friendly Index',
-        '#',
-        '# This file is intended for agents and scrapers that prefer a plain-text sitemap',
-        '# with human-readable labels.',
-        '#',
-        `# Base URL: ${siteUrl}`,
-        `# Docs base: ${docsBase}`,
+        '',
+        '> OpenBox is an enterprise governance platform for AI integrations. This file provides a structured index of all documentation for use by LLMs and AI agents.',
+        '',
       ];
-      const llmsTxt = header.join('\n') + '\n' + indexLines.join('\n') + '\n';
+      const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n';
       fs.writeFileSync(path.join(outDir, 'llms.txt'), llmsTxt);
 
       // llms-full.txt
