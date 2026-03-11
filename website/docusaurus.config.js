@@ -68,6 +68,10 @@ const config = {
     {tagName: 'link', attributes: {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap'}},
   ],
 
+  plugins: [
+    ['./plugins/docusaurus-plugin-llms-txt', {}],
+  ],
+
   themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],
 
   themeConfig:
