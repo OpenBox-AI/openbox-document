@@ -165,6 +165,8 @@ const {outDir, siteDir, siteConfig, plugins} = props;
 
       const siteUrl = siteConfig.url.replace(/\/$/, '');
 
+      const tagline = siteConfig.tagline || '';
+
       const indexLines = [];
       const fullSections = [];
 
@@ -183,8 +185,7 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       const header = [
         '# OpenBox Docs: LLM-Friendly Index',
         '',
-        '> OpenBox is an enterprise governance platform for AI integrations. This file provides a structured index of all documentation for use by LLMs and AI agents.',
-        '',
+        ...(tagline ? [`> ${tagline}`, ''] : []),
       ];
       const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n';
       fs.writeFileSync(path.join(outDir, 'llms.txt'), llmsTxt);
