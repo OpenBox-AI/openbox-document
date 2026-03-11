@@ -89,8 +89,7 @@ function pluginLlmsTxt(_context, _options) {
     name: 'docusaurus-plugin-llms-txt',
 
     async postBuild(props) {
-      throw new Error('[llms-txt] Forced failure to verify build aborts on plugin error');
-      const {outDir, siteDir, siteConfig, plugins} = props;
+const {outDir, siteDir, siteConfig, plugins} = props;
 
       // Dynamic imports for ESM-only packages
       const [{unified}, remarkParse, remarkMdx, remarkGfm, {toMarkdown}, {gfmToMarkdown}] =
