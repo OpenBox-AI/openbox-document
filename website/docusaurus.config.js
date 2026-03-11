@@ -13,7 +13,6 @@ const config = {
   title: 'OpenBox Docs',
   tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
   favicon: 'img/favicon.ico',
-
   markdown: {
     mermaid: true,
   },
@@ -77,6 +76,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/social_preview.png',
       colorMode: {
         defaultMode: 'light',
         respectPrefersColorScheme: true,
