@@ -144,16 +144,16 @@ Use Tree View when you need execution-path reasoning:
 
 #### Watch Replay
 
-Opens [Session Replay](/docs/trust-lifecycle/session-replay) so you can walk through session execution step by step.
+Opens [Session Replay](/trust-lifecycle/session-replay) so you can walk through session execution step by step.
 
 ## Integration with Other Phases
 
 - **Authorize**: Drift patterns can trigger behavioral rules
 - **Adapt**: Repeated drift generates policy suggestions
-- **Monitor**: Alignment annotations appear in [Session Replay](/docs/trust-lifecycle/session-replay)
+- **Monitor**: Alignment annotations appear in [Session Replay](/trust-lifecycle/session-replay)
 
 ## Next Phase
 
 Based on alignment results and detected patterns:
 
-→ **[Adapt](/docs/trust-lifecycle/adapt)** - Review policy suggestions, handle agent-specific approvals, and watch trust evolve over time
+→ **[Adapt](/trust-lifecycle/adapt)** - Review policy suggestions, handle agent-specific approvals, and watch trust evolve over time

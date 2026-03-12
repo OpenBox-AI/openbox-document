@@ -12,25 +12,25 @@ const ExploreSections = [
   {
     title: 'Try it out',
     links: [
-      {label: 'Introduction', to: '/docs/'},
-      {label: 'Run the Demo', to: '/docs/getting-started/run-the-demo'},
-      {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
+      {label: 'Introduction', to: '/overview'},
+      {label: 'Run the Demo', to: '/getting-started/run-the-demo'},
+      {label: 'Workflow engines', to: '/developer-guide/temporal-integration-guide-python'},
     ],
   },
   {
     title: 'Agents',
     links: [
-      {label: 'Overview', to: '/docs/dashboard/agents'},
-      {label: 'Registering agents', to: '/docs/dashboard/agents/registering-agents'},
-      {label: 'Trust lifecycle', to: '/docs/trust-lifecycle'},
+      {label: 'Overview', to: '/dashboard/agents'},
+      {label: 'Registering agents', to: '/dashboard/agents/registering-agents'},
+      {label: 'Trust lifecycle', to: '/trust-lifecycle'},
     ],
   },
   {
     title: 'Operations',
     links: [
-      {label: 'Dashboard', to: '/docs/dashboard'},
-      {label: 'Approvals', to: '/docs/approvals'},
-      {label: 'Compliance', to: '/docs/administration/compliance-and-audit'},
+      {label: 'Dashboard', to: '/dashboard'},
+      {label: 'Approvals', to: '/approvals'},
+      {label: 'Compliance', to: '/administration/compliance-and-audit'},
     ],
   },
 ];
@@ -246,7 +246,7 @@ function HomepageHeader() {
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
-            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/getting-started">
+            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/getting-started">
               Get started
             </Link>
           </div>
@@ -307,7 +307,7 @@ export default function Home() {
             <div className={styles.tryHeader}>
               <div className={styles.tryTitleRow}>
                 <div className={styles.tryTitle}>Try it out</div>
-                <Link className={styles.tryLink} to="/docs/getting-started/wrap-an-existing-agent">
+                <Link className={styles.tryLink} to="/getting-started/wrap-an-existing-agent">
                   Wrap an Existing Agent →
                 </Link>
               </div>

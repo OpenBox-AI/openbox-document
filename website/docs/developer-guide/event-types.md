@@ -146,6 +146,6 @@ Each event includes:
 
 ## Related
 
-- **[Troubleshooting](/docs/getting-started/troubleshooting)** - Common issues and solutions when integrating
-- **[Governance Decisions](/docs/core-concepts/governance-decisions)** - What decisions can be made for each event
-- **[Authorize Phase](/docs/trust-lifecycle/authorize)** - Write policies that reference event types
+- **[Troubleshooting](/getting-started/troubleshooting)** - Common issues and solutions when integrating
+- **[Governance Decisions](/core-concepts/governance-decisions)** - What decisions can be made for each event
+- **[Authorize Phase](/trust-lifecycle/authorize)** - Write policies that reference event types

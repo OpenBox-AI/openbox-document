@@ -132,6 +132,6 @@ Guidance for maintaining compliance readiness:
 
 ## Next Steps
 
-1. **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
-2. **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization audit log
+1. **[Attestation & Cryptographic Proof](/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
+2. **[Audit Log](/administration/organization-audit-log)** - View and export the organization audit log
 

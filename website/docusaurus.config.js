@@ -50,6 +50,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: '/',
           sidebarPath: './sidebars.js',
           showLastUpdateTime: true,
           onInlineTags: 'throw',
@@ -141,7 +142,7 @@ const config = {
       searchLocal: {
         indexDocs: true,
         indexBlog: false,
-        docsRouteBasePath: '/docs',
+        docsRouteBasePath: '/',
         hashed: true,
         language: ['en'],
       },
@@ -151,25 +152,25 @@ const config = {
           {
             title: 'Developers',
             items: [
-              {label: 'Getting Started', to: '/docs/getting-started/'},
-              {label: 'SDK Reference', to: '/docs/developer-guide/sdk-reference'},
-              {label: 'Configuration', to: '/docs/developer-guide/configuration'},
+              {label: 'Getting Started', to: '/getting-started/'},
+              {label: 'SDK Reference', to: '/developer-guide/sdk-reference'},
+              {label: 'Configuration', to: '/developer-guide/configuration'},
             ],
           },
           {
             title: 'Operations',
             items: [
-              {label: 'Dashboard', to: '/docs/dashboard/'},
-              {label: 'Trust Lifecycle', to: '/docs/trust-lifecycle/'},
-              {label: 'Approvals', to: '/docs/approvals/'},
+              {label: 'Dashboard', to: '/dashboard/'},
+              {label: 'Trust Lifecycle', to: '/trust-lifecycle/'},
+              {label: 'Approvals', to: '/approvals/'},
             ],
           },
           {
             title: 'Compliance',
             items: [
-              {label: 'Audit & Evidence', to: '/docs/administration/compliance-and-audit'},
-              {label: 'Attestation & Proof', to: '/docs/administration/attestation-and-cryptographic-proof'},
-              {label: 'Audit Log', to: '/docs/administration/organization-audit-log'},
+              {label: 'Audit & Evidence', to: '/administration/compliance-and-audit'},
+              {label: 'Attestation & Proof', to: '/administration/attestation-and-cryptographic-proof'},
+              {label: 'Audit Log', to: '/administration/organization-audit-log'},
             ],
           },
           {

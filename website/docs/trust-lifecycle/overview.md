@@ -29,7 +29,7 @@ Active sessions update in real time, showing the current step and running durati
 | **Duration** | Running time (e.g., `90h 20m`) |
 | **Events / LLM / Tools / Policy** | Count of events, LLM calls, tool calls, and policy evaluations |
 
-Click **Details** on the right bar of each agent session to open the session in the [Verify](/docs/trust-lifecycle/verify) tab, where you can view the full execution evidence and event log timeline.
+Click **Details** on the right bar of each agent session to open the session in the [Verify](/trust-lifecycle/verify) tab, where you can view the full execution evidence and event log timeline.
 
 ### Completed Sessions
 
@@ -70,8 +70,8 @@ Click **Terminate Session** to proceed, or **Cancel** to return to the Overview 
 
 ### Next Steps
 
-1. **[Assess Your Agent's Risk](/docs/trust-lifecycle/assess)** - Configure the risk profile for this agent
-2. **[Understand the Trust Lifecycle](/docs/trust-lifecycle)** - Learn how the 5 phases work together
+1. **[Assess Your Agent's Risk](/trust-lifecycle/assess)** - Configure the risk profile for this agent
+2. **[Understand the Trust Lifecycle](/trust-lifecycle)** - Learn how the 5 phases work together
 
 
 

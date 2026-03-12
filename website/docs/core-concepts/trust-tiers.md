@@ -139,6 +139,6 @@ require_approval {
 
 ## Related
 
-- **[Trust Scores](/docs/core-concepts/trust-scores)** - How the 0-100 score is calculated
-- **[Governance Decisions](/docs/core-concepts/governance-decisions)** - What happens at each tier
-- **[Dashboard](/docs/dashboard)** - View organization-wide tier distribution
+- **[Trust Scores](/core-concepts/trust-scores)** - How the 0-100 score is calculated
+- **[Governance Decisions](/core-concepts/governance-decisions)** - What happens at each tier
+- **[Dashboard](/dashboard)** - View organization-wide tier distribution

@@ -55,7 +55,7 @@ Select the workflow engine your agent uses:
 | **Icon** | No | Visual identifier (headphones, code, trending-up, file-search, bot) |
 
 :::tip
-All of these fields can be edited after creation from the [Agent Settings](/docs/dashboard/agents/agent-settings#general-settings) page.
+All of these fields can be edited after creation from the [Agent Settings](/dashboard/agents/agent-settings#general-settings) page.
 :::
 
 ### API Key Generation
@@ -125,7 +125,7 @@ Predicted Risk Tier: TIER 2
 Based on current configuration
 ```
 
-See **[Assess](/docs/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
+See **[Assess](/trust-lifecycle/assess)** for how the Risk Profile impacts Trust Score.
 
 ### Attestation
 
@@ -136,7 +136,7 @@ For now, use **AWS KMS** (recommended/default):
 1. Select **AWS KMS**
 2. Keep the default settings
 
-See **[Attestation](/docs/administration/attestation-and-cryptographic-proof)** for how execution evidence is produced and verified.
+See **[Attestation](/administration/attestation-and-cryptographic-proof)** for how execution evidence is produced and verified.
 
 ### Creating the Agent
 
@@ -150,6 +150,6 @@ You'll be redirected to the new agent's detail page.
 
 Now that you have an agent and API key:
 
-- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
-- **[Run the Demo](/docs/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
-- **[Agents](/docs/dashboard/agents)** — View and manage all registered agents
+- **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
+- **[Run the Demo](/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Agents](/dashboard/agents)** — View and manage all registered agents

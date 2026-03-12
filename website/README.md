@@ -49,14 +49,14 @@ The site generates [llms.txt](https://llmstxt.org/) files during build via a cus
 | --------------- | --------------------------------------------------------- |
 | `llms.txt`      | Index with categorized links and short descriptions       |
 | `llms-full.txt` | Full-text concatenation of all docs                       |
-| `docs/**/*.md`  | Individual markdown files at each doc's permalink + `.md` |
+| `**/*.md`       | Individual markdown files at each doc's permalink + `.md` |
 
 ### Link descriptions
 
 Each doc page should include an `llms_description` field in its frontmatter. This provides a short phrase (4-10 words) appended to the link in `llms.txt`, helping LLMs decide relevance before fetching:
 
 ```
-- [Trust Scores](https://docs.openbox.ai/docs/core-concepts/trust-scores.md): How OpenBox quantifies agent trustworthiness
+- [Trust Scores](https://docs.openbox.ai/core-concepts/trust-scores.md): How OpenBox quantifies agent trustworthiness
 ```
 
 The plugin falls back to the standard `description` field if `llms_description` is absent.
