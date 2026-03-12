@@ -1,6 +1,7 @@
 ---
 title: Event Types
 description: The 24 semantic event types for agent operations
+llms_description: Reference for all emitted event types
 sidebar_position: 6
 tags:
   - reference

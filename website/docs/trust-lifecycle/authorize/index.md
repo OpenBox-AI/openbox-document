@@ -1,6 +1,7 @@
 ---
 title: Authorize
 description: Phase 2 - Configure guardrails, policies, and behavioral rules
+llms_description: Configure guardrails, policies, and behavioral rules
 sidebar_position: 2
 tags:
   - governance

@@ -1,6 +1,7 @@
 ---
 title: Developer Guide
 description: SDK reference, integration guides, and configuration for OpenBox
+llms_description: SDK reference, guides, and configuration
 tags:
   - sdk
   - integration
@@ -20,3 +21,4 @@ Everything you need to integrate OpenBox into your agent workflows.
 | **[Error Handling](/docs/developer-guide/error-handling)** | Handle governance decisions and failures in your code |
 | **[Event Types](/docs/developer-guide/event-types)** | Semantic event types captured by the SDK |
 | **[Demo Architecture](/docs/developer-guide/demo-architecture)** | Architecture of the reference demo application |
+| **[Working with llms.txt](/docs/developer-guide/llms-txt)** | Machine-readable documentation for LLMs and AI tools |

@@ -2,6 +2,7 @@
 title: Extending the Demo Agent
 sidebar_label: Extending the Demo Agent
 description: Add custom goals, native tools, and MCP tools to the OpenBox demo agent
+llms_description: Customizing the demo for your use case
 sidebar_position: 3
 tags:
   - sdk

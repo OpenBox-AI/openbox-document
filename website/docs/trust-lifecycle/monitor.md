@@ -1,6 +1,7 @@
 ---
 title: Monitor
 description: Phase 3 - Observe runtime behavior and telemetry
+llms_description: Real-time agent observability
 sidebar_position: 3
 tags:
   - observability

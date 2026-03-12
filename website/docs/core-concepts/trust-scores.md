@@ -1,6 +1,7 @@
 ---
 title: Trust Scores
 description: How Trust Scores are calculated and used
+llms_description: How OpenBox quantifies agent trustworthiness
 sidebar_position: 1
 tags:
   - trust-scoring

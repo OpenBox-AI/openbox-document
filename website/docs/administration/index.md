@@ -1,6 +1,7 @@
 ---
 title: Administration
 description: Organization management, compliance, attestation, and audit capabilities
+llms_description: Organization management and compliance overview
 tags:
   - compliance
   - audit

@@ -1,6 +1,7 @@
 ---
 title: Adapt
 description: Phase 5 - Evolve trust and improve policies over time
+llms_description: Updating policies based on observed behavior
 sidebar_position: 5
 tags:
   - trust-scoring

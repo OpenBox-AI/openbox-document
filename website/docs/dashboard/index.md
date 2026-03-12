@@ -1,6 +1,7 @@
 ---
 title: Dashboard
 description: Trust Overview and organization-wide monitoring
+llms_description: Trust overview and organization-wide monitoring
 sidebar_position: 3
 tags:
   - agent-management
