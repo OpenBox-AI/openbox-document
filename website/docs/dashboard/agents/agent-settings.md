@@ -15,7 +15,7 @@ Settings is divided into four sections: [General](#general-settings), [Risk Conf
 
 ## General Settings
 
-![General Settings](/img/agents/settings-general.png)
+![General Settings](/img/agents/settings-general.webp)
 
 Use this section to update the core identity and organizational assignment of the agent.
 
@@ -56,7 +56,7 @@ Click **Adjust Risk Level** to modify the underlying risk profile parameters. Se
 
 ## API Access
 
-![API Access](/img/agents/settings-api-access.png)
+![API Access](/img/agents/settings-api-access.webp)
 
 Manage the API key that the agent uses to authenticate with the OpenBox SDK.
 
@@ -82,7 +82,7 @@ Click **Revoke Key** to permanently revoke the API key. This is a destructive ac
 
 ## Danger Zone
 
-![Danger Zone](/img/agents/settings-danger-zone.png)
+![Danger Zone](/img/agents/settings-danger-zone.webp)
 
 Actions in this section have significant impact on the agent's operational status and cannot always be easily undone.
 

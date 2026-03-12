@@ -17,7 +17,7 @@ Session Replay provides a step-by-step walkthrough of an agent's session executi
 
 - **Agent Detail → Verify → Watch Replay** — opens replay for the selected session
 
-![Session Replay](/img/SessionReplay.png)
+![Session Replay](/img/SessionReplay.webp)
 
 ## Session Header
 

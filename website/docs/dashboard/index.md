@@ -12,7 +12,7 @@ tags:
 
 The Dashboard provides a real-time overview of your organization's AI governance health. Access it from the sidebar by clicking **Dashboard**.
 
-![Dashboard](/img/Dashboard.png)
+![Dashboard](/img/Dashboard.webp)
 
 ## Navigation
 
