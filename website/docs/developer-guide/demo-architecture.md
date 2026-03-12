@@ -12,7 +12,7 @@ tags:
 
 # Demo Architecture Reference
 
-Quick reference for the [demo agent](https://github.com/OpenBox-AI/poc-temporal-agent) architecture. For setup, see the [Temporal Integration Guide](/docs/developer-guide/temporal-integration-guide-python). For customization, see [Extending the Demo Agent](/docs/developer-guide/customizing-your-agent).
+Quick reference for the [demo agent](https://github.com/OpenBox-AI/poc-temporal-agent) architecture. For setup, see the [Temporal Integration Guide](/developer-guide/temporal-integration-guide-python). For customization, see [Extending the Demo Agent](/developer-guide/customizing-your-agent).
 
 ## System Layers
 

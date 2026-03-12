@@ -100,9 +100,9 @@ Filter audit log by:
 - Agent
 - Team
 
-See [Audit Log](/docs/administration/organization-audit-log) for details.
+See [Audit Log](/administration/organization-audit-log) for details.
 
 ## Next Steps
 
-1. **[View Audit Log](/docs/administration/organization-audit-log)** - See detailed activity history and export for compliance
-2. **[Compliance](/docs/administration/compliance-and-audit)** - Use audit trails and attestation evidence for auditors
+1. **[View Audit Log](/administration/organization-audit-log)** - See detailed activity history and export for compliance
+2. **[Compliance](/administration/compliance-and-audit)** - Use audit trails and attestation evidence for auditors

@@ -30,11 +30,11 @@ flowchart LR
 
 | Phase | Tab | Purpose | Key Activities |
 |-------|-----|---------|----------------|
-| **[Assess](/docs/trust-lifecycle/assess)** | Assess | Establish baseline risk | Risk profile configuration, risk profiling |
-| **[Authorize](/docs/trust-lifecycle/authorize)** | Authorize | Define allowed behaviors | Guardrails, policies, behavioral rules |
-| **[Monitor](/docs/trust-lifecycle/monitor)** | Monitor | Observe runtime execution | Sessions, metrics, telemetry |
-| **[Verify](/docs/trust-lifecycle/verify)** | Verify | Validate goal alignment | Drift detection, attestation |
-| **[Adapt](/docs/trust-lifecycle/adapt)** | Adapt | Evolve trust over time | Policy suggestions, trust recovery |
+| **[Assess](/trust-lifecycle/assess)** | Assess | Establish baseline risk | Risk profile configuration, risk profiling |
+| **[Authorize](/trust-lifecycle/authorize)** | Authorize | Define allowed behaviors | Guardrails, policies, behavioral rules |
+| **[Monitor](/trust-lifecycle/monitor)** | Monitor | Observe runtime execution | Sessions, metrics, telemetry |
+| **[Verify](/trust-lifecycle/verify)** | Verify | Validate goal alignment | Drift detection, attestation |
+| **[Adapt](/trust-lifecycle/adapt)** | Adapt | Evolve trust over time | Policy suggestions, trust recovery |
 
 ## Trust Score
 
@@ -95,8 +95,8 @@ In Agent Detail, click the phase tabs:
 
 Follow the Trust Lifecycle phases in order:
 
-1. **[Assess](/docs/trust-lifecycle/assess)** - Start here to understand your agent's risk profile
-2. **[Authorize](/docs/trust-lifecycle/authorize)** - Then configure what your agent is allowed to perform
-3. **[Monitor](/docs/trust-lifecycle/monitor)** - Watch your agent operate in real-time
-4. **[Verify](/docs/trust-lifecycle/verify)** - Validate goal alignment
-5. **[Adapt](/docs/trust-lifecycle/adapt)** - Evolve trust based on behavior
+1. **[Assess](/trust-lifecycle/assess)** - Start here to understand your agent's risk profile
+2. **[Authorize](/trust-lifecycle/authorize)** - Then configure what your agent is allowed to perform
+3. **[Monitor](/trust-lifecycle/monitor)** - Watch your agent operate in real-time
+4. **[Verify](/trust-lifecycle/verify)** - Validate goal alignment
+5. **[Adapt](/trust-lifecycle/adapt)** - Evolve trust based on behavior

@@ -47,7 +47,7 @@ OpenBox pauses the operation pending human approval.
 
 **Effect:**
 - Request appears in the Approvals queue
-- [Session Replay](/docs/trust-lifecycle/session-replay) shows the operation context and decision timeline
+- [Session Replay](/trust-lifecycle/session-replay) shows the operation context and decision timeline
 - Once a reviewer approves or rejects, the operation proceeds or stops
 
 **Approval flow:**
@@ -103,7 +103,7 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 
 ## Decision in Session Replay
 
-[Session Replay](/docs/trust-lifecycle/session-replay) shows decisions at each operation:
+[Session Replay](/trust-lifecycle/session-replay) shows decisions at each operation:
 
 ```
 09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW
@@ -127,5 +127,5 @@ Use policy and behavioral-rule testing before rollout to confirm expected outcom
 
 ## Related
 
-- **[Authorize Phase](/docs/trust-lifecycle/authorize)** - Configure policies that produce these decisions
-- **[Approvals](/docs/approvals)** - Process REQUIRE_APPROVAL decisions
+- **[Authorize Phase](/trust-lifecycle/authorize)** - Configure policies that produce these decisions
+- **[Approvals](/approvals)** - Process REQUIRE_APPROVAL decisions

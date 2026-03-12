@@ -43,7 +43,7 @@ Triggered when HITL requests expire without action:
 
 - Default timeout: 24 hours
 - Expired approvals result in operation denial
-- Review queue in **[Approvals](/docs/approvals)**
+- Review queue in **[Approvals](/approvals)**
 
 ### Behavioral Rule Matches
 
@@ -68,6 +68,6 @@ For each alert, you can:
 
 When you see an alert:
 
-1. **[View Agent Details](/docs/dashboard/agents)** - Click the agent to investigate
-2. **[Check Goal Alignment (Verify)](/docs/trust-lifecycle/verify)** - If drift is detected
-3. **[Review Approvals](/docs/approvals)** - If approvals have timed out
+1. **[View Agent Details](/dashboard/agents)** - Click the agent to investigate
+2. **[Check Goal Alignment (Verify)](/trust-lifecycle/verify)** - If drift is detected
+3. **[Review Approvals](/approvals)** - If approvals have timed out

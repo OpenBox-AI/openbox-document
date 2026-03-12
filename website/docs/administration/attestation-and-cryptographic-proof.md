@@ -120,6 +120,6 @@ Each session produces one proof certificate containing:
 
 ## Related
 
-- **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization-wide audit log
-- **[Compliance & Audit](/docs/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
+- **[Audit Log](/administration/organization-audit-log)** - View and export the organization-wide audit log
+- **[Compliance & Audit](/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
 

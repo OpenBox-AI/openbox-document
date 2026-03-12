@@ -14,10 +14,10 @@ OpenBox governs AI agents through three foundational concepts: Trust Scores quan
 
 | Term | Description |
 |------|-------------|
-| **Risk Profile Score** | Initial assessment score (0–100) based on your agent's risk questionnaire. Set during the [Assess phase](/docs/trust-lifecycle/assess) |
-| **[Trust Score](/docs/core-concepts/trust-scores)** | Ongoing score (0–100) combining Risk Profile (40%) + Behavioral (35%) + Alignment (25%) |
-| **[Trust Tier](/docs/core-concepts/trust-tiers)** | Tier label (1–4) derived from Risk Profile Score ranges that determines how strictly an agent is governed |
-| **[Governance Decision](/docs/core-concepts/governance-decisions)** | Runtime verdict (one of four) that determines whether an agent operation is allowed, blocked, or requires approval |
+| **Risk Profile Score** | Initial assessment score (0–100) based on your agent's risk questionnaire. Set during the [Assess phase](/trust-lifecycle/assess) |
+| **[Trust Score](/core-concepts/trust-scores)** | Ongoing score (0–100) combining Risk Profile (40%) + Behavioral (35%) + Alignment (25%) |
+| **[Trust Tier](/core-concepts/trust-tiers)** | Tier label (1–4) derived from Risk Profile Score ranges that determines how strictly an agent is governed |
+| **[Governance Decision](/core-concepts/governance-decisions)** | Runtime verdict (one of four) that determines whether an agent operation is allowed, blocked, or requires approval |
 
 ## How They Connect
 

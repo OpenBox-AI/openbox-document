@@ -138,6 +138,6 @@ Recovery rate:
 
 ## Related
 
-- **[Trust Tiers](/docs/core-concepts/trust-tiers)** - How scores map to trust controls
-- **[Assess Phase](/docs/trust-lifecycle/assess)** - Configure the Risk Profile component
-- **[Adapt Phase](/docs/trust-lifecycle/adapt)** - Watch trust evolve over time
+- **[Trust Tiers](/core-concepts/trust-tiers)** - How scores map to trust controls
+- **[Assess Phase](/trust-lifecycle/assess)** - Configure the Risk Profile component
+- **[Adapt Phase](/trust-lifecycle/adapt)** - Watch trust evolve over time

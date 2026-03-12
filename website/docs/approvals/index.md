@@ -133,5 +133,5 @@ Filter the queue by:
 
 ## Next Steps
 
-1. **[Organization Settings](/docs/administration/organization)** - Manage teams, roles, and organization configuration
-2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/docs/trust-lifecycle/session-replay) before approving or rejecting
+1. **[Organization Settings](/administration/organization)** - Manage teams, roles, and organization configuration
+2. **[Monitor Sessions](/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/trust-lifecycle/session-replay) before approving or rejecting

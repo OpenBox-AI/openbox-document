@@ -19,12 +19,12 @@ This is the end-to-end guide for integrating OpenBox with a Temporal AI agent. Y
 :::tip Skip ahead
 
 - **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
-- **Already have an agent?** See the **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** page.
+- **Already have an agent?** See the **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** page.
   :::
 
 ## Prerequisites
 
-- **[Tools & dependencies](/docs/getting-started/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
+- **[Tools & dependencies](/getting-started/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
   - `openai/gpt-4o`
@@ -65,11 +65,11 @@ make setup
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
 5. Configure platform settings:
-   - **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
-   - **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**) - select an attestation provider
+   - **Initial Risk Assessment** (**[Risk Profile](/trust-lifecycle/assess)**) - select a risk profile (Tier 1-4)
+   - **Attestation** (**[Execution Evidence](/administration/attestation-and-cryptographic-proof)**) - select an attestation provider
 6. Click **Add Agent**
 
-See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
+See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
 
 ## Part 3: Configure Environment
 
@@ -135,7 +135,7 @@ Open the UI at [http://localhost:5173](http://localhost:5173):
 4. Click **Details** to open it — you'll land on the **Overview** tab which shows the **Event Log Timeline**
 5. Scroll through the timeline — you'll see every event the trust layer captured: workflow start/complete, each activity with its inputs and outputs, the HTTP requests to your LLM, and the governance decision OpenBox made for each one
 6. Switch to the **Tree View** to see the same data as a hierarchy — workflows at the top, activities nested underneath, tool calls within those
-7. Click **Watch Replay** to open [Session Replay](/docs/trust-lifecycle/session-replay) — this plays back the entire session step-by-step, showing exactly what the agent did and how OpenBox evaluated it
+7. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) — this plays back the entire session step-by-step, showing exactly what the agent did and how OpenBox evaluated it
 
 ## What Just Happened?
 
@@ -217,7 +217,7 @@ The agent's Temporal code is organized in:
 - **`tools/`** — Tools are the capabilities available to the agent (e.g., search flights, check balances, process payments). Each tool is implemented as a Temporal activity, so OpenBox automatically captures and governs tool usage.
 - **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
 
-See **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/docs/developer-guide/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
+See **[Extending the Demo Agent](/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/developer-guide/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
 
 ## Explore Different Scenarios
 
@@ -252,17 +252,17 @@ After changing the goal, restart the worker (`make run-worker`) to pick up the n
   - `goal_mcp_stripe` — Manage Stripe customer and product data
 
 :::tip Add Your Own
-These are the built-in scenarios. You can create your own goals with custom tools — see **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)**.
+These are the built-in scenarios. You can create your own goals with custom tools — see **[Extending the Demo Agent](/developer-guide/customizing-your-agent)**.
 :::
 
 ## Human-in-the-Loop Approvals
 
-Some operations are too sensitive to run without a human sign-off — for example, initiating a money transfer, processing a payment, or modifying a customer's account. You can configure governance policies in OpenBox to require approval for these kinds of activities. See **[Authorize](/docs/trust-lifecycle/authorize)** to set up guardrails, policies, and behavioral rules.
+Some operations are too sensitive to run without a human sign-off — for example, initiating a money transfer, processing a payment, or modifying a customer's account. You can configure governance policies in OpenBox to require approval for these kinds of activities. See **[Authorize](/trust-lifecycle/authorize)** to set up guardrails, policies, and behavioral rules.
 
 When governance requires approval:
 
 1. OpenBox creates an approval request
-2. Approval request appears in the [OpenBox dashboard](/docs/approvals)
+2. Approval request appears in the [OpenBox dashboard](/approvals)
 3. Human approves/rejects
 4. Temporal proceeds or fails based on the decision
 
@@ -328,7 +328,7 @@ worker = create_openbox_worker(
 )
 ```
 
-See **[SDK Configuration](/docs/developer-guide/configuration)** for the full list of options.
+See **[SDK Configuration](/developer-guide/configuration)** for the full list of options.
 
 ## Error Handling
 
@@ -338,10 +338,10 @@ To investigate failures, open a session in the dashboard using the same steps fr
 
 ## Next Steps
 
-1. **[Extending the Demo Agent](/docs/developer-guide/customizing-your-agent)** - Add your own goals, native tools, and MCP integrations
-2. **[SDK Configuration](/docs/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
-3. **[Error Handling](/docs/developer-guide/error-handling)** - Handle governance decisions in your code
-4. **[Set Up Approvals](/docs/approvals)** - Add human-in-the-loop for sensitive operations
-5. **[Demo Architecture Reference](/docs/developer-guide/demo-architecture)** - Signals, activities, endpoints, and message flow
+1. **[Extending the Demo Agent](/developer-guide/customizing-your-agent)** - Add your own goals, native tools, and MCP integrations
+2. **[SDK Configuration](/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
+3. **[Error Handling](/developer-guide/error-handling)** - Handle governance decisions in your code
+4. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
+5. **[Demo Architecture Reference](/developer-guide/demo-architecture)** - Signals, activities, endpoints, and message flow
 
-Having issues? See the **[Troubleshooting](/docs/getting-started/troubleshooting)** guide for common problems and solutions.
+Having issues? See the **[Troubleshooting](/getting-started/troubleshooting)** guide for common problems and solutions.
