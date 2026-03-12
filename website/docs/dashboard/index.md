@@ -86,15 +86,15 @@ The agent creation form includes:
 
 - **Teams** and **Icon** selection
 - **API Key Generation** (copy once)
-- **Initial Risk Assessment** (**[Risk Profile](/docs/trust-lifecycle/assess)**)
-- **Attestation** (**[Execution Evidence](/docs/administration/attestation-and-cryptographic-proof)**)
+- **Initial Risk Assessment** (**[Risk Profile](/trust-lifecycle/assess)**)
+- **Attestation** (**[Execution Evidence](/administration/attestation-and-cryptographic-proof)**)
 
-See **[Registering Agents](/docs/dashboard/agents/registering-agents)** for a field-by-field walkthrough.
+See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-by-field walkthrough.
 
 ## Next Steps
 
 From the Dashboard, you'll typically:
 
-1. **[View Agents](/docs/dashboard/agents)** - Click an agent to see its details and configure trust controls
-2. **[Handle Approvals](/docs/approvals)** - Review pending HITL requests when the badge shows pending items
-3. **[Add a New Agent](/docs/dashboard/agents/registering-agents)** - Register another agent to bring under the trust layer
+1. **[View Agents](/dashboard/agents)** - Click an agent to see its details and configure trust controls
+2. **[Handle Approvals](/approvals)** - Review pending HITL requests when the badge shows pending items
+3. **[Add a New Agent](/dashboard/agents/registering-agents)** - Register another agent to bring under the trust layer

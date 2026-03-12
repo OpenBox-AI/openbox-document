@@ -31,12 +31,12 @@ Use this section to update the core identity and organizational assignment of th
 Click **Save Changes** to persist any edits.
 
 :::tip
-You can reassign an agent to different teams at any time from this section — you are not limited to the team chosen during [registration](/docs/dashboard/agents/registering-agents).
+You can reassign an agent to different teams at any time from this section — you are not limited to the team chosen during [registration](/dashboard/agents/registering-agents).
 :::
 
 ## Risk Configuration
 
-This section displays the agent's current risk posture as determined by the [Risk Profile](/docs/trust-lifecycle/assess) parameters.
+This section displays the agent's current risk posture as determined by the [Risk Profile](/trust-lifecycle/assess) parameters.
 
 At a glance you can see:
 
@@ -52,7 +52,7 @@ Click **Recalculate Trust Score** to trigger a fresh calculation based on the cu
 
 ### Adjust Risk Level
 
-Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/docs/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
+Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
 
 ## API Access
 
@@ -122,6 +122,6 @@ Each entry shows the action, timestamp, and the user who performed it.
 
 ## Next Steps
 
-- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
-- **[Run the Demo](/docs/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
-- **[Agents](/docs/dashboard/agents)** — View and manage all registered agents
+- **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
+- **[Run the Demo](/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Agents](/dashboard/agents)** — View and manage all registered agents
