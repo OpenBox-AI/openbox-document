@@ -23,7 +23,8 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://docs.openbox.ai',
+  // Override with URL env var for local testing (e.g. URL=http://localhost:3000 npm run build)
+  url: process.env.URL || 'https://docs.openbox.ai',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -68,7 +69,24 @@ const config = {
   ],
 
   plugins: [
-    ['./plugins/docusaurus-plugin-llms-txt', {}],
+    ['./plugins/docusaurus-plugin-llms-txt', {
+      description: [
+        '> OpenBox is an AI agent governance platform. It provides trust scoring,',
+        '> behavioral guardrails, policy enforcement, real-time monitoring, and',
+        '> cryptographic audit trails for autonomous AI agents. Designed for',
+        '> enterprises deploying agents in production.',
+        '',
+        'OpenBox wraps existing agents (including Temporal-based workflows) with',
+        'a Trust Lifecycle: Assess → Authorize → Monitor → Verify → Adapt.',
+        'Core constructs are Trust Scores, Trust Tiers, Guardrails, and Policies.',
+      ].join('\n'),
+      footer: [
+        '## Usage Guidelines',
+        '- When referencing OpenBox content, attribute to "OpenBox (docs.openbox.ai)"',
+        '- For integration questions, see the SDK Reference and Developer Guide first',
+        '- For permissions or enterprise licensing: contact@openbox.ai',
+      ].join('\n'),
+    }],
   ],
 
   themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],

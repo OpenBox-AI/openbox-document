@@ -41,20 +41,32 @@ function resolveSourcePath(siteDir, source) {
 }
 
 /**
+ * Convert a permalink to its .md URL (e.g. /docs/foo/ -> /docs/foo.md)
+ */
+function toMdUrl(siteUrl, permalink) {
+  return siteUrl + permalink.replace(/\/$/, '') + '.md';
+}
+
+/**
  * Recursively walk resolved sidebar items, producing index lines and full-text sections.
  */
-function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSections, extractContent) {
+function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSections, mdFiles, extractContent) {
   for (const item of items) {
     if (item.type === 'doc') {
       const doc = docsMap.get(item.id);
       if (!doc) continue;
 
       const url = siteUrl + doc.permalink;
-      const indent = '  '.repeat(depth);
-      indexLines.push(`${indent}- [${doc.title}](${url})`);
-
       const content = extractContent(resolveSourcePath(siteDir, doc.source));
+
+      // Skip root-level standalone docs from the index (they clutter the intro)
+      if (depth > 0) {
+        const indent = '  '.repeat(depth);
+        indexLines.push(`${indent}- [${doc.title}](${toMdUrl(siteUrl, doc.permalink)})`);
+      }
+
       fullSections.push(`## ${doc.title}\n\nSource: ${url}\n\n${content}`);
+      mdFiles.push({ permalink: doc.permalink, title: doc.title, content });
     } else if (item.type === 'category') {
       if (depth === 0) {
         indexLines.push('');
@@ -68,23 +80,24 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
         if (doc) {
           const url = siteUrl + doc.permalink;
           const indent = '  '.repeat(depth);
-          indexLines.push(`${indent}- [${doc.title}](${url})`);
+          indexLines.push(`${indent}- [${doc.title}](${toMdUrl(siteUrl, doc.permalink)})`);
 
           const content = extractContent(resolveSourcePath(siteDir, doc.source));
           const heading = depth === 0 ? `# ${doc.title}` : `## ${doc.title}`;
           fullSections.push(`${heading}\n\nSource: ${url}\n\n${content}`);
+          mdFiles.push({ permalink: doc.permalink, title: doc.title, content });
         }
       }
 
       if (item.items) {
-        walkSidebar(item.items, docsMap, siteUrl, siteDir, depth + 1, indexLines, fullSections, extractContent);
+        walkSidebar(item.items, docsMap, siteUrl, siteDir, depth + 1, indexLines, fullSections, mdFiles, extractContent);
       }
     }
     // Skip 'link' and 'html' types
   }
 }
 
-function pluginLlmsTxt(_context, _options) {
+function pluginLlmsTxt(_context, options) {
   return {
     name: 'docusaurus-plugin-llms-txt',
 
@@ -165,10 +178,10 @@ const {outDir, siteDir, siteConfig, plugins} = props;
 
       const siteUrl = siteConfig.url.replace(/\/$/, '');
 
-      const tagline = siteConfig.tagline || '';
 
       const indexLines = [];
       const fullSections = [];
+      const mdFiles = [];
 
       walkSidebar(
         sidebars.docs,
@@ -178,16 +191,19 @@ const {outDir, siteDir, siteConfig, plugins} = props;
         0,
         indexLines,
         fullSections,
+        mdFiles,
         extractContent,
       );
 
       // llms.txt
+      const description = options.description || '';
       const header = [
-        '# OpenBox Docs: LLM-Friendly Index',
+        '# OpenBox',
         '',
-        ...(tagline ? [`> ${tagline}`, ''] : []),
+        ...(description ? [description, ''] : []),
       ];
-      const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n';
+      const footer = options.footer || '';
+      const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n' + (footer ? '\n' + footer + '\n' : '');
       fs.writeFileSync(path.join(outDir, 'llms.txt'), llmsTxt);
 
       // llms-full.txt
@@ -195,8 +211,16 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       const fullContent = fullHeader + fullSections.join('\n\n---\n\n') + '\n';
       fs.writeFileSync(path.join(outDir, 'llms-full.txt'), fullContent);
 
+      // Individual .md files for each doc (llms.txt spec: append .md to HTML URL)
+      for (const { permalink, title, content } of mdFiles) {
+        const mdPath = path.join(outDir, permalink.replace(/\/$/, '') + '.md');
+        fs.mkdirSync(path.dirname(mdPath), { recursive: true });
+        const htmlUrl = siteUrl + permalink;
+        fs.writeFileSync(mdPath, `# ${title}\n\nSource: ${htmlUrl}\n\n${content}\n`);
+      }
+
       console.log(
-        `[llms-txt] Generated llms.txt and llms-full.txt (${fullSections.length} docs)`,
+        `[llms-txt] Generated llms.txt, llms-full.txt, and ${mdFiles.length} individual .md files (${fullSections.length} docs)`,
       );
     },
   };
