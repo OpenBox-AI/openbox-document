@@ -57,9 +57,49 @@ function formatIndexLine(indent, doc, siteUrl) {
 }
 
 /**
+ * Escape special characters for use in XML attribute values.
+ */
+function escapeXmlAttr(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Build an XML document for llms-ctx.txt from collected context sections.
+ * Matches the output format of the llms_txt2ctx Python tool (fastcore.xml).
+ */
+function buildCtxXml(projectTitle, summary, info, ctxSections) {
+  const grouped = new Map();
+  for (const entry of ctxSections) {
+    if (!grouped.has(entry.sectionLabel)) grouped.set(entry.sectionLabel, []);
+    grouped.get(entry.sectionLabel).push(entry);
+  }
+
+  // fastcore's to_xml uses lowercase tags and renders inline (no added newlines)
+  let xml = `<project title="${escapeXmlAttr(projectTitle)}" summary="${escapeXmlAttr(summary)}">`;
+  xml += info;
+
+  for (const [section, docs] of grouped) {
+    // fastcore allows spaces in tag names — use section name as-is, lowercased
+    const tag = section.toLowerCase();
+    xml += `<${tag}>`;
+    for (const doc of docs) {
+      xml += `<doc title="${escapeXmlAttr(doc.title)}" desc="${escapeXmlAttr(doc.desc)}">${doc.content}</doc>`;
+    }
+    xml += `</${tag}>`;
+  }
+
+  xml += `</project>`;
+  return xml;
+}
+
+/**
  * Recursively walk resolved sidebar items, producing index lines and full-text sections.
  */
-function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSections, mdFiles, extractContent) {
+function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSections, mdFiles, extractContent, ctxSections, optionalSections, isOptional, sectionLabel) {
   for (const item of items) {
     if (item.type === 'doc') {
       const doc = docsMap.get(item.id);
@@ -67,6 +107,7 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
 
       const url = siteUrl + doc.permalink;
       const content = extractContent(resolveSourcePath(siteDir, doc.source));
+      const docIsOptional = isOptional || optionalSections.has(item.id);
 
       // Skip root-level standalone docs from the index (they clutter the intro)
       if (depth > 0) {
@@ -76,7 +117,16 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
 
       fullSections.push(`## ${doc.title}\n\nSource: ${url}\n\n${content}`);
       mdFiles.push({ permalink: doc.permalink, title: doc.title, content });
+
+      if (!docIsOptional && sectionLabel) {
+        const desc = doc.frontMatter?.llms_description || doc.description || '';
+        const mdContent = `# ${doc.title}\n\nSource: ${url}\n\n${content}`;
+        ctxSections.push({ sectionLabel, title: doc.title, desc, content: mdContent });
+      }
     } else if (item.type === 'category') {
+      const categoryIsOptional = isOptional || (depth === 0 && optionalSections.has(item.label));
+      const currentSectionLabel = depth === 0 ? item.label : sectionLabel;
+
       if (depth === 0) {
         indexLines.push('');
         indexLines.push(`## ${item.label}`);
@@ -95,11 +145,18 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
           const heading = depth === 0 ? `# ${doc.title}` : `## ${doc.title}`;
           fullSections.push(`${heading}\n\nSource: ${url}\n\n${content}`);
           mdFiles.push({ permalink: doc.permalink, title: doc.title, content });
+
+          const linkIsOptional = categoryIsOptional || optionalSections.has(linkId);
+          if (!linkIsOptional && currentSectionLabel) {
+            const desc = doc.frontMatter?.llms_description || doc.description || '';
+            const mdContent = `# ${doc.title}\n\nSource: ${url}\n\n${content}`;
+            ctxSections.push({ sectionLabel: currentSectionLabel, title: doc.title, desc, content: mdContent });
+          }
         }
       }
 
       if (item.items) {
-        walkSidebar(item.items, docsMap, siteUrl, siteDir, depth + 1, indexLines, fullSections, mdFiles, extractContent);
+        walkSidebar(item.items, docsMap, siteUrl, siteDir, depth + 1, indexLines, fullSections, mdFiles, extractContent, ctxSections, optionalSections, categoryIsOptional, currentSectionLabel);
       }
     }
     // Skip 'link' and 'html' types
@@ -191,6 +248,8 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       const indexLines = [];
       const fullSections = [];
       const mdFiles = [];
+      const ctxSections = [];
+      const optionalSections = new Set(options.optionalSections || []);
 
       walkSidebar(
         sidebars.docs,
@@ -202,6 +261,10 @@ const {outDir, siteDir, siteConfig, plugins} = props;
         fullSections,
         mdFiles,
         extractContent,
+        ctxSections,
+        optionalSections,
+        false,
+        null,
       );
 
       // llms.txt
@@ -211,14 +274,25 @@ const {outDir, siteDir, siteConfig, plugins} = props;
         '',
         ...(description ? [description, ''] : []),
       ];
-      const footer = options.footer || '';
-      const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n' + (footer ? '\n' + footer + '\n' : '');
+      const llmsTxt = header.join('\n') + indexLines.join('\n') + '\n';
       fs.writeFileSync(path.join(outDir, 'llms.txt'), llmsTxt);
 
       // llms-full.txt
       const fullHeader = '# OpenBox Documentation — Full Text\n\n';
       const fullContent = fullHeader + fullSections.join('\n\n---\n\n') + '\n';
       fs.writeFileSync(path.join(outDir, 'llms-full.txt'), fullContent);
+
+      // llms-ctx.txt
+      // Match Python parse_llms_file: summary is only the first > line,
+      // info is everything after (including remaining > lines, preserving format)
+      const descriptionText = options.description || '';
+      const summaryMatch = descriptionText.match(/^>\s*(.+?)$/m);
+      const summary = summaryMatch ? summaryMatch[1] : '';
+      const info = summaryMatch
+        ? descriptionText.slice(summaryMatch.index + summaryMatch[0].length).replace(/^\n+/, '')
+        : descriptionText;
+      const ctxXml = buildCtxXml('OpenBox', summary, info, ctxSections);
+      fs.writeFileSync(path.join(outDir, 'llms-ctx.txt'), ctxXml + '\n');
 
       // Individual .md files for each doc (llms.txt spec: append .md to HTML URL)
       for (const { permalink, title, content } of mdFiles) {
@@ -229,7 +303,7 @@ const {outDir, siteDir, siteConfig, plugins} = props;
       }
 
       console.log(
-        `[llms-txt] Generated llms.txt, llms-full.txt, and ${mdFiles.length} individual .md files (${fullSections.length} docs)`,
+        `[llms-txt] Generated llms.txt, llms-full.txt, llms-ctx.txt, and ${mdFiles.length} individual .md files (${fullSections.length} docs)`,
       );
     },
   };
