@@ -96,6 +96,7 @@ const sidebars = {
         'developer-guide/error-handling',
         'developer-guide/event-types',
         'developer-guide/demo-architecture',
+        'developer-guide/llms-txt',
       ],
     },
     {
