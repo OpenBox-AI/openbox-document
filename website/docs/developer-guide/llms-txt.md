@@ -34,8 +34,8 @@ The [`llms.txt`](pathname:///llms.txt) file is a structured table of contents fo
 
 ```
 ## Core Concepts
-- [Trust Scores](https://docs.openbox.ai/docs/core-concepts/trust-scores.md): How OpenBox quantifies agent trustworthiness
-- [Trust Tiers](https://docs.openbox.ai/docs/core-concepts/trust-tiers.md): Tiered classification of agent trust levels
+- [Trust Scores](https://docs.openbox.ai/core-concepts/trust-scores.md): How OpenBox quantifies agent trustworthiness
+- [Trust Tiers](https://docs.openbox.ai/core-concepts/trust-tiers.md): Tiered classification of agent trust levels
 ```
 
 The file opens with a platform summary that gives an LLM enough context to answer basic questions about OpenBox without fetching any additional pages.
@@ -52,8 +52,8 @@ Every documentation page is available as standalone markdown by appending `.md` 
 
 | HTML page | Plain text |
 |-----------|------------|
-| `/docs/core-concepts/trust-scores` | `/docs/core-concepts/trust-scores.md` |
-| `/docs/developer-guide/sdk-reference` | `/docs/developer-guide/sdk-reference.md` |
+| `/core-concepts/trust-scores` | `/core-concepts/trust-scores.md` |
+| `/developer-guide/sdk-reference` | `/developer-guide/sdk-reference.md` |
 
 These are the files linked from `llms.txt`. They're useful when an LLM only needs one or two pages rather than the full corpus. Compared to the rendered HTML:
 
