@@ -54,11 +54,11 @@ Sessions terminated by a governance decision. Each card shows:
 
 Each active session card includes a **Terminate** link alongside the Details link.
 
-![Active session card showing the Terminate link](/img/overview/terminate-session-button.png)
+![Active session card showing the Terminate link](/img/overview/terminate-session-button.webp)
 
 Clicking **Terminate** opens a confirmation dialog warning that this is a **destructive, irreversible action**.
 
-![Terminate Session confirmation dialog](/img/overview/terminate-session-dialog.png)
+![Terminate Session confirmation dialog](/img/overview/terminate-session-dialog.webp)
 
 Before confirming, you must acknowledge a checkbox confirming that terminating the session will:
 

@@ -15,7 +15,7 @@ The Approvals page is the organization-wide Human-in-the-Loop (HITL) queue. Revi
 
 Access from the sidebar by clicking **Approvals**. The badge shows the number of pending requests.
 
-![Approvals](/img/Approvals.png)
+![Approvals](/img/Approvals.webp)
 
 ## Real-Time Updates
 
