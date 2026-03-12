@@ -51,7 +51,7 @@ This is the right choice when you want to load everything at once: populating a 
 
 The [`llms-ctx.txt`](pathname:///llms-ctx.txt) file packages the core documentation into a single structured file sized for an LLM context window. Use it when you want an LLM to have broad knowledge of OpenBox without fetching individual pages.
 
-It covers the main documentation sections — Getting Started, Core Concepts, Trust Lifecycle, Developer Guide, and Dashboard. If you need the complete corpus including administration and reference material, use `llms-full.txt` instead.
+It covers the main documentation sections — Getting Started, Core Concepts, Trust Lifecycle, Developer Guide, and Dashboard. If you need the complete corpus including administration and reference material, use [`llms-full.txt`](pathname:///llms-full.txt) instead. To selectively fetch individual pages, start with [`llms.txt`](pathname:///llms.txt).
 
 ### Individual .md Files
 
