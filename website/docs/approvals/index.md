@@ -1,6 +1,7 @@
 ---
 title: Approvals
 description: Human-in-the-Loop approval queue
+llms_description: Human-in-the-loop approval workflows
 sidebar_position: 5
 tags:
   - hitl

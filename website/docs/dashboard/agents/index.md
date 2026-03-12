@@ -1,6 +1,7 @@
 ---
 title: Agents
 description: Managing AI agents in OpenBox
+llms_description: Managing agents in the dashboard
 sidebar_position: 4
 tags:
   - agent-management

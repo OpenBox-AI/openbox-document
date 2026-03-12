@@ -1,6 +1,7 @@
 ---
 title: "Attestation & Cryptographic Proof"
 description: "Tamper-proof evidence chain using SHA-256 Merkle trees and digital signing via AWS KMS or external attestation providers"
+llms_description: Tamper-evident cryptographic audit trails
 sidebar_position: 1
 tags:
   - cryptography

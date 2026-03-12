@@ -1,6 +1,7 @@
 ---
 title: Session Replay
 description: Step-by-step playback of agent session execution
+llms_description: Replay and audit agent sessions
 sidebar_position: 1
 tags:
   - session

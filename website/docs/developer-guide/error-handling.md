@@ -1,6 +1,7 @@
 ---
 title: Error Handling
 description: Handle trust decisions in your code
+llms_description: Error codes and recovery patterns
 sidebar_position: 5
 tags:
   - sdk

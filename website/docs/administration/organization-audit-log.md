@@ -1,6 +1,7 @@
 ---
 title: Audit Log
 description: Organization activity audit trail
+llms_description: Full org-level audit log reference
 sidebar_position: 1
 tags:
   - audit

@@ -1,6 +1,7 @@
 ---
 title: Core Concepts
 description: The foundational concepts behind OpenBox governance
+llms_description: Foundational concepts behind OpenBox governance
 tags:
   - trust-scoring
   - governance

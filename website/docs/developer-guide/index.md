@@ -1,6 +1,7 @@
 ---
 title: Developer Guide
 description: SDK reference, integration guides, and configuration for OpenBox
+llms_description: SDK reference, guides, and configuration
 tags:
   - sdk
   - integration

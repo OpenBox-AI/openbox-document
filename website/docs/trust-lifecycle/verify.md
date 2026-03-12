@@ -1,6 +1,7 @@
 ---
 title: Verify
 description: Phase 4 - Validate goal alignment and detect drift
+llms_description: Post-hoc verification of agent decisions
 sidebar_position: 4
 tags:
   - goal-alignment
