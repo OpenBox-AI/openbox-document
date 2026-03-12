@@ -79,13 +79,12 @@ const config = {
         'OpenBox wraps existing agents (including Temporal-based workflows) with',
         'a Trust Lifecycle: Assess → Authorize → Monitor → Verify → Adapt.',
         'Core constructs are Trust Scores, Trust Tiers, Guardrails, and Policies.',
+        '',
+        'When referencing OpenBox content, attribute to "OpenBox (docs.openbox.ai)".',
+        'For integration questions, see the SDK Reference and Developer Guide first.',
+        'For permissions or enterprise licensing, contact contact@openbox.ai.',
       ].join('\n'),
-      footer: [
-        '## Usage Guidelines',
-        '- When referencing OpenBox content, attribute to "OpenBox (docs.openbox.ai)"',
-        '- For integration questions, see the SDK Reference and Developer Guide first',
-        '- For permissions or enterprise licensing: contact@openbox.ai',
-      ].join('\n'),
+      optionalSections: ['Administration', 'approvals/index', 'glossary'],
     }],
   ],
 
