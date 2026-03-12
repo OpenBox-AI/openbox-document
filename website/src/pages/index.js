@@ -58,6 +58,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_1.mp4',
+        posterSrc: '/img/step_1_poster.webp',
         mediaLabel: (
           <>
             GIF: Dashboard walkthrough
@@ -82,6 +83,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_2.mp4',
+        posterSrc: '/img/step_2_poster.webp',
         mediaLabel: <>GIF: installation command</>,
       },
       {
@@ -111,6 +113,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_3.mp4',
+        posterSrc: '/img/step_3_poster.webp',
         mediaLabel: <>GIF: Code change walkthrough</>,
       },
       {
@@ -135,6 +138,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
           </div>
         ),
         videoSrc: '/img/step_4.mp4',
+        posterSrc: '/img/step_4_poster.webp',
         mediaLabel: <>GIF: env setup</>,
       },
     ],
@@ -216,6 +220,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
             <video
               className={styles.tryMediaImage}
               src={slide.videoSrc}
+              poster={slide.posterSrc}
               autoPlay
               loop
               muted
