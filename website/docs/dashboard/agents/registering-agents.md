@@ -1,6 +1,7 @@
 ---
 title: Registering Agents
 description: Create and configure new agents in the OpenBox dashboard
+llms_description: How to register a new agent
 sidebar_position: 2
 tags:
   - agent-management

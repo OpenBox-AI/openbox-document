@@ -48,6 +48,15 @@ function toMdUrl(siteUrl, permalink) {
 }
 
 /**
+ * Format a single index line with optional description suffix.
+ */
+function formatIndexLine(indent, doc, siteUrl) {
+  const desc = doc.frontMatter?.llms_description || doc.description || '';
+  const suffix = desc ? ': ' + desc : '';
+  return `${indent}- [${doc.title}](${toMdUrl(siteUrl, doc.permalink)})${suffix}`;
+}
+
+/**
  * Recursively walk resolved sidebar items, producing index lines and full-text sections.
  */
 function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSections, mdFiles, extractContent) {
@@ -62,7 +71,7 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
       // Skip root-level standalone docs from the index (they clutter the intro)
       if (depth > 0) {
         const indent = '  '.repeat(depth);
-        indexLines.push(`${indent}- [${doc.title}](${toMdUrl(siteUrl, doc.permalink)})`);
+        indexLines.push(formatIndexLine(indent, doc, siteUrl));
       }
 
       fullSections.push(`## ${doc.title}\n\nSource: ${url}\n\n${content}`);
@@ -80,7 +89,7 @@ function walkSidebar(items, docsMap, siteUrl, siteDir, depth, indexLines, fullSe
         if (doc) {
           const url = siteUrl + doc.permalink;
           const indent = '  '.repeat(depth);
-          indexLines.push(`${indent}- [${doc.title}](${toMdUrl(siteUrl, doc.permalink)})`);
+          indexLines.push(formatIndexLine(indent, doc, siteUrl));
 
           const content = extractContent(resolveSourcePath(siteDir, doc.source));
           const heading = depth === 0 ? `# ${doc.title}` : `## ${doc.title}`;

@@ -1,6 +1,7 @@
 ---
 title: Trust Overview
 description: Understanding the organization-wide trust health view
+llms_description: Aggregate trust view across all agents
 sidebar_position: 1
 tags:
   - trust-scoring

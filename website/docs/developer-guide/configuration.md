@@ -1,6 +1,7 @@
 ---
 title: Configuration
 description: SDK configuration options
+llms_description: All SDK configuration options
 sidebar_position: 4
 tags:
   - sdk

@@ -1,6 +1,7 @@
 ---
 title: Assess
 description: Phase 1 - Establish baseline trust through risk assessment
+llms_description: Evaluating agent behavior and risk posture
 sidebar_position: 1
 tags:
   - risk-assessment

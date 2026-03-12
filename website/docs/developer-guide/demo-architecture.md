@@ -2,6 +2,7 @@
 title: Demo Architecture Reference
 sidebar_label: Demo Architecture
 description: Architecture reference for the demo agent — components, signals, activities, endpoints, and message flow
+llms_description: How the demo agent is structured
 sidebar_position: 7
 tags:
   - temporal

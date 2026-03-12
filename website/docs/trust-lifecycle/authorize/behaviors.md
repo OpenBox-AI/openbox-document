@@ -1,6 +1,7 @@
 ---
 title: Behavioral Rules
 description: Stateful multi-step pattern detection rules
+llms_description: Stateful multi-step pattern detection
 sidebar_position: 3
 tags:
   - policy-authoring

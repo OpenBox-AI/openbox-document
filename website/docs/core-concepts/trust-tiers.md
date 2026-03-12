@@ -1,6 +1,7 @@
 ---
 title: Trust Tiers
 description: Trust Tier levels and how they affect trust controls
+llms_description: Tiered classification of agent trust levels
 sidebar_position: 2
 tags:
   - trust-scoring

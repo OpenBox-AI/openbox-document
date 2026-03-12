@@ -1,6 +1,7 @@
 ---
 title: Overview
 description: Overview of all the sessions and agent behavior
+llms_description: Sessions and agent behavior overview
 sidebar_position: 1
 tags:
   - session
