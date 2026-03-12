@@ -13,7 +13,7 @@ Agents are the core entity in OpenBox. Each agent represents an AI system (workf
 
 Access the agent list from the sidebar by clicking **Agents**.
 
-![Agents](/img/Agents.png)
+![Agents](/img/Agents.webp)
 
 ## Stats Cards
 

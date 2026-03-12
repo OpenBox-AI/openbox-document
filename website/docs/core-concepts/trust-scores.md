@@ -80,7 +80,7 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 ## Score Display
 
 <div style={{textAlign: 'center'}}>
-  <img src="/img/TrustScoreCard.png" alt="Trust Score Display" width="400" />
+  <img src="/img/TrustScoreCard.webp" alt="Trust Score Display" width="400" />
   
   *Trust Score card on the Assess tab, showing the score, tier badge, and component breakdown.*
 </div>

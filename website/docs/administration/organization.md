@@ -12,7 +12,7 @@ tags:
 
 Manage your organization's teams, members, and settings. Access from the sidebar by clicking **Organization**.
 
-![Organization](/img/Organization.png)
+![Organization](/img/Organization.webp)
 
 
 ## Teams
