@@ -20,7 +20,7 @@ The `llms.txt` standard solves this by providing clean, pre-processed markdown a
 
 ## What We Publish
 
-OpenBox generates four resources at build time. They update automatically with every documentation change — there's no manual step to keep them in sync.
+OpenBox provides four machine-readable resources, always up to date with the latest documentation.
 
 | Resource | URL | When to use |
 |----------|-----|-------------|
