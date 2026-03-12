@@ -20,12 +20,13 @@ The `llms.txt` standard solves this by providing clean, pre-processed markdown a
 
 ## What We Publish
 
-OpenBox generates three resources at build time. They update automatically with every documentation change — there's no manual step to keep them in sync.
+OpenBox generates four resources at build time. They update automatically with every documentation change — there's no manual step to keep them in sync.
 
 | Resource | URL | When to use |
 |----------|-----|-------------|
 | `llms.txt` | [`/llms.txt`](pathname:///llms.txt) | Discover what's available, find the right page |
 | `llms-full.txt` | [`/llms-full.txt`](pathname:///llms-full.txt) | Ingest the entire corpus at once |
+| `llms-ctx.txt` | [`/llms-ctx.txt`](pathname:///llms-ctx.txt) | Load core docs into a single LLM context window |
 | `*.md` files | Append `.md` to any doc URL | Fetch a single page's content |
 
 ### llms.txt — The Index
@@ -45,6 +46,23 @@ The file opens with a platform summary that gives an LLM enough context to answe
 The [`llms-full.txt`](pathname:///llms-full.txt) file concatenates every documentation page into a single markdown file. Each section includes a source URL for attribution. All HTML, JSX, and frontmatter is stripped — what remains is clean, parseable markdown.
 
 This is the right choice when you want to load everything at once: populating a vector store, building a RAG pipeline, or giving an agent complete context about the platform.
+
+### llms-ctx.txt — Context-Sized Corpus
+
+The [`llms-ctx.txt`](pathname:///llms-ctx.txt) file contains the core documentation in a structured XML format designed for single-shot loading into an LLM context window. It follows the [reference implementation](https://github.com/AnswerDotAI/llms-txt) format:
+
+```xml
+<Project title="OpenBox" summary="AI agent governance platform...">
+  <info>Product description paragraph...</info>
+  <Getting_Started>
+    <Doc title="Getting Started" url="https://docs.openbox.ai/docs/getting-started">
+      [full markdown content]
+    </Doc>
+  </Getting_Started>
+</Project>
+```
+
+Each sidebar section becomes a semantic XML tag containing `<Doc>` elements with the page's full markdown content. Optional sections (Administration, Approvals, Glossary) are excluded to keep the file within typical context window limits. If you need everything, use `llms-full.txt` instead.
 
 ### Individual .md Files
 
