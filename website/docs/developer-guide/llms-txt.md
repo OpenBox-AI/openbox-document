@@ -49,20 +49,9 @@ This is the right choice when you want to load everything at once: populating a 
 
 ### llms-ctx.txt — Context-Sized Corpus
 
-The [`llms-ctx.txt`](pathname:///llms-ctx.txt) file contains the core documentation in a structured XML format designed for single-shot loading into an LLM context window. It follows the [reference implementation](https://github.com/AnswerDotAI/llms-txt) format:
+The [`llms-ctx.txt`](pathname:///llms-ctx.txt) file packages the core documentation into a single structured file sized for an LLM context window. Use it when you want an LLM to have broad knowledge of OpenBox without fetching individual pages.
 
-```xml
-<Project title="OpenBox" summary="AI agent governance platform...">
-  <info>Product description paragraph...</info>
-  <Getting_Started>
-    <Doc title="Getting Started" url="https://docs.openbox.ai/docs/getting-started">
-      [full markdown content]
-    </Doc>
-  </Getting_Started>
-</Project>
-```
-
-Each sidebar section becomes a semantic XML tag containing `<Doc>` elements with the page's full markdown content. Optional sections (Administration, Approvals, Glossary) are excluded to keep the file within typical context window limits. If you need everything, use `llms-full.txt` instead.
+It covers the main documentation sections — Getting Started, Core Concepts, Trust Lifecycle, Developer Guide, and Dashboard. If you need the complete corpus including administration and reference material, use `llms-full.txt` instead.
 
 ### Individual .md Files
 
