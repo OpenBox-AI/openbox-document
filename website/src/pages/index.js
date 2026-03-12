@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
+import Head from '@docusaurus/Head';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import React, {useMemo, useState, useRef, useCallback} from 'react';
@@ -281,6 +282,22 @@ export default function Home() {
       title={siteConfig.title}
       description="OpenBox Documentation — Enterprise AI governance platform. Attest every agent action so behavior is provable, auditable, and defensible by default."
       wrapperClassName="homepage-no-footer">
+      <Head>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'OpenBox Docs',
+            url: 'https://docs.openbox.ai',
+            description: 'Enterprise AI governance platform documentation.',
+            publisher: {
+              '@type': 'Organization',
+              name: 'OpenBox AI',
+              url: 'https://www.openbox.ai',
+            },
+          })}
+        </script>
+      </Head>
       <HomepageHeader />
       <main>
         <section className={styles.exploreSection}>
