@@ -24,7 +24,7 @@ OpenBox governs AI agents through three foundational concepts: Trust Scores quan
 ```mermaid
 flowchart LR
     scores["<b>Trust Score</b><br/>0–100 metric"] --> tiers["<b>Trust Tier</b><br/>1–4 risk level"]
-    tiers --> decisions["<b>Governance Decision</b><br/>CONTINUE · SOFTBLOCK<br/>REQUIRE_APPROVAL · BLOCK"]
+    tiers --> decisions["<b>Governance Decision</b><br/>ALLOW · BLOCK<br/>REQUIRE_APPROVAL · HALT"]
 ```
 
 An agent's **Trust Score** determines its **Trust Tier**, which influences the policies and guardrails that produce **Governance Decisions** at runtime.
