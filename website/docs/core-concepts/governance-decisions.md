@@ -1,6 +1,7 @@
 ---
 title: Governance Decisions
 description: The 4 governance decision types
+llms_description: The four governance decision types and how they work
 sidebar_position: 4
 tags:
   - governance

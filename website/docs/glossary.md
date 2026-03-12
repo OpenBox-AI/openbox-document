@@ -1,6 +1,7 @@
 ---
 title: Glossary
 description: Definitions of key terms used in OpenBox documentation
+llms_description: Definitions of all OpenBox terms
 tags:
   - reference
   - trust-scoring

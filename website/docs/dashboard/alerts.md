@@ -1,6 +1,7 @@
 ---
 title: Alerts
 description: Agents requiring attention
+llms_description: Configuring and responding to alerts
 sidebar_position: 2
 tags:
   - observability

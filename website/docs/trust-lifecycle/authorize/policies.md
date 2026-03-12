@@ -1,6 +1,7 @@
 ---
 title: Policies
 description: OPA/Rego stateless permission checks
+llms_description: OPA/Rego stateless permission checks
 sidebar_position: 2
 tags:
   - policy-authoring

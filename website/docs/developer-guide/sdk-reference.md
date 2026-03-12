@@ -1,6 +1,7 @@
 ---
 title: SDK Reference
 description: Thin wrapper for Temporal workflow integration
+llms_description: Full SDK API reference
 sidebar_position: 1
 tags:
   - sdk

@@ -1,6 +1,7 @@
 ---
 title: Trust Lifecycle
 description: The 5 phases of AI agent governance
+llms_description: The five phases of AI agent governance
 sidebar_position: 2
 tags:
   - trust-scoring

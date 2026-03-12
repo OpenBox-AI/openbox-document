@@ -1,6 +1,7 @@
 ---
 title: Organization
 description: Manage teams, members, and settings
+llms_description: Managing your OpenBox organization
 sidebar_position: 8
 tags:
   - agent-management

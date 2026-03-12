@@ -1,6 +1,7 @@
 ---
 title: "Compliance & Audit"
 description: "Audit trail, evidence collection, and export capabilities for regulatory readiness"
+llms_description: Compliance tooling and audit support
 sidebar_position: 9
 tags:
   - compliance
