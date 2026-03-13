@@ -55,6 +55,12 @@ const config = {
           showLastUpdateTime: true,
           onInlineTags: 'throw',
         },
+        sitemap: {
+          lastmod: 'date',
+          changefreq: null,
+          priority: null,
+          ignorePatterns: ['/tags/**', '/search'],
+        },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
