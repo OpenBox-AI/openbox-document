@@ -64,9 +64,23 @@ const config = {
   ],
 
   headTags: [
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'}},
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous'}},
-    {tagName: 'link', attributes: {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap'}},
+    {
+      tagName: 'script',
+      attributes: {type: 'application/ld+json'},
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'OpenBox AI',
+        url: 'https://www.openbox.ai',
+        logo: 'https://docs.openbox.ai/img/logo.svg',
+        description: 'Enterprise AI governance platform providing trust scoring, behavioral guardrails, policy enforcement, and cryptographic audit trails for autonomous AI agents.',
+        sameAs: ['https://github.com/OpenBox-AI'],
+        contactPoint: [
+          {'@type': 'ContactPoint', email: 'support@openbox.ai', contactType: 'technical support'},
+          {'@type': 'ContactPoint', email: 'sales@openbox.ai', contactType: 'sales'},
+        ],
+      }),
+    },
   ],
 
   plugins: [
