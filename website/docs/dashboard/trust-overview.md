@@ -1,6 +1,6 @@
 ---
 title: Trust Overview
-description: Understanding the organization-wide trust health view
+description: "See your organization's trust health: Aggregate trust scores, compliance rates, and risk trends across all AI agents in one view."
 llms_description: Aggregate trust view across all agents
 sidebar_position: 1
 tags:

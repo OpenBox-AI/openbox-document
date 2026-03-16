@@ -1,6 +1,6 @@
 ---
 title: Working with llms.txt
-description: Machine-readable documentation for LLMs and AI development tools
+description: "Help AI assistants understand your setup: Enable LLMs to read your governance policies, agent config, and documentation automatically."
 llms_description: LLM-optimized plain text documentation files
 sidebar_position: 8
 tags:

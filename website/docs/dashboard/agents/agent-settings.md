@@ -1,6 +1,6 @@
 ---
 title: Agent Settings
-description: Configure agent details, risk profile, API keys, and lifecycle status
+description: "Configure individual agent settings: Set trust tier, assign policies, adjust monitoring level, and require approvals for specific actions."
 llms_description: Configure agent details and risk profile
 sidebar_position: 3
 tags:

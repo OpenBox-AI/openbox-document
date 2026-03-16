@@ -1,6 +1,6 @@
 ---
 title: Adapt
-description: Phase 5 - Evolve trust and improve policies over time
+description: "Build adaptive trust for AI agents: Automatically adjust policies and permissions based on behavior patterns and changing risk levels."
 llms_description: Updating policies based on observed behavior
 sidebar_position: 5
 tags:

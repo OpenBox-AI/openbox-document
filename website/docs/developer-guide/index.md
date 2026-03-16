@@ -1,6 +1,6 @@
 ---
 title: Developer Guide
-description: SDK reference, integration guides, and configuration for OpenBox
+description: "Build governed AI agents: Complete SDK guides, API reference, integration examples, and best practices for Python and TypeScript."
 llms_description: SDK reference, guides, and configuration
 tags:
   - sdk

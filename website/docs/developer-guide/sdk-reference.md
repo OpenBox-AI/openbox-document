@@ -1,6 +1,6 @@
 ---
 title: SDK Reference
-description: Thin wrapper for Temporal workflow integration
+description: "OpenBox SDK reference for Python & TypeScript: 47 methods for agent registration, policy enforcement, trust scoring, and monitoring."
 llms_description: Full SDK API reference
 sidebar_position: 1
 tags:

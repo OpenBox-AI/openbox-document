@@ -1,6 +1,6 @@
 ---
 title: Core Concepts
-description: The foundational concepts behind OpenBox governance
+description: "How does OpenBox governance work? Understand trust scores, runtime decisions, and the 5-stage lifecycle for controlling AI agents."
 llms_description: Foundational concepts behind OpenBox governance
 tags:
   - trust-scoring

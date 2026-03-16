@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: SDK configuration options
+description: "Configure the OpenBox SDK in 3 steps: Set API keys, define policies, control runtime behavior - no infrastructure changes needed."
 llms_description: All SDK configuration options
 sidebar_position: 4
 tags:

@@ -1,6 +1,6 @@
 ---
 title: Event Types
-description: The 24 semantic event types for agent operations
+description: "Track every decision your AI agents make: 12 event types for governance decisions, policy checks, trust changes, and violations."
 llms_description: Reference for all emitted event types
 sidebar_position: 6
 tags:
