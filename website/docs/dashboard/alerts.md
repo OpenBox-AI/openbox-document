@@ -1,6 +1,6 @@
 ---
 title: Alerts
-description: Agents requiring attention
+description: "Never miss a policy violation: Set up real-time alerts for trust changes, risky actions, and compliance issues via Slack or email."
 llms_description: Configuring and responding to alerts
 sidebar_position: 2
 tags:

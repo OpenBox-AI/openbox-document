@@ -1,6 +1,6 @@
 ---
 title: Dashboard
-description: Trust Overview and organization-wide monitoring
+description: "Monitor all your AI agents in one dashboard: View trust scores, active sessions, policy violations, and real-time alerts."
 llms_description: Trust overview and organization-wide monitoring
 sidebar_position: 3
 tags:

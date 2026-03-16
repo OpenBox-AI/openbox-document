@@ -1,6 +1,6 @@
 ---
 title: Governance Decisions
-description: The 4 governance decision types
+description: "See how governance decisions happen in real-time: Policy checks, risk assessment, and automated enforcement before agent execution."
 llms_description: The four governance decision types and how they work
 sidebar_position: 4
 tags:

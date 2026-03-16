@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: Overview of all the sessions and agent behavior
+description: "Understand the trust lifecycle: The 5-stage process for governing AI agents from identity verification to continuous adaptation."
 llms_description: Sessions and agent behavior overview
 sidebar_position: 1
 tags:
