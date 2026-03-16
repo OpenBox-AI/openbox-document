@@ -1,6 +1,6 @@
 ---
 title: "Temporal 101"
-description: A quick primer on Temporal concepts and how OpenBox uses them for AI governance
+description: "New to Temporal? Learn workflow basics, activities, and how OpenBox adds governance and trust to Temporal execution in 5 minutes."
 llms_description: Introduction to Temporal concepts for OpenBox
 sidebar_position: 1
 tags:

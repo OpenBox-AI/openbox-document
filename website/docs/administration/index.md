@@ -1,6 +1,6 @@
 ---
 title: Administration
-description: Organization management, compliance, attestation, and audit capabilities
+description: "Manage your OpenBox organization: Configure teams, assign roles, set governance policies, and control access across all AI agents."
 llms_description: Organization management and compliance overview
 tags:
   - compliance

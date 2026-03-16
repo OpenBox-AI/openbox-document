@@ -285,7 +285,7 @@ export default function Home() {
   return (
     <Layout
       title={siteConfig.title}
-      description="OpenBox Documentation — Enterprise AI governance platform. Attest every agent action so behavior is provable, auditable, and defensible by default."
+      description="Start governing AI agents in 5 minutes: Runtime policies, compliance automation, and cryptographic trust for any framework."
       wrapperClassName="homepage-no-footer">
       <Head>
         <script type="application/ld+json">

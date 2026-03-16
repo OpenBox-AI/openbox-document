@@ -1,6 +1,6 @@
 ---
 title: Glossary
-description: Definitions of key terms used in OpenBox documentation
+description: "OpenBox terminology explained: Definitions for trust scores, attestation, policies, governance decisions, and AI agent concepts."
 llms_description: Definitions of all OpenBox terms
 tags:
   - reference

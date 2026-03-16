@@ -1,6 +1,6 @@
 ---
 title: Authorize
-description: Phase 2 - Configure guardrails, policies, and behavioral rules
+description: "Control what AI agents can do: Enforce policies, verify permissions, require approvals for high-risk operations before execution."
 llms_description: Configure guardrails, policies, and behavioral rules
 sidebar_position: 2
 tags:

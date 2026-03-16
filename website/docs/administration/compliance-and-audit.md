@@ -1,6 +1,6 @@
 ---
 title: "Compliance & Audit"
-description: "Audit trail, evidence collection, and export capabilities for regulatory readiness"
+description: "Pass AI audits with confidence: Auto-generate compliance reports for EU AI Act, NIST AI RMF, and ISO 42001 with cryptographic proof."
 llms_description: Compliance tooling and audit support
 sidebar_position: 9
 tags:

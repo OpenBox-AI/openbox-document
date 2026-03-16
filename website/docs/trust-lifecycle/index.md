@@ -1,6 +1,6 @@
 ---
 title: Trust Lifecycle
-description: The 5 phases of AI agent governance
+description: "How OpenBox governs AI agents: The 5-stage trust lifecycle from identity verification to adaptive policies with runtime enforcement."
 llms_description: The five phases of AI agent governance
 sidebar_position: 2
 tags:

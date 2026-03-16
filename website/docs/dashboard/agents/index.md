@@ -1,6 +1,6 @@
 ---
 title: Agents
-description: Managing AI agents in OpenBox
+description: "View every AI agent in your organization: Check trust scores, recent activity, policy compliance, and execution status in real-time."
 llms_description: Managing agents in the dashboard
 sidebar_position: 4
 tags:

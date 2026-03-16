@@ -1,6 +1,6 @@
 ---
 title: Organization
-description: Manage teams, members, and settings
+description: "Configure your organization settings: Manage billing, teams, SSO, and governance policies in one place for all your AI agents."
 llms_description: Managing your OpenBox organization
 sidebar_position: 8
 tags:

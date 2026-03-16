@@ -1,6 +1,6 @@
 ---
 title: Approvals
-description: Human-in-the-Loop approval queue
+description: "Require human approval for risky AI actions: Build 3-step workflows with automated escalation, Slack notifications, and audit trails."
 llms_description: Human-in-the-loop approval workflows
 sidebar_position: 5
 tags:

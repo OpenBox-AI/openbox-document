@@ -1,6 +1,6 @@
 ---
 title: Trust Tiers
-description: Trust Tier levels and how they affect trust controls
+description: "What are trust tiers? Learn the 4-level system from restricted to autonomous and how tier changes affect agent permissions."
 llms_description: Tiered classification of agent trust levels
 sidebar_position: 2
 tags:

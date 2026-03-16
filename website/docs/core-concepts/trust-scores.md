@@ -1,6 +1,6 @@
 ---
 title: Trust Scores
-description: How Trust Scores are calculated and used
+description: "How do AI agent trust scores work? Real-time risk calculation using 5 behavioral factors, policy violations, and execution history."
 llms_description: How OpenBox quantifies agent trustworthiness
 sidebar_position: 1
 tags:

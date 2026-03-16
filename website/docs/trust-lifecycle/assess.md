@@ -1,6 +1,6 @@
 ---
 title: Assess
-description: Phase 1 - Establish baseline trust through risk assessment
+description: "Assess AI agent risk before execution: Evaluate behavior, check policy compliance, calculate trust scores in real-time at runtime."
 llms_description: Evaluating agent behavior and risk posture
 sidebar_position: 1
 tags:
