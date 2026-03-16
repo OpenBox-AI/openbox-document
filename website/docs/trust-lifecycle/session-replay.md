@@ -1,6 +1,6 @@
 ---
 title: Session Replay
-description: Step-by-step playback of agent session execution
+description: "Replay any AI agent session step-by-step: Audit every decision, investigate policy violations, and reconstruct complete execution history."
 llms_description: Replay and audit agent sessions
 sidebar_position: 1
 tags:

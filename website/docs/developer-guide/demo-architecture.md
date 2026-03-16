@@ -1,7 +1,7 @@
 ---
 title: Demo Architecture Reference
 sidebar_label: Demo Architecture
-description: Architecture reference for the demo agent — components, signals, activities, endpoints, and message flow
+description: "See governance in action: Explore demo architecture with Temporal workflows, custom policies, and runtime enforcement patterns."
 llms_description: How the demo agent is structured
 sidebar_position: 7
 tags:

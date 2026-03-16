@@ -1,6 +1,6 @@
 ---
 title: Registering Agents
-description: Create and configure new agents in the OpenBox dashboard
+description: "Register AI agents in under 2 minutes: Assign cryptographic identity, set initial trust tier, apply policies - start monitoring immediately."
 llms_description: How to register a new agent
 sidebar_position: 2
 tags:

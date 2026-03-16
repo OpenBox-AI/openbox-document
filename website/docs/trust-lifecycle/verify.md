@@ -1,6 +1,6 @@
 ---
 title: Verify
-description: Phase 4 - Validate goal alignment and detect drift
+description: "Verify AI agent identity with cryptographic proof: Authenticate every agent before execution using tamper-proof attestation records."
 llms_description: Post-hoc verification of agent decisions
 sidebar_position: 4
 tags:

@@ -1,6 +1,6 @@
 ---
 title: Error Handling
-description: Handle trust decisions in your code
+description: "Handle OpenBox errors gracefully: Manage policy violations, trust failures, and network issues with retry logic and fallback patterns."
 llms_description: Error codes and recovery patterns
 sidebar_position: 5
 tags:

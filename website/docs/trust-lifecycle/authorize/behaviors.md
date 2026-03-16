@@ -1,6 +1,6 @@
 ---
 title: Behavioral Rules
-description: Stateful multi-step pattern detection rules
+description: "Define allowed AI agent behaviors: Specify permitted actions, data access patterns, API calls, and interaction boundaries per agent."
 llms_description: Stateful multi-step pattern detection
 sidebar_position: 3
 tags:
