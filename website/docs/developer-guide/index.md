@@ -16,6 +16,7 @@ Everything you need to integrate OpenBox into your agent workflows.
 |-------|-------------|
 | **[SDK Reference](/developer-guide/sdk-reference)** | API surface for `create_openbox_worker()` and related functions |
 | **[Temporal Integration](/developer-guide/temporal-integration-guide-python)** | Step-by-step guide for wrapping Temporal workers |
+| **[n8n Integration](/developer-guide/n8n-integration-guide)** | Step-by-step guide for governing n8n LLM calls with `govern()` |
 | **[Customizing Your Agent](/developer-guide/customizing-your-agent)** | Tailor governance behavior to your agent's needs |
 | **[Configuration](/developer-guide/configuration)** | Environment variables and function parameters |
 | **[Error Handling](/developer-guide/error-handling)** | Handle governance decisions and failures in your code |

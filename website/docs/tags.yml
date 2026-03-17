@@ -36,7 +36,18 @@ hitl:
 sdk:
   label: SDK
   permalink: /sdk
-  description: Python SDK installation, config, and API
+  description: SDK installation, config, and API
+
+n8n:
+  label: n8n
+  permalink: /n8n
+  description: n8n workflow engine integration
+
+
+javascript:
+  label: JavaScript
+  permalink: /javascript
+  description: JavaScript SDK and code examples
 
 temporal:
   label: Temporal
