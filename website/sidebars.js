@@ -24,31 +24,6 @@ const sidebars = {
       },
       items: [
         {
-          type: 'category',
-          label: 'Temporal',
-          link: {
-            type: 'doc',
-            id: 'getting-started/temporal/index',
-          },
-          items: [
-            'getting-started/temporal/temporal-101',
-            'getting-started/temporal/run-the-demo',
-            'getting-started/temporal/wrap-an-existing-agent',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'n8n',
-          link: {
-            type: 'doc',
-            id: 'getting-started/n8n/index',
-          },
-          items: [
-            'getting-started/n8n/run-the-n8n-demo',
-            'getting-started/n8n/wrap-an-existing-n8n-workflow',
-          ],
-        },
-        {
           type: 'doc',
           id: 'getting-started/crewai/index',
           label: 'CrewAI',
@@ -74,9 +49,34 @@ const sidebars = {
           label: 'Mastra',
         },
         {
+          type: 'category',
+          label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'getting-started/n8n/index',
+          },
+          items: [
+            'getting-started/n8n/run-the-n8n-demo',
+            'getting-started/n8n/wrap-an-existing-n8n-workflow',
+          ],
+        },
+        {
           type: 'doc',
           id: 'getting-started/openclaw/index',
           label: 'OpenClaw',
+        },
+        {
+          type: 'category',
+          label: 'Temporal',
+          link: {
+            type: 'doc',
+            id: 'getting-started/temporal/index',
+          },
+          items: [
+            'getting-started/temporal/temporal-101',
+            'getting-started/temporal/run-the-demo',
+            'getting-started/temporal/wrap-an-existing-agent',
+          ],
         },
       ],
     },
@@ -141,6 +141,56 @@ const sidebars = {
       },
       items: [
         {
+          type: 'doc',
+          id: 'developer-guide/crewai/index',
+          label: 'CrewAI',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/deep-agent/index',
+          label: 'Deep Agent SDK (Python)',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/langchain/index',
+          label: 'LangChain SDK (TypeScript)',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/langgraph/index',
+          label: 'LangGraph SDK (Python)',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/mastra/index',
+          label: 'Mastra',
+        },
+        {
+          type: 'category',
+          label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/n8n/index',
+          },
+          items: [
+            'developer-guide/n8n/n8n-integration-guide',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'OpenClaw Plugin',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/openclaw/index',
+          },
+          items: [
+            'developer-guide/openclaw/how-it-works',
+            'developer-guide/openclaw/configuration',
+            'developer-guide/openclaw/examples',
+            'developer-guide/openclaw/troubleshooting',
+          ],
+        },
+        {
           type: 'category',
           label: 'Temporal SDK (Python)',
           link: {
@@ -155,47 +205,6 @@ const sidebars = {
             'developer-guide/temporal-python/demo-architecture',
             'developer-guide/temporal-python/troubleshooting',
           ],
-        },
-        {
-          type: 'category',
-          label: 'n8n',
-          link: {
-            type: 'doc',
-            id: 'developer-guide/n8n/index',
-          },
-          items: [
-            'developer-guide/n8n/n8n-integration-guide',
-          ],
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/crewai/index',
-          label: 'CrewAI',
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/deep-agent/index',
-          label: 'Deep Agent',
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/langchain/index',
-          label: 'LangChain',
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/langgraph/index',
-          label: 'LangGraph',
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/mastra/index',
-          label: 'Mastra',
-        },
-        {
-          type: 'doc',
-          id: 'developer-guide/openclaw/index',
-          label: 'OpenClaw',
         },
         'developer-guide/event-types',
         'developer-guide/llms-txt',
