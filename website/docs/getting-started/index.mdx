@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: "Deploy your first governed AI agent in 5 minutes: Install SDK, register agent, set policies, track compliance - no architecture changes."
+description: "Deploy your first governed AI agent in 5 minutes: choose your integration, install the SDK, and start capturing trust evidence."
 llms_description: Step-by-step onboarding guide
 sidebar_position: 1
 tags:
@@ -8,110 +8,95 @@ tags:
   - sdk
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Getting Started
 
-OpenBox adds governance, compliance, and audit-grade evidence to your AI agents. It integrates with your existing workflow engine by wrapping the worker process — all trust configuration happens in the OpenBox dashboard, and your agent code stays unchanged.
+OpenBox adds governance, compliance, and audit-grade evidence to your AI agents. Choose your integration below to get started.
 
-## One Code Change
+## Choose Your Integration
 
-The entire integration is a single import swap. Your workflows, activities, and agent logic stay exactly as they are:
+<div className="row">
+<div className="col col--4">
 
-<Tabs>
-<TabItem value="before" label="Temporal">
+### [Temporal](/getting-started/temporal)
 
-```python title="worker.py"
-import asyncio
-from temporalio.client import Client
-from temporalio.worker import Worker
-from your_workflows import YourWorkflow
-from your_activities import your_activity
+Wrap your Temporal worker with a single import swap. Your workflows, activities, and agent logic stay exactly as they are.
 
-async def main():
-    client = await Client.connect("localhost:7233")
+**Best for:** Python agents running on Temporal
 
-    worker = Worker(
-        client,
-        task_queue="agent-task-queue",
-        workflows=[YourWorkflow],
-        activities=[your_activity],
-    )
+</div>
+<div className="col col--4">
 
-    await worker.run()
+### [n8n](/getting-started/n8n)
 
-asyncio.run(main())
-```
+Wrap your n8n LLM calls with `govern()`. Your existing workflows stay unchanged.
 
-</TabItem>
-<TabItem value="after" label="OpenBox" default>
+**Best for:** JavaScript/TypeScript workflows in n8n
 
-```python title="worker.py"
-import os
-import asyncio
-from temporalio.client import Client
-from openbox import create_openbox_worker  # Changed import
-from your_workflows import YourWorkflow
-from your_activities import your_activity
+</div>
+<div className="col col--4">
 
-async def main():
-    client = await Client.connect("localhost:7233")
+### [CrewAI](/getting-started/crewai) <small>coming soon</small>
 
-    # Replace Worker with create_openbox_worker
-    worker = create_openbox_worker(
-        client=client,
-        task_queue="agent-task-queue",
-        workflows=[YourWorkflow],
-        activities=[your_activity],
+Governance for multi-agent crews.
 
-        # Add OpenBox configuration
-        openbox_url=os.getenv("OPENBOX_URL"),
-        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
-    )
+**Best for:** Python agents running on CrewAI
 
-    await worker.run()
+</div>
+</div>
 
-asyncio.run(main())
-```
+<div className="row" style={{marginTop: '1rem'}}>
+<div className="col col--4">
 
-</TabItem>
-</Tabs>
+### [Deep Agent](/getting-started/deep-agent) <small>coming soon</small>
+
+Governance for autonomous agent workflows.
+
+</div>
+<div className="col col--4">
+
+### [LangChain](/getting-started/langchain) <small>coming soon</small>
+
+Governance for chains and retrieval pipelines.
+
+**Best for:** Python agents on LangChain
+
+</div>
+<div className="col col--4">
+
+### [Mastra](/getting-started/mastra) <small>coming soon</small>
+
+Governance for TypeScript AI agents.
+
+**Best for:** TypeScript agents running on Mastra
+
+</div>
+</div>
+
+<div className="row" style={{marginTop: '1rem'}}>
+<div className="col col--4">
+
+### [LangGraph](/getting-started/langgraph) <small>coming soon</small>
+
+Governance for graph-based agent workflows.
+
+**Best for:** Python agents on LangGraph
+
+</div>
+<div className="col col--4">
+
+### [OpenClaw](/getting-started/openclaw) <small>coming soon</small>
+
+Governance for autonomous agent workflows.
+
+</div>
+</div>
 
 ## What OpenBox Captures
 
-From that single integration point, every workflow execution is automatically governed:
+From a single integration point, every execution is automatically governed:
 
 - **Event timeline** — workflow starts, completions, failures, and signals captured in sequence
 - **Activity tracking** — every activity execution with full inputs and outputs
 - **HTTP call recording** — all outbound requests (LLM calls, external APIs) with request and response bodies
 - **Governance decisions** — each event evaluated against your policies in real-time: approved, blocked, or flagged
 - **Session replay** — step-by-step playback of the entire agent session for debugging and audit
-
-## Choose Your Path
-
-<div className="row">
-<div className="col col--3">
-
-### [I already use Temporal](/getting-started/wrap-an-existing-agent)
-
-Add the trust layer to your existing agent in 5 minutes. Install the SDK, swap one import, and your agent is governed.
-
-</div>
-<div className="col col--3">
-
-### [I'm new to Temporal](/getting-started/temporal-101)
-
-Learn the core concepts (Workflows, Activities, Workers), then [run the demo](/getting-started/run-the-demo) to see OpenBox in action.
-
-</div>
-<div className="col col--3">
-
-### I use n8n
-
-**[Run the n8n Demo](/getting-started/run-the-n8n-demo)** — Try a fully configured local setup with Docker, Ollama, and a sample workflow.
-
-**[Wrap an Existing Workflow](/getting-started/wrap-an-existing-n8n-workflow)** — Add governance to your own n8n workflow with `govern()`.
-
-</div>
-</div>

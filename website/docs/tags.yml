@@ -118,3 +118,43 @@ reference:
   label: Reference
   permalink: /reference
   description: Specifications, glossary, and lookup tables
+
+python:
+  label: Python
+  permalink: /python
+  description: Python SDK and code examples
+
+typescript:
+  label: TypeScript
+  permalink: /typescript
+  description: TypeScript SDK and code examples
+
+crewai:
+  label: CrewAI
+  permalink: /crewai
+  description: CrewAI multi-agent framework integration
+
+deep-agent:
+  label: Deep Agent
+  permalink: /deep-agent
+  description: Deep Agent framework integration
+
+langchain:
+  label: LangChain
+  permalink: /langchain
+  description: LangChain framework integration
+
+langgraph:
+  label: LangGraph
+  permalink: /langgraph
+  description: LangGraph state machine integration
+
+mastra:
+  label: Mastra
+  permalink: /mastra
+  description: Mastra TypeScript agent framework integration
+
+openclaw:
+  label: OpenClaw
+  permalink: /openclaw
+  description: OpenClaw agent framework integration

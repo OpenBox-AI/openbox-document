@@ -23,12 +23,61 @@ const sidebars = {
         id: 'getting-started/index',
       },
       items: [
-        'getting-started/temporal-101',
-        'getting-started/run-the-demo',
-        'getting-started/wrap-an-existing-agent',
-        'getting-started/troubleshooting',
-        'getting-started/run-the-n8n-demo',
-        'getting-started/wrap-an-existing-n8n-workflow',
+        {
+          type: 'category',
+          label: 'Temporal',
+          link: {
+            type: 'doc',
+            id: 'getting-started/temporal/index',
+          },
+          items: [
+            'getting-started/temporal/temporal-101',
+            'getting-started/temporal/run-the-demo',
+            'getting-started/temporal/wrap-an-existing-agent',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'getting-started/n8n/index',
+          },
+          items: [
+            'getting-started/n8n/run-the-n8n-demo',
+            'getting-started/n8n/wrap-an-existing-n8n-workflow',
+          ],
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/crewai/index',
+          label: 'CrewAI',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/deep-agent/index',
+          label: 'Deep Agent',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/langchain/index',
+          label: 'LangChain',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/langgraph/index',
+          label: 'LangGraph',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/mastra/index',
+          label: 'Mastra',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/openclaw/index',
+          label: 'OpenClaw',
+        },
       ],
     },
     {
@@ -91,14 +140,64 @@ const sidebars = {
         id: 'developer-guide/index',
       },
       items: [
-        'developer-guide/sdk-reference',
-        'developer-guide/temporal-integration-guide-python',
-        'developer-guide/n8n-integration-guide',
-        'developer-guide/customizing-your-agent',
-        'developer-guide/configuration',
-        'developer-guide/error-handling',
+        {
+          type: 'category',
+          label: 'Temporal SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/temporal-python/sdk-reference',
+          },
+          items: [
+            'developer-guide/temporal-python/configuration',
+            'developer-guide/temporal-python/error-handling',
+            'developer-guide/temporal-python/integration-walkthrough',
+            'developer-guide/temporal-python/customizing-the-demo',
+            'developer-guide/temporal-python/demo-architecture',
+            'developer-guide/temporal-python/troubleshooting',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/n8n/index',
+          },
+          items: [
+            'developer-guide/n8n/n8n-integration-guide',
+          ],
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/crewai/index',
+          label: 'CrewAI',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/deep-agent/index',
+          label: 'Deep Agent',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/langchain/index',
+          label: 'LangChain',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/langgraph/index',
+          label: 'LangGraph',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/mastra/index',
+          label: 'Mastra',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/openclaw/index',
+          label: 'OpenClaw',
+        },
         'developer-guide/event-types',
-        'developer-guide/demo-architecture',
         'developer-guide/llms-txt',
       ],
     },

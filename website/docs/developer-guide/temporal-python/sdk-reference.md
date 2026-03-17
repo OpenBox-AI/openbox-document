@@ -35,10 +35,10 @@ The SDK is intentionally minimal:
 
 See:
 
-1. **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** - Wrap an existing Temporal worker
-2. **[Temporal (Python)](/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
-3. **[n8n (JavaScript)](/developer-guide/n8n-integration-guide)** - Govern n8n workflows with `govern()`
-4. **[Configuration](/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
+1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** - Wrap an existing Temporal worker
+2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)** - End-to-end setup from scratch
+3. **[n8n (JavaScript)](/developer-guide/n8n/n8n-integration-guide)** - Govern n8n workflows with `govern()`
+4. **[Configuration](/developer-guide/temporal-python/configuration)** - All SDK options for `create_openbox_worker`
 
 ## Function Signature
 
@@ -57,7 +57,7 @@ def create_openbox_worker(
 
 Returns a standard Temporal `Worker` with OpenBox interceptors, telemetry, and governance configured. All [Temporal Worker options](https://python.temporal.io/temporalio.worker.Worker.html) are passed through.
 
-See **[Configuration](/developer-guide/configuration)** for the full parameter list.
+See **[Configuration](/developer-guide/temporal-python/configuration)** for the full parameter list.
 
 ## What the SDK Captures
 
@@ -155,7 +155,7 @@ flowchart TD
 
 ## Configuration
 
-See **[Configuration](/developer-guide/configuration)** for all options including:
+See **[Configuration](/developer-guide/temporal-python/configuration)** for all options including:
 - Environment variables
 - Governance timeout and fail policies
 - Event filtering (skip workflows/activities)
@@ -163,6 +163,6 @@ See **[Configuration](/developer-guide/configuration)** for all options includin
 
 ## Next Steps
 
-1. **[Temporal Integration](/developer-guide/temporal-integration-guide-python)** - Wrap an existing Temporal agent with the SDK
-2. **[Configuration](/developer-guide/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Error Handling](/developer-guide/error-handling)** - Handle governance decisions in your code
+1. **[Temporal Integration](/developer-guide/temporal-python/integration-walkthrough)** - Wrap an existing Temporal agent with the SDK
+2. **[Configuration](/developer-guide/temporal-python/configuration)** - Configure timeouts, fail policies, and exclusions
+3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
