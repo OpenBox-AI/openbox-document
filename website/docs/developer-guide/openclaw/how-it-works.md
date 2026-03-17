@@ -10,7 +10,7 @@ tags:
 
 # How It Works
 
-The OpenBox plugin governs your OpenClaw agent through two paths: **tool governance** for agent tool calls and **LLM guardrails** for model inference requests. Both paths evaluate actions against your OpenBox Core policies in real time before execution.
+OpenBox plugin governs your OpenClaw agent through two paths: **tool governance** for agent tool calls and **LLM guardrails** for model inference requests. Both paths evaluate actions against your OpenBox Core policies in real time before execution.
 
 ## Tool Governance
 
@@ -51,16 +51,16 @@ The agent sees this as the tool result and can respond accordingly.
 ### What gets sent to Core
 
 For each tool call, the plugin sends:
-- **Tool name** — which tool the agent is calling
-- **Parameters** — the full parameters passed to the tool
-- **Session identity** — workflow ID, run ID, agent ID
-- **Timestamps** — when the activity started
+- **Tool name** - which tool the agent is calling
+- **Parameters** - the full parameters passed to the tool
+- **Session identity** - workflow ID, run ID, agent ID
+- **Timestamps** - when the activity started
 
 After execution, the plugin also sends:
-- **Tool result** — the output (truncated to 4000 characters for string results)
-- **Error information** — if the tool failed
-- **Duration** — how long the tool took
-- **OTel spans** — HTTP requests and filesystem operations that occurred during execution
+- **Tool result** - the output (truncated to 4000 characters for string results)
+- **Error information** - if the tool failed
+- **Duration** - how long the tool took
+- **OTel spans** - HTTP requests and filesystem operations that occurred during execution
 
 ## LLM Guardrails
 
@@ -90,7 +90,7 @@ LLM provider response returned to agent
 
 ### Guardrails
 
-Guardrails are configured in the OpenBox platform — no code or plugin configuration changes needed.
+Guardrails are configured in the OpenBox platform - no code or plugin configuration changes needed. Available guardrail types include:
 
 | Type | What it does |
 |------|-------------|
@@ -99,16 +99,27 @@ Guardrails are configured in the OpenBox platform — no code or plugin configur
 | **Toxicity** | Blocks abusive or hostile language from user interactions |
 | **Ban Words** | Censors or blocks domain-specific banned terms (competitor names, internal codenames, regulated terms) |
 
-When guardrails detect sensitive content:
+When guardrails detect sensitive content, there are two possible outcomes:
 
-- **Redaction** — sensitive content is replaced with sanitized values before the request reaches the LLM. The agent continues normally with the sanitized input.
-- **Block** — the request is stopped entirely. The agent receives a message explaining why, formatted as a valid LLM response so the agent can process it normally.
+- **Redaction** - the sensitive content is replaced with sanitized values before the request reaches the LLM. For example, an email address in the prompt becomes a redacted placeholder. The agent continues normally with the sanitized input.
+- **Block** - the request is stopped entirely. The agent receives a message explaining why the request was blocked, formatted as a valid LLM response so the agent can process it normally.
 
 Blocked responses are returned in the correct format for both Chat Completions and Responses APIs, including proper SSE streaming format when the agent requests streaming.
 
+## Governance Verdicts
+
+OpenBox Core evaluates every tool call against your configured policies and returns a verdict:
+
+| Verdict | Effect |
+|---------|--------|
+| `allow` | Tool executes normally. This is the default when no policy matches or when Core is unreachable (fail-open). |
+| `block` | Current tool call is prevented. The agent receives the block reason as the tool result and can attempt other actions. |
+
+A `block` verdict stops a single action. The agent can continue using other tools or try a different approach. The block reason from your policy is returned to the agent so it understands why the action was prevented.
+
 ## Session Lifecycle
 
-The plugin tracks the full lifecycle of each agent session and reports it to OpenBox Core.
+The plugin tracks the full lifecycle of each agent session and reports it to OpenBox Core. This is what populates session timelines in the OpenBox dashboard.
 
 ### Lifecycle events
 
@@ -144,7 +155,7 @@ Gateway stopped, state reset
 
 ### Identity and session tracking
 
-The plugin accumulates session identity across multiple hooks:
+The plugin accumulates session identity across multiple hooks because different hooks provide different context:
 
 - `session_start` provides the `sessionId`
 - `before_tool_call` provides the `sessionKey`
@@ -154,7 +165,7 @@ The session is registered with Core on the first governance evaluation (not at `
 
 ## OTel Span Capture
 
-The plugin captures OpenTelemetry spans during tool execution and LLM inference and attaches them to governance events.
+The plugin captures OpenTelemetry spans during tool execution and LLM inference and attaches them to governance events sent to Core. This gives you visibility into what HTTP requests and filesystem operations occurred during each action.
 
 ### What is captured
 
@@ -163,7 +174,7 @@ The plugin captures OpenTelemetry spans during tool execution and LLM inference 
 | HTTP requests | Undici instrumentation | API calls, web fetches made during tool execution |
 | Filesystem operations | Filesystem instrumentation | File reads, writes, deletes |
 
-Spans are mapped to semantic names:
+Spans are mapped to semantic names for clarity:
 
 | Raw operation | Mapped name |
 |--------------|-------------|
@@ -174,11 +185,13 @@ Spans are mapped to semantic names:
 
 ### Self-call filtering
 
-HTTP requests to OpenBox Core itself are automatically excluded from span capture. This prevents governance API calls from appearing as tool activity.
+HTTP requests to OpenBox Core itself are automatically excluded from span capture. This prevents governance API calls from appearing as tool activity in your telemetry data.
 
 ## Fail-Open Design
 
-The plugin is designed to fail open. If OpenBox Core is unreachable or returns an error, tools and LLM calls execute normally.
+The plugin is designed to fail open. If OpenBox Core is unreachable or returns an error, tools and LLM calls execute normally. This ensures that infrastructure issues with the governance service never block your agent's work.
+
+Specifically:
 
 | Scenario | Behavior |
 |----------|----------|
@@ -188,6 +201,6 @@ The plugin is designed to fail open. If OpenBox Core is unreachable or returns a
 | Core returns `allow` | Tool executes |
 | Core returns `block` | Tool is prevented |
 
-Only an explicit `block` verdict prevents execution. Everything else defaults to allowing the action.
+Only an explicit `block` verdict from Core prevents execution. Everything else defaults to allowing the action.
 
 The LLM gateway follows the same pattern: if Core is unreachable during guardrails evaluation, the LLM request is forwarded to the provider as-is.

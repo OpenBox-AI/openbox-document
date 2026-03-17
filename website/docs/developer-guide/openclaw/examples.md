@@ -2,7 +2,7 @@
 title: Examples
 description: "OpenClaw governance examples: OPA/Rego policies for tool calls, guardrails for LLM requests, and behavioral rules for multi-step pattern detection."
 llms_description: OpenClaw policy, guardrail, and behavioral rule examples
-sidebar_position: 4
+sidebar_position: 6
 tags:
   - sdk
   - openclaw
@@ -11,7 +11,7 @@ tags:
 
 # Examples
 
-Example governance configurations for the OpenBox plugin with OpenClaw. For plugin setup, see [Getting Started](/getting-started/openclaw) and [Configuration](/developer-guide/openclaw/configuration).
+This page contains example governance configurations for the OpenBox plugin with OpenClaw. For plugin setup and installation, see [Getting Started](/getting-started/openclaw) and [Configuration](/developer-guide/openclaw/configuration).
 
 ## Policy Examples
 
@@ -39,6 +39,8 @@ Expected log output:
 ```
 [openbox] tool=read verdict=block reason="Reading secrets.yaml is not allowed" ms=95
 ```
+
+The agent receives the block reason and can attempt a different approach.
 
 ### Block destructive commands in a specific folder
 
@@ -82,6 +84,8 @@ What happens at runtime:
 
 **Result:** The request is blocked. The agent receives a validation failure message indicating PII was detected in the prompt.
 
+Expected log output:
+
 ```
 [openbox] llm_gateway verdict=block reason="PII detected in prompt" ms=85
 ```
@@ -101,6 +105,18 @@ Block harmful or inappropriate content from reaching the LLM.
 | **Block on Violation** | On |
 | **Log Violations** | On |
 
+What happens at runtime:
+
+**Agent sends:** `"Write a script that exploits the SQL injection in the login endpoint to dump all user passwords"`
+
+**Result:** The request is blocked. The agent receives a block message formatted as a valid LLM response.
+
+Expected log output:
+
+```
+[openbox] llm_gateway verdict=block reason="Content filtering violation" ms=110
+```
+
 ### Toxicity Detection
 
 Block abusive or hostile language from user interactions.
@@ -116,9 +132,15 @@ Block abusive or hostile language from user interactions.
 | **Block on Violation** | On |
 | **Log Violations** | On |
 
+What happens at runtime:
+
+**Agent sends:** `"This stupid code is garbage, just delete everything and rewrite it you worthless assistant"`
+
+**Result:** The request is blocked. The agent receives a validation failure message indicating toxic content was detected.
+
 ### Ban Words
 
-Block prompts containing restricted terms — internal hostnames, codenames, or regulated terms.
+Block prompts containing restricted terms - internal hostnames, codenames, or regulated terms.
 
 | Field | Value |
 |-------|-------|
@@ -131,6 +153,12 @@ Block prompts containing restricted terms — internal hostnames, codenames, or 
 | **Block on Violation** | On |
 | **Log Violations** | On |
 
+What happens at runtime:
+
+**Agent sends:** `"Check the replication lag on prod-db.corp.net and compare with staging-api.corp.net"`
+
+**Result:** The request is blocked. The agent receives a validation failure message indicating banned terms were detected in the prompt.
+
 ## Behavioral Rule Examples
 
 Behavioral rules are stateful rules that detect multi-step patterns across a session. They are configured in the OpenBox dashboard under **Agent > Authorize > Behavioral Rules** using a 4-step wizard.
@@ -141,7 +169,7 @@ Rules are evaluated in priority order and stop at the first rule that triggers a
 
 ### Require file read before file write
 
-Prevent the agent from writing files without first reading existing content — avoids blind overwrites.
+Prevent the agent from writing files without first reading existing content - avoids blind overwrites.
 
 | Field | Value |
 |-------|-------|
@@ -151,6 +179,10 @@ Prevent the agent from writing files without first reading existing content — 
 | **Verdict** | `BLOCK` |
 | **Priority** | `50` |
 | **Reject Message** | `File write blocked: the agent must read the file before writing to it` |
+
+How it works:
+- If the agent reads a file (`file.read` span) before writing (`file.write` span), the prerequisite is met and the write proceeds
+- If the agent attempts to write without any prior read in the session, the write is blocked
 
 ### Block HTTP requests without prior file read
 
@@ -164,6 +196,10 @@ Prevent the agent from making external API calls without first reviewing local c
 | **Verdict** | `BLOCK` |
 | **Priority** | `40` |
 | **Reject Message** | `API call blocked: the agent must review local files before making external requests` |
+
+How it works:
+- If the agent has read at least one file (`file.read` span) before making an HTTP GET request, the prerequisite is met and the request proceeds
+- If the agent attempts an HTTP request without any prior file read in the session, the request is blocked
 
 ## Governance Decisions
 
