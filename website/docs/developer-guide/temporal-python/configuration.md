@@ -226,7 +226,7 @@ if __name__ == "__main__":
 
 ## Next Steps
 
-1. **[Error Handling](/developer-guide/error-handling)** - Handle governance decisions in your code
+1. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 2. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types captured by the SDK
 3. **[Approvals](/approvals)** - Review and act on HITL approval requests
 

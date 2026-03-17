@@ -12,14 +12,38 @@ tags:
 
 Everything you need to integrate OpenBox into your agent workflows.
 
+## Temporal SDK (Python)
+
 | Guide | Description |
 |-------|-------------|
-| **[SDK Reference](/developer-guide/sdk-reference)** | API surface for `create_openbox_worker()` and related functions |
-| **[Temporal Integration](/developer-guide/temporal-integration-guide-python)** | Step-by-step guide for wrapping Temporal workers |
-| **[n8n Integration](/developer-guide/n8n-integration-guide)** | Step-by-step guide for governing n8n LLM calls with `govern()` |
-| **[Customizing Your Agent](/developer-guide/customizing-your-agent)** | Tailor governance behavior to your agent's needs |
-| **[Configuration](/developer-guide/configuration)** | Environment variables and function parameters |
-| **[Error Handling](/developer-guide/error-handling)** | Handle governance decisions and failures in your code |
+| **[SDK Reference](/developer-guide/temporal-python/sdk-reference)** | API surface for `create_openbox_worker()` and related functions |
+| **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for wrapping Temporal workers |
+| **[Configuration](/developer-guide/temporal-python/configuration)** | Environment variables and function parameters |
+| **[Error Handling](/developer-guide/temporal-python/error-handling)** | Handle governance decisions and failures in your code |
+| **[Customizing the Demo](/developer-guide/temporal-python/customizing-the-demo)** | Tailor governance behavior to your agent's needs |
+| **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
+| **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal SDK setup |
+
+## n8n (JavaScript)
+
+| Guide | Description |
+|-------|-------------|
+| **[n8n Integration Guide](/developer-guide/n8n/n8n-integration-guide)** | Step-by-step guide for governing n8n LLM calls with `govern()` |
+
+## Coming Soon
+
+| Integration | Language | Status |
+|-------------|----------|--------|
+| **[CrewAI](/developer-guide/crewai)** | Python | Coming soon |
+| **[Deep Agent](/developer-guide/deep-agent)** | — | Coming soon |
+| **[LangChain](/developer-guide/langchain)** | Python | Coming soon |
+| **[LangGraph](/developer-guide/langgraph)** | Python | Coming soon |
+| **[Mastra](/developer-guide/mastra)** | TypeScript | Coming soon |
+| **[OpenClaw](/developer-guide/openclaw)** | — | Coming soon |
+
+## Shared Reference
+
+| Guide | Description |
+|-------|-------------|
 | **[Event Types](/developer-guide/event-types)** | Semantic event types captured by the SDK |
-| **[Demo Architecture](/developer-guide/demo-architecture)** | Architecture of the reference demo application |
 | **[Working with llms.txt](/developer-guide/llms-txt)** | Machine-readable documentation for LLMs and AI tools |

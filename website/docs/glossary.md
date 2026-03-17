@@ -20,7 +20,7 @@ A single unit of work inside a [Workflow](#workflow) — calling an LLM, queryin
 
 **OpenBox connection:** OpenBox captures the inputs and outputs of every Activity execution, evaluates governance policies against them, and records a [Governance Decision](#governance-decision) for each one.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101#activity)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#activity)
 
 ---
 
@@ -179,7 +179,7 @@ A synchronous, read-only request to inspect a running [Workflow's](#workflow) st
 
 **OpenBox connection:** OpenBox uses Queries to inspect governance state during execution — for example, checking whether an approval is still pending. Queries do not trigger governance evaluation since they are read-only.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
 
 ---
 
@@ -197,7 +197,7 @@ An asynchronous message sent to a running [Workflow](#workflow) from the outside
 
 **OpenBox connection:** OpenBox captures Signal data and evaluates governance policies on every Signal received. This is how [HITL](#hitl-human-in-the-loop) approvals flow back into the Workflow when a REQUIRE_APPROVAL decision pauses execution.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
 
 ---
 
@@ -207,7 +207,7 @@ A named channel that connects [Workflow](#workflow)/[Activity](#activity) starte
 
 **OpenBox connection:** OpenBox preserves your existing Task Queue configuration. The wrapped Worker polls the same queue your original Worker used — governance is transparent to task routing.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
 
 ---
 
@@ -270,7 +270,7 @@ A process that hosts your [Workflow](#workflow) and [Activity](#activity) code a
 
 **OpenBox connection:** The Worker is the single integration point. You replace Temporal's `Worker` with `create_openbox_worker` — one code change that wraps the Worker with the [Trust Layer](#trust-layer). No changes to your Workflows or Activities.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101#worker)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#worker)
 
 ---
 
@@ -280,4 +280,4 @@ A durable function that orchestrates a sequence of steps. If the process crashes
 
 **OpenBox connection:** When a Workflow starts, OpenBox creates a governance session. When it completes or fails, OpenBox closes the session and triggers [Attestation](#attestation). Every Workflow execution maps 1:1 to a governance session in your dashboard.
 
-**Learn more:** [Temporal 101](/getting-started/temporal-101#workflow)
+**Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#workflow)
