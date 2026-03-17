@@ -27,6 +27,8 @@ const sidebars = {
         'getting-started/run-the-demo',
         'getting-started/wrap-an-existing-agent',
         'getting-started/troubleshooting',
+        'getting-started/run-the-n8n-demo',
+        'getting-started/wrap-an-existing-n8n-workflow',
       ],
     },
     {
@@ -91,6 +93,7 @@ const sidebars = {
       items: [
         'developer-guide/sdk-reference',
         'developer-guide/temporal-integration-guide-python',
+        'developer-guide/n8n-integration-guide',
         'developer-guide/customizing-your-agent',
         'developer-guide/configuration',
         'developer-guide/error-handling',

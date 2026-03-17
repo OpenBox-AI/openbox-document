@@ -10,10 +10,10 @@ tags:
 
 # SDK Reference
 
-The OpenBox SDK integrates with Temporal workflows. It handles event capture, telemetry collection, and trust evaluation with a single function call.
+The OpenBox SDKs integrate with your workflow engine. They handle event capture, telemetry collection, and trust evaluation with minimal code changes.
 
-:::info What the SDK Does
-The SDK's primary job is to **wrap your Temporal worker** and send workflow/activity events to the OpenBox platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
+:::info What the SDKs Do
+The SDKs' primary job is to **connect your workflow engine to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
 :::
 
 ## Philosophy
@@ -29,6 +29,7 @@ The SDK is intentionally minimal:
 | Engine | Language | Status |
 |--------|----------|--------|
 | Temporal | Python | ✅ Supported |
+| n8n | JavaScript | ✅ Supported |
 
 ## Installation and Setup
 
@@ -36,7 +37,8 @@ See:
 
 1. **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** - Wrap an existing Temporal worker
 2. **[Temporal (Python)](/developer-guide/temporal-integration-guide-python)** - End-to-end setup from scratch
-3. **[Configuration](/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
+3. **[n8n (JavaScript)](/developer-guide/n8n-integration-guide)** - Govern n8n workflows with `govern()`
+4. **[Configuration](/developer-guide/configuration)** - All SDK options for `create_openbox_worker`
 
 ## Function Signature
 
