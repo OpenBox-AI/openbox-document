@@ -1,7 +1,7 @@
 ---
 title: Getting Started with LangGraph
-description: "Add OpenBox governance to LangGraph agents: trust scoring, policy enforcement, and audit-grade evidence for graph-based agent workflows."
-llms_description: LangGraph integration onboarding (coming soon)
+description: "Add OpenBox governance to LangGraph agents: wrap your compiled graph for real-time policy enforcement, guardrails, and human-in-the-loop approvals."
+llms_description: LangGraph Python SDK quickstart and setup
 sidebar_position: 6
 tags:
   - getting-started
@@ -12,21 +12,15 @@ tags:
 # Getting Started with LangGraph
 
 :::info Docs coming soon
-The OpenBox SDK for [LangGraph](https://www.langchain.com/langgraph) is in development.
-This page will be updated with a full getting-started guide when the integration is available.
+The OpenBox SDK for [LangGraph](https://github.com/langchain-ai/langgraph) is open source.
+Refer to the README for setup instructions:
+**[OpenBox-AI/openbox-langgraph-sdk-python](https://github.com/OpenBox-AI/openbox-langgraph-sdk-python)**
 :::
 
-OpenBox will integrate with LangGraph by wrapping graph execution — your agents, nodes, and state machines stay exactly as they are while every step is governed, scored, and auditable.
+OpenBox integrates with LangGraph by wrapping your compiled graph — your agents, nodes, and state machines stay exactly as they are while every action is governed, scored, and auditable.
 
 ## What to expect
 
-- Governance layer for LangGraph state machines and agent graphs
-- Trust scoring and policy enforcement for every node execution
-- Full session replay across graph traversals
-- HTTP call recording for all LLM and tool invocations
-
-## In the meantime
-
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+- Wrap your compiled graph with a single function call
+- OPA/Rego policy enforcement for every tool call and LLM invocation
+- Guardrails, human-in-the-loop approvals, and automatic HTTP telemetry

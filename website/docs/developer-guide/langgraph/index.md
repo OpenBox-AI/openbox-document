@@ -1,23 +1,28 @@
 ---
-title: LangGraph Developer Guide
-description: "Developer resources for governing LangGraph agents with OpenBox: SDK reference, integration guide, and configuration."
-llms_description: LangGraph SDK integration and developer resources (coming soon)
+title: LangGraph SDK (Python)
+description: "Developer reference for governing LangGraph agents with OpenBox: graph handler, policy enforcement, guardrails, HITL, and tool classification."
+llms_description: LangGraph Python SDK reference and architecture
 tags:
   - sdk
   - langgraph
   - python
 ---
 
-# LangGraph Developer Guide
+# LangGraph SDK (Python)
 
 :::info Docs coming soon
-The OpenBox SDK for LangGraph is in development.
-This page will be updated with SDK reference, integration guides, and configuration details when the integration is available.
+This SDK is open source — full developer documentation is on the way.
+In the meantime, refer to the README and examples in the repo:
+**[OpenBox-AI/openbox-langgraph-sdk-python](https://github.com/OpenBox-AI/openbox-langgraph-sdk-python)**
 :::
+
+The `openbox-langgraph-sdk` provides real-time governance and observability for [LangGraph](https://github.com/langchain-ai/langgraph) agents — powered by [OpenBox](https://openbox.ai).
 
 ## What to expect
 
-- SDK reference for wrapping LangGraph graphs with OpenBox governance
-- Configuration options for trust scoring and policy enforcement
-- Error handling patterns for governance decisions
-- Code examples for common integration scenarios
+- Zero graph changes — wrap your compiled graph; keep writing LangGraph as normal
+- OPA/Rego policies for tool calls and LLM invocations
+- Guardrails — PII redaction, content filtering, toxicity detection
+- Human-in-the-loop approvals
+- Behavior Rules and tool classification
+- Automatic HTTP telemetry

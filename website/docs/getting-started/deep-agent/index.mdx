@@ -1,31 +1,26 @@
 ---
 title: Getting Started with Deep Agent
-description: "Add OpenBox governance to Deep Agent workflows: trust scoring, policy enforcement, and audit-grade evidence for autonomous agents."
-llms_description: Deep Agent integration onboarding (coming soon)
+description: "Add OpenBox governance to DeepAgents workflows: per-subagent policy targeting, HITL conflict detection, and built-in tool classification."
+llms_description: DeepAgents integration quickstart and setup
 sidebar_position: 4
 tags:
   - getting-started
   - deep-agent
+  - python
 ---
 
 # Getting Started with Deep Agent
 
 :::info Docs coming soon
-The OpenBox SDK for Deep Agent is in development.
-This page will be updated with a full getting-started guide when the integration is available.
+The OpenBox SDK for [DeepAgents](https://github.com/langchain-ai/deepagents) is open source.
+Refer to the README for setup instructions:
+**[OpenBox-AI/openbox-deepagent-sdk-python](https://github.com/OpenBox-AI/openbox-deepagent-sdk-python)**
 :::
 
-OpenBox will integrate with Deep Agent by wrapping agent execution — your workflows and agent logic stay exactly as they are while every action is governed, scored, and auditable.
+OpenBox integrates with DeepAgents by wrapping your compiled graph — your workflows, subagents, and tools stay exactly as they are while every action is governed, scored, and auditable.
 
 ## What to expect
 
-- Governance layer added with minimal code changes
-- Trust scoring and policy enforcement for every agent action
-- Full session replay for debugging and audit
-- HTTP call recording for all LLM and tool invocations
-
-## In the meantime
-
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+- Wrap your `create_deep_agent()` graph with a single function call
+- Per-subagent policy targeting, HITL conflict detection, and tool classification
+- Full session replay across multi-agent workflows
