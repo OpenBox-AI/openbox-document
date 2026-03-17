@@ -81,5 +81,7 @@ Core runs guardrails checks
 |-------|-------------|
 | **[How It Works](/developer-guide/openclaw/how-it-works)** | Tool governance flow, LLM guardrails, session lifecycle, OTel spans, fail-open design |
 | **[Configuration](/developer-guide/openclaw/configuration)** | Plugin config, environment variables, LLM gateway setup |
+| **[Verifying Your Setup](/developer-guide/openclaw/verify-setup)** | Step-by-step verification checklist |
+| **[OpenBox Dashboard](/developer-guide/openclaw/dashboard)** | Session timelines, policy config, guardrails, usage analytics |
 | **[Examples](/developer-guide/openclaw/examples)** | Policy, guardrail, and behavioral rule examples |
 | **[Troubleshooting](/developer-guide/openclaw/troubleshooting)** | Common issues, verification checklist, and log message reference |

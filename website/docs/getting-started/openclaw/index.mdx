@@ -8,19 +8,15 @@ tags:
   - openclaw
 ---
 
-# Getting Started with OpenClaw
+# Getting Started
 
-OpenBox integrates with [OpenClaw](https://openclaw.dev) as a plugin — every tool call and LLM inference your agent makes is evaluated against your OpenBox policies before execution.
-
-The plugin provides two governance paths:
-- **Tool governance** — intercepts every tool call via `before_tool_call` / `after_tool_call` hooks
-- **LLM guardrails** — routes LLM requests through a local gateway for PII detection, content filtering, and more
+This guide walks you through integrating OpenBox with your OpenClaw agent. By the end, every tool call and LLM inference your agent makes will be evaluated against your OpenBox policies before execution.
 
 ## Prerequisites
 
 - **Node.js 22+**
 - **OpenClaw** installed and running
-- **OpenBox API Key** — [Register your agent](/dashboard/agents/registering-agents) in the dashboard to get one
+- **OpenBox account** — sign up at [openbox.ai](https://openbox.ai) to get your API key
 
 You will need two values from your OpenBox account:
 
@@ -29,7 +25,9 @@ You will need two values from your OpenBox account:
 | OpenBox URL | `https://core.openbox.ai` | Your OpenBox Core instance URL |
 | API Key | `obx_live_*` or `obx_test_*` | Settings > API Keys in the OpenBox dashboard |
 
-## Step 1: Build and Install the Plugin
+## Installation
+
+### 1. Build the plugin
 
 ```bash
 cd /path/to/openbox-openclaw-plugin
@@ -37,25 +35,25 @@ npm install
 npm run build
 ```
 
-Install the plugin into OpenClaw:
+### 2. Install the plugin into OpenClaw
 
 ```bash
 openclaw plugins install .
 ```
 
-## Step 2: Configure the Plugin
+### 3. Configure the plugin
 
 Add your OpenBox credentials to your `.env` file in OpenClaw:
 
-```bash title=".env"
+```
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_key_here
-OPENAI_API_KEY=sk-your_openai_key_here  # your existing LLM API key
+OPENAI_API_KEY=sk-your_openai_key_here  # your existing LLM API key in OpenClaw
 ```
 
 Then add the plugin config to your `openclaw.json`:
 
-```json title="openclaw.json"
+```json
 {
   "plugins": {
     "entries": {
@@ -76,11 +74,11 @@ Then add the plugin config to your `openclaw.json`:
 
 You can also configure these values from the OpenClaw web control UI instead of editing files directly.
 
-## Step 3: Point Your LLM Provider to the Gateway
+### 4. Point your LLM provider to the gateway
 
 To enable LLM guardrails (PII detection, content policy), route your model provider through the OpenBox gateway. In your `openclaw.json`, update the model provider's `baseUrl`:
 
-```json title="openclaw.json"
+```json
 {
   "models": {
     "providers": {
@@ -102,49 +100,24 @@ To enable LLM guardrails (PII detection, content policy), route your model provi
 
 The model choice is flexible — any OpenAI-compatible model and provider will work.
 
-:::info Tool governance works independently
-If you skip the gateway step, tool governance still works — policies are enforced on every tool call. Only LLM guardrails (PII redaction, content filtering) require the gateway.
-:::
+> **Important:** If you skip this step, tool governance still works but LLM guardrails (PII redaction, content filtering) will not be applied to LLM requests.
 
-## Step 4: Restart the Gateway
+### 5. Restart the gateway
 
 ```bash
 openclaw gateway restart
 ```
 
-The gateway must be restarted after any plugin or configuration change.
+The gateway must be restarted after any plugin or configuration change for changes to take effect.
 
-## Step 5: Verify Your Setup
+## Verify your setup
 
-After restarting, check the OpenClaw logs for:
+See [Verifying Your Setup](/developer-guide/openclaw/verify-setup) for step-by-step instructions to confirm the plugin is loaded and governance is active.
 
-```
-[openbox] plugin loaded
-[openbox] LLM gateway started on http://127.0.0.1:18919/v1
-```
+## Next steps
 
-If you configured the LLM gateway, verify the health endpoint:
-
-```bash
-curl http://127.0.0.1:18919/health
-# Expected: {"status":"ok"}
-```
-
-Run a tool call and check for governance output:
-
-```
-[openbox] session registered verdict=allow
-[openbox] tool=Read verdict=allow reason="" ms=120
-```
-
-This confirms the plugin is intercepting tool calls, OpenBox Core is reachable, and your API key is valid.
-
-For a full verification checklist, see **[Verifying Your Setup](/developer-guide/openclaw/troubleshooting#verifying-your-setup)**.
-
-## Next Steps
-
-- **[OpenClaw Developer Guide](/developer-guide/openclaw)** — Full reference for the plugin
-- **[How It Works](/developer-guide/openclaw/how-it-works)** — Understand tool governance, LLM guardrails, and session lifecycle
-- **[Configuration](/developer-guide/openclaw/configuration)** — Full configuration reference and advanced options
-- **[Examples](/developer-guide/openclaw/examples)** — Policy, guardrail, and behavioral rule examples
-- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
+- [Configuration](/developer-guide/openclaw/configuration) — full configuration reference and advanced options
+- [How It Works](/developer-guide/openclaw/how-it-works) — understand tool governance, LLM guardrails, and session lifecycle
+- [OpenBox Dashboard](/developer-guide/openclaw/dashboard) — what you see in the dashboard after integration
+- [Examples](/developer-guide/openclaw/examples) — demo agents and usage patterns
+- [Troubleshooting](/developer-guide/openclaw/troubleshooting) — common issues and fixes
