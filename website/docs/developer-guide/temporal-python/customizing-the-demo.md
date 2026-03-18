@@ -17,7 +17,7 @@ The demo agent ships with built-in scenarios like travel booking and banking, bu
 OpenBox automatically governs all tool calls regardless of type. You don't need any extra configuration to get governance coverage for new goals or tools.
 
 :::tip Prerequisites
-This guide assumes you've completed [Run the Demo](/getting-started/run-the-demo) or the [Temporal Integration Guide](/developer-guide/temporal-integration-guide-python) and have the demo running locally. See the [Demo Architecture Reference](/developer-guide/demo-architecture) for a full breakdown of signals, activities, and endpoints.
+This guide assumes you've completed [Run the Demo](/getting-started/temporal/run-the-demo) or the [Temporal Integration Guide](/developer-guide/temporal-python/integration-walkthrough) and have the demo running locally. See the [Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture) for a full breakdown of signals, activities, and endpoints.
 :::
 
 ## How Goals and Tools Work
@@ -363,7 +363,7 @@ book_pto_tool = ToolDefinition(
 
 ## Next Steps
 
-- **[SDK Configuration](/developer-guide/configuration)** — Fine-tune timeouts, fail policies, and event filtering
-- **[Error Handling](/developer-guide/error-handling)** — Handle governance decisions in your code
+- **[SDK Configuration](/developer-guide/temporal-python/configuration)** — Fine-tune timeouts, fail policies, and event filtering
+- **[Error Handling](/developer-guide/temporal-python/error-handling)** — Handle governance decisions in your code
 - **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
-- **[Available Goals](/developer-guide/temporal-integration-guide-python#available-goals)** — See the full list of built-in scenarios
+- **[Available Goals](/developer-guide/temporal-python/integration-walkthrough#available-goals)** — See the full list of built-in scenarios

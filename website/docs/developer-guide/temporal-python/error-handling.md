@@ -189,5 +189,5 @@ The SDK raises configuration exceptions from `openbox.config` during `create_ope
 Now that you understand how to handle trust decisions in code:
 
 1. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types that trigger these decisions
-2. **[Troubleshooting](/getting-started/troubleshooting)** - Common issues and solutions
+2. **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** - Common issues and solutions
 3. **[Handle Approvals](/approvals)** - Review and process HITL requests in the dashboard

@@ -122,6 +122,6 @@ Each entry shows the action, timestamp, and the user who performed it.
 
 ## Next Steps
 
-- **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
-- **[Run the Demo](/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
+- **[Run the Demo](/getting-started/temporal/run-the-demo)** — Clone the demo repo and see governance in action
 - **[Agents](/dashboard/agents)** — View and manage all registered agents
