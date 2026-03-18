@@ -94,7 +94,7 @@
 .integration-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0;
+  gap: 12px;
 }
 
 .integration-grid a {
@@ -116,27 +116,16 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
-  transition: background 150ms ease;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  background: var(--ifm-card-background-color);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .integration-card:hover {
-  background: var(--ifm-color-emphasis-100);
-}
-
-/* Vertical divider between columns */
-.integration-grid a:nth-child(odd) .integration-card {
-  border-right: 1px solid var(--ifm-color-emphasis-200);
-}
-
-/* Remove bottom border on last row */
-.integration-grid a:nth-last-child(-n+2) .integration-card {
-  border-bottom: none;
-}
-
-/* When odd total, only the very last card loses its bottom border */
-.integration-grid a:last-child .integration-card {
-  border-bottom: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .integration-card__icon {
@@ -214,7 +203,7 @@
 }
 
 [data-theme='dark'] .integration-card:hover {
-  background: var(--ifm-color-emphasis-200);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 [data-theme='dark'] .integration-tag {
@@ -230,14 +219,6 @@
 @media (max-width: 600px) {
   .integration-grid {
     grid-template-columns: 1fr;
-  }
-
-  .integration-grid a:nth-child(odd) .integration-card {
-    border-right: none;
-  }
-
-  .integration-grid a:not(:last-child) .integration-card {
-    border-bottom: 1px solid var(--ifm-color-emphasis-200);
   }
 }
 
