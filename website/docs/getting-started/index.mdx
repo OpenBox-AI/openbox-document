@@ -14,83 +14,121 @@ OpenBox adds governance, compliance, and audit-grade evidence to your AI agents.
 
 ## Choose Your Integration
 
-<div className="row">
-<div className="col col--4">
+<div className="integration-grid">
 
-### [CrewAI](/getting-started/crewai) <small>coming soon</small>
-
-Governance for multi-agent crews.
-
-**Best for:** Python agents running on CrewAI
-
+<a href="/getting-started/crewai">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/crewai.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">CrewAI <small>coming soon</small></div>
+    <div className="integration-card__description">Governance for multi-agent crews and collaborative workflows. Every agent action is tracked automatically.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Multi-agent</span>
+    </div>
+  </div>
 </div>
-<div className="col col--4">
+</a>
 
-### [Deep Agent](/getting-started/deep-agent)
-
-Per-subagent governance for DeepAgents workflows.
-
-**Best for:** Python agents running on DeepAgents
-
+<a href="/getting-started/deep-agents">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/deepagent.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Deep Agents</div>
+    <div className="integration-card__description">Per-subagent governance for DeepAgents workflows. Every nested call is captured automatically.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Sub-agents</span>
+    </div>
+  </div>
 </div>
-<div className="col col--4">
+</a>
 
-### [LangChain](/getting-started/langchain)
-
-Governance for chains and retrieval pipelines.
-
-**Best for:** TypeScript agents on LangChain
-
+<a href="/getting-started/langchain">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/langchain.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">LangChain</div>
+    <div className="integration-card__description">Governance for chains, tools, and retrieval pipelines. Your existing code stays unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Chains / RAG</span>
+    </div>
+  </div>
 </div>
+</a>
+
+<a href="/getting-started/langgraph">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/langgraph.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">LangGraph</div>
+    <div className="integration-card__description">Governance for graph-based, stateful agent workflows. Every node and state transition is recorded.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Graph workflows</span>
+    </div>
+  </div>
 </div>
+</a>
 
-<div className="row" style={{marginTop: '1rem'}}>
-<div className="col col--4">
-
-### [LangGraph](/getting-started/langgraph)
-
-Governance for graph-based agent workflows.
-
-**Best for:** Python agents on LangGraph
-
+<a href="/getting-started/mastra">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/mastra.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Mastra <small>coming soon</small></div>
+    <div className="integration-card__description">Governance for TypeScript AI agents and tool calls. Your existing Mastra code stays unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Agents</span>
+    </div>
+  </div>
 </div>
-<div className="col col--4">
+</a>
 
-### [Mastra](/getting-started/mastra) <small>coming soon</small>
-
-Governance for TypeScript AI agents.
-
-**Best for:** TypeScript agents running on Mastra
-
+<a href="/getting-started/n8n">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/n8n.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">n8n</div>
+    <div className="integration-card__description">Wrap your n8n LLM calls with a single function. Your existing workflows stay unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">JavaScript</span>
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Workflows</span>
+    </div>
+  </div>
 </div>
-<div className="col col--4">
+</a>
 
-### [n8n](/getting-started/n8n)
-
-Wrap your n8n LLM calls with `govern()`. Your existing workflows stay unchanged.
-
-**Best for:** JavaScript/TypeScript workflows in n8n
-
+<a href="/getting-started/openclaw">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/openclaw.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">OpenClaw</div>
+    <div className="integration-card__description">Tool governance and LLM guardrails for OpenClaw agents. Every tool call is evaluated against your policies.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Tool governance</span>
+    </div>
+  </div>
 </div>
+</a>
+
+<a href="/getting-started/temporal">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/temporal.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Temporal</div>
+    <div className="integration-card__description">Wrap your Temporal worker with a single import swap. Your existing workflows and activities stay unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Orchestration</span>
+    </div>
+  </div>
 </div>
+</a>
 
-<div className="row" style={{marginTop: '1rem'}}>
-<div className="col col--4">
-
-### [OpenClaw](/getting-started/openclaw)
-
-Tool governance and LLM guardrails for OpenClaw agents.
-
-</div>
-<div className="col col--4">
-
-### [Temporal](/getting-started/temporal)
-
-Wrap your Temporal worker with a single import swap. Your workflows, activities, and agent logic stay exactly as they are.
-
-**Best for:** Python agents running on Temporal
-
-</div>
 </div>
 
 ## What OpenBox Captures

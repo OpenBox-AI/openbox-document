@@ -35,7 +35,7 @@ Everything you need to integrate OpenBox into your agent workflows.
 | Integration | Language | Status |
 |-------------|----------|--------|
 | **[CrewAI](/developer-guide/crewai)** | Python | Coming soon |
-| **[Deep Agent](/developer-guide/deep-agent)** | — | Coming soon |
+| **[Deep Agents](/developer-guide/deep-agents)** | — | Coming soon |
 | **[LangChain](/developer-guide/langchain)** | Python | Coming soon |
 | **[LangGraph](/developer-guide/langgraph)** | Python | Coming soon |
 | **[Mastra](/developer-guide/mastra)** | TypeScript | Coming soon |

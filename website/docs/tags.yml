@@ -134,10 +134,10 @@ crewai:
   permalink: /crewai
   description: CrewAI multi-agent framework integration
 
-deep-agent:
-  label: Deep Agent
-  permalink: /deep-agent
-  description: Deep Agent framework integration
+deep-agents:
+  label: Deep Agents
+  permalink: /deep-agents
+  description: Deep Agents framework integration
 
 langchain:
   label: LangChain
