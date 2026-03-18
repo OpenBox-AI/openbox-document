@@ -30,8 +30,8 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'getting-started/deep-agent/index',
-          label: 'Deep Agent',
+          id: 'getting-started/deep-agents/index',
+          label: 'Deep Agents',
         },
         {
           type: 'doc',
@@ -147,8 +147,8 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'developer-guide/deep-agent/index',
-          label: 'Deep Agent SDK (Python)',
+          id: 'developer-guide/deep-agents/index',
+          label: 'Deep Agents SDK (Python)',
         },
         {
           type: 'doc',

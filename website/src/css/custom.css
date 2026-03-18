@@ -90,6 +90,157 @@
   --search-local-muted-color: var(--ifm-color-emphasis-500);
 }
 
+/* Integration grid — Getting Started page */
+.integration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.integration-grid a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+}
+
+.integration-grid a .integration-card {
+  flex: 1;
+}
+
+.integration-grid a:hover {
+  text-decoration: none;
+}
+
+.integration-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  transition: background 150ms ease;
+}
+
+.integration-card:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Vertical divider between columns */
+.integration-grid a:nth-child(odd) .integration-card {
+  border-right: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Remove bottom border on last row */
+.integration-grid a:nth-last-child(-n+2) .integration-card {
+  border-bottom: none;
+}
+
+/* When odd total, only the very last card loses its bottom border */
+.integration-grid a:last-child .integration-card {
+  border-bottom: none;
+}
+
+.integration-card__icon {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.integration-card__icon--padded {
+  object-fit: contain;
+  padding: 5px;
+  background: #fff;
+}
+
+[data-theme='dark'] .integration-card__icon--padded {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.integration-card__icon-placeholder {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.integration-card__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.integration-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ifm-font-color-base);
+}
+
+.integration-card__title small {
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-left: 0.4rem;
+}
+
+.integration-card__description {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.integration-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.5rem;
+}
+
+.integration-tag {
+  display: inline-block;
+  font-size: 0.675rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.25em 0.55em;
+  border-radius: 5px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-700);
+}
+
+[data-theme='dark'] .integration-card:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .integration-tag {
+  border-color: var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-600);
+}
+
+[data-theme='dark'] .integration-card__description {
+  color: var(--ifm-color-emphasis-600);
+}
+
+@media (max-width: 600px) {
+  .integration-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .integration-grid a:nth-child(odd) .integration-card {
+    border-right: none;
+  }
+
+  .integration-grid a:not(:last-child) .integration-card {
+    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  }
+}
+
  .linear-cards {
    display: flex;
    flex-direction: column;

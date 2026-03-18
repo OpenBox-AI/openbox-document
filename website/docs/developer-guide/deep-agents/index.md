@@ -1,14 +1,14 @@
 ---
-title: Deep Agent SDK (Python)
+title: Deep Agents SDK (Python)
 description: "Developer reference for governing DeepAgents workflows with OpenBox: per-subagent policy targeting, HITL, tool classification, and configuration."
 llms_description: DeepAgents Python SDK reference and architecture
 tags:
   - sdk
-  - deep-agent
+  - deep-agents
   - python
 ---
 
-# Deep Agent SDK (Python)
+# Deep Agents SDK (Python)
 
 :::info Docs coming soon
 This SDK is open source — full developer documentation is on the way.
