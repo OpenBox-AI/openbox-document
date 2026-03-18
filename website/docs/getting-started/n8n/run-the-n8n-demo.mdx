@@ -59,7 +59,9 @@ OPENBOX_API_KEY=obx_live_your_key_here
 </TabItem>
 <TabItem value="windows" label="Windows">
 
-Windows support coming soon.
+```bat
+start.bat
+```
 
 </TabItem>
 </Tabs>
@@ -108,7 +110,7 @@ docker compose down -v --rmi local
 - `-v` removes volumes (database data, etc.)
 - `--rmi local` removes images that were built locally, not pulled from a registry
 
-Then run `./start.sh` again.
+Then run `./start.sh` (macOS/Linux) or `start.bat` (Windows) again.
 
 ## Next Steps
 
