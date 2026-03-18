@@ -13,9 +13,6 @@ tags:
 
 Spin up a fully configured demo on your machine — n8n with OpenBox governance pre-wired, a sample workflow, and a local LLM via Ollama.
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 ## Prerequisites
 
 - **Docker Desktop** running
@@ -43,29 +40,17 @@ OPENBOX_API_KEY=obx_live_your_key_here
 
 ## Start
 
-<Tabs>
-<TabItem value="mac" label="macOS" default>
+**macOS / Linux:**
 
 ```bash
 ./start.sh
 ```
 
-</TabItem>
-<TabItem value="linux" label="Linux">
+**Windows:**
 
-```bash
-./start.sh
-```
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-```bat
+```cmd
 start.bat
 ```
-
-</TabItem>
-</Tabs>
 
 This starts n8n and Postgres via Docker, installs the OpenBox node, creates a demo account, and activates the showcase workflow. Takes about a minute on first run.
 
