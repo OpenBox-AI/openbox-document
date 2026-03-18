@@ -23,30 +23,51 @@ Reference for the OpenBox n8n integration — the governance pipeline, configura
 - Completed the [n8n demo](/getting-started/n8n/run-the-n8n-demo) or [wrapped an existing workflow](/getting-started/n8n/wrap-an-existing-n8n-workflow)
 - An **OpenBox API key**. [Register an agent](/dashboard/agents/registering-agents) in the OpenBox Dashboard to obtain one.
 
-## OpenAI Example
+## Customising the Node
 
-Same pattern as the Ollama example in the getting-started guide, with a different LLM call inside the callback:
+### Change the LLM provider
 
-```javascript
-async (governed) => {
-  const prompt = governed.message ?? userMessage;
-  const response = await this.helpers.httpRequest({
-    method: 'POST',
-    url: 'https://api.openai.com/v1/chat/completions',
-    headers: { Authorization: 'Bearer ' + openaiKey },
-    body: {
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-    },
-  });
-  return { text: response.choices[0].message.content };
-}
+Replace the Ollama call inside the activity callback. The SDK doesn't care what the activity does — it governs the data going in and coming out.
+
+```typescript
+import { govern } from 'openbox';
+
+const { output, meta } = await govern(
+  transport,
+  { apiKey, activityType: 'OpenAIChat' },
+  'N8nChatWorkflow',
+  { chatInput: userMessage },
+  async (governed) => {
+    const response = await helpers.httpRequest({
+      method: 'POST',
+      url: 'https://api.openai.com/v1/chat/completions',
+      headers: { Authorization: `Bearer ${openaiKey}` },
+      body: {
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: (governed as any).chatInput },
+        ],
+      },
+    });
+    return { text: (response as any).choices[0].message.content };
+  },
+);
 ```
 
-The `govern()` wrapper stays the same — just swap the LLM call in the callback.
+### Fail-closed governance
+
+```typescript
+govern(transport, { apiKey, activityType, governancePolicy: 'fail_closed' }, ...);
+```
+
+### Human-in-the-loop
+
+```typescript
+govern(transport, { apiKey, activityType, hitlEnabled: true }, ...);
+```
+
+When governance returns `require_approval`, the SDK polls the dashboard until a human approves or rejects.
 
 ## How It Works
 
@@ -88,14 +109,12 @@ Options passed to `govern()`:
 |--------|---------|-------------|
 | `apiKey` | **Required** | Your OpenBox API key (`obx_live_*` or `obx_test_*`) |
 | `apiEndpoint` | `https://core.openbox.ai` | OpenBox Core base URL |
-| `activityType` | `DefaultActivity` | Must match the dashboard config |
+| `activityType` | `LlmActivity` | Must match the dashboard config |
 | `governancePolicy` | `fail_open` | Set to `fail_closed` to block when Core is unreachable |
-| `apiTimeout` | `30` | Request timeout in seconds |
 | `hitlEnabled` | `false` | Enable human-in-the-loop approval |
 | `hitlPollInterval` | `5` | Polling interval in seconds while waiting for approval |
 | `hitlMaxWait` | `300` | Maximum wait time for approval in seconds |
-| `skipWorkflowTypes` | none | Workflow names exempt from governance |
-| `skipActivityTypes` | none | Activity types exempt from governance |
+| `apiTimeout` | `30` | Request timeout in seconds |
 
 ## Error Handling
 
@@ -137,4 +156,3 @@ try {
 2. **[Set up policies](/trust-lifecycle/authorize/policies)** — authorization rules, risk thresholds, data classification
 3. **[Enable approvals](/approvals)** — human-in-the-loop workflows for sensitive operations
 4. **[View sessions](/trust-lifecycle/session-replay)** — monitor governed interactions in the dashboard event timeline
-5. **[SDK Reference](/developer-guide/temporal-python/sdk-reference)** — full API surface and supported engines
