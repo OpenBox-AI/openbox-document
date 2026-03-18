@@ -61,7 +61,7 @@ Every documentation page is available as plain text markdown by appending `.md` 
 | HTML page | Plain text |
 |-----------|------------|
 | `/core-concepts/trust-scores` | `/core-concepts/trust-scores.md` |
-| `/developer-guide/sdk-reference` | `/developer-guide/sdk-reference.md` |
+| `/developer-guide/temporal-python/sdk-reference` | `/developer-guide/temporal-python/sdk-reference.md` |
 
 These are the files linked from `llms.txt`. This format is preferable to scraping or copying from the rendered HTML pages because:
 

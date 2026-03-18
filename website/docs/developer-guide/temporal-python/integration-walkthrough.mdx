@@ -19,12 +19,12 @@ This is the end-to-end guide for integrating OpenBox with a Temporal AI agent. Y
 :::tip Skip ahead
 
 - **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
-- **Already have an agent?** See the **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** page.
+- **Already have an agent?** See the **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** page.
   :::
 
 ## Prerequisites
 
-- **[Tools & dependencies](/getting-started/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
+- **[Tools & dependencies](/getting-started/temporal/run-the-demo#prerequisites)** — Python 3.11+, Node.js, uv, make, and the Temporal CLI
 - **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
 - **LLM API Key** — The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. Set `LLM_MODEL` using the format `provider/model-name`:
   - `openai/gpt-4o`
@@ -217,7 +217,7 @@ The agent's Temporal code is organized in:
 - **`tools/`** — Tools are the capabilities available to the agent (e.g., search flights, check balances, process payments). Each tool is implemented as a Temporal activity, so OpenBox automatically captures and governs tool usage.
 - **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
 
-See **[Extending the Demo Agent](/developer-guide/customizing-your-agent)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/developer-guide/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
+See **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
 
 ## Explore Different Scenarios
 
@@ -252,7 +252,7 @@ After changing the goal, restart the worker (`make run-worker`) to pick up the n
   - `goal_mcp_stripe` — Manage Stripe customer and product data
 
 :::tip Add Your Own
-These are the built-in scenarios. You can create your own goals with custom tools — see **[Extending the Demo Agent](/developer-guide/customizing-your-agent)**.
+These are the built-in scenarios. You can create your own goals with custom tools — see **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)**.
 :::
 
 ## Human-in-the-Loop Approvals
@@ -328,7 +328,7 @@ worker = create_openbox_worker(
 )
 ```
 
-See **[SDK Configuration](/developer-guide/configuration)** for the full list of options.
+See **[SDK Configuration](/developer-guide/temporal-python/configuration)** for the full list of options.
 
 ## Error Handling
 
@@ -338,10 +338,10 @@ To investigate failures, open a session in the dashboard using the same steps fr
 
 ## Next Steps
 
-1. **[Extending the Demo Agent](/developer-guide/customizing-your-agent)** - Add your own goals, native tools, and MCP integrations
-2. **[SDK Configuration](/developer-guide/configuration)** - Fine-tune timeouts, fail policies, and filtering
-3. **[Error Handling](/developer-guide/error-handling)** - Handle governance decisions in your code
+1. **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** - Add your own goals, native tools, and MCP integrations
+2. **[SDK Configuration](/developer-guide/temporal-python/configuration)** - Fine-tune timeouts, fail policies, and filtering
+3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 4. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
-5. **[Demo Architecture Reference](/developer-guide/demo-architecture)** - Signals, activities, endpoints, and message flow
+5. **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** - Signals, activities, endpoints, and message flow
 
-Having issues? See the **[Troubleshooting](/getting-started/troubleshooting)** guide for common problems and solutions.
+Having issues? See the **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** guide for common problems and solutions.

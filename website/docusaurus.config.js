@@ -182,8 +182,8 @@ const config = {
             title: 'Developers',
             items: [
               {label: 'Getting Started', to: '/getting-started/'},
-              {label: 'SDK Reference', to: '/developer-guide/sdk-reference'},
-              {label: 'Configuration', to: '/developer-guide/configuration'},
+              {label: 'SDK Reference', to: '/developer-guide/temporal-python/sdk-reference'},
+              {label: 'Configuration', to: '/developer-guide/temporal-python/configuration'},
             ],
           },
           {

@@ -78,5 +78,5 @@ flowchart LR
 
 ## Next Steps
 
-- **[Run the Demo](/getting-started/run-the-demo)** — See these concepts in action with a working agent
-- **[Wrap an Existing Agent](/getting-started/wrap-an-existing-agent)** — Add the trust layer to your own Temporal agent
+- **[Run the Demo](/getting-started/temporal/run-the-demo)** — See these concepts in action with a working agent
+- **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** — Add the trust layer to your own Temporal agent
