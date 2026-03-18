@@ -144,7 +144,7 @@
 }
 
 [data-theme='dark'] .integration-card__icon--padded {
-  background: var(--ifm-color-emphasis-100);
+  background: #fff;
 }
 
 .integration-card__icon-placeholder {
