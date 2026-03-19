@@ -24,12 +24,6 @@ Everything you need to integrate OpenBox into your agent workflows.
 | **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
 | **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal SDK setup |
 
-## n8n (JavaScript)
-
-| Guide | Description |
-|-------|-------------|
-| **[n8n Integration Guide](/developer-guide/n8n/n8n-integration-guide)** | Step-by-step guide for governing n8n LLM calls with `govern()` |
-
 ## Coming Soon
 
 | Integration | Language | Status |
@@ -39,6 +33,7 @@ Everything you need to integrate OpenBox into your agent workflows.
 | **[LangChain](/developer-guide/langchain)** | Python | Coming soon |
 | **[LangGraph](/developer-guide/langgraph)** | Python | Coming soon |
 | **[Mastra](/developer-guide/mastra)** | TypeScript | Coming soon |
+| **[n8n](/developer-guide/n8n)** | JavaScript | Coming soon |
 | **[OpenClaw](/developer-guide/openclaw)** | — | Coming soon |
 
 ## Shared Reference
