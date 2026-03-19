@@ -39,7 +39,7 @@ if (process.env.SEGMENT_WRITE_KEY && process.env.SEGMENT_ANALYTICS_KEY) {
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenBox Docs',
-  tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
+  tagline: 'Enterprise-grade AI Trust, available to everyone. Runtime enforcement of identity, authorization, policy, and risk – across every agent action and cross-system interaction.',
   favicon: 'img/favicon.ico',
   markdown: {
     mermaid: true,

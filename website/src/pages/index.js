@@ -248,7 +248,7 @@ function HomepageHeader() {
         <div>
           <span className={styles.heroLabel}>AI Trust Platform</span>
           <Heading as="h1" className={styles.heroTitle}>
-            Verify Every Action
+            Trustworthy AI starts here
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
