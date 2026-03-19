@@ -1,6 +1,7 @@
 ---
 title: Assess
-description: Phase 1 - Establish baseline trust through risk assessment
+description: "Assess AI agent risk before execution: Evaluate behavior, check policy compliance, calculate trust scores in real-time at runtime."
+llms_description: Evaluating agent behavior and risk posture
 sidebar_position: 1
 tags:
   - risk-assessment
@@ -127,4 +128,4 @@ Click **Re-assess Risk** to update Risk Profile parameters.
 
 Once you've assessed your agent's risk profile:
 
-→ **[Authorize](/docs/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do
+→ **[Authorize](/trust-lifecycle/authorize)** - Configure guardrails, policies, and behavioral rules to control what your agent can do

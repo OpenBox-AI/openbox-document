@@ -1,6 +1,7 @@
 ---
 title: "Attestation & Cryptographic Proof"
-description: "Tamper-proof evidence chain using SHA-256 Merkle trees and digital signing via AWS KMS or external attestation providers"
+description: "Prove what your AI agents did: Generate cryptographic attestations for every decision with tamper-proof, auditor-ready evidence."
+llms_description: Tamper-evident cryptographic audit trails
 sidebar_position: 1
 tags:
   - cryptography
@@ -119,6 +120,6 @@ Each session produces one proof certificate containing:
 
 ## Related
 
-- **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization-wide audit log
-- **[Compliance & Audit](/docs/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
+- **[Audit Log](/administration/organization-audit-log)** - View and export the organization-wide audit log
+- **[Compliance & Audit](/administration/compliance-and-audit)** - Overview of audit trail and evidence collection
 

@@ -1,6 +1,7 @@
 ---
 title: "Compliance & Audit"
-description: "Audit trail, evidence collection, and export capabilities for regulatory readiness"
+description: "Pass AI audits with confidence: Auto-generate compliance reports for EU AI Act, NIST AI RMF, and ISO 42001 with cryptographic proof."
+llms_description: Compliance tooling and audit support
 sidebar_position: 9
 tags:
   - compliance
@@ -131,6 +132,6 @@ Guidance for maintaining compliance readiness:
 
 ## Next Steps
 
-1. **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
-2. **[Audit Log](/docs/administration/organization-audit-log)** - View and export the organization audit log
+1. **[Attestation & Cryptographic Proof](/administration/attestation-and-cryptographic-proof)** - Learn how session events are cryptographically signed
+2. **[Audit Log](/administration/organization-audit-log)** - View and export the organization audit log
 

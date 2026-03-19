@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
+import Head from '@docusaurus/Head';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import React, {useMemo, useState, useRef, useCallback} from 'react';
@@ -12,25 +13,25 @@ const ExploreSections = [
   {
     title: 'Try it out',
     links: [
-      {label: 'Introduction', to: '/docs/'},
-      {label: 'Run the Demo', to: '/docs/getting-started/run-the-demo'},
-      {label: 'Workflow engines', to: '/docs/developer-guide/temporal-integration-guide-python'},
+      {label: 'Introduction', to: '/overview'},
+      {label: 'Run the Demo', to: '/getting-started/temporal/run-the-demo'},
+      {label: 'Workflow engines', to: '/developer-guide/temporal-python/integration-walkthrough'},
     ],
   },
   {
     title: 'Agents',
     links: [
-      {label: 'Overview', to: '/docs/dashboard/agents'},
-      {label: 'Registering agents', to: '/docs/dashboard/agents/registering-agents'},
-      {label: 'Trust lifecycle', to: '/docs/trust-lifecycle'},
+      {label: 'Overview', to: '/dashboard/agents'},
+      {label: 'Registering agents', to: '/dashboard/agents/registering-agents'},
+      {label: 'Trust lifecycle', to: '/trust-lifecycle'},
     ],
   },
   {
     title: 'Operations',
     links: [
-      {label: 'Dashboard', to: '/docs/dashboard'},
-      {label: 'Approvals', to: '/docs/approvals'},
-      {label: 'Compliance', to: '/docs/administration/compliance-and-audit'},
+      {label: 'Dashboard', to: '/dashboard'},
+      {label: 'Approvals', to: '/approvals'},
+      {label: 'Compliance', to: '/administration/compliance-and-audit'},
     ],
   },
 ];
@@ -58,6 +59,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_1.mp4',
+        posterSrc: '/img/step_1_poster.webp',
         mediaLabel: (
           <>
             GIF: Dashboard walkthrough
@@ -82,6 +84,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_2.mp4',
+        posterSrc: '/img/step_2_poster.webp',
         mediaLabel: <>GIF: installation command</>,
       },
       {
@@ -111,6 +114,7 @@ function GettingStartedCarousel() {
           </div>
         ),
         videoSrc: '/img/step_3.mp4',
+        posterSrc: '/img/step_3_poster.webp',
         mediaLabel: <>GIF: Code change walkthrough</>,
       },
       {
@@ -135,6 +139,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
           </div>
         ),
         videoSrc: '/img/step_4.mp4',
+        posterSrc: '/img/step_4_poster.webp',
         mediaLabel: <>GIF: env setup</>,
       },
     ],
@@ -216,6 +221,7 @@ OPENBOX_API_KEY=obx_live_your_key_here`}
             <video
               className={styles.tryMediaImage}
               src={slide.videoSrc}
+              poster={slide.posterSrc}
               autoPlay
               loop
               muted
@@ -246,7 +252,7 @@ function HomepageHeader() {
           </Heading>
           <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
           <div className={styles.heroCtas}>
-            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/docs/getting-started">
+            <Link className={clsx('button button--primary', styles.ctaPrimary)} to="/getting-started">
               Get started
             </Link>
           </div>
@@ -279,8 +285,24 @@ export default function Home() {
   return (
     <Layout
       title={siteConfig.title}
-      description="OpenBox Documentation — Enterprise AI governance platform. Attest every agent action so behavior is provable, auditable, and defensible by default."
+      description="Start governing AI agents in 5 minutes: Runtime policies, compliance automation, and cryptographic trust for any framework."
       wrapperClassName="homepage-no-footer">
+      <Head>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'OpenBox Docs',
+            url: 'https://docs.openbox.ai',
+            description: 'Enterprise AI governance platform documentation.',
+            publisher: {
+              '@type': 'Organization',
+              name: 'OpenBox AI',
+              url: 'https://www.openbox.ai',
+            },
+          })}
+        </script>
+      </Head>
       <HomepageHeader />
       <main>
         <section className={styles.exploreSection}>
@@ -307,7 +329,7 @@ export default function Home() {
             <div className={styles.tryHeader}>
               <div className={styles.tryTitleRow}>
                 <div className={styles.tryTitle}>Try it out</div>
-                <Link className={styles.tryLink} to="/docs/getting-started/wrap-an-existing-agent">
+                <Link className={styles.tryLink} to="/getting-started/temporal/wrap-an-existing-agent">
                   Wrap an Existing Agent →
                 </Link>
               </div>

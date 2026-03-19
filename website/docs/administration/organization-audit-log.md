@@ -1,6 +1,7 @@
 ---
 title: Audit Log
-description: Organization activity audit trail
+description: "Track every change in your organization: Complete audit trail of policy updates, user actions, and permission changes with export."
+llms_description: Full org-level audit log reference
 sidebar_position: 1
 tags:
   - audit
@@ -121,5 +122,5 @@ Exports are processed in the background and made available for download once com
 
 ## Related
 
-- **[Compliance & Audit](/docs/administration/compliance-and-audit)** — Overview of audit trails and evidence collection
-- **[Attestation & Cryptographic Proof](/docs/administration/attestation-and-cryptographic-proof)** — How session events are cryptographically signed
+- **[Compliance & Audit](/administration/compliance-and-audit)** — Overview of audit trails and evidence collection
+- **[Attestation & Cryptographic Proof](/administration/attestation-and-cryptographic-proof)** — How session events are cryptographically signed

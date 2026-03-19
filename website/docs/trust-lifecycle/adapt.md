@@ -1,6 +1,7 @@
 ---
 title: Adapt
-description: Phase 5 - Evolve trust and improve policies over time
+description: "Build adaptive trust for AI agents: Automatically adjust policies and permissions based on behavior patterns and changing risk levels."
+llms_description: Updating policies based on observed behavior
 sidebar_position: 5
 tags:
   - trust-scoring
@@ -56,7 +57,7 @@ Collapsible history of recent decisions for this agent:
 | **Decided By** | User who made the decision |
 | **Time** | When the decision was made |
 
-For the organization-wide approval queue, see **[Approvals](/docs/approvals)**.
+For the organization-wide approval queue, see **[Approvals](/approvals)**.
 
 ### Insights
 
@@ -124,6 +125,6 @@ Other Insights cards:
 
 The Trust Lifecycle is continuous. From here you can:
 
-1. **[Update Governance (Authorize)](/docs/trust-lifecycle/authorize)** - Accept policy suggestions or create new rules
-2. **[Re-assess Risk (Assess)](/docs/trust-lifecycle/assess)** - If your agent's capabilities have changed
-3. **[Handle Approvals](/docs/approvals)** - Review organization-wide approval queue
+1. **[Update Governance (Authorize)](/trust-lifecycle/authorize)** - Accept policy suggestions or create new rules
+2. **[Re-assess Risk (Assess)](/trust-lifecycle/assess)** - If your agent's capabilities have changed
+3. **[Handle Approvals](/approvals)** - Review organization-wide approval queue

@@ -1,0 +1,206 @@
+---
+title: Wrap an Existing n8n Workflow
+sidebar_label: Wrap an Existing n8n Workflow
+description: "Add OpenBox governance to an existing n8n workflow: install the SDK, wrap your LLM call with govern(), and see results in the dashboard."
+llms_description: How to add OpenBox to an existing n8n workflow
+sidebar_position: 6
+tags:
+  - getting-started
+  - n8n
+  - javascript
+---
+
+# Wrap an Existing n8n Workflow
+
+Add OpenBox governance to your existing n8n workflow. This guide assumes you have a self-hosted n8n instance with a workflow that makes an LLM call, and walks through wrapping it with `govern()` for pre-call and post-call policy checks.
+
+## Prerequisites
+
+- A **self-hosted n8n instance** with an existing workflow that makes an LLM call
+- **Node.js 18+** on the machine where you'll build the custom node (doesn't have to be the n8n host)
+- An **OpenBox API key**. [Register an agent](/dashboard/agents/registering-agents) in the OpenBox Dashboard to obtain one.
+
+## Step 1: Install the OpenBox Node
+
+### Build the custom node
+
+On any machine with Node.js 18+, clone the repo and build:
+
+```bash
+git clone https://github.com/OpenBox-AI/n8n-openbox-poc.git
+cd n8n-openbox-poc/custom-nodes/n8n-nodes-openbox-hook
+npm install && npm run build
+```
+
+This produces the compiled node in `dist/`.
+
+### Add to your n8n instance
+
+Copy the built node into n8n's custom extensions directory, then set the environment variable to allow the OpenBox SDK in Code nodes.
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="docker" label="Docker" default>
+
+Mount the custom node into your n8n container. Add these to your `docker-compose.yml`:
+
+```yaml
+environment:
+  - NODE_FUNCTION_ALLOW_EXTERNAL=openbox
+volumes:
+  - ./custom-nodes/n8n-nodes-openbox-hook:/home/node/.n8n/custom/n8n-nodes-openbox-hook
+```
+
+Restart the container.
+
+</TabItem>
+<TabItem value="npm" label="Local (npm)">
+
+Copy the built files into n8n's custom extensions directory:
+
+```bash
+# Find your n8n custom extensions path (default: ~/.n8n/custom/)
+mkdir -p ~/.n8n/custom/n8n-nodes-openbox-hook
+cp -r dist/ package.json node_modules/openbox/ ~/.n8n/custom/n8n-nodes-openbox-hook/
+```
+
+Set the environment variable and restart n8n:
+
+```bash
+export NODE_FUNCTION_ALLOW_EXTERNAL=openbox
+n8n start
+```
+
+</TabItem>
+<TabItem value="server" label="Bare Server">
+
+Copy the built artifacts to your n8n server's custom extensions directory:
+
+```bash
+scp -r dist/ package.json node_modules/openbox/ user@n8n-host:~/.n8n/custom/n8n-nodes-openbox-hook/
+```
+
+On the server, set the environment variable and restart n8n:
+
+```bash
+export NODE_FUNCTION_ALLOW_EXTERNAL=openbox
+systemctl restart n8n  # or however you manage the process
+```
+
+</TabItem>
+</Tabs>
+
+## Step 2: Wrap Your LLM Call
+
+Here is a typical LLM call in a Code node before governance:
+
+```javascript title="Code node — before governance"
+// BEFORE — no governance
+const input = items[0].json;
+const userMessage = input.chatInput ?? input.message ?? '';
+
+const llmResponse = await this.helpers.httpRequest({
+  method: 'POST',
+  url: 'http://host.docker.internal:11434/api/generate',
+  body: {
+    model: 'llama3.2',
+    system: 'You are a helpful assistant.',
+    prompt: userMessage,
+    stream: false,
+  },
+});
+
+return [{ json: { ...input, output: llmResponse.response } }];
+```
+
+To add governance, wrap the LLM call with `govern()`. The LLM call moves inside the callback — `govern()` checks the input first, runs your call, then checks the output:
+
+```javascript title="Code node — with OpenBox governance"
+// AFTER — with OpenBox governance
+const { govern } = require('openbox');
+
+const input = items[0].json;
+const userMessage = (input.chatInput ?? '') as string;
+
+const transport = async (opts) => {
+  return await this.helpers.httpRequest({
+    method: opts.method, url: opts.url,
+    headers: opts.headers, body: opts.body,
+  });
+};
+
+const { output, meta } = await govern(
+  transport,
+  {
+    apiKey: 'obx_live_your_key_here',
+    apiEndpoint: 'https://core.openbox.ai',
+    activityType: 'LlmActivity',
+    governancePolicy: 'fail_open',
+    hitlEnabled: false,
+  },
+  'N8nChatWorkflow',
+  { chatInput: userMessage },
+  async (governed) => {
+    // Your existing LLM call — unchanged.
+    // 'governed.chatInput' is the input after pre-call governance (e.g. PII redacted).
+    const prompt = (governed as any).chatInput ?? userMessage;
+    const llmResponse = await this.helpers.httpRequest({
+      method: 'POST',
+      url: 'http://host.docker.internal:11434/api/generate',
+      body: {
+        model: 'llama3.2',
+        system: 'You are a helpful assistant.',
+        prompt,
+        stream: false,
+      },
+    });
+    return { text: llmResponse.response };
+  },
+);
+
+return [{ json: { ...input, output: output.text, text: output.text, _openbox: meta } }];
+```
+
+That's it. Your LLM call is now governed.
+
+## Step 3: Configure
+
+Replace the config values in the `govern()` call:
+
+- **`apiKey`** — Your OpenBox API key.
+- **`apiEndpoint`** — Your OpenBox Core URL. Default: `https://core.openbox.ai`
+- **`activityType`** — Must match the activity type configured in your OpenBox Dashboard.
+- **`governancePolicy`** — `'fail_open'` allows the call if OpenBox is unreachable. `'fail_closed'` blocks it.
+- **`hitlEnabled`** — `true` to enable human-in-the-loop approval.
+
+## Step 4: Run and Verify
+
+Run the workflow. What happens:
+
+1. User input → OpenBox pre-call governance (guardrails, policies).
+2. If approved → LLM call with the (potentially constrained) input.
+3. LLM response → OpenBox post-call governance.
+4. If approved → response returned to user.
+
+The n8n Chat Trigger outputs the user's message as `chatInput`. The node reads `chatInput` and sends it to OpenBox governance under the same key, so the guardrail field path in the dashboard is `input.*.chatInput`.
+
+Check the [OpenBox Dashboard](https://platform.openbox.ai) to see the full event timeline.
+
+## What Just Happened?
+
+Under the hood, `govern()`:
+
+- **Checked the input before the LLM call** — your user's message was evaluated against configured guardrails (PII detection, toxicity filtering, banned terms) and policies
+- **Ran your LLM call with governed input** — if the input was constrained (e.g. PII redacted), the cleaned version was passed to the callback via `governed.chatInput`
+- **Checked the output after the LLM call** — the LLM response was evaluated against post-call guardrails and policies
+- **Recorded a governance decision for every stage** — visible in the dashboard Event Log Timeline
+
+## Next Steps
+
+- **[n8n Integration Guide](/developer-guide/n8n/n8n-integration-guide)** — Configuration reference, error handling, and the full governance pipeline
+- **[Configure Guardrails](/trust-lifecycle/authorize/guardrails)** — PII detection, toxicity filtering, banned terms, content classification
+- **[Set Up Policies](/trust-lifecycle/authorize/policies)** — Authorization rules, risk thresholds, data classification
+- **[Enable Approvals](/approvals)** — Human-in-the-loop workflows for sensitive operations
+- **[View Sessions](/trust-lifecycle/session-replay)** — Monitor governed interactions in the dashboard event timeline

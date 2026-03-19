@@ -1,6 +1,7 @@
 ---
 title: Approvals
-description: Human-in-the-Loop approval queue
+description: "Require human approval for risky AI actions: Build 3-step workflows with automated escalation, Slack notifications, and audit trails."
+llms_description: Human-in-the-loop approval workflows
 sidebar_position: 5
 tags:
   - hitl
@@ -14,7 +15,7 @@ The Approvals page is the organization-wide Human-in-the-Loop (HITL) queue. Revi
 
 Access from the sidebar by clicking **Approvals**. The badge shows the number of pending requests.
 
-![Approvals](/img/Approvals.png)
+![Approvals](/img/Approvals.webp)
 
 ## Real-Time Updates
 
@@ -132,5 +133,5 @@ Filter the queue by:
 
 ## Next Steps
 
-1. **[Organization Settings](/docs/administration/organization)** - Manage teams, roles, and organization configuration
-2. **[Monitor Sessions](/docs/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/docs/trust-lifecycle/session-replay) before approving or rejecting
+1. **[Organization Settings](/administration/organization)** - Manage teams, roles, and organization configuration
+2. **[Monitor Sessions](/trust-lifecycle/monitor)** - Review the full session context with [Session Replay](/trust-lifecycle/session-replay) before approving or rejecting
