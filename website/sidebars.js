@@ -49,16 +49,9 @@ const sidebars = {
           label: 'Mastra',
         },
         {
-          type: 'category',
+          type: 'doc',
+          id: 'getting-started/n8n/index',
           label: 'n8n',
-          link: {
-            type: 'doc',
-            id: 'getting-started/n8n/index',
-          },
-          items: [
-            'getting-started/n8n/run-the-n8n-demo',
-            'getting-started/n8n/wrap-an-existing-n8n-workflow',
-          ],
         },
         {
           type: 'doc',
@@ -166,15 +159,9 @@ const sidebars = {
           label: 'Mastra',
         },
         {
-          type: 'category',
+          type: 'doc',
+          id: 'developer-guide/n8n/index',
           label: 'n8n',
-          link: {
-            type: 'doc',
-            id: 'developer-guide/n8n/index',
-          },
-          items: [
-            'developer-guide/n8n/n8n-integration-guide',
-          ],
         },
         {
           type: 'category',

@@ -1,7 +1,7 @@
 ---
 title: Getting Started with n8n
 description: "Add OpenBox governance to n8n workflows: wrap LLM calls with govern() for policy checks, trust scoring, and compliance evidence."
-llms_description: n8n-specific onboarding and quick start
+llms_description: n8n integration onboarding (coming soon)
 sidebar_position: 2
 tags:
   - getting-started
@@ -11,23 +11,22 @@ tags:
 
 # Getting Started with n8n
 
-OpenBox integrates with [n8n](https://n8n.io/) by wrapping LLM calls with the `govern()` function — your existing workflows stay unchanged.
+:::info Docs coming soon
+The OpenBox SDK for [n8n](https://n8n.io/) is in development.
+This page will be updated with a full getting-started guide when the integration is available.
+:::
 
-## Choose Your Path
+OpenBox will integrate with n8n by wrapping workflow execution — your existing workflows stay exactly as they are while every action is governed, scored, and auditable.
 
-<div className="row">
-<div className="col col--6">
+## What to expect
 
-### [Run the n8n Demo](/getting-started/n8n/run-the-n8n-demo)
+- Wrap your n8n workflows with the `govern()` function
+- Trust scoring and policy enforcement for every LLM call
+- Full session replay across workflow executions
+- HTTP call recording for all LLM and tool invocations
 
-Try a fully configured local setup with Docker, Ollama, and a sample workflow. See governance in action without writing any code.
+## In the meantime
 
-</div>
-<div className="col col--6">
-
-### [Wrap an Existing Workflow](/getting-started/n8n/wrap-an-existing-n8n-workflow)
-
-Add governance to your own n8n workflow with `govern()`. Install the SDK, wrap your LLM call, and see results in the dashboard.
-
-</div>
-</div>
+- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
+- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
+- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
