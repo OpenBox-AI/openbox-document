@@ -122,7 +122,7 @@ To add governance, wrap the LLM call with `govern()`. The LLM call moves inside 
 const { govern } = require('openbox');
 
 const input = items[0].json;
-const userMessage = input.chatInput ?? input.message ?? '';
+const userMessage = (input.chatInput ?? '') as string;
 
 const transport = async (opts) => {
   return await this.helpers.httpRequest({
@@ -141,11 +141,11 @@ const { output, meta } = await govern(
     hitlEnabled: false,
   },
   'N8nChatWorkflow',
-  { message: userMessage },
+  { chatInput: userMessage },
   async (governed) => {
     // Your existing LLM call — unchanged.
-    // 'governed.message' is the input after pre-call governance (e.g. PII redacted).
-    const prompt = governed.message ?? userMessage;
+    // 'governed.chatInput' is the input after pre-call governance (e.g. PII redacted).
+    const prompt = (governed as any).chatInput ?? userMessage;
     const llmResponse = await this.helpers.httpRequest({
       method: 'POST',
       url: 'http://host.docker.internal:11434/api/generate',
@@ -184,6 +184,8 @@ Run the workflow. What happens:
 3. LLM response → OpenBox post-call governance.
 4. If approved → response returned to user.
 
+The n8n Chat Trigger outputs the user's message as `chatInput`. The node reads `chatInput` and sends it to OpenBox governance under the same key, so the guardrail field path in the dashboard is `input.*.chatInput`.
+
 Check the [OpenBox Dashboard](https://platform.openbox.ai) to see the full event timeline.
 
 ## What Just Happened?
@@ -191,7 +193,7 @@ Check the [OpenBox Dashboard](https://platform.openbox.ai) to see the full event
 Under the hood, `govern()`:
 
 - **Checked the input before the LLM call** — your user's message was evaluated against configured guardrails (PII detection, toxicity filtering, banned terms) and policies
-- **Ran your LLM call with governed input** — if the input was constrained (e.g. PII redacted), the cleaned version was passed to the callback via `governed.message`
+- **Ran your LLM call with governed input** — if the input was constrained (e.g. PII redacted), the cleaned version was passed to the callback via `governed.chatInput`
 - **Checked the output after the LLM call** — the LLM response was evaluated against post-call guardrails and policies
 - **Recorded a governance decision for every stage** — visible in the dashboard Event Log Timeline
 
