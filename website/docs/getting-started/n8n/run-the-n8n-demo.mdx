@@ -1,0 +1,105 @@
+---
+title: Run the n8n Demo
+sidebar_label: Run the n8n Demo
+description: "Run a local n8n demo with OpenBox governance pre-wired: Docker, Ollama, and a sample workflow in under 5 minutes."
+llms_description: Hands-on n8n demo walkthrough
+sidebar_position: 5
+tags:
+  - getting-started
+  - n8n
+---
+
+# Run the n8n Demo
+
+Spin up a fully configured demo on your machine — n8n with OpenBox governance pre-wired, a sample workflow, and a local LLM via Ollama.
+
+## Prerequisites
+
+- **Docker Desktop** running
+- **[Ollama](https://ollama.ai)** installed with at least one model pulled:
+
+```bash
+ollama pull llama3.2
+ollama serve
+```
+
+- An **OpenBox API key**. [Register an agent](/dashboard/agents/registering-agents) in the OpenBox Dashboard to obtain one.
+
+## Clone and Configure
+
+```bash
+git clone https://github.com/OpenBox-AI/n8n-openbox-poc.git
+cd n8n-openbox-poc
+```
+
+Copy `.env.example` to `.env` and set your API key:
+
+```bash title=".env"
+OPENBOX_API_KEY=obx_live_your_key_here
+```
+
+## Start
+
+**macOS / Linux:**
+
+```bash
+./start.sh
+```
+
+**Windows:**
+
+```cmd
+start.bat
+```
+
+This starts n8n and Postgres via Docker, installs the OpenBox node, creates a demo account, and activates the showcase workflow. Takes about a minute on first run.
+
+## Open n8n and Chat
+
+Navigate to [http://localhost:5678](http://localhost:5678) and log in:
+
+- **Email:** `admin@openbox.ai`
+- **Password:** `Openbox123`
+
+Open the **OpenBox SDK Showcase** workflow and click **Chat**. Each message passes through full OpenBox governance before reaching the LLM.
+
+## See It in the Dashboard
+
+Open the **[OpenBox Dashboard](https://platform.openbox.ai)**:
+
+1. Navigate to **Agents** → click your agent
+2. On the **Overview** tab, find the session that corresponds to your workflow run
+3. Click **Details** to open the **Event Log Timeline**
+4. Scroll through the timeline — you'll see every governance stage:
+   - Pre-call governance decision on your input
+   - The LLM call with request and response
+   - Post-call governance decision on the output
+   - The final verdict returned to n8n
+
+## What Just Happened?
+
+When you chatted with the agent, the OpenBox `govern()` function:
+
+- **Checked the input before the LLM call** — your message was evaluated against configured guardrails and policies (PII detection, toxicity filtering, banned terms)
+- **Ran your LLM call** — the governed input was passed to the Ollama model
+- **Checked the output after the LLM call** — the LLM response was evaluated against post-call guardrails and policies
+- **Recorded a governance decision for every stage** — giving you a complete audit trail in the dashboard
+
+## Reset
+
+To tear down and restart from scratch:
+
+```bash
+docker compose down -v --rmi local
+```
+
+- `-v` removes volumes (database data, etc.)
+- `--rmi local` removes images that were built locally, not pulled from a registry
+
+Then run `./start.sh` (macOS/Linux) or `start.bat` (Windows) again.
+
+## Next Steps
+
+- **[Wrap an Existing n8n Workflow](/getting-started/n8n/wrap-an-existing-n8n-workflow)** — Add governance to your own n8n workflow
+- **[n8n Integration Guide](/developer-guide/n8n/n8n-integration-guide)** — Deep dive into configuration, error handling, and the governance pipeline
+- **[Configure Guardrails](/trust-lifecycle/authorize/guardrails)** — Set up PII detection, toxicity filtering, and content classification

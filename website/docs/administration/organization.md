@@ -1,6 +1,7 @@
 ---
 title: Organization
-description: Manage teams, members, and settings
+description: "Configure your organization settings: Manage billing, teams, SSO, and governance policies in one place for all your AI agents."
+llms_description: Managing your OpenBox organization
 sidebar_position: 8
 tags:
   - agent-management
@@ -11,7 +12,7 @@ tags:
 
 Manage your organization's teams, members, and settings. Access from the sidebar by clicking **Organization**.
 
-![Organization](/img/Organization.png)
+![Organization](/img/Organization.webp)
 
 
 ## Teams
@@ -99,9 +100,9 @@ Filter audit log by:
 - Agent
 - Team
 
-See [Audit Log](/docs/administration/organization-audit-log) for details.
+See [Audit Log](/administration/organization-audit-log) for details.
 
 ## Next Steps
 
-1. **[View Audit Log](/docs/administration/organization-audit-log)** - See detailed activity history and export for compliance
-2. **[Compliance](/docs/administration/compliance-and-audit)** - Use audit trails and attestation evidence for auditors
+1. **[View Audit Log](/administration/organization-audit-log)** - See detailed activity history and export for compliance
+2. **[Compliance](/administration/compliance-and-audit)** - Use audit trails and attestation evidence for auditors

@@ -36,7 +36,18 @@ hitl:
 sdk:
   label: SDK
   permalink: /sdk
-  description: Python SDK installation, config, and API
+  description: SDK installation, config, and API
+
+n8n:
+  label: n8n
+  permalink: /n8n
+  description: n8n workflow engine integration
+
+
+javascript:
+  label: JavaScript
+  permalink: /javascript
+  description: JavaScript SDK and code examples
 
 temporal:
   label: Temporal
@@ -78,6 +89,26 @@ agent-management:
   permalink: /agent-management
   description: Registering, configuring, and managing agents
 
+overview:
+  label: Overview
+  permalink: /overview
+  description: High-level platform overview and key capabilities
+
+integration:
+  label: Integration
+  permalink: /integration
+  description: Integrating OpenBox with workflow engines and tools
+
+configuration:
+  label: Configuration
+  permalink: /configuration
+  description: SDK and agent configuration options
+
+organization:
+  label: Organization
+  permalink: /organization
+  description: Organization settings and team management
+
 getting-started:
   label: Getting Started
   permalink: /getting-started
@@ -87,3 +118,43 @@ reference:
   label: Reference
   permalink: /reference
   description: Specifications, glossary, and lookup tables
+
+python:
+  label: Python
+  permalink: /python
+  description: Python SDK and code examples
+
+typescript:
+  label: TypeScript
+  permalink: /typescript
+  description: TypeScript SDK and code examples
+
+crewai:
+  label: CrewAI
+  permalink: /crewai
+  description: CrewAI multi-agent framework integration
+
+deep-agents:
+  label: Deep Agents
+  permalink: /deep-agents
+  description: Deep Agents framework integration
+
+langchain:
+  label: LangChain
+  permalink: /langchain
+  description: LangChain framework integration
+
+langgraph:
+  label: LangGraph
+  permalink: /langgraph
+  description: LangGraph state machine integration
+
+mastra:
+  label: Mastra
+  permalink: /mastra
+  description: Mastra TypeScript agent framework integration
+
+openclaw:
+  label: OpenClaw
+  permalink: /openclaw
+  description: OpenClaw agent framework integration

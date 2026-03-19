@@ -1,6 +1,7 @@
 ---
 title: Event Types
-description: The 24 semantic event types for agent operations
+description: "Track every decision your AI agents make: 12 event types for governance decisions, policy checks, trust changes, and violations."
+llms_description: Reference for all emitted event types
 sidebar_position: 6
 tags:
   - reference
@@ -145,6 +146,6 @@ Each event includes:
 
 ## Related
 
-- **[Troubleshooting](/docs/getting-started/troubleshooting)** - Common issues and solutions when integrating
-- **[Governance Decisions](/docs/core-concepts/governance-decisions)** - What decisions can be made for each event
-- **[Authorize Phase](/docs/trust-lifecycle/authorize)** - Write policies that reference event types
+- **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** - Common issues and solutions when integrating
+- **[Governance Decisions](/core-concepts/governance-decisions)** - What decisions can be made for each event
+- **[Authorize Phase](/trust-lifecycle/authorize)** - Write policies that reference event types

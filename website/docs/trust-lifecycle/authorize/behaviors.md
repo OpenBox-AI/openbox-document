@@ -1,6 +1,7 @@
 ---
 title: Behavioral Rules
-description: Stateful multi-step pattern detection rules
+description: "Define allowed AI agent behaviors: Specify permitted actions, data access patterns, API calls, and interaction boundaries per agent."
+llms_description: Stateful multi-step pattern detection
 sidebar_position: 3
 tags:
   - policy-authoring
@@ -48,7 +49,7 @@ This step defines the **Prior State** prerequisite described below.
 Finish by clicking **Create Rule**.
 
 :::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes — see [Error Handling](/docs/developer-guide/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes — see [Error Handling](/developer-guide/temporal-python/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
 :::
 
 ## Verdicts

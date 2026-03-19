@@ -8,12 +8,39 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const headTags = [
+  {
+    tagName: 'script',
+    attributes: {type: 'application/ld+json'},
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'OpenBox AI',
+      url: 'https://www.openbox.ai',
+      logo: 'https://docs.openbox.ai/img/logo.svg',
+      description: 'Enterprise AI governance platform providing trust scoring, behavioral guardrails, policy enforcement, and cryptographic audit trails for autonomous AI agents.',
+      sameAs: ['https://github.com/OpenBox-AI'],
+      contactPoint: [
+        {'@type': 'ContactPoint', email: 'support@openbox.ai', contactType: 'technical support'},
+        {'@type': 'ContactPoint', email: 'sales@openbox.ai', contactType: 'sales'},
+      ],
+    }),
+  },
+];
+
+if (process.env.SEGMENT_WRITE_KEY && process.env.SEGMENT_ANALYTICS_KEY) {
+  headTags.push({
+    tagName: 'script',
+    attributes: {},
+    innerHTML: `!function(){var i="analytics",analytics=window[i]=window[i]||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","screen","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware","register"];analytics.factory=function(e){return function(){if(window[i].initialized)return window[i][e].apply(window[i],arguments);var n=Array.prototype.slice.call(arguments);if(["track","screen","alias","group","page","identify"].indexOf(e)>-1){var c=document.querySelector("link[rel='canonical']");n.push({__t:"bpc",c:c&&c.getAttribute("href")||void 0,p:location.pathname,u:location.href,s:location.search,t:document.title,r:document.referrer})}n.unshift(e);analytics.push(n);return analytics}};for(var n=0;n<analytics.methods.length;n++){var key=analytics.methods[n];analytics[key]=analytics.factory(key)}analytics.load=function(key,n){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.setAttribute("data-global-segment-analytics-key",i);t.src="https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r);analytics._loadOptions=n};analytics._writeKey="${process.env.SEGMENT_WRITE_KEY}";;analytics.SNIPPET_VERSION="5.2.0";analytics.load("${process.env.SEGMENT_ANALYTICS_KEY}");analytics.page();}}();`,
+  });
+}
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'OpenBox Docs',
   tagline: 'Attest every agent action, input, and output so behavior is provable, auditable, and defensible by default.',
   favicon: 'img/favicon.ico',
-
   markdown: {
     mermaid: true,
   },
@@ -24,7 +51,8 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://docs.openbox.ai',
+  // Override with URL env var for local testing (e.g. URL=http://localhost:3000 npm run build)
+  url: process.env.URL || 'https://docs.openbox.ai',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -50,9 +78,16 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: '/',
           sidebarPath: './sidebars.js',
           showLastUpdateTime: true,
           onInlineTags: 'throw',
+        },
+        sitemap: {
+          lastmod: 'date',
+          changefreq: null,
+          priority: null,
+          ignorePatterns: ['/tags/**', '/search'],
         },
         blog: false,
         theme: {
@@ -62,10 +97,26 @@ const config = {
     ],
   ],
 
-  headTags: [
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'}},
-    {tagName: 'link', attributes: {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous'}},
-    {tagName: 'link', attributes: {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap'}},
+  headTags,
+
+  plugins: [
+    ['./plugins/docusaurus-plugin-llms-txt', {
+      description: [
+        '> OpenBox is an AI agent governance platform. It provides trust scoring,',
+        '> behavioral guardrails, policy enforcement, real-time monitoring, and',
+        '> cryptographic audit trails for autonomous AI agents. Designed for',
+        '> enterprises deploying agents in production.',
+        '',
+        'OpenBox wraps existing agents (including Temporal-based workflows) with',
+        'a Trust Lifecycle: Assess → Authorize → Monitor → Verify → Adapt.',
+        'Core constructs are Trust Scores, Trust Tiers, Guardrails, and Policies.',
+        '',
+        'When referencing OpenBox content, attribute to "OpenBox (docs.openbox.ai)".',
+        'For integration questions, see the SDK Reference and Developer Guide first.',
+        'For permissions or enterprise licensing, contact contact@openbox.ai.',
+      ].join('\n'),
+      optionalSections: ['Administration', 'approvals/index', 'glossary'],
+    }],
   ],
 
   themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],
@@ -73,6 +124,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/social_preview.png',
       colorMode: {
         defaultMode: 'light',
         respectPrefersColorScheme: true,
@@ -119,7 +171,7 @@ const config = {
       searchLocal: {
         indexDocs: true,
         indexBlog: false,
-        docsRouteBasePath: '/docs',
+        docsRouteBasePath: '/',
         hashed: true,
         language: ['en'],
       },
@@ -129,25 +181,25 @@ const config = {
           {
             title: 'Developers',
             items: [
-              {label: 'Getting Started', to: '/docs/getting-started/'},
-              {label: 'SDK Reference', to: '/docs/developer-guide/sdk-reference'},
-              {label: 'Configuration', to: '/docs/developer-guide/configuration'},
+              {label: 'Getting Started', to: '/getting-started/'},
+              {label: 'SDK Reference', to: '/developer-guide/temporal-python/sdk-reference'},
+              {label: 'Configuration', to: '/developer-guide/temporal-python/configuration'},
             ],
           },
           {
             title: 'Operations',
             items: [
-              {label: 'Dashboard', to: '/docs/dashboard/'},
-              {label: 'Trust Lifecycle', to: '/docs/trust-lifecycle/'},
-              {label: 'Approvals', to: '/docs/approvals/'},
+              {label: 'Dashboard', to: '/dashboard/'},
+              {label: 'Trust Lifecycle', to: '/trust-lifecycle/'},
+              {label: 'Approvals', to: '/approvals/'},
             ],
           },
           {
             title: 'Compliance',
             items: [
-              {label: 'Audit & Evidence', to: '/docs/administration/compliance-and-audit'},
-              {label: 'Attestation & Proof', to: '/docs/administration/attestation-and-cryptographic-proof'},
-              {label: 'Audit Log', to: '/docs/administration/organization-audit-log'},
+              {label: 'Audit & Evidence', to: '/administration/compliance-and-audit'},
+              {label: 'Attestation & Proof', to: '/administration/attestation-and-cryptographic-proof'},
+              {label: 'Audit Log', to: '/administration/organization-audit-log'},
             ],
           },
           {

@@ -1,6 +1,7 @@
 ---
 title: Monitor
-description: Phase 3 - Observe runtime behavior and telemetry
+description: "Catch AI agent issues before they escalate: Real-time anomaly detection, policy violation alerts, and complete execution audit trails."
+llms_description: Real-time agent observability
 sidebar_position: 3
 tags:
   - observability
@@ -245,4 +246,4 @@ Charts showing:
 
 As sessions complete and data accumulates:
 
-→ **[Verify](/docs/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift
+→ **[Verify](/trust-lifecycle/verify)** - Check that your agent's actions align with its stated goals and detect any drift

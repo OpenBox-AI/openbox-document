@@ -1,0 +1,106 @@
+---
+title: Getting Started with Temporal
+description: "Add OpenBox governance to Temporal agents: one import swap, full trust scoring, policy enforcement, and audit-grade evidence."
+llms_description: Temporal-specific onboarding and quick start
+sidebar_position: 1
+tags:
+  - getting-started
+  - temporal
+  - sdk
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started with Temporal
+
+OpenBox integrates with [Temporal](https://temporal.io/) by wrapping the worker process — your workflows, activities, and agent logic stay exactly as they are.
+
+## One Code Change
+
+The entire integration is a single import swap:
+
+<Tabs>
+<TabItem value="before" label="Temporal">
+
+```python title="worker.py"
+import asyncio
+from temporalio.client import Client
+from temporalio.worker import Worker
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    worker = Worker(
+        client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+    )
+
+    await worker.run()
+
+asyncio.run(main())
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="worker.py"
+import os
+import asyncio
+from temporalio.client import Client
+from openbox import create_openbox_worker  # Changed import
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    # Replace Worker with create_openbox_worker
+    worker = create_openbox_worker(
+        client=client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+
+        # Add OpenBox configuration
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+    )
+
+    await worker.run()
+
+asyncio.run(main())
+```
+
+</TabItem>
+</Tabs>
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--4">
+
+### [I already use Temporal](/getting-started/temporal/wrap-an-existing-agent)
+
+Add the trust layer to your existing agent in 5 minutes. Install the SDK, swap one import, and your agent is governed.
+
+</div>
+<div className="col col--4">
+
+### [I'm new to Temporal](/getting-started/temporal/temporal-101)
+
+Learn the core concepts (Workflows, Activities, Workers), then [run the demo](/getting-started/temporal/run-the-demo) to see OpenBox in action.
+
+</div>
+<div className="col col--4">
+
+### [Run the Demo](/getting-started/temporal/run-the-demo)
+
+Clone, configure, and run the reference demo end-to-end.
+
+</div>
+</div>

@@ -1,6 +1,7 @@
 ---
 title: Policies
-description: OPA/Rego stateless permission checks
+description: "Build AI governance policies that actually enforce: Define rules once, apply to all agents, block violations before execution."
+llms_description: OPA/Rego stateless permission checks
 sidebar_position: 2
 tags:
   - policy-authoring

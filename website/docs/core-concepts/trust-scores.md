@@ -1,6 +1,7 @@
 ---
 title: Trust Scores
-description: How Trust Scores are calculated and used
+description: "How do AI agent trust scores work? Real-time risk calculation using 5 behavioral factors, policy violations, and execution history."
+llms_description: How OpenBox quantifies agent trustworthiness
 sidebar_position: 1
 tags:
   - trust-scoring
@@ -79,7 +80,7 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 ## Score Display
 
 <div style={{textAlign: 'center'}}>
-  <img src="/img/TrustScoreCard.png" alt="Trust Score Display" width="400" />
+  <img src="/img/TrustScoreCard.webp" alt="Trust Score Display" width="400" />
   
   *Trust Score card on the Assess tab, showing the score, tier badge, and component breakdown.*
 </div>
@@ -137,6 +138,6 @@ Recovery rate:
 
 ## Related
 
-- **[Trust Tiers](/docs/core-concepts/trust-tiers)** - How scores map to trust controls
-- **[Assess Phase](/docs/trust-lifecycle/assess)** - Configure the Risk Profile component
-- **[Adapt Phase](/docs/trust-lifecycle/adapt)** - Watch trust evolve over time
+- **[Trust Tiers](/core-concepts/trust-tiers)** - How scores map to trust controls
+- **[Assess Phase](/trust-lifecycle/assess)** - Configure the Risk Profile component
+- **[Adapt Phase](/trust-lifecycle/adapt)** - Watch trust evolve over time

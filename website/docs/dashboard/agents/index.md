@@ -1,6 +1,7 @@
 ---
 title: Agents
-description: Managing AI agents in OpenBox
+description: "View every AI agent in your organization: Check trust scores, recent activity, policy compliance, and execution status in real-time."
+llms_description: Managing agents in the dashboard
 sidebar_position: 4
 tags:
   - agent-management
@@ -12,7 +13,7 @@ Agents are the core entity in OpenBox. Each agent represents an AI system (workf
 
 Access the agent list from the sidebar by clicking **Agents**.
 
-![Agents](/img/Agents.png)
+![Agents](/img/Agents.webp)
 
 ## Stats Cards
 
@@ -71,27 +72,27 @@ The main table displays:
 Click the **⋮** menu on any row to:
 
 - **View Details** - Navigate to agent detail page
-- **[Settings](/docs/dashboard/agents/agent-settings)** - Go directly to agent settings
+- **[Settings](/dashboard/agents/agent-settings)** - Go directly to agent settings
 
 Or click anywhere on the row to view the agent detail.
 
 ## Adding Agents
 
-Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/docs/dashboard/agents/registering-agents) for details.
+Click the **Add Agent** button (top right) to register a new agent. See [Registering Agents](/dashboard/agents/registering-agents) for details.
 
 ## Agent Detail Page
 
 Click any agent to view its detail page with these tabs:
 
-- **[Overview](/docs/trust-lifecycle/overview)** - Active sessions, completed, failed, and halted sessions
-- **[Assess](/docs/trust-lifecycle/assess)** - Risk profile configuration
-- **[Authorize](/docs/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
-- **[Monitor](/docs/trust-lifecycle/monitor)** - Operational dashboard and telemetry
-- **[Verify](/docs/trust-lifecycle/verify)** - Goal alignment and drift detection
-- **[Adapt](/docs/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
-- **[Settings](/docs/dashboard/agents/agent-settings)** - Agent configuration, risk profile, API keys, and lifecycle management
+- **[Overview](/trust-lifecycle/overview)** - Active sessions, completed, failed, and halted sessions
+- **[Assess](/trust-lifecycle/assess)** - Risk profile configuration
+- **[Authorize](/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
+- **[Monitor](/trust-lifecycle/monitor)** - Operational dashboard and telemetry
+- **[Verify](/trust-lifecycle/verify)** - Goal alignment and drift detection
+- **[Adapt](/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
+- **[Settings](/dashboard/agents/agent-settings)** - Agent configuration, risk profile, API keys, and lifecycle management
 
 ## Next Steps
 
-1. **[Register a New Agent](/docs/dashboard/agents/registering-agents)** - Add a new agent to OpenBox
-2. **[Trust Overview](/docs/dashboard/trust-overview)** - View trust scores and trends across all agents
+1. **[Register a New Agent](/dashboard/agents/registering-agents)** - Add a new agent to OpenBox
+2. **[Trust Overview](/dashboard/trust-overview)** - View trust scores and trends across all agents

@@ -1,6 +1,7 @@
 ---
 title: Agent Settings
-description: Configure agent details, risk profile, API keys, and lifecycle status
+description: "Configure individual agent settings: Set trust tier, assign policies, adjust monitoring level, and require approvals for specific actions."
+llms_description: Configure agent details and risk profile
 sidebar_position: 3
 tags:
   - agent-management
@@ -14,7 +15,7 @@ Settings is divided into four sections: [General](#general-settings), [Risk Conf
 
 ## General Settings
 
-![General Settings](/img/agents/settings-general.png)
+![General Settings](/img/agents/settings-general.webp)
 
 Use this section to update the core identity and organizational assignment of the agent.
 
@@ -30,12 +31,12 @@ Use this section to update the core identity and organizational assignment of th
 Click **Save Changes** to persist any edits.
 
 :::tip
-You can reassign an agent to different teams at any time from this section — you are not limited to the team chosen during [registration](/docs/dashboard/agents/registering-agents).
+You can reassign an agent to different teams at any time from this section — you are not limited to the team chosen during [registration](/dashboard/agents/registering-agents).
 :::
 
 ## Risk Configuration
 
-This section displays the agent's current risk posture as determined by the [Risk Profile](/docs/trust-lifecycle/assess) parameters.
+This section displays the agent's current risk posture as determined by the [Risk Profile](/trust-lifecycle/assess) parameters.
 
 At a glance you can see:
 
@@ -51,11 +52,11 @@ Click **Recalculate Trust Score** to trigger a fresh calculation based on the cu
 
 ### Adjust Risk Level
 
-Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/docs/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
+Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
 
 ## API Access
 
-![API Access](/img/agents/settings-api-access.png)
+![API Access](/img/agents/settings-api-access.webp)
 
 Manage the API key that the agent uses to authenticate with the OpenBox SDK.
 
@@ -81,7 +82,7 @@ Click **Revoke Key** to permanently revoke the API key. This is a destructive ac
 
 ## Danger Zone
 
-![Danger Zone](/img/agents/settings-danger-zone.png)
+![Danger Zone](/img/agents/settings-danger-zone.webp)
 
 Actions in this section have significant impact on the agent's operational status and cannot always be easily undone.
 
@@ -121,6 +122,6 @@ Each entry shows the action, timestamp, and the user who performed it.
 
 ## Next Steps
 
-- **[Wrap an Existing Agent](/docs/getting-started/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
-- **[Run the Demo](/docs/getting-started/run-the-demo)** — Clone the demo repo and see governance in action
-- **[Agents](/docs/dashboard/agents)** — View and manage all registered agents
+- **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** — Already have a Temporal agent? Add the OpenBox trust layer
+- **[Run the Demo](/getting-started/temporal/run-the-demo)** — Clone the demo repo and see governance in action
+- **[Agents](/dashboard/agents)** — View and manage all registered agents

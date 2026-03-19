@@ -1,6 +1,7 @@
 ---
 title: Guardrails
-description: Pre/post-processing validation and transformation rules
+description: "Set hard limits for AI agents: Prevent prohibited actions, enforce safety boundaries, block violations at runtime - not after the fact."
+llms_description: Hard constraints on agent actions
 sidebar_position: 1
 tags:
   - guardrails
