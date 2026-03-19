@@ -1,31 +1,123 @@
 ---
 title: Getting Started with OpenClaw
 description: "Add OpenBox governance to OpenClaw agents: tool-level policy enforcement, LLM guardrails via a local gateway, and OTel span capture."
-llms_description: OpenClaw plugin installation and setup (coming soon)
+llms_description: OpenClaw plugin installation and setup
 sidebar_position: 8
 tags:
   - getting-started
   - openclaw
 ---
 
-# Getting Started with OpenClaw
+# Getting Started
 
-:::info Docs coming soon
-The OpenBox plugin for [OpenClaw](https://openclaw.dev) is in development.
-This page will be updated with a full getting-started guide when the integration is available.
-:::
+This guide walks you through integrating OpenBox with your OpenClaw agent. By the end, every tool call and LLM inference your agent makes will be evaluated against your OpenBox policies before execution.
 
-OpenBox will integrate with OpenClaw by governing your agent through two paths — tool governance for agent tool calls and LLM guardrails for model inference requests.
+## Prerequisites
 
-## What to expect
+- **Node.js 22+**
+- **OpenClaw** installed and running
+- **OpenBox account** — sign up at [openbox.ai](https://openbox.ai) to get your API key
 
-- Tool-level governance via `before_tool_call` / `after_tool_call` hooks
-- LLM guardrails through a local gateway for PII detection and content filtering
-- OTel span capture for HTTP requests and filesystem operations
-- Fail-open design — if OpenBox Core is unreachable, tools and LLM calls execute normally
+You will need two values from your OpenBox account:
 
-## In the meantime
+| Value | Format | Where to find it |
+|-------|--------|------------------|
+| OpenBox URL | `https://core.openbox.ai` | Your OpenBox Core instance URL |
+| API Key | `obx_live_*` or `obx_test_*` | Settings > API Keys in the OpenBox dashboard |
 
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+## Installation
+
+### 1. Build the plugin
+
+```bash
+cd /path/to/openbox-openclaw-plugin
+npm install
+npm run build
+```
+
+### 2. Install the plugin into OpenClaw
+
+```bash
+openclaw plugins install .
+```
+
+### 3. Configure the plugin
+
+Add your OpenBox credentials to your `.env` file in OpenClaw:
+
+```
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_key_here
+OPENAI_API_KEY=sk-your_openai_key_here  # your existing LLM API key in OpenClaw
+```
+
+Then add the plugin config to your `openclaw.json`:
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "openbox": {
+        "enabled": true,
+        "config": {
+          "openboxUrl": "${OPENBOX_URL}",
+          "openboxApiKey": "${OPENBOX_API_KEY}",
+          "llmBaseUrl": "https://api.openai.com/v1",
+          "llmApiKey": "${OPENAI_API_KEY}",
+          "gatewayPort": 18919
+        }
+      }
+    }
+  }
+}
+```
+
+You can also configure these values from the OpenClaw web control UI instead of editing files directly.
+
+### 4. Point your LLM provider to the gateway
+
+To enable LLM guardrails (PII detection, content policy), route your model provider through the OpenBox gateway. In your `openclaw.json`, update the model provider's `baseUrl`:
+
+```json
+{
+  "models": {
+    "providers": {
+      "openai": {
+        "baseUrl": "http://127.0.0.1:18919/v1",
+        "apiKey": "${OPENAI_API_KEY}",
+        "api": "openai-responses",
+        "models": [
+          {
+            "id": "openai/gpt-5-mini",
+            "name": "openai/gpt-5-mini"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+The model choice is flexible — any OpenAI-compatible model and provider will work.
+
+> **Important:** If you skip this step, tool governance still works but LLM guardrails (PII redaction, content filtering) will not be applied to LLM requests.
+
+### 5. Restart the gateway
+
+```bash
+openclaw gateway restart
+```
+
+The gateway must be restarted after any plugin or configuration change for changes to take effect.
+
+## Verify your setup
+
+See [Verifying Your Setup](/developer-guide/openclaw/verify-setup) for step-by-step instructions to confirm the plugin is loaded and governance is active.
+
+## Next steps
+
+- [Configuration](/developer-guide/openclaw/configuration) — full configuration reference and advanced options
+- [How It Works](/developer-guide/openclaw/how-it-works) — understand tool governance, LLM guardrails, and session lifecycle
+- [OpenBox Dashboard](/developer-guide/openclaw/dashboard) — what you see in the dashboard after integration
+- [Examples](/developer-guide/openclaw/examples) — demo agents and usage patterns
+- [Troubleshooting](/developer-guide/openclaw/troubleshooting) — common issues and fixes

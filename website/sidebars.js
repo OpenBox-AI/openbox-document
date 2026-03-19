@@ -164,9 +164,18 @@ const sidebars = {
           label: 'n8n',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/openclaw/index',
-          label: 'OpenClaw',
+          type: 'category',
+          label: 'OpenClaw Plugin',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/openclaw/index',
+          },
+          items: [
+            'developer-guide/openclaw/how-it-works',
+            'developer-guide/openclaw/configuration',
+            'developer-guide/openclaw/examples',
+            'developer-guide/openclaw/troubleshooting',
+          ],
         },
         {
           type: 'category',
