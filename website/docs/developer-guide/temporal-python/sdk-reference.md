@@ -37,7 +37,8 @@ See:
 
 1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** - Wrap an existing Temporal worker
 2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)** - End-to-end setup from scratch
-3. **[Configuration](/developer-guide/temporal-python/configuration)** - All SDK options for `create_openbox_worker`
+3. **[n8n (JavaScript)](/developer-guide/n8n/n8n-integration-guide)** - Govern n8n workflows with `govern()`
+4. **[Configuration](/developer-guide/temporal-python/configuration)** - All SDK options for `create_openbox_worker`
 
 ## Function Signature
 
