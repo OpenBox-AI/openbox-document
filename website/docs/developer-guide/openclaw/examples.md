@@ -30,7 +30,7 @@ default result := {"decision": "CONTINUE", "reason": ""}
 
 result := {"decision": "BLOCK", "reason": "Reading secrets.yaml is not allowed"} if {
     input.activity_type == "read"
-    input.activity_input.path == "/Users/username/project/config/secrets.yaml"
+    input.activity_input[0].path == "/Users/username/project/config/secrets.yaml"
 }
 ```
 
@@ -53,8 +53,8 @@ default result := {"decision": "CONTINUE", "reason": ""}
 
 result := {"decision": "BLOCK", "reason": "rm not allowed in src folder"} if {
     input.activity_type == "exec"
-    contains(input.activity_input.command, "/Users/username/project/src/")
-    contains(input.activity_input.command, "rm ")
+    contains(input.activity_input[0].command, "/Users/username/project/src/")
+    contains(input.activity_input[0].command, "rm ")
 }
 ```
 
