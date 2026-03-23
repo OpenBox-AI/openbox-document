@@ -1,0 +1,139 @@
+---
+title: Developer Guide
+description: "Build governed AI agents: Complete SDK guides, API reference, integration examples, and best practices for Python and TypeScript."
+llms_description: SDK reference, guides, and configuration
+tags:
+  - sdk
+  - integration
+  - configuration
+---
+
+# Developer Guide
+
+Everything you need to integrate OpenBox into your agent workflows.
+
+## Integrations
+
+<div className="integration-grid">
+
+<a href="/developer-guide/crewai">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/crewai.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">CrewAI <small>coming soon</small></div>
+    <div className="integration-card__description">Governance for multi-agent crews and collaborative workflows. Every agent action is tracked automatically.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Multi-agent</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/deep-agents">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/deepagent.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Deep Agents</div>
+    <div className="integration-card__description">Per-subagent governance for DeepAgents workflows. Every nested call is captured automatically.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Sub-agents</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/langchain">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/langchain.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">LangChain</div>
+    <div className="integration-card__description">Governance for chains, tools, and retrieval pipelines. Your existing code stays unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Chains / RAG</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/langgraph">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/langgraph.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">LangGraph</div>
+    <div className="integration-card__description">Governance for graph-based, stateful agent workflows. Every node and state transition is recorded.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Graph workflows</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/mastra">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/mastra.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Mastra <small>coming soon</small></div>
+    <div className="integration-card__description">Governance for TypeScript AI agents and tool calls. Your existing Mastra code stays unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Agents</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/n8n">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/n8n.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">n8n</div>
+    <div className="integration-card__description">Wrap your n8n LLM calls with a single function. Your existing workflows stay unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">JavaScript</span>
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Workflows</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/openclaw">
+<div className="integration-card">
+  <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/openclaw.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">OpenClaw</div>
+    <div className="integration-card__description">Tool governance and LLM guardrails for OpenClaw agents. Every tool call is evaluated against your policies.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">TypeScript</span>
+      <span className="integration-tag">Tool governance</span>
+    </div>
+  </div>
+</div>
+</a>
+
+<a href="/developer-guide/temporal-python/sdk-reference">
+<div className="integration-card">
+  <img className="integration-card__icon" src="/img/integrations/temporal.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Temporal</div>
+    <div className="integration-card__description">Wrap your Temporal worker with a single import swap. Your existing workflows and activities stay unchanged.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Python</span>
+      <span className="integration-tag">Orchestration</span>
+    </div>
+  </div>
+</div>
+</a>
+
+</div>
+
+## Shared Reference
+
+| Guide | Description |
+|-------|-------------|
+| **[Event Types](/developer-guide/event-types)** | Semantic event types captured by the SDK |
+| **[Working with llms.txt](/developer-guide/llms-txt)** | Machine-readable documentation for LLMs and AI tools |
