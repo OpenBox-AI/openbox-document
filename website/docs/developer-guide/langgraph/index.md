@@ -98,20 +98,20 @@ The SDK enforces governance at three layers simultaneously:
 ```mermaid
 flowchart TD
     subgraph lg["Your LangGraph Graph"]
-        node["Agent Node\n(unchanged)"]
-        tools["Tool Node\n(unchanged)"]
+        node["Agent Node<br/>(unchanged)"]
+        tools["Tool Node<br/>(unchanged)"]
         node --> tools
         tools --> node
     end
 
     subgraph sdk["OpenBox SDK"]
-        events["Layer 1: Event Stream\nLangGraph v2 callbacks"]
-        hooks["Layer 2: Hook Governance\nHTTP / DB / File I/O"]
-        otel["Layer 3: Activity Context\nOpenTelemetry spans"]
+        events["Layer 1: Event Stream<br/>LangGraph v2 callbacks"]
+        hooks["Layer 2: Hook Governance<br/>HTTP / DB / File I/O"]
+        otel["Layer 3: Activity Context<br/>OpenTelemetry spans"]
     end
 
     lg --> sdk
-    sdk --> engine["OpenBox Trust Engine\n\nVerdicts:\nALLOW · REQUIRE_APPROVAL\nBLOCK · HALT"]
+    sdk --> engine["OpenBox Trust Engine<br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
 
 ## Tracing

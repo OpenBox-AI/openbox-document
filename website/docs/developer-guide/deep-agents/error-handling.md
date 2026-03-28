@@ -88,17 +88,6 @@ async def safe_tool_call(tool_fn, *args, **kwargs):
         return f"[Tool blocked: {str(e)}]"
 ```
 
-### Subagent-Specific Error Context
-
-When a governance error occurs during a subagent dispatch, the exception message includes the subagent context. You can correlate with the `__openbox.subagent_name` tag visible in the OpenBox Dashboard event log.
-
-```python
-except GovernanceBlockedError as e:
-    # The exception message includes which tool was blocked and why
-    logger.warning(f"Governance block: {str(e)}")
-    # Check the Dashboard event log for subagent_name context
-```
-
 ## Configuration Exceptions
 
 These are raised during `create_openbox_middleware()` initialization — not during agent execution. Handle them where you set up your agent:
@@ -158,4 +147,4 @@ You can also inspect the full event trace in the OpenBox Dashboard under **Agent
 
 1. **[Event Types](/developer-guide/event-types)** — Understand the semantic event types that trigger governance decisions
 2. **[Approvals](/approvals)** — Review and process HITL requests in the dashboard
-3. **[Policies](/trust-lifecycle/authorize/policies)** — Write per-subagent Rego policies that produce these decisions
+3. **[Policies](/trust-lifecycle/authorize/policies)** — Write Rego policies that produce these decisions

@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Deep Agents
-description: "Add OpenBox governance to DeepAgents workflows: per-subagent policy targeting, HITL conflict detection, and built-in tool classification."
+description: "Add OpenBox governance to DeepAgents workflows: HITL conflict detection, policy enforcement, and built-in tool classification."
 llms_description: DeepAgents integration quickstart and setup
 sidebar_position: 4
 tags:
@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started with Deep Agents
 
-OpenBox integrates with [DeepAgents](https://github.com/langchain-ai/deepagents) by wrapping your agent with a middleware layer — your subagents, tools, and graph logic stay exactly as they are while every action is governed, scored, and auditable.
+OpenBox integrates with [DeepAgents](https://github.com/langchain-ai/deepagents) by wrapping your agent with a middleware layer — your tools and graph logic stay exactly as they are while every action is governed, scored, and auditable.
 
 ## One Code Change
 
@@ -56,7 +56,7 @@ middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
     agent_name="ResearchBot",
-    known_subagents=["researcher", "writer"],
+
 )
 
 agent = create_deep_agent(
@@ -92,7 +92,7 @@ Add the trust layer to your existing agent in 5 minutes. Install the SDK, create
 
 ### [Show me the SDK reference](/developer-guide/deep-agents)
 
-Full developer reference: middleware hooks, per-subagent targeting, HITL conflict detection, and all configuration options.
+Full developer reference: middleware hooks, HITL conflict detection, and all configuration options.
 
 </div>
 </div>
@@ -172,7 +172,7 @@ middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
     agent_name="ResearchBot",
-    known_subagents=["researcher", "writer"],
+
 )
 
 agent = create_deep_agent(
@@ -203,7 +203,7 @@ The SDK initializes on first call and connects to OpenBox. You will see output s
 OpenBox SDK initialized successfully
   - Agent: ResearchBot
   - Governance policy: fail_open
-  - Known subagents: researcher, writer
+
 ```
 
 ### Step 5: See It in Action
@@ -215,7 +215,7 @@ Invoke your agent with a task. Once it completes:
 3. On the **Overview** tab, find the session that just ran
 4. Click **Details** to open the session
 
-The **Event Log Timeline** shows the full execution trace — model calls, tool calls, subagent dispatches, and governance decisions. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) for step-by-step playback.
+The **Event Log Timeline** shows the full execution trace — model calls, tool calls, and governance decisions. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) for step-by-step playback.
 
 ## What Just Happened?
 
@@ -223,7 +223,6 @@ Under the hood, the OpenBox middleware:
 
 - **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
 - **Governed every tool call** — evaluated your policies before each tool executed, blocking or flagging as needed
-- **Tracked subagent dispatches** — tagged each action with the dispatching subagent (`researcher`, `writer`) for per-subagent policy targeting
 - **Captured HTTP, database, and file I/O** — automatic telemetry via OpenTelemetry instrumentation
 - **Evaluated governance policies** — every action was checked against your trust rules on the OpenBox platform
 - **Detected HITL conflicts** — if your DeepAgents `interrupt_on` config clashes with OpenBox HITL, the SDK warns you at startup
