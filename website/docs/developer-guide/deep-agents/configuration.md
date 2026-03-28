@@ -51,16 +51,6 @@ Human-readable name shown in the OpenBox Dashboard. Defaults to the graph class 
 agent_name="ResearchBot"
 ```
 
-### known_subagents
-
-List of subagent names declared in your `create_deep_agent()` call. Enables per-subagent policy targeting by tagging every event with `__openbox.subagent_name`.
-
-```python
-known_subagents=["researcher", "writer", "editor"]
-```
-
-Must match the `name` fields in your `subagents` list. See [Per-Subagent Policy Targeting](/developer-guide/deep-agents#per-subagent-policy-targeting) for details.
-
 ### on_api_error
 
 Behavior when the OpenBox API is unreachable or times out:
@@ -171,8 +161,6 @@ middleware = create_openbox_middleware(
 
     # Agent identity
     agent_name="ResearchBot",
-    known_subagents=["researcher", "writer", "editor"],
-
     # Governance behavior
     on_api_error="fail_closed",   # High-security: block on API failure
     governance_timeout=45.0,
