@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Deep Agents
-description: "Add OpenBox governance to DeepAgents workflows: per-subagent policy targeting, HITL conflict detection, and built-in tool classification."
+description: "Add OpenBox governance to DeepAgents workflows: HITL conflict detection, policy enforcement, and built-in tool classification."
 llms_description: DeepAgents integration quickstart and setup
 sidebar_position: 4
 tags:
@@ -8,6 +8,9 @@ tags:
   - deep-agents
   - python
 ---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 # Getting Started with Deep Agents
 
@@ -17,10 +20,221 @@ Refer to the README for setup instructions:
 **[OpenBox-AI/openbox-deepagent-sdk-python](https://github.com/OpenBox-AI/openbox-deepagent-sdk-python)**
 :::
 
-OpenBox integrates with DeepAgents by wrapping your compiled graph — your workflows, subagents, and tools stay exactly as they are while every action is governed, scored, and auditable.
+## One Code Change
 
-## What to expect
+The entire integration adds one import and two lines:
 
-- Wrap your `create_deep_agent()` graph with a single function call
-- Per-subagent policy targeting, HITL conflict detection, and tool classification
-- Full session replay across multi-agent workflows
+<Tabs>
+<TabItem value="before" label="DeepAgents">
+
+```python title="agent.py"
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "tools": [search_web]},
+        {"name": "writer", "tools": [write_report]},
+    ],
+)
+
+result = await agent.ainvoke(
+    {"messages": [{"role": "user", "content": "Research AI safety"}]},
+    config={"configurable": {"thread_id": "session-001"}},
+)
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+from openbox_deepagent import create_openbox_middleware  # Added import
+
+# Create OpenBox middleware
+middleware = create_openbox_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="ResearchBot",
+
+)
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "tools": [search_web]},
+        {"name": "writer", "tools": [write_report]},
+    ],
+    middleware=[middleware],  # Added middleware
+)
+
+result = await agent.ainvoke(
+    {"messages": [{"role": "user", "content": "Research AI safety"}]},
+    config={"configurable": {"thread_id": "session-001"}},
+)
+```
+
+</TabItem>
+</Tabs>
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--6">
+
+### [I already use DeepAgents](#wrap-an-existing-agent)
+
+Add the trust layer to your existing agent in 5 minutes. Install the SDK, create middleware, and your agent is governed.
+
+</div>
+<div className="col col--6">
+
+### [Show me the SDK reference](/developer-guide/deep-agents)
+
+Full developer reference: middleware hooks, HITL conflict detection, and all configuration options.
+
+</div>
+</div>
+
+---
+
+## Wrap an Existing Agent
+
+### Step 1: Install the SDK
+
+```bash
+uv add openbox-deepagent-sdk-python
+
+# Or with pip
+pip install openbox-deepagent-sdk-python
+```
+
+**Requires Python 3.11+.**
+
+### Step 2: Configure Environment Variables
+
+```bash
+export OPENBOX_URL=https://core.openbox.ai
+export OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+<details>
+<summary>Using an .env file?</summary>
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+Install `python-dotenv` and load it before creating middleware:
+
+```bash
+pip install python-dotenv
+```
+
+```python
+from dotenv import load_dotenv
+load_dotenv()
+```
+
+</details>
+
+### Step 3: Create Middleware and Add to Your Agent
+
+<Tabs>
+<TabItem value="before" label="DeepAgents">
+
+```python title="agent.py"
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "tools": [search_web]},
+        {"name": "writer", "tools": [write_report]},
+    ],
+)
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+from openbox_deepagent import create_openbox_middleware
+
+middleware = create_openbox_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="ResearchBot",
+
+)
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "tools": [search_web]},
+        {"name": "writer", "tools": [write_report]},
+    ],
+    middleware=[middleware],
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Step 4: Run Your Agent
+
+Run your agent as you normally would:
+
+```bash
+python agent.py
+```
+
+The SDK initializes on first call and connects to OpenBox. You will see output similar to:
+
+```
+OpenBox SDK initialized successfully
+  - Agent: ResearchBot
+  - Governance policy: fail_open
+
+```
+
+### Step 5: See It in Action
+
+Invoke your agent with a task. Once it completes:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → click your agent
+3. On the **Overview** tab, find the session that just ran
+4. Click **Details** to open the session
+
+The **Event Log Timeline** shows the full execution trace — model calls, tool calls, and governance decisions. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) for step-by-step playback.
+
+## What Just Happened?
+
+Under the hood, the OpenBox middleware:
+
+- **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
+- **Governed every tool call** — evaluated your policies before each tool executed, blocking or flagging as needed
+- **Captured HTTP, database, and file I/O** — automatic telemetry via OpenTelemetry instrumentation
+- **Evaluated governance policies** — every action was checked against your trust rules on the OpenBox platform
+- **Detected HITL conflicts** — if your DeepAgents `interrupt_on` config clashes with OpenBox HITL, the SDK warns you at startup
+
+This runs on every agent invocation automatically.
+
+## Next Steps
+
+- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
+- **[Monitor Sessions](/trust-lifecycle/session-replay)** — Use Session Replay to debug and audit agent behavior
+- **[Deep Agents SDK Reference](/developer-guide/deep-agents)** — Full developer reference for middleware hooks, configuration, and error handling

@@ -44,9 +44,17 @@ const sidebars = {
           label: 'LangGraph',
         },
         {
-          type: 'doc',
-          id: 'getting-started/mastra/index',
+          type: 'category',
           label: 'Mastra',
+          link: {
+            type: 'doc',
+            id: 'getting-started/mastra/index',
+          },
+          items: [
+            'getting-started/mastra/mastra-101',
+            'getting-started/mastra/run-the-demo',
+            'getting-started/mastra/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -139,9 +147,16 @@ const sidebars = {
           label: 'CrewAI',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/deep-agents/index',
+          type: 'category',
           label: 'Deep Agents SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/deep-agents/index',
+          },
+          items: [
+            'developer-guide/deep-agents/configuration',
+            'developer-guide/deep-agents/error-handling',
+          ],
         },
         {
           type: 'doc',
@@ -149,14 +164,33 @@ const sidebars = {
           label: 'LangChain SDK (TypeScript)',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/langgraph/index',
+          type: 'category',
           label: 'LangGraph SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/langgraph/index',
+          },
+          items: [
+            'developer-guide/langgraph/configuration',
+            'developer-guide/langgraph/error-handling',
+          ],
         },
         {
-          type: 'doc',
-          id: 'developer-guide/mastra/index',
-          label: 'Mastra',
+          type: 'category',
+          label: 'Mastra SDK (TypeScript)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/mastra/sdk-reference',
+          },
+          items: [
+            'developer-guide/mastra/configuration',
+            'developer-guide/mastra/error-handling',
+            'developer-guide/mastra/integration-walkthrough',
+            'developer-guide/mastra/event-model',
+            'developer-guide/mastra/approvals-and-guardrails',
+            'developer-guide/mastra/telemetry',
+            'developer-guide/mastra/troubleshooting',
+          ],
         },
         {
           type: 'doc',
