@@ -1,0 +1,128 @@
+---
+title: Run the Demo
+description: "Run the Mastra coding-agent POC and watch OpenBox govern sandbox creation, file operations, and shell-command activity."
+llms_description: Hands-on Mastra coding-agent POC walkthrough
+sidebar_position: 2
+tags:
+  - getting-started
+  - mastra
+  - typescript
+  - sdk
+---
+
+# Run the Demo
+
+The recommended runnable demo for the Mastra SDK is the public Mastra coding-agent POC:
+
+- GitHub: [OpenBox-AI/poc-mastra-coding-agent](https://github.com/OpenBox-AI/poc-mastra-coding-agent/tree/dev)
+
+This POC demonstrates:
+
+- secure E2B sandbox creation
+- file and directory operations
+- shell command execution
+- OpenBox governance, approvals, and guardrails for agent activity
+
+## Prerequisites
+
+- Node.js `24.10+`
+- npm
+- an E2B API key
+- an OpenAI API key
+- an OpenBox Core URL and API key
+
+## Clone The Repository
+
+```bash
+git clone -b dev https://github.com/OpenBox-AI/poc-mastra-coding-agent
+cd poc-mastra-coding-agent
+```
+
+## Install Dependencies
+
+From the POC root:
+
+```bash
+npm install
+```
+
+This installs `@openbox-ai/openbox-mastra-sdk` from npm. You do not need a sibling SDK checkout.
+
+## Configure Environment
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Required values:
+
+| Variable | Purpose |
+| --- | --- |
+| `E2B_API_KEY` | access to E2B sandbox execution |
+| `OPENAI_API_KEY` | model access for the coding agent |
+| `OPENBOX_URL` | OpenBox Core base URL |
+| `OPENBOX_API_KEY` | OpenBox API key |
+
+Common runtime options:
+
+| Variable | Purpose | Typical value |
+| --- | --- | --- |
+| `OPENBOX_GOVERNANCE_POLICY` | behavior when OpenBox is unavailable | `fail_closed` |
+| `OPENBOX_VALIDATE` | validate the API key at startup | `true` |
+| `OPENBOX_GOVERNANCE_TIMEOUT` | OpenBox API timeout in milliseconds for this demo environment | `5000` |
+
+## Run The Demo
+
+Start the local development server:
+
+```bash
+npm run dev
+```
+
+Other useful commands:
+
+```bash
+npm run build
+npm run start
+```
+
+## What To Try
+
+Example prompts:
+
+- `create a sandbox and write hello_world.txt with print("Hello World")`
+- `create a sandbox, write a file, then read it back`
+- `create a sandbox and run a shell command`
+
+If OpenBox approvals or guardrails are enabled for the registered agent, the demo will reflect those decisions during execution.
+
+## What You Should See In OpenBox
+
+After running the coding agent, OpenBox should show:
+
+- agent runs for the coding-agent workflow
+- activity boundaries for governed tool calls
+- approvals or guardrail outcomes where policy requires them
+- model usage on the agent run
+- operational telemetry associated with sandbox and tool activity
+
+## Troubleshooting
+
+### `E2B_API_KEY` is missing or invalid
+
+Check that the runtime is loading `.env.local` and that the key is valid for your E2B account.
+
+### OpenBox requests are failing
+
+Verify:
+
+- `OPENBOX_URL` is reachable from your machine
+- `OPENBOX_API_KEY` is correct
+- `OPENBOX_VALIDATE` is set appropriately for the environment
+
+## Next Steps
+
+- [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent)
+- [Mastra SDK (TypeScript)](/developer-guide/mastra)

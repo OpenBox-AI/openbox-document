@@ -9,18 +9,244 @@ tags:
   - python
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started with LangGraph
 
-:::info Docs coming soon
-The OpenBox SDK for [LangGraph](https://github.com/langchain-ai/langgraph) is open source.
-Refer to the README for setup instructions:
-**[OpenBox-AI/openbox-langgraph-sdk-python](https://github.com/OpenBox-AI/openbox-langgraph-sdk-python)**
-:::
+OpenBox integrates with [LangGraph](https://github.com/langchain-ai/langgraph) by wrapping your compiled graph — your agents, nodes, and state machines stay exactly as they are while every action is governed, scored, and auditable.
 
-OpenBox integrates with LangGraph by wrapping your compiled graph — your agents, nodes, and state machines stay exactly as they are while every action is governed, scored, and auditable.
+## One Code Change
 
-## What to expect
+The entire integration is a single function call wrapping your compiled graph:
 
-- Wrap your compiled graph with a single function call
-- OPA/Rego policy enforcement for every tool call and LLM invocation
-- Guardrails, human-in-the-loop approvals, and automatic HTTP telemetry
+<Tabs>
+<TabItem value="before" label="LangGraph">
+
+```python title="agent.py"
+from langgraph.graph import StateGraph, START, END, MessagesState
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+result = await app.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+from langgraph.graph import StateGraph, START, END, MessagesState
+from openbox_langgraph import create_openbox_graph_handler  # Added import
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+
+# Wrap with OpenBox governance
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="MyAgent",
+)
+
+result = await governed.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+</Tabs>
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--6">
+
+### [I already use LangGraph](#wrap-an-existing-agent)
+
+Add the trust layer to your existing agent in 5 minutes. Install the SDK, wrap your graph, and your agent is governed.
+
+</div>
+<div className="col col--6">
+
+### [Show me the SDK reference](/developer-guide/langgraph)
+
+Explore the full API reference, configuration options, error handling, and 3-layer governance architecture.
+
+</div>
+</div>
+
+---
+
+## Wrap an Existing Agent
+
+Add the OpenBox trust layer to your existing LangGraph agent. This guide assumes you already have a compiled LangGraph graph and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
+
+### Prerequisites
+
+- **Existing LangGraph agent** with a compiled graph
+- **Python 3.11+** installed
+- **OpenBox API Key** — [Register your agent](/dashboard/agents/registering-agents) in the dashboard to get one
+
+### Step 1: Install OpenBox SDK
+
+Add the OpenBox LangGraph SDK to your existing project:
+
+**Package:** `openbox-langgraph-sdk-python`
+
+```bash
+uv add openbox-langgraph-sdk-python
+
+# Or with pip
+pip install openbox-langgraph-sdk-python
+```
+
+### Step 2: Configure Environment Variables
+
+Add OpenBox credentials to your environment:
+
+```bash
+export OPENBOX_URL=https://core.openbox.ai
+export OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+<details>
+<summary>Using an .env file?</summary>
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+Install `python-dotenv` and load it in your agent script:
+
+```bash
+uv add python-dotenv
+```
+
+```python
+from dotenv import load_dotenv
+load_dotenv()
+```
+
+</details>
+
+### Step 3: Wrap Your Graph
+
+Replace your direct `app.ainvoke(...)` call with a governed handler:
+
+<Tabs>
+<TabItem value="before" label="LangGraph">
+
+```python title="agent.py"
+from langgraph.graph import StateGraph, START, END, MessagesState
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+result = await app.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+from langgraph.graph import StateGraph, START, END, MessagesState
+from openbox_langgraph import create_openbox_graph_handler  # Added import
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+
+# Wrap with OpenBox governance
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="MyAgent",
+)
+
+result = await governed.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+</Tabs>
+
+### Step 4: Run Your Agent
+
+Start your agent as you normally would:
+
+```bash
+uv run agent.py
+
+# Or with python directly
+python agent.py
+```
+
+You should see the OpenBox SDK initialize and connect:
+
+```
+OpenBox SDK initialized successfully
+  - Governance policy: fail_open
+  - Agent: MyAgent
+  - Instrumentation: HTTP, LangGraph v2 events
+```
+
+### Step 5: See It in Action
+
+Invoke your agent. Once it completes:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → click your agent
+3. On the **Overview** tab, find the session that just ran
+4. Click **Details** to open the session
+
+The **Event Log Timeline** shows the full execution trace. You should see:
+
+- LangGraph node events (agent steps, tool calls)
+- LLM invocations with inputs and outputs
+- HTTP requests to external services
+- Governance decisions per event
+
+For a full step-by-step playback, click **Watch Replay** to open **[Session Replay](/trust-lifecycle/session-replay)**.
+
+If your session doesn't appear, check that your agent is running and connected to OpenBox. See the **[SDK Reference](/developer-guide/langgraph)** for configuration options.
+
+## What Just Happened?
+
+Under the hood, the OpenBox SDK:
+
+- **Intercepted LangGraph v2 events** — every node execution, tool call, and LLM invocation was captured with its full input/output payload and sent to OpenBox for governance evaluation
+- **Captured HTTP calls automatically** — any requests your agent made (LLM APIs, external services) were recorded via OpenTelemetry instrumentation, including full request and response details
+- **Evaluated your governance policies** against each event, determining whether the action should be allowed, blocked, or flagged for human approval
+- **Recorded a governance decision** for every event — that's what you see in the Event Log Timeline and Session Replay
+
+This runs on every graph invocation automatically.
+
+## Next Steps
+
+- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
+- **[Monitor Sessions](/trust-lifecycle/session-replay)** — Use Session Replay to debug and audit agent behavior
+- **[LangGraph SDK Reference](/developer-guide/langgraph)** — Deep dive into configuration options, HITL approvals, and error handling
