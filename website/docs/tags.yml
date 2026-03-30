@@ -158,3 +158,8 @@ openclaw:
   label: OpenClaw
   permalink: /openclaw
   description: OpenClaw agent framework integration
+
+cursor:
+  label: Cursor
+  permalink: /cursor
+  description: Cursor IDE hooks integration
