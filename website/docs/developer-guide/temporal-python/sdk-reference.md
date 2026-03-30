@@ -1,5 +1,5 @@
 ---
-title: SDK Reference
+title: Temporal SDK (Python)
 description: "OpenBox SDK reference for Python & TypeScript: 47 methods for agent registration, policy enforcement, trust scoring, and monitoring."
 llms_description: Full SDK API reference
 sidebar_position: 1
@@ -8,9 +8,18 @@ tags:
   - reference
 ---
 
-# SDK Reference
+# Temporal SDK (Python)
 
 The OpenBox SDKs integrate with your workflow engine. They handle event capture, telemetry collection, and trust evaluation with minimal code changes.
+
+| Guide | Description |
+|-------|-------------|
+| **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for wrapping Temporal workers |
+| **[Configuration](/developer-guide/temporal-python/configuration)** | Environment variables and function parameters |
+| **[Error Handling](/developer-guide/temporal-python/error-handling)** | Handle governance decisions and failures in your code |
+| **[Customizing the Demo](/developer-guide/temporal-python/customizing-the-demo)** | Tailor governance behavior to your agent's needs |
+| **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
+| **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal SDK setup |
 
 :::info What the SDKs Do
 The SDKs' primary job is to **connect your workflow engine to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
