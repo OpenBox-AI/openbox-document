@@ -4,8 +4,8 @@ description: "Developer reference for governing Cursor IDE agents with OpenBox: 
 llms_description: Cursor Hooks TypeScript SDK reference and architecture
 tags:
   - sdk
-  - cursor
   - typescript
+  - integration
 ---
 
 # Cursor Hooks (TypeScript)
