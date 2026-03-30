@@ -1,0 +1,40 @@
+---
+title: Getting Started with Cursor Hooks
+description: "Add OpenBox governance to Cursor IDE: every agent action — prompts, shell commands, MCP tool calls, file reads — is governed through hooks."
+llms_description: Cursor IDE hooks integration onboarding
+sidebar_position: 3
+tags:
+  - getting-started
+  - sdk
+  - typescript
+---
+
+# Getting Started with Cursor Hooks
+
+OpenBox governance for [Cursor IDE](https://cursor.com) via the official [hooks system](https://docs.cursor.com/context/hooks). Every agent action — prompts, shell commands, MCP tool calls, file reads — is governed through OpenBox before it executes.
+
+## Quick start
+
+```bash
+git clone https://github.com/OpenBox-AI/cursor-hooks.git
+cd cursor-hooks
+npm install && npm run build
+npm run install-hooks -- --key obx_live_your_key
+# Restart Cursor — all agent actions are now governed
+```
+
+Verify with `tail -f ~/.cursor-hooks/hook.log`.
+
+## What to expect
+
+- Every prompt, file read, shell command, and MCP tool call is governed before execution
+- PII/secret redaction on file content and MCP responses
+- Human-in-the-loop approvals for sensitive operations
+- Goal alignment scoring and drift detection
+- Full session replay and audit trail
+
+## Next steps
+
+- **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, lifecycle, span instrumentation, and configuration
+- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
+- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework

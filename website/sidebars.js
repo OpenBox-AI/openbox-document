@@ -25,6 +25,11 @@ const sidebars = {
       items: [
         {
           type: 'doc',
+          id: 'getting-started/cursor-hooks/index',
+          label: 'Cursor Hooks',
+        },
+        {
+          type: 'doc',
           id: 'getting-started/crewai/index',
           label: 'CrewAI',
         },
