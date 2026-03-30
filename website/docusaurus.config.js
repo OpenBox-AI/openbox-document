@@ -155,7 +155,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python',
+            href: 'https://github.com/OpenBox-AI',
             label: 'GitHub',
             position: 'right',
           },
@@ -207,7 +207,7 @@ const config = {
             items: [
               {label: 'Get Access', href: 'https://www.openbox.ai/#waitlist'},
               {label: 'Dashboard', href: 'https://platform.openbox.ai'},
-              {label: 'GitHub', href: 'https://github.com/OpenBox-AI/openbox-temporal-sdk-python'},
+              {label: 'GitHub', href: 'https://github.com/OpenBox-AI'},
             ],
           },
         ],
