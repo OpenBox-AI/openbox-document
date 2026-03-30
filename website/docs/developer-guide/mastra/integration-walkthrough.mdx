@@ -1,0 +1,149 @@
+---
+title: Integration Walkthrough
+sidebar_label: Mastra (TypeScript)
+description: "Govern a Mastra service with OpenBox: install the SDK, wire startup, choose the right wrapper pattern, and verify live runs."
+llms_description: Mastra-specific integration walkthrough
+sidebar_position: 4
+tags:
+  - sdk
+  - mastra
+  - typescript
+  - integration
+---
+
+# Integration Walkthrough
+
+This is the end-to-end guide for integrating OpenBox with a Mastra service. It covers the standard bootstrap path, when to use manual wrappers instead, and what should appear in OpenBox once the integration is live.
+
+:::tip Skip ahead
+
+- **Already wrapped your startup?** Jump to [What the Integration Captures](#what-the-integration-captures).
+- **Need the fastest local validation?** Run [the public quickstart example](/getting-started/mastra/run-the-demo) first.
+:::
+
+## Prerequisites
+
+- Node.js `24.10+`
+- `@mastra/core` `^1.8.0`
+- an ESM-capable TypeScript runtime
+- an OpenBox account and agent API key
+
+## Part 1: Register Your Agent In OpenBox
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to **Agents**
+3. Create or open the agent you want to govern
+4. Generate an API key
+5. Keep that key for your Mastra runtime
+
+See [Registering Agents](/dashboard/agents/registering-agents) for the full dashboard flow.
+
+## Part 2: Install The SDK
+
+```bash
+npm install @openbox-ai/openbox-mastra-sdk @mastra/core
+```
+
+## Part 3: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+OPENBOX_GOVERNANCE_POLICY=fail_open
+```
+
+## Part 4: Wrap Startup
+
+```ts title="src/mastra/index.ts"
+import { Mastra } from "@mastra/core/mastra";
+import { getOpenBoxRuntime, withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
+import { supportAgent } from "./agents/support-agent";
+import { fileTool } from "./tools/file-tool";
+import { supportWorkflow } from "./workflows/support-workflow";
+
+const mastra = new Mastra({
+  agents: { supportAgent },
+  tools: { fileTool },
+  workflows: { supportWorkflow }
+});
+
+export const governedMastra = await withOpenBox(mastra, {
+  apiKey: process.env.OPENBOX_API_KEY,
+  apiUrl: process.env.OPENBOX_URL
+});
+
+process.on("SIGTERM", async () => {
+  await getOpenBoxRuntime(governedMastra)?.shutdown();
+});
+```
+
+This is the preferred integration path. It:
+
+- validates configuration
+- creates the OpenBox runtime
+- installs process-wide telemetry
+- wraps existing tools, workflows, and agents
+- patches future Mastra registrations
+
+## Part 5: Decide If You Need Manual Wrappers
+
+Most services do not. Use manual wrappers only when:
+
+- another subsystem owns telemetry bootstrap
+- you want selective adoption
+- you need strict control over startup order
+
+```ts
+import {
+  OpenBoxClient,
+  OpenBoxSpanProcessor,
+  parseOpenBoxConfig,
+  setupOpenBoxOpenTelemetry,
+  wrapAgent,
+  wrapTool,
+  wrapWorkflow
+} from "@openbox-ai/openbox-mastra-sdk";
+```
+
+That pattern lets you wire only the specific runtime surfaces you want governed.
+
+## Part 6: Verify A Live Run
+
+Trigger one real request through your Mastra service, then check OpenBox for:
+
+- a run under your registered agent
+- workflow lifecycle events
+- tool or governed step activities
+- approvals or guardrails where policy requires them
+- agent signals such as `user_input` and `agent_output`
+
+## What The Integration Captures
+
+### Tools
+
+Wrapped tools become governed activities with `ActivityStarted` and `ActivityCompleted`.
+
+### Workflows
+
+Wrapped workflows emit `WorkflowStarted`, `WorkflowCompleted`, and `WorkflowFailed`. Non-tool steps can also be governed as activities.
+
+### Agents
+
+Wrapped agents behave like workflow-like runs and emit:
+
+- `SignalReceived(user_input)`
+- `SignalReceived(resume)`
+- `SignalReceived(agent_output)`
+
+## What To Expect In The UI
+
+- Tool calls show up as activities.
+- Agent-only model work shows up on the agent signal and workflow summary path.
+- Tool health appears only when tools actually run.
+- A routing or orchestration layer may have no direct model usage of its own.
+
+## Next Steps
+
+- [Configuration](/developer-guide/mastra/configuration)
+- [Error Handling](/developer-guide/mastra/error-handling)
+- [Event Model](/developer-guide/mastra/event-model)

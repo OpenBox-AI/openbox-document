@@ -1,0 +1,114 @@
+---
+title: Wrap an Existing Agent
+description: "Add OpenBox to an existing Mastra service without changing your agent, tool, or workflow logic."
+llms_description: How to add OpenBox to an existing Mastra agent
+sidebar_position: 3
+tags:
+  - getting-started
+  - mastra
+  - typescript
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Agent
+
+If you already have a working Mastra service, the integration point is still the same: wrap the Mastra instance during startup, then shut the OpenBox runtime down with the process.
+
+## Prerequisites
+
+- An existing Mastra app with agents, tools, or workflows already registered
+- Node.js `24.10+`
+- An OpenBox agent API key
+
+## Step 1: Install The SDK
+
+```bash
+npm install @openbox-ai/openbox-mastra-sdk @mastra/core
+```
+
+## Step 2: Add OpenBox Credentials
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+```
+
+## Step 3: Wrap Startup
+
+<Tabs>
+<TabItem value="before" label="Mastra">
+
+```ts title="src/mastra/index.ts"
+import { Mastra } from "@mastra/core/mastra";
+import { supportAgent } from "./agents/support-agent";
+import { searchTool } from "./tools/search-tool";
+
+export const mastra = new Mastra({
+  agents: { supportAgent },
+  tools: { searchTool }
+});
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```ts title="src/mastra/index.ts"
+import { Mastra } from "@mastra/core/mastra";
+import { getOpenBoxRuntime, withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
+import { supportAgent } from "./agents/support-agent";
+import { searchTool } from "./tools/search-tool";
+
+const mastra = new Mastra({
+  agents: { supportAgent },
+  tools: { searchTool }
+});
+
+export const governedMastra = await withOpenBox(mastra, {
+  apiKey: process.env.OPENBOX_API_KEY,
+  apiUrl: process.env.OPENBOX_URL,
+  onApiError: "fail_open"
+});
+
+process.on("SIGINT", async () => {
+  await getOpenBoxRuntime(governedMastra)?.shutdown();
+  process.exit(0);
+});
+```
+
+</TabItem>
+</Tabs>
+
+## Step 4: Verify A Real Run
+
+Trigger the same workflow, tool call, or agent request you already use in development. In OpenBox, you should now see:
+
+- workflow and agent runs
+- tool or governed step activities
+- approvals and guardrails where policy requires them
+- runtime telemetry attached to the run
+
+## Common Integration Notes
+
+### Startup Order
+
+Initialize OpenBox once during process startup. Avoid wrapping multiple Mastra instances in the same process unless that is intentional.
+
+### Future Registrations
+
+`withOpenBox()` patches future `addTool()`, `addWorkflow()`, and `addAgent()` calls, so later registrations stay governed.
+
+### Shutdown
+
+The telemetry layer is process-wide. Shut it down during normal process termination to flush spans and detach instrumentations cleanly.
+
+## When To Use Manual Wrappers Instead
+
+Use the standard bootstrap unless you have a reason not to. Manual wrappers are better only when:
+
+- another subsystem owns telemetry initialization
+- you want to govern only a subset of tools, workflows, or agents
+- you need explicit control over startup order
+
+See the [Integration Walkthrough](/developer-guide/mastra/integration-walkthrough) for the manual pattern and runtime wiring options.

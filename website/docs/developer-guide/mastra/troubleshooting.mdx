@@ -1,0 +1,102 @@
+---
+title: Troubleshooting
+description: "Common Mastra SDK integration issues and how to diagnose them quickly."
+llms_description: Mastra SDK troubleshooting guide
+sidebar_position: 7
+tags:
+  - sdk
+  - mastra
+  - configuration
+  - integration
+---
+
+# Troubleshooting
+
+Use this page to diagnose the most common startup, runtime, and UI interpretation issues with the OpenBox Mastra SDK.
+
+## Startup Validation Fails
+
+Typical causes:
+
+- `OPENBOX_URL` is missing
+- `OPENBOX_API_KEY` is missing or malformed
+- the URL is not HTTPS outside localhost development
+- the API key validation call fails
+
+What to do:
+
+1. Verify `OPENBOX_URL` and `OPENBOX_API_KEY`.
+2. Confirm the service can reach OpenBox Core.
+3. Use `validate: false` only for local mocks or tests.
+
+## No Runs Appear In OpenBox
+
+Check these first:
+
+1. The service can reach `OPENBOX_URL` from its runtime environment.
+2. The agent API key is valid for the intended OpenBox agent.
+3. The service is using the governed Mastra instance returned by `withOpenBox()`.
+4. The process was restarted after configuration changes.
+
+## A Guardrail UI Test Passes But The Live Run Does Not Fire
+
+This usually means policy returned a non-`allow` verdict first. In a standard deployment, policy evaluates before guardrails on the same event.
+
+What to verify:
+
+- the live event returns `allow` from policy
+- the guardrail targets `ActivityStarted` when matching tool input
+- the field selector matches the emitted payload shape, such as `input.command`
+
+## I Do Not See Spans On `ActivityStarted` For Agent Runs
+
+This can be expected. Agent-only model work is surfaced through:
+
+- `SignalReceived(agent_output)`
+- `WorkflowCompleted`
+
+It is not always attached directly to `ActivityStarted`, especially when no tool executed.
+
+## I See Runs But No Tool Health
+
+Tool health only appears for agents that actually execute tools. An orchestrator, gateway, or agent that only performs model generation will not populate tool health metrics for that run.
+
+## I See Runs But No Model Usage On The Parent Orchestrator
+
+That can also be expected. If the parent runtime only routes work to child agents, the model usage belongs to the child agent runs, not the orchestrator.
+
+## The Dashboard Shows `ActivityCompleted` But I Expected A Matching `ActivityStarted`
+
+Check whether you are looking at a real business activity or at hook-triggered telemetry. OpenBox can attach internal span-derived telemetry around the same runtime path.
+
+Recommended interpretation:
+
+- tools and governed non-tool workflow steps are the business activities
+- internal hook telemetry is operational evidence, not a second business step
+- use `activity_id` to correlate started and completed boundaries
+
+## Approvals Never Resolve
+
+Check:
+
+1. `OPENBOX_HITL_ENABLED` is still enabled.
+2. The approval exists and is being acted on in OpenBox.
+3. The service can still reach OpenBox during approval polling or resume.
+
+## Configuration Changes Do Not Take Effect
+
+After changing environment variables:
+
+1. restart the process
+2. confirm the service is not reusing an old environment file
+3. verify the startup path is still calling `withOpenBox()` or the intended manual bootstrap
+
+## Useful Debug Setting
+
+Enable summarized SDK debug logs with:
+
+```bash title=".env"
+OPENBOX_DEBUG=true
+```
+
+This helps confirm evaluate requests, approval polling, and startup behavior without changing application code.
