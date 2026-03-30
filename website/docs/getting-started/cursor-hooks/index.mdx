@@ -91,6 +91,19 @@ To confirm hooks are firing locally:
 tail -f ~/.cursor-hooks/hook.log
 ```
 
+## Example: PII detection
+
+When a prompt contains personally identifiable information, OpenBox blocks it before the agent processes it:
+
+```
+add seed data for testing: insert a user with name John Smith
+and email jsmith@gmail.com into the users table
+```
+
+<img src="/img/integrations/cursor-pii-block.png" alt="Cursor prompt blocked by PII detection" style={{maxWidth: '600px', borderRadius: '8px'}} />
+
+The PII guardrail detected the name and email address in the prompt and halted the submission.
+
 ## Next steps
 
 - **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, event lifecycle, and configuration reference
