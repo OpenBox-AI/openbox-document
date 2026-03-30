@@ -16,14 +16,6 @@ The `cursor-hooks` package connects [Cursor IDE](https://cursor.com) to [OpenBox
 The integration's primary job is to **connect Cursor to OpenBox** and send hook events to the platform. All trust logic, policies, and UI management happens on the platform — not in cursor-hooks.
 :::
 
-## Philosophy
-
-The integration is intentionally minimal:
-
-- **One command** to install (`npm run install-hooks`)
-- **Zero changes** to your Cursor setup — hooks are registered globally
-- **Automatic capture** — every agent action is governed without any per-project configuration
-
 ## Installation
 
 See **[Getting Started with Cursor](/getting-started/cursor-hooks)** for setup instructions.
