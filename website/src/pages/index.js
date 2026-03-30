@@ -269,6 +269,11 @@ const HelpfulLinks = [
     href: 'mailto:support@openbox.ai',
   },
   {
+    labelPrefix: 'Join our community:',
+    labelLink: 'Discord',
+    href: 'https://discord.gg/YjRYvV6QJw',
+  },
+  {
     labelPrefix: 'Talk to us:',
     labelLink: 'Email sales',
     href: 'mailto:sales@openbox.ai',
