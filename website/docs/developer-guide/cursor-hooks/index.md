@@ -3,6 +3,7 @@ title: Cursor
 description: "Developer reference for governing Cursor IDE agents with OpenBox: hook handler architecture, lifecycle events, and span instrumentation."
 llms_description: Cursor Hooks TypeScript developer reference
 tags:
+  - sdk
   - cursor
   - typescript
 ---
