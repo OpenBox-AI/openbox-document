@@ -166,14 +166,8 @@ src/
 
 ### Hooks not firing
 
-Check that `~/.cursor/hooks.json` exists and points to `~/.cursor-hooks/hook-handler.js`. Re-run `npm run install-hooks` if needed.
+Restart Cursor after running `npm run install-hooks`. If hooks still don't fire, re-run the install command.
 
 ### File reads getting blocked
 
-Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys in file content.
-
-### Alignment score is null
-
-1. Confirm `beforeSubmitPrompt` fires before `afterAgentResponse` (check hook.log)
-2. The `llm_completion` span must have `stage: "completed"`
-3. Goal alignment must be enabled on the dashboard
+Check your guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys or tokens found in file content.
