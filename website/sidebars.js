@@ -25,13 +25,13 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          id: 'getting-started/cursor-hooks/index',
-          label: 'Cursor',
+          id: 'getting-started/crewai/index',
+          label: 'CrewAI',
         },
         {
           type: 'doc',
-          id: 'getting-started/crewai/index',
-          label: 'CrewAI',
+          id: 'getting-started/cursor-hooks/index',
+          label: 'Cursor',
         },
         {
           type: 'doc',
@@ -148,13 +148,13 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          id: 'developer-guide/cursor-hooks/index',
-          label: 'Cursor',
+          id: 'developer-guide/crewai/index',
+          label: 'CrewAI',
         },
         {
           type: 'doc',
-          id: 'developer-guide/crewai/index',
-          label: 'CrewAI',
+          id: 'developer-guide/cursor-hooks/index',
+          label: 'Cursor',
         },
         {
           type: 'doc',
