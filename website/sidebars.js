@@ -25,6 +25,11 @@ const sidebars = {
       items: [
         {
           type: 'doc',
+          id: 'getting-started/cursor-hooks/index',
+          label: 'Cursor Hooks',
+        },
+        {
+          type: 'doc',
           id: 'getting-started/crewai/index',
           label: 'CrewAI',
         },
@@ -133,6 +138,11 @@ const sidebars = {
         id: 'developer-guide/index',
       },
       items: [
+        {
+          type: 'doc',
+          id: 'developer-guide/cursor-hooks/index',
+          label: 'Cursor Hooks (TypeScript)',
+        },
         {
           type: 'doc',
           id: 'developer-guide/crewai/index',
