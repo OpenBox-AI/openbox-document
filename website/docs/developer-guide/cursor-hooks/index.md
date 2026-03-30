@@ -12,29 +12,67 @@ The `cursor-hooks` package connects [Cursor IDE](https://cursor.com) to [OpenBox
 
 **[OpenBox-AI/cursor-hooks](https://github.com/OpenBox-AI/cursor-hooks)**
 
-## Architecture
+:::info
+The integration's primary job is to **connect Cursor to OpenBox** and send hook events to the platform. All trust logic, policies, and UI management happens on the platform — not in cursor-hooks.
+:::
 
-Cursor fires hook scripts at each point in the agent loop. `cursor-hooks` intercepts these, sends each action to OpenBox for evaluation, and returns the verdict back to Cursor.
+## Philosophy
+
+The integration is intentionally minimal:
+
+- **One command** to install (`npm run install-hooks`)
+- **Zero changes** to your Cursor setup — hooks are registered globally
+- **Automatic capture** — every agent action is governed without any per-project configuration
+
+## Installation
+
+See **[Getting Started with Cursor](/getting-started/cursor-hooks)** for setup instructions.
+
+## What it captures
+
+cursor-hooks automatically captures and sends to OpenBox:
+
+### Prompt events
+- User prompt text and attachments
+- Agent response text
+- Agent reasoning (thinking)
+
+### File events
+- File content on read (before the agent sees it)
+- File edits (after the agent writes)
+
+### Shell events
+- Shell commands before execution
+- Command output and exit code after execution
+
+### MCP events
+- MCP tool name and arguments before execution
+- MCP tool response after execution
+
+### Session events
+- Session start and stop
+- Goal signal (user's original prompt for drift detection)
+
+All captured data is evaluated against your trust policies on the OpenBox platform.
+
+## How it works
 
 ```mermaid
-sequenceDiagram
-    participant C as Cursor
-    participant H as cursor-hooks
-    participant O as OpenBox Core
+flowchart TD
+    subgraph cursor["Cursor IDE"]
+        agent["Agent Loop<br/>(unchanged)"]
+    end
 
-    C->>H: beforeSubmitPrompt
-    H->>O: evaluate prompt
-    O-->>H: verdict
-    H-->>C: allow / block
+    agent --> hooks
 
-    C->>H: afterAgentResponse
-    H->>O: evaluate response
+    subgraph hooks["cursor-hooks"]
+        handler["<b>Hook Handler</b><br/>Intercepts all agent actions<br/>Routes to OpenBox<br/>Enforces verdicts"]
+    end
 
-    C->>H: stop
-    H->>O: finalize session
+    hooks --> engine
+
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN<br/>REQUIRE_APPROVAL · BLOCK · HALT"]
 ```
-
-Before-hooks (`beforeSubmitPrompt`, `beforeReadFile`, `beforeShellExecution`, `beforeMCPExecution`) can block or constrain the action. After-hooks observe the result for trust scoring and drift detection.
 
 ## Event lifecycle
 
@@ -132,3 +170,9 @@ Re-run `npm run install-hooks` and restart Cursor.
 ### File reads getting blocked
 
 Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys in file content.
+
+## Next steps
+
+- **[Getting Started with Cursor](/getting-started/cursor-hooks)** — installation and setup
+- **[Core Concepts](/core-concepts)** — Trust Scores, Trust Tiers, Governance Decisions
+- **[Trust Lifecycle](/trust-lifecycle)** — Assess, Authorize, Monitor, Verify, Adapt
