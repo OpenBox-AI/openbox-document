@@ -73,12 +73,3 @@ tags:
   - trust-scoring
 ---
 ```
-
-## Deployment
-
-The site deploys automatically on Vercel. Each environment tracks a git branch — pushes or merges trigger a new build and deploy.
-
-| Environment | URL                          | Branch    |
-| ----------- | ---------------------------- | --------- |
-| Production  | https://docs.openbox.ai/     | `main`    |
-| Develop     | https://docs.node.lat/       | `develop` |
