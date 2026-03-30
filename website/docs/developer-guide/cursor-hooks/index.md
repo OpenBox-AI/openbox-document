@@ -4,7 +4,6 @@ description: "Developer reference for governing Cursor IDE agents with OpenBox: 
 llms_description: Cursor Hooks TypeScript developer reference
 tags:
   - cursor
-  - typescript
 ---
 
 # Cursor
@@ -17,24 +16,25 @@ The `cursor-hooks` package connects [Cursor IDE](https://cursor.com) to [OpenBox
 
 `cursor-hooks` operates as a set of external hook scripts invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that reads JSON from stdin, calls the OpenBox governance API, and writes JSON to stdout.
 
-```text
-Cursor Agent Loop                  cursor-hooks                   OpenBox Core
-│                                      │                               │
-├─ beforeSubmitPrompt ──stdin──►  hook-handler.ts                      │
-│                                  ├─ sendGoalSignal() ─────────►  SignalReceived
-│                                  ├─ governInput() ────────────►  ActivityStarted
-│                                  │                          ◄──  verdict
-│                          ◄──stdout── mapPromptVerdict()          │
-│                                      │                               │
-├─ afterAgentResponse ──stdin──►  hook-handler.ts                      │
-│                                  ├─ completeActivity() ───────►  ActivityStarted
-│                                  │                                (hook_trigger,
-│                                  │                                 llm span)
-│                                  ├─ observe() ────────────────►  ActivityStarted
-│                          ◄──stdout── null (observe only)             │
-│                                      │                               │
-└─ stop ────────────────stdin──►  hook-handler.ts                      │
-                                   └─ endSession() ─────────────►  WorkflowCompleted
+```mermaid
+sequenceDiagram
+    participant C as Cursor
+    participant H as cursor-hooks
+    participant O as OpenBox Core
+
+    C->>H: beforeSubmitPrompt (stdin)
+    H->>O: SignalReceived (user goal)
+    H->>O: ActivityStarted (PromptSubmission)
+    O-->>H: verdict
+    H-->>C: allow / block (stdout)
+
+    C->>H: afterAgentResponse (stdin)
+    H->>O: ActivityStarted (hook_trigger + llm span)
+    H->>O: ActivityStarted (observe)
+    H-->>C: null
+
+    C->>H: stop (stdin)
+    H->>O: WorkflowCompleted
 ```
 
 ## Event lifecycle
