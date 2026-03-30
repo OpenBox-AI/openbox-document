@@ -174,5 +174,4 @@ Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detec
 
 ### Goal alignment not showing
 
-1. Check that hooks are firing (verify events in `~/.cursor-hooks/hook.log`)
-2. Ensure goal alignment is enabled for your agent on the OpenBox dashboard
+Check that hooks are firing by verifying events appear in `~/.cursor-hooks/hook.log`. Goal alignment runs automatically when both the prompt and response hooks fire within the same session.
