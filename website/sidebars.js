@@ -26,7 +26,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'getting-started/cursor-hooks/index',
-          label: 'Cursor Hooks',
+          label: 'Cursor',
         },
         {
           type: 'doc',
@@ -141,7 +141,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'developer-guide/cursor-hooks/index',
-          label: 'Cursor Hooks (TypeScript)',
+          label: 'Cursor',
         },
         {
           type: 'doc',
