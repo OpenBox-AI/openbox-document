@@ -14,6 +14,18 @@ The `cursor-hooks` package provides real-time governance and observability for [
 
 **[OpenBox-AI/cursor-hooks](https://github.com/OpenBox-AI/cursor-hooks)**
 
+## Quick start
+
+```bash
+git clone https://github.com/OpenBox-AI/cursor-hooks.git
+cd cursor-hooks
+npm install && npm run build
+npm run install-hooks -- --key obx_live_your_key
+# Restart Cursor — all agent actions are now governed
+```
+
+Verify with `tail -f ~/.cursor-hooks/hook.log`.
+
 ## Architecture
 
 `cursor-hooks` operates as a set of **external hook scripts** invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that:
@@ -134,12 +146,16 @@ The alignment score is returned in the `age_result.span_results[].alignment_resu
 
 ## Configuration reference
 
-See **[Getting Started — Configuration](/getting-started/cursor-hooks#configuration)** for basic settings.
-
-Advanced settings in `~/.cursor-hooks/config.json`:
+Config file: `~/.cursor-hooks/config.json`
 
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
+| `OPENBOX_API_KEY` | string | — | API key (required) |
+| `OPENBOX_ENDPOINT` | string | `https://core.openbox.ai` | Core API URL |
+| `GOVERNANCE_POLICY` | string | `fail_open` | `fail_open` or `fail_closed` |
+| `GOVERNANCE_TIMEOUT` | number | `15` | API timeout in seconds |
+| `VERBOSE` | boolean | `false` | Debug logging to stderr and log file |
+| `DRY_RUN` | boolean | `false` | Allow all actions, skip API calls |
 | `HITL_ENABLED` | boolean | `true` | Enable HITL approval polling |
 | `HITL_POLL_INTERVAL` | number | `5` | Approval poll interval (seconds) |
 | `HITL_MAX_WAIT` | number | `300` | Approval timeout (seconds) |
