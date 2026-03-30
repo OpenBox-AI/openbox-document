@@ -1,5 +1,5 @@
 ---
-title: Cursor Hooks (TypeScript)
+title: Cursor
 description: "Developer reference for governing Cursor IDE agents with OpenBox: hook handler architecture, lifecycle events, span instrumentation, and configuration."
 llms_description: Cursor Hooks TypeScript SDK reference and architecture
 tags:
@@ -8,67 +8,52 @@ tags:
   - integration
 ---
 
-# Cursor Hooks (TypeScript)
+# Cursor
 
-The `cursor-hooks` package provides real-time governance and observability for [Cursor IDE](https://cursor.com) agents — powered by [OpenBox](https://openbox.ai).
+The `cursor-hooks` package provides real-time governance and observability for [Cursor IDE](https://cursor.com) agents.
 
 **[OpenBox-AI/cursor-hooks](https://github.com/OpenBox-AI/cursor-hooks)**
 
-## Quick start
-
-```bash
-git clone https://github.com/OpenBox-AI/cursor-hooks.git
-cd cursor-hooks
-npm install && npm run build
-npm run install-hooks -- --key obx_live_your_key
-# Restart Cursor — all agent actions are now governed
-```
-
-Verify with `tail -f ~/.cursor-hooks/hook.log`.
-
 ## Architecture
 
-`cursor-hooks` operates as a set of **external hook scripts** invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that:
+`cursor-hooks` operates as a set of external hook scripts invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that reads JSON from stdin, calls the OpenBox governance API, and writes JSON to stdout.
 
-1. Reads JSON from stdin (Cursor's hook payload)
-2. Routes to the correct handler based on `hook_event_name`
-3. Calls OpenBox's governance API
-4. Writes JSON to stdout (Cursor's expected response format)
-
-```
-Cursor Agent Loop                    cursor-hooks                    OpenBox Core
-  │                                      │                               │
-  ├─ beforeSubmitPrompt ──stdin──►  hook-handler.ts                      │
-  │                                  ├─ sendGoalSignal() ─────────►  SignalReceived
-  │                                  ├─ governInput() ────────────►  ActivityStarted
-  │                                  │                          ◄──  verdict
-  │                          ◄──stdout── mapPromptVerdict()          │
-  │                                      │                               │
-  ├─ afterAgentResponse ──stdin──►  hook-handler.ts                      │
-  │                                  ├─ completeActivity() ───────►  ActivityStarted (hook_trigger, llm span)
-  │                                  ├─ observe() ────────────────►  ActivityStarted
-  │                          ◄──stdout── null (observe only)             │
-  │                                      │                               │
-  └─ stop ────────────────stdin──►  hook-handler.ts                      │
-                                     └─ endSession() ─────────────►  WorkflowCompleted
+```text
+Cursor Agent Loop                  cursor-hooks                   OpenBox Core
+│                                      │                               │
+├─ beforeSubmitPrompt ──stdin──►  hook-handler.ts                      │
+│                                  ├─ sendGoalSignal() ─────────►  SignalReceived
+│                                  ├─ governInput() ────────────►  ActivityStarted
+│                                  │                          ◄──  verdict
+│                          ◄──stdout── mapPromptVerdict()          │
+│                                      │                               │
+├─ afterAgentResponse ──stdin──►  hook-handler.ts                      │
+│                                  ├─ completeActivity() ───────►  ActivityStarted
+│                                  │                                (hook_trigger,
+│                                  │                                 llm span)
+│                                  ├─ observe() ────────────────►  ActivityStarted
+│                          ◄──stdout── null (observe only)             │
+│                                      │                               │
+└─ stop ────────────────stdin──►  hook-handler.ts                      │
+                                   └─ endSession() ─────────────►  WorkflowCompleted
 ```
 
 ## Event lifecycle
 
-All hooks within a Cursor conversation share one `workflow_id`. This maps to a single OpenBox session:
+All hooks within a Cursor conversation share one `workflow_id`, mapping to a single OpenBox session.
 
-```
-sessionStart         → WorkflowStarted
-beforeSubmitPrompt   → SignalReceived (user goal) + ActivityStarted (PromptSubmission)
-afterAgentResponse   → ActivityStarted (hook_trigger, llm_completion span) + ActivityStarted (AgentResponse)
-beforeShellExecution → ActivityStarted (ShellExecution)
-afterShellExecution  → ActivityCompleted (ShellExecution) + ActivityStarted (ShellOutput)
-stop                 → WorkflowCompleted
-```
+| Cursor hook | OpenBox event | Purpose |
+|-------------|--------------|---------|
+| `sessionStart` | WorkflowStarted | Creates the session |
+| `beforeSubmitPrompt` | SignalReceived + ActivityStarted | Captures user goal, governs prompt |
+| `afterAgentResponse` | ActivityStarted (hook trigger) | Sends `llm_completion` span for alignment |
+| `beforeShellExecution` | ActivityStarted | Governs shell command |
+| `afterShellExecution` | ActivityCompleted | Closes shell activity with output |
+| `stop` | WorkflowCompleted | Finalizes session and attestation |
 
 ### Session persistence
 
-Each hook runs as a separate process. Sessions are persisted to `~/.cursor-hooks/sessions/` as JSON files, keyed by `{conversation_id}:{activity_type}`. This allows `afterAgentResponse` to complete the activity started by `beforeSubmitPrompt`.
+Each hook runs as a separate process. Sessions are persisted to `~/.cursor-hooks/sessions/` as JSON files, keyed by `{conversation_id}:{activity_type}`.
 
 ## Hook handlers
 
@@ -76,20 +61,20 @@ Each hook runs as a separate process. Sessions are persisted to `~/.cursor-hooks
 
 | Hook | Handler | What it does |
 |------|---------|-------------|
-| `beforeSubmitPrompt` | `mappers/prompt.ts` | Sends user goal via `SignalReceived`. Governs prompt input. Can block or pass through. |
-| `beforeReadFile` | `mappers/file-read.ts` | Governs file content. Can block, allow, or redact (constrain). |
-| `beforeShellExecution` | `mappers/shell.ts` | Governs shell commands. Can block dangerous commands via Rego policies. |
-| `beforeMCPExecution` | `mappers/mcp.ts` | Governs MCP tool calls. Can block unauthorized tools. |
+| `beforeSubmitPrompt` | `mappers/prompt.ts` | Sends user goal via `SignalReceived`. Governs prompt input. |
+| `beforeReadFile` | `mappers/file-read.ts` | Governs file content. Can block, allow, or redact. |
+| `beforeShellExecution` | `mappers/shell.ts` | Governs shell commands via Rego policies. |
+| `beforeMCPExecution` | `mappers/mcp.ts` | Governs MCP tool calls. |
 
 ### After-hooks (observe only)
 
 | Hook | Handler | What it does |
 |------|---------|-------------|
-| `afterAgentResponse` | `mappers/observe.ts` | Completes prompt lifecycle. Sends `llm_completion` span for goal alignment scoring. |
-| `afterAgentThought` | `mappers/observe.ts` | Observes agent reasoning for drift detection. |
-| `afterShellExecution` | `mappers/observe.ts` | Completes shell lifecycle with output and exit code. |
-| `afterMCPExecution` | `mappers/mcp-response.ts` | Governs MCP response. Can redact PII from tool output. |
-| `afterFileEdit` | `mappers/observe.ts` | Observes file changes for behavioral rules. |
+| `afterAgentResponse` | `mappers/observe.ts` | Sends `llm_completion` span for goal alignment. |
+| `afterAgentThought` | `mappers/observe.ts` | Observes agent reasoning. |
+| `afterShellExecution` | `mappers/observe.ts` | Completes shell lifecycle. |
+| `afterMCPExecution` | `mappers/mcp-response.ts` | Can redact PII from tool output. |
+| `afterFileEdit` | `mappers/observe.ts` | Observes file changes. |
 
 ## Span instrumentation
 
@@ -119,11 +104,9 @@ The `afterAgentResponse` handler sends an `llm_completion` span as a hook trigge
 }
 ```
 
-The `request_body` contains the original user prompt (stored during `beforeSubmitPrompt`), and `response_body` contains the agent's response. OpenBox compares these for goal alignment scoring.
+`request_body` contains the original user prompt (stored during `beforeSubmitPrompt`). `response_body` contains the agent's response. OpenBox compares these for goal alignment scoring.
 
 ### Semantic type mapping
-
-OpenBox classifies spans by their attributes. The hook handler sets appropriate span attributes so the server can compute the correct semantic type:
 
 | Activity type | Span attributes | Server classification |
 |--------------|----------------|----------------------|
@@ -134,15 +117,11 @@ OpenBox classifies spans by their attributes. The hook handler sets appropriate 
 
 ## Goal alignment (drift detection)
 
-Goal alignment compares the user's stated intent against the agent's actual response:
-
-1. **`beforeSubmitPrompt`** sends a `SignalReceived` event with the user's prompt as the goal
-2. **`afterAgentResponse`** sends an `llm_completion` span (via hook trigger) with:
-   - `request_body` = original user prompt
-   - `response_body` = agent's response
+1. `beforeSubmitPrompt` sends a `SignalReceived` event with the user's prompt as the goal
+2. `afterAgentResponse` sends an `llm_completion` span (via hook trigger) with `request_body` = user prompt, `response_body` = agent response
 3. OpenBox scores alignment 0-100%. Below 50% = drift detected.
 
-The alignment score is returned in the `age_result.span_results[].alignment_result` field of the API response.
+The score is returned in `age_result.span_results[].alignment_result`.
 
 ## Configuration reference
 
@@ -167,7 +146,7 @@ Config file: `~/.cursor-hooks/config.json`
 
 ## Project structure
 
-```
+```text
 src/
   hook-handler.ts      Entry point — reads stdin, routes, writes stdout
   config.ts            Config from env vars / config.json / .env
@@ -183,38 +162,20 @@ src/
     mcp.ts             beforeMCPExecution
     mcp-response.ts    afterMCPExecution
     observe.ts         After-hooks + sessionStart + stop
-  __tests__/
 ```
 
 ## Troubleshooting
 
 ### Hooks not firing
 
-Check that `~/.cursor/hooks.json` exists and points to a valid handler:
-```bash
-cat ~/.cursor/hooks.json
-```
-
-The command should reference `~/.cursor-hooks/hook-handler.js`. If the path is wrong, re-run:
-```bash
-npm run install-hooks -- --key obx_live_your_key
-```
-
-### No log output
-
-Ensure the hook handler is executable and the config directory exists:
-```bash
-ls -la ~/.cursor-hooks/hook-handler.js
-node ~/.cursor-hooks/hook-handler.js  # should exit silently with no API key
-```
+Check that `~/.cursor/hooks.json` exists and points to `~/.cursor-hooks/hook-handler.js`. Re-run `npm run install-hooks` if needed.
 
 ### File reads getting blocked
 
-Check your guardrail configuration for the `FileRead` activity type on the OpenBox dashboard. PII detection may flag API keys or tokens found in file content.
+Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys in file content.
 
 ### Alignment score is null
 
-Ensure:
-1. `beforeSubmitPrompt` fires before `afterAgentResponse` (check hook.log)
-2. The `llm_completion` span has `stage: "completed"` (not `"started"`)
-3. Goal alignment is enabled on your OpenBox dashboard
+1. Confirm `beforeSubmitPrompt` fires before `afterAgentResponse` (check hook.log)
+2. The `llm_completion` span must have `stage: "completed"`
+3. Goal alignment must be enabled on the dashboard

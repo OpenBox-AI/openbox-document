@@ -1,5 +1,5 @@
 ---
-title: Getting Started with Cursor Hooks
+title: Getting Started with Cursor
 description: "Add OpenBox governance to Cursor IDE: every agent action — prompts, shell commands, MCP tool calls, file reads — is governed through hooks."
 llms_description: Cursor IDE hooks integration onboarding
 sidebar_position: 3
@@ -9,32 +9,88 @@ tags:
   - typescript
 ---
 
-# Getting Started with Cursor Hooks
+# Getting Started with Cursor
 
-OpenBox governance for [Cursor IDE](https://cursor.com) via the official [hooks system](https://docs.cursor.com/context/hooks). Every agent action — prompts, shell commands, MCP tool calls, file reads — is governed through OpenBox before it executes.
+Add OpenBox governance to [Cursor IDE](https://cursor.com) using Cursor's official [hooks system](https://docs.cursor.com/context/hooks). Prompts, file reads, shell commands, and MCP tool calls are all evaluated against your policies before they execute. After-hooks observe agent responses for drift detection and trust scoring.
 
-## Quick start
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) v18+
+- [Cursor IDE](https://cursor.com) v2.5+
+- An OpenBox API key (`obx_live_xxx`) — get one at [platform.openbox.ai](https://platform.openbox.ai)
+
+## Install
 
 ```bash
 git clone https://github.com/OpenBox-AI/cursor-hooks.git
 cd cursor-hooks
 npm install && npm run build
 npm run install-hooks -- --key obx_live_your_key
-# Restart Cursor — all agent actions are now governed
 ```
 
-Verify with `tail -f ~/.cursor-hooks/hook.log`.
+This creates `~/.cursor-hooks/config.json`, a stable symlink at `~/.cursor-hooks/hook-handler.js`, and registers all 11 hooks in `~/.cursor/hooks.json`.
 
-## What to expect
+Restart Cursor (`Cmd+Q` → reopen).
 
-- Every prompt, file read, shell command, and MCP tool call is governed before execution
-- PII/secret redaction on file content and MCP responses
-- Human-in-the-loop approvals for sensitive operations
-- Goal alignment scoring and drift detection
-- Full session replay and audit trail
+## Verify
+
+```bash
+tail -f ~/.cursor-hooks/hook.log
+```
+
+Send any prompt in Cursor — hook events appear in the log.
+
+## Configuration
+
+Config file: `~/.cursor-hooks/config.json`
+
+| Setting | Required | Default | Description |
+|---------|----------|---------|-------------|
+| `OPENBOX_API_KEY` | Yes | — | API key (`obx_live_xxx`) |
+| `OPENBOX_ENDPOINT` | No | `https://core.openbox.ai` | Core API URL |
+| `GOVERNANCE_POLICY` | No | `fail_open` | `fail_open` or `fail_closed` |
+| `GOVERNANCE_TIMEOUT` | No | `15` | API timeout (seconds) |
+| `VERBOSE` | No | `false` | Debug logging |
+| `DRY_RUN` | No | `false` | Allow all, skip API |
+
+See **[Developer Guide](/developer-guide/cursor-hooks#configuration-reference)** for the full configuration reference.
+
+## What gets governed
+
+| Hook | Can block? | Activity type |
+|------|-----------|---------------|
+| `beforeSubmitPrompt` | Yes | `PromptSubmission` |
+| `beforeReadFile` | Yes (+ redact) | `FileRead` |
+| `beforeShellExecution` | Yes | `ShellExecution` |
+| `beforeMCPExecution` | Yes | `MCPToolCall` |
+| `afterMCPExecution` | Redact only | `MCPToolResponse` |
+| `afterAgentResponse` | No | `AgentResponse` |
+| `afterAgentThought` | No | `AgentThinking` |
+| `afterShellExecution` | No | `ShellOutput` |
+| `afterFileEdit` | No | `FileEdit` |
+| `sessionStart` / `stop` | No | `CursorSession` |
+
+## Dashboard setup
+
+Configure guardrails and policies per activity type in **Agent → Authorize**:
+
+| Activity type | What to configure |
+|--------------|-------------------|
+| `PromptSubmission` | PII, toxicity, ban words, content filter |
+| `FileRead` | PII/secret redaction |
+| `ShellExecution` | Rego policies (command allowlists) |
+| `MCPToolCall` | Rego policies, tool allowlists |
+| `MCPToolResponse` | PII redaction on output |
+
+## Uninstall
+
+```bash
+rm ~/.cursor/hooks.json
+rm -rf ~/.cursor-hooks
+```
 
 ## Next steps
 
-- **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, lifecycle, span instrumentation, and configuration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+- **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, event lifecycle, span instrumentation
+- **[Core Concepts](/core-concepts)** — Trust Scores, Trust Tiers, Governance Decisions
+- **[Trust Lifecycle](/trust-lifecycle)** — Assess, Authorize, Monitor, Verify, Adapt
