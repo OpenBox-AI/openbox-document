@@ -1,0 +1,113 @@
+---
+title: Mastra SDK (TypeScript)
+description: "OpenBox SDK reference for Mastra: govern agents, tools, and workflows with approvals, guardrails, and operational telemetry."
+llms_description: Mastra SDK reference and guide set
+sidebar_position: 1
+slug: /developer-guide/mastra
+tags:
+  - sdk
+  - mastra
+  - typescript
+---
+
+# Mastra SDK (TypeScript)
+
+The OpenBox Mastra SDK connects a Mastra runtime to OpenBox. It governs tools, workflow steps, workflows, and agent runs while attaching operational telemetry that operators can inspect in the dashboard.
+
+| Guide | Description |
+|-------|-------------|
+| **[Integration Walkthrough](/developer-guide/mastra/integration-walkthrough)** | End-to-end guide for wiring `withOpenBox()`, manual wrappers, and telemetry into a Mastra service |
+| **[Configuration](/developer-guide/mastra/configuration)** | Environment variables, runtime options, defaults, and production guidance |
+| **[Error Handling](/developer-guide/mastra/error-handling)** | Runtime errors, approval outcomes, guardrail failures, and startup validation issues |
+| **[Event Model](/developer-guide/mastra/event-model)** | Understand workflows, activities, signals, and how Mastra runs appear in OpenBox |
+| **[Approvals and Guardrails](/developer-guide/mastra/approvals-and-guardrails)** | How verdicts are enforced and how to test live guardrails correctly |
+| **[Telemetry](/developer-guide/mastra/telemetry)** | HTTP, database, file, and traced-function capture behavior |
+| **[Troubleshooting](/developer-guide/mastra/troubleshooting)** | Diagnose startup, policy, approvals, telemetry, and UI interpretation issues |
+
+:::info What the SDK Does
+The SDK's job is to connect a Mastra runtime to OpenBox. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside the SDK.
+:::
+
+## Philosophy
+
+The integration is intentionally minimal:
+
+- One standard bootstrap path with `withOpenBox()`
+- No rewrite of existing agent, tool, or workflow logic
+- Automatic governance at Mastra runtime boundaries
+- Automatic telemetry capture through OpenTelemetry
+
+## Recommended Entry Point
+
+For most services, use `withOpenBox()`:
+
+```ts
+import { withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
+
+await withOpenBox(mastra, {
+  apiKey: process.env.OPENBOX_API_KEY,
+  apiUrl: process.env.OPENBOX_URL
+});
+```
+
+It validates configuration, creates the OpenBox runtime, installs telemetry, wraps existing registrations, and keeps future Mastra registrations governed.
+
+## Public API Summary
+
+Most integrations only need these exports:
+
+- `withOpenBox()`
+- `getOpenBoxRuntime()`
+- `wrapTool()`
+- `wrapWorkflow()`
+- `wrapAgent()`
+- `setupOpenBoxOpenTelemetry()`
+- `traced()`
+
+## What The SDK Captures
+
+OpenBox receives:
+
+### Workflow Boundaries
+
+- `WorkflowStarted`
+- `WorkflowCompleted`
+- `WorkflowFailed`
+
+### Activity Boundaries
+
+- `ActivityStarted`
+- `ActivityCompleted`
+
+These apply to:
+
+- wrapped tools
+- wrapped non-tool workflow steps
+
+### Signals
+
+- `SignalReceived(user_input)`
+- `SignalReceived(resume)`
+- `SignalReceived(agent_output)`
+
+### Operational Telemetry
+
+- HTTP requests
+- supported database activity
+- file operations when enabled
+- custom traced functions
+
+## Supported Runtime Conditions
+
+| Requirement | Value |
+| --- | --- |
+| Node.js | `>=24.10.0` |
+| Mastra | `@mastra/core ^1.8.0` |
+| Module format | ESM |
+| OpenBox Core | reachable over HTTPS except localhost development |
+
+## Next Steps
+
+1. Start with the [Integration Walkthrough](/developer-guide/mastra/integration-walkthrough).
+2. Configure production behavior in [Configuration](/developer-guide/mastra/configuration).
+3. Read [Event Model](/developer-guide/mastra/event-model) before writing policy or guardrails.

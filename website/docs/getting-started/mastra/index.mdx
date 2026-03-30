@@ -1,32 +1,117 @@
 ---
 title: Getting Started with Mastra
-description: "Add OpenBox governance to Mastra agents: trust scoring, policy enforcement, and audit-grade evidence for TypeScript AI agents."
-llms_description: Mastra integration onboarding (coming soon)
-sidebar_position: 7
+description: "Add OpenBox governance to Mastra agents, tools, and workflows with one bootstrap step."
+llms_description: Mastra integration onboarding and first governed app
+sidebar_position: 5
 tags:
   - getting-started
   - mastra
   - typescript
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started with Mastra
 
-:::info Docs coming soon
-The OpenBox SDK for [Mastra](https://mastra.ai/) is in development.
-This page will be updated with a full getting-started guide when the integration is available.
-:::
+OpenBox integrates with [Mastra](https://mastra.ai/) by wrapping the Mastra runtime during startup. Your agents, tools, and workflows stay in place while OpenBox adds governance, approvals, guardrails, and operational telemetry.
 
-OpenBox will integrate with Mastra by wrapping agent execution — your agents, tools, and workflows stay exactly as they are while every action is governed, scored, and auditable.
+## One Bootstrap Change
 
-## What to expect
+<Tabs>
+<TabItem value="before" label="Mastra">
 
-- Governance layer added with minimal code changes
-- Trust scoring and policy enforcement for every agent action
-- Full session replay for debugging and audit
-- HTTP call recording for all LLM and tool invocations
+```ts title="src/mastra/index.ts"
+import { Mastra } from "@mastra/core/mastra";
+import { myAgent } from "./agents/my-agent";
+import { myWorkflow } from "./workflows/my-workflow";
+import { myTool } from "./tools/my-tool";
 
-## In the meantime
+export const mastra = new Mastra({
+  agents: { myAgent },
+  workflows: { myWorkflow },
+  tools: { myTool }
+});
+```
 
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```ts title="src/mastra/index.ts"
+import { Mastra } from "@mastra/core/mastra";
+import { getOpenBoxRuntime, withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
+import { myAgent } from "./agents/my-agent";
+import { myWorkflow } from "./workflows/my-workflow";
+import { myTool } from "./tools/my-tool";
+
+const mastra = new Mastra({
+  agents: { myAgent },
+  workflows: { myWorkflow },
+  tools: { myTool }
+});
+
+export const governedMastra = await withOpenBox(mastra, {
+  apiKey: process.env.OPENBOX_API_KEY,
+  apiUrl: process.env.OPENBOX_URL
+});
+
+process.on("SIGTERM", async () => {
+  await getOpenBoxRuntime(governedMastra)?.shutdown();
+});
+```
+
+</TabItem>
+</Tabs>
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--4">
+
+### [Mastra 101](/getting-started/mastra/mastra-101)
+
+Get the Mastra concepts that matter for OpenBox before you wire governance into a real service.
+
+</div>
+<div className="col col--4">
+
+### [Run the Demo](/getting-started/mastra/run-the-demo)
+
+Run the SDK's public quickstart example locally and see a governed workflow, approval, and agent summary path end to end.
+
+</div>
+<div className="col col--4">
+
+### [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent)
+
+Add OpenBox to an existing Mastra codebase without rewriting your agents, tools, or workflows.
+
+</div>
+</div>
+
+## What OpenBox Captures
+
+From a single integration point, OpenBox captures:
+
+- Workflow lifecycle events for workflows and agent runs
+- Activity lifecycle events for tools and governed non-tool workflow steps
+- Agent signals such as `user_input`, `resume`, and `agent_output`
+- HTTP, database, file, and traced-function telemetry
+- Governance decisions, approvals, and guardrail outcomes
+
+## What To Expect In The UI
+
+After integration, OpenBox gives you:
+
+- A run timeline for workflows, tools, and agents
+- Policy and guardrail decisions on governed boundaries
+- Session replay with runtime context
+- Model and token usage for agent runs
+- Tool health metrics for agents that actually execute tools
+
+## Next Steps
+
+1. Read [Mastra 101](/getting-started/mastra/mastra-101) if you want the conceptual model first.
+2. Use [Run the Demo](/getting-started/mastra/run-the-demo) for the fastest working example.
+3. Use [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent) if you already have Mastra in production.
+3. Continue to the [Mastra Developer Guide](/developer-guide/mastra) for configuration, event semantics, telemetry, and troubleshooting.

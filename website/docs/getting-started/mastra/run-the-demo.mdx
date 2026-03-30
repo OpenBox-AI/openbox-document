@@ -1,0 +1,95 @@
+---
+title: Run the Demo
+description: "Run the public OpenBox Mastra quickstart example locally and watch a governed workflow, approval, and agent summary path execute."
+llms_description: Hands-on Mastra SDK demo walkthrough
+sidebar_position: 2
+tags:
+  - getting-started
+  - mastra
+  - typescript
+  - sdk
+---
+
+# Run the Demo
+
+The Mastra SDK repository ships with a public quickstart example. It is the fastest way to validate the integration loop without wiring your own application first.
+
+This demo uses:
+
+- a local mock OpenBox server
+- a mock model
+- a governed workflow with a tool call
+- a suspended approval and resume path
+- a wrapped summary agent
+
+Use it to validate SDK behavior locally. When you are ready to connect a real service to OpenBox, move to [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent).
+
+## Prerequisites
+
+- Node.js `24.10+`
+- npm
+- git
+
+## Clone The SDK Repo
+
+```bash
+git clone https://github.com/OpenBox-AI/openbox-mastra-sdk
+cd openbox-mastra-sdk
+```
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Run The Example
+
+```bash
+npm run example:quickstart
+```
+
+That command:
+
+1. builds the SDK
+2. starts the bundled quickstart example
+3. runs a governed workflow
+4. suspends for approval
+5. resumes after operator approval
+6. completes with an agent-generated summary
+
+## What You Should See
+
+The example prints progress similar to:
+
+- starting governed workflow
+- workflow suspended for approval
+- resume payload after operator approval
+- workflow success with final summary output
+
+## What This Demo Proves
+
+The example shows that the SDK can:
+
+- wrap a Mastra workflow
+- govern a tool execution as an activity
+- suspend and resume around an approval
+- wrap an agent and capture its output path
+
+## What This Demo Does Not Cover
+
+This demo does not connect to your real OpenBox environment or dashboard. It is a local SDK validation example.
+
+For a real integration with:
+
+- your OpenBox agent registration
+- your OpenBox API key
+- live policy and guardrails
+- dashboard-backed runs and session replay
+
+use [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent).
+
+## Next Steps
+
+- [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent)
+- [Mastra SDK (TypeScript)](/developer-guide/mastra)
