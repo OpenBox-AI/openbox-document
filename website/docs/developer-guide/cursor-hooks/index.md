@@ -16,7 +16,7 @@ The `cursor-hooks` package provides real-time governance and observability for [
 
 ## Architecture
 
-Unlike other OpenBox SDKs that wrap a runtime, `cursor-hooks` operates as a set of **external hook scripts** invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that:
+`cursor-hooks` operates as a set of **external hook scripts** invoked by Cursor at each point in the agent loop. Each hook invocation is a separate Node.js process that:
 
 1. Reads JSON from stdin (Cursor's hook payload)
 2. Routes to the correct handler based on `hook_event_name`
