@@ -44,9 +44,17 @@ const sidebars = {
           label: 'LangGraph',
         },
         {
-          type: 'doc',
-          id: 'getting-started/mastra/index',
+          type: 'category',
           label: 'Mastra',
+          link: {
+            type: 'doc',
+            id: 'getting-started/mastra/index',
+          },
+          items: [
+            'getting-started/mastra/mastra-101',
+            'getting-started/mastra/run-the-demo',
+            'getting-started/mastra/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -154,9 +162,21 @@ const sidebars = {
           label: 'LangGraph SDK (Python)',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/mastra/index',
-          label: 'Mastra',
+          type: 'category',
+          label: 'Mastra SDK (TypeScript)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/mastra/sdk-reference',
+          },
+          items: [
+            'developer-guide/mastra/configuration',
+            'developer-guide/mastra/error-handling',
+            'developer-guide/mastra/integration-walkthrough',
+            'developer-guide/mastra/event-model',
+            'developer-guide/mastra/approvals-and-guardrails',
+            'developer-guide/mastra/telemetry',
+            'developer-guide/mastra/troubleshooting',
+          ],
         },
         {
           type: 'doc',
