@@ -9,9 +9,6 @@ tags:
   - typescript
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Getting Started with Cursor
 
 OpenBox integrates with Cursor via the official [hooks system](https://cursor.com/docs/hooks) — your IDE workflows stay exactly as they are while every agent action is governed, scored, and auditable.
@@ -39,39 +36,12 @@ cd cursor-hooks
 npm install
 ```
 
-Set your API key:
-
-<Tabs>
-<TabItem value="macos-linux" label="macOS / Linux">
-
-```bash
-export OPENBOX_API_KEY=obx_live_your_key
-```
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-**PowerShell:**
-
-```powershell
-$env:OPENBOX_API_KEY = "obx_live_your_key"
-```
-
-**cmd:**
-
-```cmd
-set OPENBOX_API_KEY=obx_live_your_key
-```
-
-</TabItem>
-</Tabs>
-
-Register the hooks and restart Cursor:
+Register the hooks with your API key and restart Cursor:
 
 ### Global install (all workspaces)
 
 ```bash
-npm run install-hooks
+npm run install-hooks -- --key obx_live_your_key
 # Restart Cursor — all agent actions are now governed
 ```
 
@@ -82,7 +52,7 @@ This writes to `~/.cursor/hooks.json` so every Cursor workspace is governed auto
 To scope hooks to a single project instead of all workspaces:
 
 ```bash
-npm run install-hooks -- --project
+npm run install-hooks -- --project --key obx_live_your_key
 ```
 
 This writes to `.cursor/hooks.json` in the current directory.
