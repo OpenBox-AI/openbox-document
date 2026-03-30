@@ -28,7 +28,7 @@ sequenceDiagram
     H-->>C: allow / block
 
     C->>H: afterAgentResponse
-    H->>O: evaluate response (goal alignment)
+    H->>O: evaluate response
 
     C->>H: stop
     H->>O: finalize session
