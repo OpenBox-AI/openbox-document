@@ -14,15 +14,15 @@ The SDK can be configured via environment variables or function parameters.
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `OPENBOX_URL` | Yes | - | OpenBox Core API URL (HTTPS required for non-localhost) |
-| `OPENBOX_API_KEY` | Yes | - | API key for authentication (`obx_live_*` or `obx_test_*`) |
-| `OPENBOX_ENABLED` | No | `true` | Enable/disable governance |
-| `OPENBOX_GOVERNANCE_TIMEOUT` | No | `30.0` | Seconds to wait for governance evaluation |
-| `OPENBOX_GOVERNANCE_POLICY` | No | `fail_open` | Behavior when API unreachable |
-| `OPENBOX_SEND_START_EVENT` | No | `true` | Send WorkflowStarted events |
-| `OPENBOX_SEND_ACTIVITY_START_EVENT` | No | `true` | Send ActivityStarted events |
+| Variable                            | Required | Default     | Description                                               |
+| ----------------------------------- | -------- | ----------- | --------------------------------------------------------- |
+| `OPENBOX_URL`                       | Yes      | -           | OpenBox Core API URL (HTTPS required for non-localhost)   |
+| `OPENBOX_API_KEY`                   | Yes      | -           | API key for authentication (`obx_live_*` or `obx_test_*`) |
+| `OPENBOX_ENABLED`                   | No       | `true`      | Enable/disable governance                                 |
+| `OPENBOX_GOVERNANCE_TIMEOUT`        | No       | `30.0`      | Seconds to wait for governance evaluation                 |
+| `OPENBOX_GOVERNANCE_POLICY`         | No       | `fail_open` | Behavior when API unreachable                             |
+| `OPENBOX_SEND_START_EVENT`          | No       | `true`      | Send WorkflowStarted events                               |
+| `OPENBOX_SEND_ACTIVITY_START_EVENT` | No       | `true`      | Send ActivityStarted events                               |
 
 ## Function Parameters
 
@@ -37,8 +37,7 @@ See **[Example: Full Configuration](#example-full-configuration)** for a complet
 OpenBox Core API URL. HTTPS required for non-localhost.
 
 ```python
-openbox_url="https://core.openbox.ai"  # Production
-openbox_url="https://core.staging.openbox.ai"  # Staging
+openbox_url="https://core.openbox.ai"
 ```
 
 ### openbox_api_key
@@ -65,10 +64,10 @@ If timeout is exceeded, behavior follows `governance_policy`.
 
 What happens when OpenBox API is unreachable:
 
-| Value | Behavior |
-|-------|----------|
-| `fail_open` | Allow operation to proceed (log warning) |
-| `fail_closed` | Block operation |
+| Value         | Behavior                                 |
+| ------------- | ---------------------------------------- |
+| `fail_open`   | Allow operation to proceed (log warning) |
+| `fail_closed` | Block operation                          |
 
 ```python
 governance_policy="fail_open"   # Default - prioritize availability
@@ -150,6 +149,7 @@ db_libraries={"psycopg2", "redis"}
 ```
 
 Supported values:
+
 - `psycopg2`
 - `asyncpg`
 - `mysql`
@@ -229,5 +229,3 @@ if __name__ == "__main__":
 1. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 2. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types captured by the SDK
 3. **[Approvals](/approvals)** - Review and act on HITL approval requests
-
-
