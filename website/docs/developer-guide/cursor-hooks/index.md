@@ -172,8 +172,7 @@ Check that `~/.cursor/hooks.json` exists and points to `~/.cursor-hooks/hook-han
 
 Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys in file content.
 
-### Alignment score is null
+### Goal alignment not showing
 
-1. Confirm `beforeSubmitPrompt` fires before `afterAgentResponse` (check `~/.cursor-hooks/hook.log`)
-2. The `llm_completion` span must have `stage: "completed"`
-3. Goal alignment must be enabled on the dashboard
+1. Check that hooks are firing (verify events in `~/.cursor-hooks/hook.log`)
+2. Ensure goal alignment is enabled for your agent on the OpenBox dashboard
