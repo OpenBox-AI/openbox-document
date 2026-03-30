@@ -9,6 +9,9 @@ tags:
   - typescript
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started with Cursor
 
 OpenBox integrates with Cursor via the official [hooks system](https://cursor.com/docs/hooks) — your IDE workflows stay exactly as they are while every agent action is governed, scored, and auditable.
@@ -38,9 +41,30 @@ npm install
 
 Set your API key:
 
+<Tabs>
+<TabItem value="macos-linux" label="macOS / Linux">
+
 ```bash
 export OPENBOX_API_KEY=obx_live_your_key
 ```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+**PowerShell:**
+
+```powershell
+$env:OPENBOX_API_KEY = "obx_live_your_key"
+```
+
+**cmd:**
+
+```cmd
+set OPENBOX_API_KEY=obx_live_your_key
+```
+
+</TabItem>
+</Tabs>
 
 Register the hooks and restart Cursor:
 
