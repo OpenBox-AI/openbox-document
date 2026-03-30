@@ -54,6 +54,49 @@ All hooks within a Cursor conversation share one OpenBox session.
 | `afterFileEdit` | Records file changes |
 | `stop` | Finalizes session, generates attestation |
 
+## Verdicts
+
+When OpenBox evaluates an action, it returns a verdict that cursor-hooks enforces in Cursor:
+
+| Verdict | Cursor behavior |
+|---------|----------------|
+| **Allow** | Action proceeds normally |
+| **Constrain** | Sensitive content is redacted from file reads or MCP responses, action proceeds |
+| **Require approval** | Action is paused. Approve on the OpenBox dashboard, then retry in Cursor. |
+| **Block** | Action is blocked. Cursor shows the policy or guardrail message. |
+| **Halt** | Action is blocked and the session is terminated. |
+
+## Guardrails
+
+Guardrails run automatically on before-hooks. Configure them per activity type on the OpenBox dashboard under **Agent → Authorize**:
+
+| Activity type | Available guardrails |
+|--------------|---------------------|
+| `PromptSubmission` | PII detection, toxicity, content filter, ban words |
+| `FileRead` | PII detection, secret redaction |
+| `ShellExecution` | Rego policies |
+| `MCPToolCall` | Rego policies |
+| `MCPToolResponse` | PII detection |
+
+When a guardrail triggers, the verdict determines the behavior — block the action, redact the content, or require approval.
+
+## Redaction
+
+For `FileRead` and `MCPToolResponse`, a **constrain** verdict redacts sensitive content before the agent sees it. The original content is never exposed — Cursor receives the redacted version.
+
+This applies to:
+- API keys and tokens in file content
+- PII (emails, phone numbers, addresses) in file content or MCP responses
+- Any content matched by your guardrail rules
+
+## Human-in-the-loop approvals
+
+When an action receives a **require_approval** verdict, cursor-hooks pauses the action and polls the OpenBox dashboard for a decision. The user approves or rejects on the dashboard, and cursor-hooks enforces the result.
+
+Configure polling behavior in `~/.cursor-hooks/config.json`:
+- `HITL_POLL_INTERVAL` — how often to check (default 5 seconds)
+- `HITL_MAX_WAIT` — maximum wait before timing out (default 300 seconds)
+
 ## Goal alignment
 
 OpenBox automatically compares the user's original prompt against the agent's response to detect drift:
