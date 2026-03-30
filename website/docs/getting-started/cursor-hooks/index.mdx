@@ -1,7 +1,7 @@
 ---
 title: Getting Started with Cursor
-description: "Add OpenBox governance to Cursor IDE: every agent action — prompts, shell commands, MCP tool calls, file reads — is governed through hooks."
-llms_description: Cursor IDE hooks integration onboarding
+description: "Add OpenBox governance to Cursor IDE: every agent action — prompts, shell commands, MCP tool calls, file reads — is governed automatically."
+llms_description: Cursor IDE integration onboarding
 sidebar_position: 3
 tags:
   - getting-started
@@ -11,13 +11,13 @@ tags:
 
 # Getting Started with Cursor
 
-Add OpenBox governance to [Cursor IDE](https://cursor.com) using Cursor's official [hooks system](https://docs.cursor.com/context/hooks). Prompts, file reads, shell commands, and MCP tool calls are all evaluated against your policies before they execute. After-hooks observe agent responses for drift detection and trust scoring.
+Add OpenBox governance to [Cursor IDE](https://cursor.com). Every agent action — prompts, file reads, shell commands, and MCP tool calls — is evaluated against your policies automatically.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) v18+
 - [Cursor IDE](https://cursor.com) v2.5+
-- An OpenBox API key (`obx_live_xxx`) — get one at [platform.openbox.ai](https://platform.openbox.ai)
+- An OpenBox API key — get one at [platform.openbox.ai](https://platform.openbox.ai)
 
 ## Install
 
@@ -28,9 +28,7 @@ npm install && npm run build
 npm run install-hooks -- --key obx_live_your_key
 ```
 
-This creates `~/.cursor-hooks/config.json`, a stable symlink at `~/.cursor-hooks/hook-handler.js`, and registers all 11 hooks in `~/.cursor/hooks.json`.
-
-Restart Cursor (`Cmd+Q` → reopen).
+Restart Cursor (`Cmd+Q` → reopen). All agent actions are now governed.
 
 ## Verify
 
@@ -38,49 +36,50 @@ Restart Cursor (`Cmd+Q` → reopen).
 tail -f ~/.cursor-hooks/hook.log
 ```
 
-Send any prompt in Cursor — hook events appear in the log.
+Send any prompt in Cursor — you should see events appear in the log.
 
-## Configuration
+## Configure on the dashboard
 
-Config file: `~/.cursor-hooks/config.json`
-
-| Setting | Required | Default | Description |
-|---------|----------|---------|-------------|
-| `OPENBOX_API_KEY` | Yes | — | API key (`obx_live_xxx`) |
-| `OPENBOX_ENDPOINT` | No | `https://core.openbox.ai` | Core API URL |
-| `GOVERNANCE_POLICY` | No | `fail_open` | `fail_open` or `fail_closed` |
-| `GOVERNANCE_TIMEOUT` | No | `15` | API timeout (seconds) |
-| `VERBOSE` | No | `false` | Debug logging |
-| `DRY_RUN` | No | `false` | Allow all, skip API |
-
-See **[Developer Guide](/developer-guide/cursor-hooks#configuration-reference)** for the full configuration reference.
-
-## What gets governed
-
-| Hook | Can block? | Activity type |
-|------|-----------|---------------|
-| `beforeSubmitPrompt` | Yes | `PromptSubmission` |
-| `beforeReadFile` | Yes (+ redact) | `FileRead` |
-| `beforeShellExecution` | Yes | `ShellExecution` |
-| `beforeMCPExecution` | Yes | `MCPToolCall` |
-| `afterMCPExecution` | Redact only | `MCPToolResponse` |
-| `afterAgentResponse` | No | `AgentResponse` |
-| `afterAgentThought` | No | `AgentThinking` |
-| `afterShellExecution` | No | `ShellOutput` |
-| `afterFileEdit` | No | `FileEdit` |
-| `sessionStart` / `stop` | No | `CursorSession` |
-
-## Dashboard setup
-
-Configure guardrails and policies per activity type in **Agent → Authorize**:
+Go to **Agent → Authorize** on the OpenBox dashboard and set up guardrails per activity type:
 
 | Activity type | What to configure |
 |--------------|-------------------|
-| `PromptSubmission` | PII, toxicity, ban words, content filter |
-| `FileRead` | PII/secret redaction |
-| `ShellExecution` | Rego policies (command allowlists) |
-| `MCPToolCall` | Rego policies, tool allowlists |
-| `MCPToolResponse` | PII redaction on output |
+| `PromptSubmission` | PII detection, toxicity, ban words, content filter |
+| `FileRead` | PII/secret redaction on file content |
+| `ShellExecution` | Command policies (allowlist/blocklist) |
+| `MCPToolCall` | Tool policies, MCP server allowlists |
+| `MCPToolResponse` | PII redaction on tool output |
+
+## What gets governed
+
+| Agent action | What happens |
+|-------------|-------------|
+| User submits a prompt | Checked for PII, toxicity, banned content |
+| Agent reads a file | Secrets and PII are redacted before the agent sees them |
+| Agent runs a shell command | Evaluated against your command policies |
+| Agent calls an MCP tool | Checked against tool allowlists |
+| MCP tool returns data | PII is redacted from the response |
+| Agent responds | Response is scored for goal alignment |
+
+## Verdicts
+
+| Verdict | What you see in Cursor |
+|---------|----------------------|
+| **Allow** | Action proceeds normally |
+| **Constrain** | Sensitive content is redacted, action proceeds |
+| **Require approval** | Action is blocked until approved on the dashboard |
+| **Block** | Action is blocked with a policy message |
+| **Halt** | Action is blocked and the session is terminated |
+
+## Settings
+
+Edit `~/.cursor-hooks/config.json` to change behavior:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `GOVERNANCE_POLICY` | `fail_open` | `fail_open` allows actions when OpenBox is unreachable. `fail_closed` blocks them. |
+| `VERBOSE` | `false` | Enable detailed logging |
+| `DRY_RUN` | `false` | Allow all actions without calling OpenBox |
 
 ## Uninstall
 
@@ -89,8 +88,10 @@ rm ~/.cursor/hooks.json
 rm -rf ~/.cursor-hooks
 ```
 
+Restart Cursor.
+
 ## Next steps
 
-- **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, event lifecycle, span instrumentation
+- **[Developer Guide](/developer-guide/cursor-hooks)** — architecture and internals
 - **[Core Concepts](/core-concepts)** — Trust Scores, Trust Tiers, Governance Decisions
 - **[Trust Lifecycle](/trust-lifecycle)** — Assess, Authorize, Monitor, Verify, Adapt
