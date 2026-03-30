@@ -31,7 +31,6 @@ sequenceDiagram
     C->>H: afterAgentResponse (stdin)
     H->>O: ActivityStarted (hook_trigger + llm span)
     H->>O: ActivityStarted (observe)
-    H-->>C: null
 
     C->>H: stop (stdin)
     H->>O: WorkflowCompleted
