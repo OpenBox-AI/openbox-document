@@ -32,3 +32,5 @@ docs/plans/
 
 #llms-ctx gen tool
 reference/llmxctx/output/
+*.cls
+/.sfdx
