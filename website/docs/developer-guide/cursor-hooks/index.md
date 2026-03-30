@@ -172,6 +172,3 @@ Check that `~/.cursor/hooks.json` exists and points to `~/.cursor-hooks/hook-han
 
 Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detection may flag API keys in file content.
 
-### Goal alignment not showing
-
-Check that hooks are firing by verifying events appear in `~/.cursor-hooks/hook.log`. Goal alignment runs automatically when both the prompt and response hooks fire within the same session.
