@@ -4,7 +4,7 @@ Documentation site for [OpenBox](https://openbox.ai), built with [Docusaurus](ht
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - npm
 - [just](https://github.com/casey/just) (optional, for convenience commands)
 

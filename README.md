@@ -17,7 +17,7 @@ Documentation for [OpenBox](https://www.openbox.ai) — an enterprise AI governa
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18+
+- [Node.js](https://nodejs.org/) 22+
 - npm
 - [just](https://github.com/casey/just) (optional, for convenience commands)
 
