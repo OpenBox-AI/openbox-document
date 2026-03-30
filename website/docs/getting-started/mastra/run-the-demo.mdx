@@ -1,7 +1,7 @@
 ---
 title: Run the Demo
-description: "Run the public OpenBox Mastra quickstart example locally and watch a governed workflow, approval, and agent summary path execute."
-llms_description: Hands-on Mastra SDK demo walkthrough
+description: "Run the Mastra coding-agent POC and watch OpenBox govern sandbox creation, file operations, and shell-command activity."
+llms_description: Hands-on Mastra coding-agent POC walkthrough
 sidebar_position: 2
 tags:
   - getting-started
@@ -12,82 +12,115 @@ tags:
 
 # Run the Demo
 
-The Mastra SDK repository ships with a public quickstart example. It is the fastest way to validate the integration loop without wiring your own application first.
+The recommended runnable demo for the Mastra SDK is the public Mastra coding-agent POC:
 
-This demo uses:
+- GitHub: [OpenBox-AI/poc-mastra-coding-agent](https://github.com/OpenBox-AI/poc-mastra-coding-agent/tree/dev)
 
-- a local mock OpenBox server
-- a mock model
-- a governed workflow with a tool call
-- a suspended approval and resume path
-- a wrapped summary agent
+This POC demonstrates:
 
-Use it to validate SDK behavior locally. When you are ready to connect a real service to OpenBox, move to [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent).
+- secure E2B sandbox creation
+- file and directory operations
+- shell command execution
+- OpenBox governance, approvals, and guardrails for agent activity
 
 ## Prerequisites
 
 - Node.js `24.10+`
 - npm
-- git
+- an E2B API key
+- an OpenAI API key
+- an OpenBox Core URL and API key
 
-## Clone The SDK Repo
+## Clone The Repository
 
 ```bash
-git clone https://github.com/OpenBox-AI/openbox-mastra-sdk
-cd openbox-mastra-sdk
+git clone -b dev https://github.com/OpenBox-AI/poc-mastra-coding-agent
+cd poc-mastra-coding-agent
 ```
 
 ## Install Dependencies
+
+From the POC root:
 
 ```bash
 npm install
 ```
 
-## Run The Example
+This installs `@openbox-ai/openbox-mastra-sdk` from npm. You do not need a sibling SDK checkout.
+
+## Configure Environment
+
+Copy the example environment file:
 
 ```bash
-npm run example:quickstart
+cp .env.example .env.local
 ```
 
-That command:
+Required values:
 
-1. builds the SDK
-2. starts the bundled quickstart example
-3. runs a governed workflow
-4. suspends for approval
-5. resumes after operator approval
-6. completes with an agent-generated summary
+| Variable | Purpose |
+| --- | --- |
+| `E2B_API_KEY` | access to E2B sandbox execution |
+| `OPENAI_API_KEY` | model access for the coding agent |
+| `OPENBOX_URL` | OpenBox Core base URL |
+| `OPENBOX_API_KEY` | OpenBox API key |
 
-## What You Should See
+Common runtime options:
 
-The example prints progress similar to:
+| Variable | Purpose | Typical value |
+| --- | --- | --- |
+| `OPENBOX_GOVERNANCE_POLICY` | behavior when OpenBox is unavailable | `fail_closed` |
+| `OPENBOX_VALIDATE` | validate the API key at startup | `true` |
+| `OPENBOX_GOVERNANCE_TIMEOUT` | OpenBox API timeout in milliseconds for this demo environment | `5000` |
 
-- starting governed workflow
-- workflow suspended for approval
-- resume payload after operator approval
-- workflow success with final summary output
+## Run The Demo
 
-## What This Demo Proves
+Start the local development server:
 
-The example shows that the SDK can:
+```bash
+npm run dev
+```
 
-- wrap a Mastra workflow
-- govern a tool execution as an activity
-- suspend and resume around an approval
-- wrap an agent and capture its output path
+Other useful commands:
 
-## What This Demo Does Not Cover
+```bash
+npm run build
+npm run start
+```
 
-This demo does not connect to your real OpenBox environment or dashboard. It is a local SDK validation example.
+## What To Try
 
-For a real integration with:
+Example prompts:
 
-- your OpenBox agent registration
-- your OpenBox API key
-- live policy and guardrails
-- dashboard-backed runs and session replay
+- `create a sandbox and write hello_world.txt with print("Hello World")`
+- `create a sandbox, write a file, then read it back`
+- `create a sandbox and run a shell command`
 
-use [Wrap an Existing Agent](/getting-started/mastra/wrap-an-existing-agent).
+If OpenBox approvals or guardrails are enabled for the registered agent, the demo will reflect those decisions during execution.
+
+## What You Should See In OpenBox
+
+After running the coding agent, OpenBox should show:
+
+- agent runs for the coding-agent workflow
+- activity boundaries for governed tool calls
+- approvals or guardrail outcomes where policy requires them
+- model usage on the agent run
+- operational telemetry associated with sandbox and tool activity
+
+## Troubleshooting
+
+### `E2B_API_KEY` is missing or invalid
+
+Check that the runtime is loading `.env.local` and that the key is valid for your E2B account.
+
+### OpenBox requests are failing
+
+Verify:
+
+- `OPENBOX_URL` is reachable from your machine
+- `OPENBOX_API_KEY` is correct
+- `OPENBOX_VALIDATE` is set appropriately for the environment
 
 ## Next Steps
 
