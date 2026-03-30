@@ -150,11 +150,6 @@ const config = {
             className: 'navbar-docs-link-mobile-only',
           },
           {
-            href: 'https://www.openbox.ai/#waitlist',
-            label: 'Get Access',
-            position: 'right',
-          },
-          {
             href: 'https://github.com/OpenBox-AI',
             label: 'GitHub',
             position: 'right',
@@ -205,8 +200,8 @@ const config = {
           {
             title: 'Product',
             items: [
-              {label: 'Get Access', href: 'https://www.openbox.ai/#waitlist'},
               {label: 'Dashboard', href: 'https://platform.openbox.ai'},
+              {label: 'Discord', href: 'https://discord.gg/YjRYvV6QJw'},
               {label: 'GitHub', href: 'https://github.com/OpenBox-AI'},
             ],
           },
