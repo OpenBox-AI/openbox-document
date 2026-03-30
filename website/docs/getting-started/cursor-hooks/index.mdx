@@ -11,24 +11,87 @@ tags:
 
 # Getting Started with Cursor
 
-:::info
-The Cursor integration is open source.
-Refer to the README for full setup instructions:
-**[OpenBox-AI/cursor-hooks](https://github.com/OpenBox-AI/cursor-hooks)**
-:::
-
-OpenBox integrates with Cursor via the official [hooks system](https://docs.cursor.com/context/hooks) — your IDE workflows stay exactly as they are while every agent action is governed, scored, and auditable.
+OpenBox integrates with Cursor via the official [hooks system](https://cursor.com/docs/hooks) — your IDE workflows stay exactly as they are while every agent action is governed, scored, and auditable.
 
 ## What to expect
 
 - Install with a single command — no code changes to your Cursor setup
 - Every prompt, file read, shell command, and MCP tool call is governed before execution
-- PII/secret redaction on file content and MCP responses
 - Human-in-the-loop approvals for sensitive operations
-- Goal alignment scoring and drift detection
-- Full session replay and audit trail
+- Full audit trail
 
-## In the meantime
+## Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [Cursor IDE](https://cursor.com)
+- An OpenBox API key (`obx_live_xxx`)
+
+## Install
+
+Clone the integration and install dependencies:
+
+```bash
+git clone https://github.com/OpenBox-AI/cursor-hooks.git
+cd cursor-hooks
+npm install
+```
+
+Set your API key:
+
+```bash
+export OPENBOX_API_KEY=obx_live_your_key
+```
+
+Register the hooks and restart Cursor:
+
+### Global install (all workspaces)
+
+```bash
+npm run install-hooks
+# Restart Cursor — all agent actions are now governed
+```
+
+This writes to `~/.cursor/hooks.json` so every Cursor workspace is governed automatically.
+
+### Project-level install
+
+To scope hooks to a single project instead of all workspaces:
+
+```bash
+npm run install-hooks -- --project
+```
+
+This writes to `.cursor/hooks.json` in the current directory.
+
+### Manual install
+
+Copy `hooks.json` to `~/.cursor/hooks.json` and replace `__HOOK_PATH__` with the absolute path to `dist/hook-handler.js`.
+
+## Configuration
+
+Create or edit `~/.cursor-hooks/config.json`:
+
+```json
+{
+  "OPENBOX_API_KEY": "obx_live_your_key",
+  "OPENBOX_ENDPOINT": "https://core.openbox.ai",
+  "GOVERNANCE_POLICY": "fail_open"
+}
+```
+
+See the [Developer Guide — Configuration](/developer-guide/cursor-hooks#configuration) for all available settings.
+
+## Verify it works
+
+Open a Cursor workspace and start an agent conversation. You should see governance activity on the OpenBox dashboard.
+
+To confirm hooks are firing locally:
+
+```bash
+tail -f ~/.cursor-hooks/hook.log
+```
+
+## Next steps
 
 - **[Developer Guide](/developer-guide/cursor-hooks)** — architecture, event lifecycle, and configuration reference
 - **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions

@@ -8,17 +8,30 @@ tags:
 
 # Cursor
 
-The `cursor-hooks` package connects [Cursor IDE](https://cursor.com) to [OpenBox](https://openbox.ai) via Cursor's official hooks system — giving you governance policies, guardrails, and human oversight over every agent action.
-
-**[OpenBox-AI/cursor-hooks](https://github.com/OpenBox-AI/cursor-hooks)**
-
-:::info
-The integration's primary job is to **connect Cursor to OpenBox** and send hook events to the platform. All trust logic, policies, and UI management happens on the platform — not in cursor-hooks.
-:::
+The [`cursor-hooks`](https://github.com/OpenBox-AI/cursor-hooks) package connects [Cursor IDE](https://cursor.com) to [OpenBox](https://openbox.ai) via Cursor's official hooks system. It sends every agent action to the platform — all trust logic, policies, guardrails, and UI management happens on OpenBox, not in cursor-hooks.
 
 ## Installation
 
 See **[Getting Started with Cursor](/getting-started/cursor-hooks)** for setup instructions.
+
+## How it works
+
+```mermaid
+flowchart TD
+    subgraph cursor["Cursor IDE"]
+        agent["Agent Loop<br/>(unchanged)"]
+    end
+
+    agent --> hooks
+
+    subgraph hooks["cursor-hooks"]
+        handler["<b>Hook Handler</b><br/>Intercepts all agent actions<br/>Routes to OpenBox<br/>Enforces verdicts"]
+    end
+
+    hooks --> engine
+
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
+```
 
 ## What it captures
 
@@ -47,25 +60,6 @@ cursor-hooks automatically captures and sends to OpenBox:
 
 All captured data is evaluated against your trust policies on the OpenBox platform.
 
-## How it works
-
-```mermaid
-flowchart TD
-    subgraph cursor["Cursor IDE"]
-        agent["Agent Loop<br/>(unchanged)"]
-    end
-
-    agent --> hooks
-
-    subgraph hooks["cursor-hooks"]
-        handler["<b>Hook Handler</b><br/>Intercepts all agent actions<br/>Routes to OpenBox<br/>Enforces verdicts"]
-    end
-
-    hooks --> engine
-
-    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN<br/>REQUIRE_APPROVAL · BLOCK · HALT"]
-```
-
 ## Event lifecycle
 
 All hooks within a Cursor conversation share one OpenBox session.
@@ -91,7 +85,6 @@ When OpenBox evaluates an action, it returns a verdict that cursor-hooks enforce
 | Verdict | Cursor behavior |
 |---------|----------------|
 | **Allow** | Action proceeds normally |
-| **Constrain** | Sensitive content is redacted from file reads or MCP responses, action proceeds |
 | **Require approval** | Action is paused. Approve on the OpenBox dashboard, then retry in Cursor. |
 | **Block** | Action is blocked. Cursor shows the policy or guardrail message. |
 | **Halt** | Action is blocked and the session is terminated. |
@@ -112,7 +105,7 @@ When a guardrail triggers, the verdict determines the behavior — block the act
 
 ## Redaction
 
-For `FileRead` and `MCPToolResponse`, a **constrain** verdict redacts sensitive content before the agent sees it. The original content is never exposed — Cursor receives the redacted version.
+For `FileRead` and `MCPToolResponse`, sensitive content is redacted before the agent sees it. The original content is never exposed — Cursor receives the redacted version.
 
 This applies to:
 - API keys and tokens in file content
