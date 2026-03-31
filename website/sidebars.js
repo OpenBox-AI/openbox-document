@@ -30,6 +30,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'getting-started/cursor/index',
+          label: 'Cursor',
+        },
+        {
+          type: 'doc',
           id: 'getting-started/deep-agents/index',
           label: 'Deep Agents',
         },
@@ -145,6 +150,11 @@ const sidebars = {
           type: 'doc',
           id: 'developer-guide/crewai/index',
           label: 'CrewAI',
+        },
+        {
+          type: 'doc',
+          id: 'developer-guide/cursor/index',
+          label: 'Cursor',
         },
         {
           type: 'category',
