@@ -166,6 +166,10 @@ const sidebars = {
           items: [
             'developer-guide/deep-agents/configuration',
             'developer-guide/deep-agents/error-handling',
+            'developer-guide/deep-agents/integration-walkthrough',
+            'developer-guide/deep-agents/extending-the-demo-agent',
+            'developer-guide/deep-agents/demo-architecture',
+            'developer-guide/deep-agents/troubleshooting',
           ],
         },
         {
