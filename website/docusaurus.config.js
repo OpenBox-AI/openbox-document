@@ -119,7 +119,16 @@ const config = {
     }],
   ],
 
-  themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    ['@easyops-cn/docusaurus-search-local', {
+      indexDocs: true,
+      indexBlog: false,
+      docsRouteBasePath: '/',
+      hashed: true,
+      language: ['en'],
+    }],
+  ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -162,13 +171,6 @@ const config = {
           },
           {type: 'search', position: 'right'},
         ],
-      },
-      searchLocal: {
-        indexDocs: true,
-        indexBlog: false,
-        docsRouteBasePath: '/',
-        hashed: true,
-        language: ['en'],
       },
       footer: {
         style: 'light',
