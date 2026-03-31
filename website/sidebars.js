@@ -30,7 +30,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'getting-started/cursor-hooks/index',
+          id: 'getting-started/cursor/index',
           label: 'Cursor',
         },
         {
@@ -153,7 +153,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'developer-guide/cursor-hooks/index',
+          id: 'developer-guide/cursor/index',
           label: 'Cursor',
         },
         {
