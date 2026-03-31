@@ -158,6 +158,5 @@ Check guardrail configuration for `FileRead` on the OpenBox dashboard. PII detec
 
 ## Next steps
 
-- **[Getting Started with Cursor](/getting-started/cursor-hooks)** — installation and setup
 - **[Core Concepts](/core-concepts)** — Trust Scores, Trust Tiers, Governance Decisions
 - **[Trust Lifecycle](/trust-lifecycle)** — Assess, Authorize, Monitor, Verify, Adapt
