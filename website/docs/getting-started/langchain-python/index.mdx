@@ -1,0 +1,172 @@
+---
+title: Getting Started with LangChain (Python)
+description: "Add OpenBox governance to LangChain Python agents: policy enforcement, guardrails, and human-in-the-loop approvals with a middleware handler."
+llms_description: LangChain Python SDK quickstart and setup
+sidebar_position: 5
+tags:
+  - getting-started
+  - langchain
+  - python
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Getting Started with LangChain (Python)
+
+:::info Docs
+The OpenBox SDK for [LangChain](https://www.langchain.com/) Python is open source.
+Refer to the README for setup instructions:
+**[OpenBox-AI/openbox-langchain-sdk-python](https://github.com/OpenBox-AI/openbox-langchain-sdk-python)**
+:::
+
+## One Code Change
+
+The entire integration adds one import and two lines:
+
+<Tabs>
+<TabItem value="before" label="LangChain">
+
+```python title="agent.py"
+from langchain.chat_models import init_chat_model
+from langchain.agents import create_agent
+from langchain_core.tools import tool
+
+@tool
+def search_web(query: str) -> str:
+    """Search the web."""
+    ...
+
+model = init_chat_model("openai:gpt-4o-mini")
+agent = create_agent(
+    model=model,
+    tools=[search_web],
+)
+
+result = agent.invoke({"messages": [("user", "Search for AI agents")]})
+```
+
+</TabItem>
+<TabItem value="after" label="LangChain + OpenBox" default>
+
+```python title="agent.py"
+import os
+from langchain.chat_models import init_chat_model
+from langchain.agents import create_agent
+from langchain_core.tools import tool
+from openbox_langchain import create_openbox_langchain_middleware  # Added
+
+@tool
+def search_web(query: str) -> str:
+    """Search the web."""
+    ...
+
+# highlight-start
+middleware = create_openbox_langchain_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="SearchBot",
+)
+# highlight-end
+
+model = init_chat_model("openai:gpt-4o-mini")
+agent = create_agent(
+    model=model,
+    tools=[search_web],
+    middleware=[middleware],  # Added
+)
+
+result = agent.invoke({"messages": [("user", "Search for AI agents")]})
+```
+
+</TabItem>
+</Tabs>
+
+Two paths from here:
+
+- **Already using LangChain?** Follow the steps below to add the trust layer in five minutes.
+- **Want the full reference?** Jump to the **[LangChain SDK Reference](/developer-guide/langchain-python)**.
+
+## Step 1 — Install
+
+```bash
+uv add openbox-langchain-sdk-python
+```
+
+Requires **Python 3.11+**. The package pulls in `langchain`, `langchain-core`, and `langgraph` as dependencies.
+
+## Step 2 — Set Environment Variables
+
+You need an OpenBox API key. If you don't have one yet, see [Registering Agents](/dashboard/agents/registering-agents).
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+```
+
+Load them in your code:
+
+```python
+from dotenv import load_dotenv
+load_dotenv()  # before creating middleware
+```
+
+## Step 3 — Create Middleware and Add to Agent
+
+```python
+import os
+from openbox_langchain import create_openbox_langchain_middleware
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="MyAgent",
+)
+```
+
+Pass the middleware to your agent:
+
+```python
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model=model,
+    tools=[...],
+    middleware=[middleware],
+)
+```
+
+## Step 4 — Run Your Agent
+
+```bash
+python agent.py
+```
+
+You should see `OpenBox SDK initialized successfully` in the logs.
+
+## Step 5 — See It in Action
+
+1. Open the **[OpenBox Dashboard](https://platform.openbox.ai)**
+2. Navigate to **Agents** → click your agent
+3. On the **Overview** tab, find the session that corresponds to your run
+4. Click **Details** → **Event Log Timeline**
+5. Scroll through — you'll see every event: model calls with prompts/completions, tool calls with governance decisions, and HTTP requests
+6. Switch to **Tree View** for a hierarchical view
+7. Click **Watch Replay** to play back the session step-by-step
+
+## What Just Happened
+
+The OpenBox middleware:
+
+- **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
+- **Governed every tool call** — evaluated governance policies before each tool executed
+- **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded outbound requests
+- **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+
+This runs on every agent invocation automatically.
+
+## Next Steps
+
+- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
+- **[Monitor Sessions](/trust-lifecycle/session-replay)** — Use Session Replay to debug and audit agent behavior
+- **[LangChain SDK Reference](/developer-guide/langchain-python)** — Full developer reference for middleware hooks, configuration, and error handling

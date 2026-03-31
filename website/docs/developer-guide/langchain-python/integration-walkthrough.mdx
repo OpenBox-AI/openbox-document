@@ -1,0 +1,302 @@
+---
+title: LangChain Integration Guide (Python)
+sidebar_label: Integration Walkthrough
+description: "End-to-end guide for governing LangChain Python agents with OpenBox: clone the demo, register your agent, run with governance, and explore the dashboard."
+llms_description: Python-specific LangChain integration guide
+sidebar_position: 4
+tags:
+  - sdk
+  - langchain
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# LangChain Integration Guide (Python)
+
+This is the end-to-end guide for integrating OpenBox with a LangChain Python application. You'll set up the demo repo, register your agent, run it with governance enabled, then walk through the integration architecture and human-in-the-loop approvals.
+
+:::tip Skip ahead
+
+- **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
+- **Already have an agent?** See the **[Getting Started](/getting-started/langchain-python)** page.
+:::
+
+## Prerequisites
+
+- **Python 3.11+** and [uv](https://docs.astral.sh/uv/)
+- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
+- **OpenAI API Key** — The demo uses `gpt-4o-mini` via LangChain's `init_chat_model`
+- **Tavily API Key** _(optional)_ — For the researcher subagent's web search
+- **Google Gemini API Key** _(optional)_ — For image generation tools
+
+## Part 1: Clone and Set Up the Demo
+
+This guide uses the public SDK repo's example:
+
+```bash
+git clone https://github.com/OpenBox-AI/openbox-langchain-sdk-python
+cd openbox-langchain-sdk-python/examples/content-builder-agent
+```
+
+### Install Dependencies
+
+```bash
+uv sync
+```
+
+## Part 2: Register Your Agent in OpenBox
+
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → Click **Add Agent**
+3. Configure the agent:
+   - **Workflow Engine**: LangChain
+   - **Agent Name**: ContentWriter
+   - **Agent ID**: Auto-generated
+   - **Description** _(optional)_: Content builder agent demo
+   - **Teams** _(optional)_: assign the agent to one or more teams
+   - **Icon** _(optional)_: select an icon
+4. **API Key Generation**:
+   - Click **Generate API Key**
+   - Copy and store the key (shown only once)
+5. Configure platform settings:
+   - **Initial Risk Assessment** (**[Risk Profile](/trust-lifecycle/assess)**) — select a risk profile (Tier 1-4)
+   - **Attestation** (**[Execution Evidence](/administration/attestation-and-cryptographic-proof)**) — select an attestation provider
+6. Click **Add Agent**
+
+See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
+
+## Part 3: Configure Environment
+
+1. Copy `.env.example` to `.env` (or create `.env` manually)
+2. Open `.env` in your editor and set your values:
+
+```bash
+# OpenAI — main agent LLM
+OPENAI_API_KEY=sk-...
+
+# OpenBox (use the API key from Part 2)
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_AGENT_NAME=ContentWriter
+
+# Google Gemini — image generation (optional)
+GOOGLE_API_KEY=AI...
+
+# Tavily — web search for researcher subagent (optional)
+TAVILY_API_KEY=tvly-...
+```
+
+## Part 4: Run the Demo
+
+```bash
+uv run python content_writer.py "Write a blog post about how AI agents are transforming software development"
+```
+
+You should see `OpenBox SDK initialized successfully` in the terminal output, followed by streaming agent activity — research, writing, and image generation.
+
+:::tip Custom task
+Pass any content task as a command-line argument:
+```bash
+uv run python content_writer.py "Create a LinkedIn post about prompt engineering"
+```
+:::
+
+## See It in Action
+
+1. Open the **[OpenBox Dashboard](https://platform.openbox.ai)**
+2. Navigate to **Agents** → Click your agent (ContentWriter)
+3. On the **Overview** tab, find the session that corresponds to your run
+4. Click **Details** to open it — you'll land on the **Overview** tab which shows the **Event Log Timeline**
+5. Scroll through the timeline — you'll see every event the trust layer captured: model calls with prompts and completions, tool calls with governance decisions, and HTTP requests
+6. Switch to the **Tree View** to see the same data as a hierarchy — model calls at the top, tool calls nested underneath
+7. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) — this plays back the entire session step-by-step
+
+## What Just Happened?
+
+When you ran the demo, the OpenBox middleware:
+
+1. **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
+2. **Governed every tool call** — evaluated governance policies before each tool executed (web search, file writes, image generation)
+3. **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded outbound requests to OpenAI, Tavily, and Gemini
+4. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+
+## How the Integration Works
+
+The OpenBox integration point is the agent factory function in `content_writer.py`. The only change is creating middleware with `create_openbox_langchain_middleware` and passing it to `create_agent`:
+
+<Tabs>
+<TabItem value="before" label="LangChain">
+
+```python title="content_writer.py"
+from langchain.chat_models import init_chat_model
+from langchain.agents import create_agent
+
+def create_content_writer():
+    model = init_chat_model("openai:gpt-4o-mini", temperature=0)
+    return create_agent(
+        model=model,
+        tools=[research, write_file, read_file, generate_cover, generate_social_image],
+        system_prompt=system_prompt,
+    )
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="content_writer.py"
+import os
+from langchain.chat_models import init_chat_model
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware  # Added
+
+def create_content_writer():
+    # Create OpenBox governance middleware
+    middleware = create_openbox_langchain_middleware(
+        api_url=os.environ["OPENBOX_URL"],
+        api_key=os.environ["OPENBOX_API_KEY"],
+        agent_name=os.environ.get("OPENBOX_AGENT_NAME", "ContentWriter"),
+        tool_type_map={"web_search": "http"},
+    )
+
+    model = init_chat_model("openai:gpt-4o-mini", temperature=0)
+    return create_agent(
+        model=model,
+        tools=[research, write_file, read_file, generate_cover, generate_social_image],
+        system_prompt=system_prompt,
+        middleware=[middleware],  # Added
+    )
+```
+
+</TabItem>
+</Tabs>
+
+The agent's code is organized in:
+
+- **`AGENTS.md`** — Brand voice and writing standards. Loaded as part of the system prompt, establishing personality and content guidelines.
+- **`skills/`** — Specialized workflow instructions. Each skill (e.g., `blog-post`, `social-media`) defines a structured process for that content type.
+- **`subagents.yaml`** — Subagent definitions loaded by a utility function. The researcher subagent is implemented as a `@tool`-decorated function that spawns a separate LangChain agent.
+- **`content_writer.py`** — The agent factory that wires everything together, including OpenBox middleware.
+
+See **[Extending the Demo Agent](/developer-guide/langchain-python/extending-the-demo-agent)** for a step-by-step guide to adding your own tools and subagents, or the **[Demo Architecture Reference](/developer-guide/langchain-python/demo-architecture)** for the full middleware lifecycle and event flow.
+
+## Subagent Pattern
+
+The demo ships with a researcher subagent that uses `web_search` to gather information. In LangChain, subagents are implemented as tool-wrapped functions:
+
+```python
+@tool
+def research(topic: str, save_to: str) -> str:
+    """Delegate research to the researcher subagent."""
+    return run_researcher(topic, save_to)
+
+def run_researcher(topic: str, save_to: str) -> str:
+    """Create and run researcher subagent synchronously."""
+    config = load_subagent_config(EXAMPLE_DIR / "subagents.yaml")
+    researcher_spec = config.get("researcher", {})
+
+    model = init_chat_model(researcher_spec.get("model", "openai:gpt-4o-mini"))
+    researcher = create_agent(
+        model=model,
+        tools=[web_search, write_file],
+        system_prompt=researcher_spec.get("system_prompt"),
+    )
+    result = researcher.invoke({"messages": [("user", f"Research {topic}...")]})
+    return "Research complete."
+```
+
+The `research` tool is governed by OpenBox like any other tool — the middleware sends `ToolStarted` / `ToolCompleted` events and enforces the verdict. You can target it with Rego policies:
+
+```rego
+result := {"decision": "REQUIRE_APPROVAL"} if {
+    input.event_type == "ToolStarted"
+    input.activity_type == "research"
+}
+```
+
+### Tool Type Classification
+
+The demo configures `tool_type_map={"web_search": "http"}` so policies can target tool categories:
+
+| Tool | Classification | Reason |
+|------|---------------|--------|
+| `web_search` | `http` | Explicit mapping in `tool_type_map` |
+| `research` | _(none)_ | Governed as a regular tool call |
+| `generate_cover` | _(none)_ | No mapping — governed by default policies |
+| `write_file` | _(none)_ | File operations — governed by default policies |
+
+## Human-in-the-Loop Approvals
+
+Some operations may be too sensitive to run without human sign-off. Configure governance policies in OpenBox to require approval. See **[Authorize](/trust-lifecycle/authorize)** to set up guardrails, policies, and behavioral rules.
+
+When governance requires approval:
+
+1. OpenBox creates an approval request
+2. Approval request appears in the [OpenBox dashboard](/approvals)
+3. Human approves/rejects
+4. The middleware polls for the decision and either proceeds or raises `GovernanceHaltError`
+
+## Configuration Options
+
+### Governance Settings
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `governance_timeout` | `30.0` | Max seconds to wait for governance evaluation |
+| `on_api_error` | `fail_open` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+
+### Tool Classification
+
+Map tool names to semantic types for category-level policies:
+
+```python
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+
+    # Classify tools
+    tool_type_map={
+        "web_search": "http",
+        "fetch_page": "http",
+        "save_report": "file",
+    },
+
+    # Skip governance for internal tools
+    skip_tool_types={"read_file", "get_time"},
+)
+```
+
+### Optional Instrumentation
+
+```python
+from sqlalchemy import create_engine
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+
+    # Database governance
+    sqlalchemy_engine=create_engine(os.environ["DATABASE_URL"]),
+)
+```
+
+See **[Configuration](/developer-guide/langchain-python/configuration)** for the full list of options.
+
+## Error Handling
+
+The SDK raises typed exceptions for governance decisions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
+
+To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and look for governance decisions that were blocked or flagged.
+
+See **[Error Handling](/developer-guide/langchain-python/error-handling)** for exception types and handling patterns.
+
+## Next Steps
+
+1. **[Extending the Demo Agent](/developer-guide/langchain-python/extending-the-demo-agent)** — Add your own tools and subagent patterns
+2. **[Configuration](/developer-guide/langchain-python/configuration)** — Fine-tune timeouts, fail policies, and tool classification
+3. **[Error Handling](/developer-guide/langchain-python/error-handling)** — Handle governance decisions in your code
+4. **[Set Up Approvals](/approvals)** — Add human-in-the-loop for sensitive operations
+5. **[Demo Architecture Reference](/developer-guide/langchain-python/demo-architecture)** — Middleware lifecycle, event flow, and OTel instrumentation
+
+Having issues? See the **[Troubleshooting](/developer-guide/langchain-python/troubleshooting)** guide for common problems and solutions.
