@@ -11,7 +11,7 @@ tags:
 
 # Demo Architecture Reference
 
-Quick reference for the [content builder agent](https://github.com/OpenBox-AI/openbox-deepagent-sdk-python/tree/main/examples/content-builder-agent) architecture. For setup, see the [Integration Guide](/developer-guide/deep-agents/integration-walkthrough). For customization, see [Extending the Demo Agent](/developer-guide/deep-agents/customizing-the-demo).
+Quick reference for the [content builder agent](https://github.com/OpenBox-AI/openbox-deepagent-sdk-python/tree/main/examples/content-builder-agent) architecture. For setup, see the [Integration Guide](/developer-guide/deep-agents/integration-walkthrough). For customization, see [Extending the Demo Agent](/developer-guide/deep-agents/extending-the-demo).
 
 ## System Layers
 
