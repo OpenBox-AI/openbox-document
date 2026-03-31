@@ -157,9 +157,20 @@ const sidebars = {
           label: 'Cursor',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/deep-agents/index',
+          type: 'category',
           label: 'Deep Agents SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/deep-agents/index',
+          },
+          items: [
+            'developer-guide/deep-agents/configuration',
+            'developer-guide/deep-agents/error-handling',
+            'developer-guide/deep-agents/integration-walkthrough',
+            'developer-guide/deep-agents/extending-the-demo-agent',
+            'developer-guide/deep-agents/demo-architecture',
+            'developer-guide/deep-agents/troubleshooting',
+          ],
         },
         {
           type: 'doc',
@@ -167,9 +178,16 @@ const sidebars = {
           label: 'LangChain SDK (TypeScript)',
         },
         {
-          type: 'doc',
-          id: 'developer-guide/langgraph/index',
+          type: 'category',
           label: 'LangGraph SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/langgraph/index',
+          },
+          items: [
+            'developer-guide/langgraph/configuration',
+            'developer-guide/langgraph/error-handling',
+          ],
         },
         {
           type: 'category',

@@ -119,7 +119,16 @@ const config = {
     }],
   ],
 
-  themes: ['@docusaurus/theme-mermaid', '@easyops-cn/docusaurus-search-local'],
+  themes: [
+    '@docusaurus/theme-mermaid',
+    ['@easyops-cn/docusaurus-search-local', {
+      indexDocs: true,
+      indexBlog: false,
+      docsRouteBasePath: '/',
+      hashed: true,
+      language: ['en'],
+    }],
+  ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -150,11 +159,6 @@ const config = {
             className: 'navbar-docs-link-mobile-only',
           },
           {
-            href: 'https://www.openbox.ai/#waitlist',
-            label: 'Get Access',
-            position: 'right',
-          },
-          {
             href: 'https://github.com/OpenBox-AI',
             label: 'GitHub',
             position: 'right',
@@ -167,13 +171,6 @@ const config = {
           },
           {type: 'search', position: 'right'},
         ],
-      },
-      searchLocal: {
-        indexDocs: true,
-        indexBlog: false,
-        docsRouteBasePath: '/',
-        hashed: true,
-        language: ['en'],
       },
       footer: {
         style: 'light',
@@ -205,8 +202,8 @@ const config = {
           {
             title: 'Product',
             items: [
-              {label: 'Get Access', href: 'https://www.openbox.ai/#waitlist'},
               {label: 'Dashboard', href: 'https://platform.openbox.ai'},
+              {label: 'Discord', href: 'https://discord.gg/YjRYvV6QJw'},
               {label: 'GitHub', href: 'https://github.com/OpenBox-AI'},
             ],
           },

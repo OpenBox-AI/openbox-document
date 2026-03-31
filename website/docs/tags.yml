@@ -134,6 +134,11 @@ crewai:
   permalink: /crewai
   description: CrewAI multi-agent framework integration
 
+cursor:
+  label: Cursor
+  permalink: /cursor
+  description: Cursor IDE agent governance integration
+
 deep-agents:
   label: Deep Agents
   permalink: /deep-agents
