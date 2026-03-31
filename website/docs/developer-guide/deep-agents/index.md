@@ -18,7 +18,7 @@ The `openbox-deepagent-sdk-python` package provides real-time governance and obs
 | **[Integration Walkthrough](/developer-guide/deep-agents/integration-walkthrough)** | Step-by-step guide using the content builder demo |
 | **[Configuration](/developer-guide/deep-agents/configuration)** | Environment variables and all middleware parameters |
 | **[Error Handling](/developer-guide/deep-agents/error-handling)** | Handle governance decisions and failures in your code |
-| **[Extending the Demo](/developer-guide/deep-agents/extending-the-demo)** | Add your own tools, subagents, and skills |
+| **[Extending the Demo](/developer-guide/deep-agents/extending-the-demo-agent)** | Add your own tools, subagents, and skills |
 | **[Demo Architecture](/developer-guide/deep-agents/demo-architecture)** | Middleware lifecycle, event flow, and subagent dispatch |
 | **[Troubleshooting](/developer-guide/deep-agents/troubleshooting)** | Common issues and fixes for Deep Agents SDK setup |
 
@@ -145,5 +145,5 @@ See **[Configuration](/developer-guide/deep-agents/configuration)** for all opti
 1. **[Integration Walkthrough](/developer-guide/deep-agents/integration-walkthrough)** — End-to-end setup with the content builder demo
 2. **[Configuration](/developer-guide/deep-agents/configuration)** — All middleware parameters and environment variables
 3. **[Error Handling](/developer-guide/deep-agents/error-handling)** — Handle governance decisions in your code
-4. **[Extending the Demo](/developer-guide/deep-agents/extending-the-demo)** — Add tools, subagents, and skills
+4. **[Extending the Demo](/developer-guide/deep-agents/extending-the-demo-agent)** — Add tools, subagents, and skills
 5. **[Policies](/trust-lifecycle/authorize/policies)** — Write Rego policies for governance rules
