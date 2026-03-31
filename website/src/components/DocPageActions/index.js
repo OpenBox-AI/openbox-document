@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useDoc} from '@docusaurus/plugin-content-docs/client';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 function normalizeText(value) {
   return value.replace(/\s+/g, ' ').trim();
@@ -95,8 +96,9 @@ function contentToMarkdown(contentEl) {
 
 export default function DocPageActions() {
   const {metadata} = useDoc();
+  const {siteConfig} = useDocusaurusContext();
   const [copied, setCopied] = useState(false);
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : metadata.permalink;
+  const pageUrl = `${siteConfig.url}${metadata.permalink}`;
   const prompt = `Read and help with this documentation page:\n\nTitle: ${metadata.title}\nURL: ${pageUrl}`;
   const encoded = encodeURIComponent(prompt);
 
@@ -106,12 +108,12 @@ export default function DocPageActions() {
   async function handleCopyPage(event) {
     const contentEl = document.querySelector('.theme-doc-markdown.markdown');
     const contentText = contentEl ? contentToMarkdown(contentEl) : '';
-    const markdown = `# ${metadata.title}\n\nSource: ${window.location.href}\n\n${contentText}`;
+    const markdown = `# ${metadata.title}\n\nSource: ${pageUrl}\n\n${contentText}`;
 
     try {
       await navigator.clipboard.writeText(markdown);
       setCopied(true);
-      window.setTimeout(() => {
+      setTimeout(() => {
         setCopied(false);
       }, 1400);
     } catch {
