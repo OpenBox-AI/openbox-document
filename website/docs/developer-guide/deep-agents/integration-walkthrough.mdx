@@ -1,0 +1,293 @@
+---
+title: Deep Agents Integration Guide (Python)
+sidebar_label: Integration Walkthrough
+description: "End-to-end guide for governing DeepAgents with OpenBox: clone the demo, register your agent, run with governance, and explore the dashboard."
+llms_description: Python-specific Deep Agents integration guide
+sidebar_position: 4
+tags:
+  - sdk
+  - deep-agents
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Deep Agents Integration Guide (Python)
+
+This is the end-to-end guide for integrating OpenBox with a DeepAgents application. You'll set up the demo repo, register your agent, run it with governance enabled, then walk through the integration architecture, subagent governance, and human-in-the-loop approvals.
+
+:::tip Skip ahead
+
+- **Completed the demo?** Skip to the **[How the Integration Works](#how-the-integration-works) section**.
+- **Already have an agent?** See the **[Getting Started](/getting-started/deep-agents)** page.
+:::
+
+## Prerequisites
+
+- **Python 3.11+** and [uv](https://docs.astral.sh/uv/)
+- **OpenBox Account** — Sign up at [platform.openbox.ai](https://platform.openbox.ai)
+- **OpenAI API Key** — The demo uses `gpt-4o-mini` via LangChain's `init_chat_model`
+- **Tavily API Key** _(optional)_ — For the `researcher` subagent's web search
+- **Google Gemini API Key** _(optional)_ — For image generation tools
+
+## Part 1: Clone and Set Up the Demo
+
+This guide uses the public SDK repo's example:
+
+```bash
+git clone https://github.com/OpenBox-AI/openbox-deepagent-sdk-python
+cd openbox-deepagent-sdk-python/examples/content-builder-agent
+```
+
+### Install Dependencies
+
+```bash
+uv sync
+```
+
+## Part 2: Register Your Agent in OpenBox
+
+1. **Log in** to the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents** → Click **Add Agent**
+3. Configure the agent:
+   - **Workflow Engine**: Deep Agents
+   - **Agent Name**: ContentWriter
+   - **Agent ID**: Auto-generated
+   - **Description** _(optional)_: Content builder agent demo
+   - **Teams** _(optional)_: assign the agent to one or more teams
+   - **Icon** _(optional)_: select an icon
+4. **API Key Generation**:
+   - Click **Generate API Key**
+   - Copy and store the key (shown only once)
+5. Configure platform settings:
+   - **Initial Risk Assessment** (**[Risk Profile](/trust-lifecycle/assess)**) — select a risk profile (Tier 1-4)
+   - **Attestation** (**[Execution Evidence](/administration/attestation-and-cryptographic-proof)**) — select an attestation provider
+6. Click **Add Agent**
+
+See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-by-field walkthrough of the form.
+
+## Part 3: Configure Environment
+
+1. Copy `.env.example` to `.env`
+2. Open `.env` in your editor and set your values:
+
+```bash
+# OpenAI — main agent LLM
+OPENAI_API_KEY=sk-...
+
+# OpenBox (use the API key from Part 2)
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_AGENT_NAME=ContentWriter
+
+# Google Gemini — image generation (optional)
+GOOGLE_API_KEY=AI...
+
+# Tavily — web search for researcher subagent (optional)
+TAVILY_API_KEY=tvly-...
+```
+
+## Part 4: Run the Demo
+
+```bash
+uv run python content_writer.py "Write a blog post about how AI agents are transforming software development"
+```
+
+You should see `OpenBox SDK initialized successfully` in the terminal output, followed by streaming agent activity — research, writing, and image generation.
+
+:::tip Custom task
+Pass any content task as a command-line argument:
+```bash
+uv run python content_writer.py "Create a LinkedIn post about prompt engineering"
+```
+:::
+
+## See It in Action
+
+1. Open the **[OpenBox Dashboard](https://platform.openbox.ai)**
+2. Navigate to **Agents** → Click your agent (ContentWriter)
+3. On the **Overview** tab, find the session that corresponds to your run
+4. Click **Details** to open it — you'll land on the **Overview** tab which shows the **Event Log Timeline**
+5. Scroll through the timeline — you'll see every event the trust layer captured: model calls with prompts and completions, tool calls with governance decisions, subagent dispatches, and HTTP requests
+6. Switch to the **Tree View** to see the same data as a hierarchy — model calls at the top, tool calls nested underneath
+7. Click **Watch Replay** to open [Session Replay](/trust-lifecycle/session-replay) — this plays back the entire session step-by-step
+
+## What Just Happened?
+
+When you ran the demo, the OpenBox middleware:
+
+1. **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
+2. **Governed every tool call** — evaluated governance policies before each tool executed (web search, file writes, image generation)
+3. **Captured subagent dispatches** — the `researcher` subagent's `task` call was treated as a governed tool call with `a2a` classification
+4. **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded outbound requests to OpenAI, Tavily, and Gemini
+5. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+
+## How the Integration Works
+
+The OpenBox integration point is the agent factory function in `content_writer.py`. The only change is creating middleware with `create_openbox_middleware` and passing it to `create_deep_agent`:
+
+<Tabs>
+<TabItem value="before" label="DeepAgents">
+
+```python title="content_writer.py"
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+
+def create_content_writer():
+    return create_deep_agent(
+        model=init_chat_model("openai:gpt-4o-mini", temperature=0),
+        memory=["./AGENTS.md"],
+        skills=["./skills/"],
+        tools=[generate_cover, generate_social_image],
+        subagents=subagent_defs,
+        backend=FilesystemBackend(root_dir=EXAMPLE_DIR),
+    )
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="content_writer.py"
+import os
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+from openbox_deepagent import create_openbox_middleware  # Added
+
+def create_content_writer():
+    subagent_defs = load_subagents(EXAMPLE_DIR / "subagents.yaml")
+    known_subagents = [s["name"] for s in subagent_defs] + ["general-purpose"]
+
+    # Create OpenBox governance middleware
+    openbox_middleware = create_openbox_middleware(
+        api_url=os.environ["OPENBOX_URL"],
+        api_key=os.environ["OPENBOX_API_KEY"],
+        agent_name=os.environ.get("OPENBOX_AGENT_NAME", "ContentWriter"),
+        known_subagents=known_subagents,
+        tool_type_map={"web_search": "http"},
+    )
+
+    return create_deep_agent(
+        model=init_chat_model("openai:gpt-4o-mini", temperature=0),
+        memory=["./AGENTS.md"],
+        skills=["./skills/"],
+        tools=[generate_cover, generate_social_image],
+        subagents=subagent_defs,
+        backend=FilesystemBackend(root_dir=EXAMPLE_DIR),
+        middleware=[openbox_middleware],  # Added
+    )
+```
+
+</TabItem>
+</Tabs>
+
+The agent's code is organized in:
+
+- **`AGENTS.md`** — Brand voice and writing standards. DeepAgents loads this as the agent's memory, establishing personality and content guidelines.
+- **`skills/`** — Specialized workflow instructions. Each skill (e.g., `blog-post`, `social-media`) defines a structured process the agent follows for that content type.
+- **`subagents.yaml`** — Subagent definitions loaded by a custom utility. Each subagent has a name, description, system prompt, and available tools.
+- **`content_writer.py`** — The agent factory that wires everything together, including OpenBox middleware.
+
+See **[Extending the Demo Agent](/developer-guide/deep-agents/extending-the-demo-agent)** for a step-by-step guide to adding your own tools and subagents, or the **[Demo Architecture Reference](/developer-guide/deep-agents/demo-architecture)** for the full middleware lifecycle and event flow.
+
+## Subagent Governance
+
+The demo ships with a `researcher` subagent that uses `web_search` to gather information. OpenBox automatically governs subagent dispatches:
+
+- The `task` tool call is classified as `a2a` (agent-to-agent)
+- The subagent name (e.g., `researcher`) is included in the `__openbox` metadata
+- Rego policies can target specific subagents:
+
+```rego
+result := {"decision": "REQUIRE_APPROVAL"} if {
+    input.event_type == "ToolStarted"
+    input.activity_type == "task"
+    some item in input.activity_input
+    item["__openbox"].subagent_name == "researcher"
+}
+```
+
+### Tool Type Classification
+
+The demo configures `tool_type_map={"web_search": "http"}` so policies can target tool categories:
+
+| Tool | Classification | Reason |
+|------|---------------|--------|
+| `web_search` | `http` | Explicit mapping in `tool_type_map` |
+| `task` (researcher) | `a2a` | Automatic — subagent dispatch |
+| `generate_cover` | _(none)_ | No mapping — governed by default policies |
+| `write_file` | _(none)_ | DeepAgents built-in tool |
+
+## Human-in-the-Loop Approvals
+
+Some operations may be too sensitive to run without human sign-off — for example, publishing content or executing external API calls. Configure governance policies in OpenBox to require approval. See **[Authorize](/trust-lifecycle/authorize)** to set up guardrails, policies, and behavioral rules.
+
+When governance requires approval:
+
+1. OpenBox creates an approval request
+2. Approval request appears in the [OpenBox dashboard](/approvals)
+3. Human approves/rejects
+4. The middleware polls for the decision and either proceeds or raises `GovernanceHaltError`
+
+## Configuration Options
+
+### Governance Settings
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `governance_timeout` | `30.0` | Max seconds to wait for governance evaluation |
+| `on_api_error` | `fail_open` | `fail_open` = continue on API error, `fail_closed` = stop on API error |
+
+### Tool Classification
+
+Map tool names to semantic types for category-level policies:
+
+```python
+middleware = create_openbox_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+
+    # Classify tools
+    tool_type_map={
+        "web_search": "http",
+        "fetch_page": "http",
+        "write_report": "file",
+    },
+
+    # Skip governance for internal tools
+    skip_tool_types={"internal", "logging"},
+)
+```
+
+### Optional Instrumentation
+
+```python
+from sqlalchemy import create_engine
+
+middleware = create_openbox_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+
+    # Database governance
+    sqlalchemy_engine=create_engine(os.environ["DATABASE_URL"]),
+)
+```
+
+See **[Configuration](/developer-guide/deep-agents/configuration)** for the full list of options.
+
+## Error Handling
+
+The SDK raises typed exceptions for governance decisions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
+
+To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and look for governance decisions that were blocked or flagged.
+
+See **[Error Handling](/developer-guide/deep-agents/error-handling)** for exception types and handling patterns.
+
+## Next Steps
+
+1. **[Extending the Demo Agent](/developer-guide/deep-agents/extending-the-demo-agent)** — Add your own tools, subagents, and skills
+2. **[Configuration](/developer-guide/deep-agents/configuration)** — Fine-tune timeouts, fail policies, and tool classification
+3. **[Error Handling](/developer-guide/deep-agents/error-handling)** — Handle governance decisions in your code
+4. **[Set Up Approvals](/approvals)** — Add human-in-the-loop for sensitive operations
+5. **[Demo Architecture Reference](/developer-guide/deep-agents/demo-architecture)** — Middleware lifecycle, event flow, and subagent dispatch
+
+Having issues? See the **[Troubleshooting](/developer-guide/deep-agents/troubleshooting)** guide for common problems and solutions.
