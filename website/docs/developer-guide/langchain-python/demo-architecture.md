@@ -121,7 +121,6 @@ Every agent invocation produces this sequence of events sent to OpenBox Core:
 | Verdict | Behavior |
 |---------|----------|
 | `ALLOW` | Tool/LLM executes normally |
-| `CONSTRAIN` | Execution continues with constraints applied |
 | `BLOCK` | `GovernanceBlockedError` raised — single tool blocked, agent may continue |
 | `HALT` | `GovernanceHaltError` raised — entire session terminated |
 | `REQUIRE_APPROVAL` | Middleware polls for human decision; proceeds or halts based on response |

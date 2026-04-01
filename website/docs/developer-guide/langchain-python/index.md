@@ -100,7 +100,6 @@ Each hook evaluates a governance verdict before the operation proceeds:
 | Verdict | Behavior |
 |---------|----------|
 | `ALLOW` | Operation continues normally |
-| `CONSTRAIN` | Operation continues with constraints applied |
 | `REQUIRE_APPROVAL` | Middleware polls for human decision; proceeds or halts |
 | `BLOCK` | `GovernanceBlockedError` raised — single tool blocked, agent may continue |
 | `HALT` | `GovernanceHaltError` raised — entire session terminated |
