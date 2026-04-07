@@ -11,11 +11,11 @@ tags:
 
 # Error Handling
 
-Trust decisions surface as Temporal `ApplicationError` exceptions in your activities. The SDK uses `ApplicationError.type` to distinguish between different governance outcomes.
+Trust decisions surface as Temporal `ApplicationError` exceptions in your activities. The plugin uses `ApplicationError.type` to distinguish between different governance outcomes.
 
 ## Governance Error Types
 
-The SDK raises `ApplicationError` with one of these type strings:
+The plugin raises `ApplicationError` with one of these type strings:
 
 | Error Type           | Decision                    | Retryable | Description                |
 | -------------------- | --------------------------- | --------- | -------------------------- |
@@ -40,7 +40,7 @@ from temporalio.exceptions import ApplicationError
 
 ## Handling Each Type
 
-These patterns apply inside your existing Temporal activity functions. The SDK intercepts activity execution automatically — you only need to add error handling if you want custom behavior beyond the default (which is to let the exception propagate and fail the activity).
+These patterns apply inside your existing Temporal activity functions. The plugin intercepts activity execution automatically — you only need to add error handling if you want custom behavior beyond the default (which is to let the exception propagate and fail the activity).
 
 ### GovernanceStop
 
@@ -66,12 +66,12 @@ async def sensitive_operation(data: dict) -> str:
 
 ### ApprovalPending
 
-Raised when the operation requires human approval. Because `non_retryable=False`, Temporal automatically retries the activity — the SDK polls for an approval decision on each retry.
+Raised when the operation requires human approval. Because `non_retryable=False`, Temporal automatically retries the activity — the plugin polls for an approval decision on each retry.
 
 ```python
 @activity.defn
 async def requires_approval_operation(data: dict) -> str:
-    # No special handling needed - SDK manages retries.
+    # No special handling needed - plugin manages retries.
     # Activity will retry until approved/rejected/expired.
     result = await perform_action(data)
     return result
@@ -167,7 +167,7 @@ class MyAgentWorkflow:
 
 ## Best Practices
 
-1. **Let ApprovalPending propagate** - The SDK handles retries
+1. **Let ApprovalPending propagate** - The plugin handles retries
 2. **Log GovernanceStop with context** - Helps debugging
 3. **Consider fallback behavior** - Not all denials should crash
 4. **Clean up on GovernanceStop** - Release resources before re-raising
@@ -175,7 +175,7 @@ class MyAgentWorkflow:
 
 ## Configuration Exceptions
 
-The SDK raises configuration exceptions from `openbox.config` during `create_openbox_worker()` calls — not during activity execution. Handle these where you initialize your worker.
+The plugin raises configuration exceptions from `openbox.config` during `OpenBoxPlugin()` initialization — not during activity execution. Handle these where you initialize your worker.
 
 | Exception                 | Cause                                   |
 | ------------------------- | --------------------------------------- |

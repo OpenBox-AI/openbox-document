@@ -363,7 +363,7 @@ book_pto_tool = ToolDefinition(
 
 ## Next Steps
 
-- **[SDK Configuration](/developer-guide/temporal-python/configuration)** — Fine-tune timeouts, fail policies, and event filtering
+- **[Plugin Configuration](/developer-guide/temporal-python/configuration)** — Fine-tune timeouts, fail policies, and event filtering
 - **[Error Handling](/developer-guide/temporal-python/error-handling)** — Handle governance decisions in your code
 - **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
 - **[Available Goals](/developer-guide/temporal-python/integration-walkthrough#available-goals)** — See the full list of built-in scenarios

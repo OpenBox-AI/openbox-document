@@ -117,7 +117,7 @@ The demo runs four processes that work together:
 | Terminal | Command | What it does |
 |----------|---------|-------------|
 | 1 | `temporal server start-dev` | Starts a local Temporal server that orchestrates workflows — it schedules activities, manages retries, and maintains workflow state |
-| 2 | `make run-worker` | Runs the Temporal worker that executes your agent's workflow and activity code. The OpenBox SDK is initialized here, intercepting every event for governance |
+| 2 | `make run-worker` | Runs the Temporal worker that executes your agent's workflow and activity code. The OpenBox plugin is initialized here, intercepting every event for governance |
 | 3 | `make run-api` | Starts the backend API that the frontend calls to trigger workflows and relay messages to the agent |
 | 4 | `make run-frontend` | Serves the chat UI at `localhost:5173` where you interact with the agent |
 
@@ -147,7 +147,7 @@ Send a message (e.g., "I want to book a trip to Australia") and let the agent ru
 
 ## What Just Happened?
 
-When you ran the demo, the OpenBox SDK:
+When you ran the demo, the OpenBox plugin:
 
 - **Intercepted workflow and activity events** — every workflow start, activity execution, and signal was captured and sent to OpenBox for governance evaluation
 - **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded all outbound HTTP requests (LLM calls, external APIs) with full request/response bodies
