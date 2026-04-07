@@ -149,7 +149,7 @@ When you ran the demo, the OpenBox trust layer:
 
 ## How the Integration Works
 
-The OpenBox integration point is the worker bootstrap script: `scripts/run_worker.py`. The only change is replacing `Worker` with `create_openbox_worker` and adding the OpenBox configuration:
+The OpenBox integration point is the worker bootstrap script: `scripts/run_worker.py`. The only change is adding `OpenBoxPlugin` to the Worker's `plugins` list:
 
 <Tabs>
 <TabItem value="before" label="Temporal">
@@ -183,23 +183,24 @@ asyncio.run(main())
 import os
 import asyncio
 from temporalio.client import Client
-from openbox import create_openbox_worker  # Changed import
+from temporalio.worker import Worker
+from openbox.plugin import OpenBoxPlugin  # Add OpenBox
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 
 async def main():
     client = await Client.connect("localhost:7233")
 
-    # Replace Worker with create_openbox_worker
-    worker = create_openbox_worker(
-        client=client,
+    worker = Worker(
+        client,
         task_queue="agent-task-queue",
         workflows=[YourWorkflow],
         activities=[your_activity],
-
-        # Add OpenBox configuration
-        openbox_url=os.getenv("OPENBOX_URL"),
-        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        # Add OpenBox plugin
+        plugins=[OpenBoxPlugin(
+            openbox_url=os.getenv("OPENBOX_URL"),
+            openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        )],
     )
 
     await worker.run()
@@ -295,16 +296,19 @@ result = await workflow.execute_activity(
 Skip governance for specific workflows or activities:
 
 ```python
-worker = create_openbox_worker(
-    client=temporal_client,
+worker = Worker(
+    client,
     task_queue="my-task-queue",
     workflows=[AgentGoalWorkflow, UtilityWorkflow],
     activities=[...],
-
-    # Skip these from governance
-    skip_workflow_types={"UtilityWorkflow"},
-    skip_activity_types={"internal_activity"},
-    skip_signals={"heartbeat"},
+    plugins=[OpenBoxPlugin(
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        # Skip these from governance
+        skip_workflow_types={"UtilityWorkflow"},
+        skip_activity_types={"internal_activity"},
+        skip_signals={"heartbeat"},
+    )],
 )
 ```
 
@@ -313,33 +317,35 @@ worker = create_openbox_worker(
 Enable additional telemetry capture:
 
 ```python
-worker = create_openbox_worker(
-    client=temporal_client,
+worker = Worker(
+    client,
     task_queue="my-task-queue",
     workflows=[AgentGoalWorkflow],
     activities=[...],
-
-    # Optional: Capture database operations
-    instrument_databases=True,
-    db_libraries={"psycopg2", "redis"},  # Or None for all
-
-    # Optional: Capture file I/O
-    instrument_file_io=True,
+    plugins=[OpenBoxPlugin(
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        # Optional: Capture database operations
+        instrument_databases=True,
+        db_libraries={"psycopg2", "redis"},  # Or None for all
+        # Optional: Capture file I/O
+        instrument_file_io=True,
+    )],
 )
 ```
 
-See **[SDK Configuration](/developer-guide/temporal-python/configuration)** for the full list of options.
+See **[Plugin Configuration](/developer-guide/temporal-python/configuration)** for the full list of options.
 
 ## Error Handling
 
-In this demo, the SDK's role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
+In this demo, the plugin's role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
 
 To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and look for governance decisions that were blocked or flagged, failed activity outputs, and approval requests that were rejected.
 
 ## Next Steps
 
 1. **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** - Add your own goals, native tools, and MCP integrations
-2. **[SDK Configuration](/developer-guide/temporal-python/configuration)** - Fine-tune timeouts, fail policies, and filtering
+2. **[Plugin Configuration](/developer-guide/temporal-python/configuration)** - Fine-tune timeouts, fail policies, and filtering
 3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 4. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
 5. **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** - Signals, activities, endpoints, and message flow

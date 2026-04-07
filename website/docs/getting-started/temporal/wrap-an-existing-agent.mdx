@@ -1,6 +1,6 @@
 ---
 title: Wrap an Existing Agent
-description: "Already have AI agents running? Add governance in 3 steps without rebuilding: wrap with SDK, apply policies, monitor - done."
+description: "Already have AI agents running? Add governance in 3 steps without rebuilding: add the plugin, apply policies, monitor - done."
 llms_description: How to add OpenBox to an existing agent
 sidebar_position: 3
 tags:
@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 # Wrap an Existing Agent
 
-Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through wrapping it with OpenBox for governance, monitoring, and compliance.
+Add the OpenBox trust layer to your existing Temporal agent. This guide assumes you already have a working Temporal agent and walks through adding the OpenBox plugin for governance, monitoring, and compliance.
 
 ## Prerequisites
 
@@ -22,9 +22,9 @@ Add the OpenBox trust layer to your existing Temporal agent. This guide assumes 
 - **Python 3.11+** installed
 - **OpenBox API Key** — [Register your agent](/dashboard/agents/registering-agents) in the dashboard to get one
 
-## Step 1: Install OpenBox SDK
+## Step 1: Install OpenBox
 
-Add the OpenBox SDK to your existing project:
+Add the OpenBox package to your existing project:
 
 **Package:** `openbox-temporal-sdk-python`
 
@@ -65,9 +65,9 @@ load_dotenv()
 
 </details>
 
-## Step 3: Wrap Your Existing Worker
+## Step 3: Add the OpenBox Plugin
 
-Replace `Worker` with `create_openbox_worker`:
+Add `OpenBoxPlugin` to your existing Worker's `plugins` list:
 
 <Tabs>
 <TabItem value="before" label="Temporal">
@@ -101,23 +101,24 @@ asyncio.run(main())
 import os
 import asyncio
 from temporalio.client import Client
-from openbox import create_openbox_worker  # Changed import
+from temporalio.worker import Worker
+from openbox.plugin import OpenBoxPlugin  # Add OpenBox
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 
 async def main():
     client = await Client.connect("localhost:7233")
 
-    # Replace Worker with create_openbox_worker
-    worker = create_openbox_worker(
-        client=client,
+    worker = Worker(
+        client,
         task_queue="agent-task-queue",
         workflows=[YourWorkflow],
         activities=[your_activity],
-
-        # Add OpenBox configuration
-        openbox_url=os.getenv("OPENBOX_URL"),
-        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        # Add OpenBox plugin
+        plugins=[OpenBoxPlugin(
+            openbox_url=os.getenv("OPENBOX_URL"),
+            openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        )],
     )
 
     await worker.run()
@@ -136,7 +137,7 @@ Start your worker as you normally would, for example:
 uv run worker.py
 ```
 
-You should see the OpenBox SDK initialize and connect. Your output will vary depending on your agent's configuration:
+You should see the OpenBox plugin initialize and connect. Your output will vary depending on your agent's configuration:
 
 ```
 Worker will use LLM model: openai/gpt-4o
@@ -210,7 +211,7 @@ If your session doesn't appear, check that your worker is running and connected 
 
 ## What Just Happened?
 
-Under the hood, the OpenBox SDK:
+Under the hood, the OpenBox plugin:
 
 - **Intercepted workflow events** (started, completed, failed, signals) and **activity events** (started, completed) with their inputs and outputs, sending each to OpenBox for governance evaluation
 - **Captured HTTP calls automatically** — any requests your agent made (LLM APIs, external services) were recorded via OpenTelemetry instrumentation, including full request and response details

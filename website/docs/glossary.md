@@ -268,7 +268,7 @@ One of four trust levels derived from the [Trust Score](#trust-score) that deter
 
 A process that hosts your [Workflow](#workflow) and [Activity](#activity) code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The Worker is the single integration point. You replace Temporal's `Worker` with `create_openbox_worker` — one code change that wraps the Worker with the [Trust Layer](#trust-layer). No changes to your Workflows or Activities.
+**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list — one code change that adds the [Trust Layer](#trust-layer). No changes to your Workflows or Activities.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#worker)
 
