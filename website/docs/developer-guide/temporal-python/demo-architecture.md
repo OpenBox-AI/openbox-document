@@ -38,7 +38,7 @@ graph TB
     end
 
     subgraph "Governance Layer"
-        OBX[OpenBox SDK]
+        OBX[OpenBox Plugin]
     end
 
     subgraph "External Services"
@@ -65,7 +65,7 @@ graph TB
 | **API** | FastAPI | Translates HTTP requests into Temporal signals and queries |
 | **Orchestration** | Temporal | Runs the agent loop, executes tools via activities |
 | **Integration** | LiteLLM, MCP | Multi-provider LLM calls, external tool servers |
-| **Governance** | OpenBox SDK | Intercepts workflow and activity events for policy evaluation |
+| **Governance** | OpenBox Plugin | Intercepts workflow and activity events for policy evaluation |
 | **External** | OpenAI, Anthropic, Stripe, etc. | LLM providers and third-party APIs |
 
 ## Message Flow
@@ -216,7 +216,7 @@ The frontend polls `/get-conversation-history` to pick up new messages.
 
 ## OpenBox Governance
 
-`create_openbox_worker` in `scripts/run_worker.py` wraps the Temporal worker with governance interceptors.
+`OpenBoxPlugin` in `scripts/run_worker.py` adds governance interceptors to the Temporal worker.
 
 | Capability | Detail |
 |------------|--------|
@@ -234,7 +234,7 @@ All governance evaluation happens on the platform side, not in the agent code. T
 
 | Path | Purpose |
 |------|---------|
-| `scripts/run_worker.py` | Worker bootstrap — `create_openbox_worker` integration point |
+| `scripts/run_worker.py` | Worker bootstrap — `OpenBoxPlugin` integration point |
 | `api/main.py` | FastAPI endpoints — HTTP bridge to Temporal |
 | `workflows/agent_goal_workflow.py` | `AgentGoalWorkflow` — main state machine |
 | `workflows/workflow_helpers.py` | `is_mcp_tool()`, continue-as-new logic, tool dispatch helpers |

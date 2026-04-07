@@ -1,7 +1,7 @@
 ---
 title: Configuration
-description: "Configure the OpenBox SDK in 3 steps: Set API keys, define policies, control runtime behavior - no infrastructure changes needed."
-llms_description: All SDK configuration options
+description: "Configure the OpenBox plugin: Set API keys, define policies, control runtime behavior - no infrastructure changes needed."
+llms_description: All plugin configuration options
 sidebar_position: 4
 tags:
   - sdk
@@ -10,7 +10,7 @@ tags:
 
 # Configuration
 
-The SDK can be configured via environment variables or function parameters.
+The plugin can be configured via environment variables or constructor parameters.
 
 ## Environment Variables
 
@@ -24,11 +24,11 @@ The SDK can be configured via environment variables or function parameters.
 | `OPENBOX_SEND_START_EVENT`          | No       | `true`      | Send WorkflowStarted events                               |
 | `OPENBOX_SEND_ACTIVITY_START_EVENT` | No       | `true`      | Send ActivityStarted events                               |
 
-## Function Parameters
+## Plugin Parameters
 
-Parameters passed to `create_openbox_worker()` override environment variables:
+Parameters passed to `OpenBoxPlugin()` override environment variables:
 
-See **[Example: Full Configuration](#example-full-configuration)** for a complete `create_openbox_worker()` example.
+See **[Example: Full Configuration](#example-full-configuration)** for a complete example.
 
 ## Configuration Options
 
@@ -179,13 +179,14 @@ instrument_file_io=True   # Capture file operations
 import asyncio
 import os
 from temporalio.client import Client
-from openbox import create_openbox_worker
+from temporalio.worker import Worker
+from openbox.plugin import OpenBoxPlugin
 
 async def main():
     client = await Client.connect("localhost:7233")
 
-    worker = create_openbox_worker(
-        client=client,
+    worker = Worker(
+        client,
         task_queue="production-queue",
         workflows=[CustomerWorkflow, OrderWorkflow],
         activities=[
@@ -193,29 +194,30 @@ async def main():
             send_notification,
             update_inventory,
         ],
+        plugins=[OpenBoxPlugin(
+            # OpenBox config from environment
+            openbox_url=os.environ.get("OPENBOX_URL"),
+            openbox_api_key=os.environ.get("OPENBOX_API_KEY"),
 
-        # OpenBox config from environment
-        openbox_url=os.environ.get("OPENBOX_URL"),
-        openbox_api_key=os.environ.get("OPENBOX_API_KEY"),
+            # Event filtering
+            send_start_event=True,
+            send_activity_start_event=True,
 
-        # Event filtering
-        send_start_event=True,
-        send_activity_start_event=True,
+            # Governance behavior
+            governance_timeout=45.0,
+            governance_policy="fail_closed",  # High security
+            hitl_enabled=True,
 
-        # Governance behavior
-        governance_timeout=45.0,
-        governance_policy="fail_closed",  # High security
-        hitl_enabled=True,
+            # Exclude internal workflows
+            skip_workflow_types={"HealthCheck", "Metrics"},
+            skip_activity_types={"log_event"},
+            skip_signals={"heartbeat", "progress_update"},
 
-        # Exclude internal workflows
-        skip_workflow_types={"HealthCheck", "Metrics"},
-        skip_activity_types={"log_event"},
-        skip_signals={"heartbeat", "progress_update"},
-
-        # Full instrumentation
-        instrument_databases=True,
-        db_libraries={"psycopg2", "redis"},
-        instrument_file_io=False,
+            # Full instrumentation
+            instrument_databases=True,
+            db_libraries={"psycopg2", "redis"},
+            instrument_file_io=False,
+        )],
     )
 
     await worker.run()
@@ -227,5 +229,5 @@ if __name__ == "__main__":
 ## Next Steps
 
 1. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
-2. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types captured by the SDK
+2. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types captured by the plugin
 3. **[Approvals](/approvals)** - Review and act on HITL approval requests

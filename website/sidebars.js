@@ -218,7 +218,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Temporal SDK (Python)',
+          label: 'Temporal Plugin (Python)',
           link: {
             type: 'doc',
             id: 'developer-guide/temporal-python/sdk-reference',
