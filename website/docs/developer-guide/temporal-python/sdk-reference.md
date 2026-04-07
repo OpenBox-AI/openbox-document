@@ -1,37 +1,38 @@
 ---
-title: Temporal SDK (Python)
-description: "OpenBox SDK reference for Python & TypeScript: 47 methods for agent registration, policy enforcement, trust scoring, and monitoring."
-llms_description: Full SDK API reference
+title: Temporal Plugin (Python)
+description: "OpenBox plugin reference for Temporal Python: governance, policy enforcement, trust scoring, and monitoring via a single plugin."
+llms_description: Full plugin API reference
 sidebar_position: 1
 tags:
   - sdk
   - reference
 ---
 
-# Temporal SDK (Python)
+# Temporal Plugin (Python)
 
-The OpenBox SDKs integrate with your workflow engine. They handle event capture, telemetry collection, and trust evaluation with minimal code changes.
+`OpenBoxPlugin` is a drop-in Temporal plugin that adds governance and observability to your workers.
 
 | Guide | Description |
 |-------|-------------|
-| **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for wrapping Temporal workers |
-| **[Configuration](/developer-guide/temporal-python/configuration)** | Environment variables and function parameters |
+| **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for adding OpenBox to Temporal workers |
+| **[Configuration](/developer-guide/temporal-python/configuration)** | Plugin options and environment variables |
 | **[Error Handling](/developer-guide/temporal-python/error-handling)** | Handle governance decisions and failures in your code |
 | **[Customizing the Demo](/developer-guide/temporal-python/customizing-the-demo)** | Tailor governance behavior to your agent's needs |
 | **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
-| **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal SDK setup |
+| **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal plugin setup |
 
-:::info What the SDKs Do
-The SDKs' primary job is to **connect your workflow engine to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
+:::info What the Plugin Does
+The plugin's primary job is to **connect your Temporal worker to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform — not in the plugin.
 :::
 
 ## Philosophy
 
-The SDK is intentionally minimal:
+The plugin is intentionally minimal:
 
-- **One function call** to wrap your worker (`create_openbox_worker`)
-- **Zero code changes** to workflow/activity logic. Worker initialization requires adding OpenBox wrapper (~5 lines).
-- **Automatic telemetry** - captures HTTP, database, and file I/O operations
+- **One plugin** added to your existing Worker — no import swaps or wrapper functions
+- **Zero code changes** to workflow/activity logic
+- **Automatic telemetry** — captures HTTP, database, and file I/O operations
+- **Composable** — works alongside other Temporal plugins (e.g., `OpenTelemetryPlugin`)
 
 ## Supported Engines
 
@@ -44,32 +45,44 @@ The SDK is intentionally minimal:
 
 See:
 
-1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** - Wrap an existing Temporal worker
-2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)** - End-to-end setup from scratch
-3. **[Configuration](/developer-guide/temporal-python/configuration)** - All SDK options for `create_openbox_worker`
+1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** — Add OpenBox to an existing Temporal worker
+2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)** — End-to-end setup from scratch
+3. **[Configuration](/developer-guide/temporal-python/configuration)** — All plugin options
 
-## Function Signature
+## Plugin Usage
 
 ```python
-def create_openbox_worker(
-    client: Client,
-    task_queue: str,
-    *,
-    workflows: Sequence[Type] = (),
-    activities: Sequence[Callable] = (),
+from openbox.plugin import OpenBoxPlugin
+
+OpenBoxPlugin(
     openbox_url: str,
     openbox_api_key: str,
-    # + governance, instrumentation, and Temporal Worker options
+    # + governance, instrumentation options
 )
 ```
 
-Returns a standard Temporal `Worker` with OpenBox interceptors, telemetry, and governance configured. All [Temporal Worker options](https://python.temporal.io/temporalio.worker.Worker.html) are passed through.
+Add it to your Worker's `plugins` list:
+
+```python
+worker = Worker(
+    client,
+    task_queue="my-task-queue",
+    workflows=[MyWorkflow],
+    activities=[my_activity],
+    plugins=[OpenBoxPlugin(
+        openbox_url=os.getenv("OPENBOX_URL"),
+        openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+    )],
+)
+```
+
+The plugin automatically configures governance interceptors, OTel instrumentation, sandbox passthrough, and the `send_governance_event` activity.
 
 See **[Configuration](/developer-guide/temporal-python/configuration)** for the full parameter list.
 
-## What the SDK Captures
+## What the Plugin Captures
 
-The SDK automatically captures and sends to OpenBox:
+The plugin automatically captures and sends to OpenBox:
 
 ### Workflow Events
 - Workflow started/completed/failed
@@ -151,7 +164,7 @@ flowchart TD
     subgraph worker["Your Temporal Worker"]
         workflow["Your Workflow<br/>(unchanged)"]
         activity["Your Activity<br/>(unchanged)"]
-        sdk["<b>OpenBox SDK (Interceptors)</b><br/>Captures events<br/>Collects HTTP/DB/File telemetry<br/>Sends events to OpenBox"]
+        sdk["<b>OpenBox Plugin</b><br/>Captures events<br/>Collects HTTP/DB/File telemetry<br/>Sends events to OpenBox"]
         workflow --> sdk
         activity --> sdk
     end
@@ -171,6 +184,6 @@ See **[Configuration](/developer-guide/temporal-python/configuration)** for all 
 
 ## Next Steps
 
-1. **[Temporal Integration](/developer-guide/temporal-python/integration-walkthrough)** - Wrap an existing Temporal agent with the SDK
+1. **[Temporal Integration](/developer-guide/temporal-python/integration-walkthrough)** - Add OpenBox to an existing Temporal agent
 2. **[Configuration](/developer-guide/temporal-python/configuration)** - Configure timeouts, fail policies, and exclusions
 3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
