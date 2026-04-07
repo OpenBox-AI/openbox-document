@@ -38,13 +38,13 @@ An **Activity** is a single unit of work inside a Workflow — calling an LLM, q
 
 A **Worker** is a process that hosts your Workflow and Activity code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The Worker is the single integration point. You replace Temporal's `Worker` with `create_openbox_worker` — one code change that wraps the Worker with the trust layer. No changes to your Workflows or Activities.
+**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list — one code change that adds the trust layer. No changes to your Workflows or Activities.
 
 [Temporal docs: Workers](https://docs.temporal.io/workers)
 
 ## Where OpenBox Sits in the Execution Flow
 
-The diagram below shows how the OpenBox SDK wraps the Temporal Worker to intercept events at each stage of execution:
+The diagram below shows how the OpenBox plugin integrates with the Temporal Worker to intercept events at each stage of execution:
 
 ```mermaid
 flowchart LR
@@ -72,7 +72,7 @@ flowchart LR
 ```
 
 - Your **App** starts a Workflow on the **Temporal Server**.
-- Temporal dispatches tasks to the **Wrapped Worker** (`create_openbox_worker`).
+- Temporal dispatches tasks to the **Worker with OpenBox Plugin** (`OpenBoxPlugin`).
 - The Worker sends every Workflow and Activity **event** to the **OpenBox Platform**, which evaluates policies and returns a governance **decision** (allow, block, require approval, etc.).
 - The Worker continues execution based on the decision and reports results back to Temporal.
 
