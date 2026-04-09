@@ -159,6 +159,11 @@ const config = {
             className: 'navbar-docs-link-mobile-only',
           },
           {
+            href: 'https://discord.gg/YjRYvV6QJw',
+            label: 'Discord',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/OpenBox-AI',
             label: 'GitHub',
             position: 'right',
