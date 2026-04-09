@@ -41,7 +41,12 @@ const sidebars = {
         {
           type: 'doc',
           id: 'getting-started/langchain/index',
-          label: 'LangChain',
+          label: 'LangChain (TypeScript)',
+        },
+        {
+          type: 'doc',
+          id: 'getting-started/langchain-python/index',
+          label: 'LangChain (Python)',
         },
         {
           type: 'doc',
@@ -176,6 +181,22 @@ const sidebars = {
           type: 'doc',
           id: 'developer-guide/langchain/index',
           label: 'LangChain SDK (TypeScript)',
+        },
+        {
+          type: 'category',
+          label: 'LangChain SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/langchain-python/index',
+          },
+          items: [
+            'developer-guide/langchain-python/configuration',
+            'developer-guide/langchain-python/error-handling',
+            'developer-guide/langchain-python/integration-walkthrough',
+            'developer-guide/langchain-python/extending-the-demo-agent',
+            'developer-guide/langchain-python/demo-architecture',
+            'developer-guide/langchain-python/troubleshooting',
+          ],
         },
         {
           type: 'category',

@@ -1,0 +1,217 @@
+---
+title: Troubleshooting
+description: "Fix common LangChain Python SDK issues: environment variables, governance blocks, subagent failures, tool classification, and API errors."
+llms_description: Common issues and fixes for the LangChain Python SDK
+sidebar_position: 7
+tags:
+  - getting-started
+  - sdk
+  - langchain
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Troubleshooting
+
+Common issues and solutions when integrating LangChain Python with OpenBox.
+
+---
+
+## Middleware Not Connecting to OpenBox
+
+Check that your environment variables are set:
+
+```bash
+[ -n "$OPENBOX_URL" ] && echo "OPENBOX_URL is set" || echo "OPENBOX_URL is NOT set"
+[ -n "$OPENBOX_API_KEY" ] && echo "OPENBOX_API_KEY is set" || echo "OPENBOX_API_KEY is NOT set"
+```
+
+Verify step by step:
+
+1. Confirm `OPENBOX_URL` and `OPENBOX_API_KEY` are set (or passed as `api_url`/`api_key` parameters)
+2. Run your agent and check logs for `OpenBox SDK initialized successfully`
+3. If using `.env`, ensure `python-dotenv` is installed and `load_dotenv()` is called before `create_openbox_langchain_middleware()`
+
+If you get `OpenBoxInsecureURLError`, your `OPENBOX_URL` uses HTTP for a non-localhost address. Use HTTPS:
+
+```bash
+# Wrong
+OPENBOX_URL=http://core.openbox.ai
+
+# Correct
+OPENBOX_URL=https://core.openbox.ai
+```
+
+---
+
+## No Sessions in Dashboard
+
+If sessions don't appear after running your agent:
+
+1. Ensure the middleware initialized successfully (check for `OpenBox SDK initialized successfully` in logs)
+2. Confirm the agent completed at least one invocation — sessions are created on `before_agent`
+3. Verify the API key matches the agent registered in OpenBox (agent names must match exactly)
+4. Check that `validate=True` (default) — this catches bad credentials at startup
+
+---
+
+## Governance Blocks or Halts Your Agent
+
+When a policy triggers, the SDK raises a governance exception. This is expected — it means governance is working.
+
+| Exception | Meaning | Recoverable? |
+|-----------|---------|-------------|
+| `GovernanceBlockedError` | A single tool was blocked | Yes — agent can continue |
+| `GovernanceHaltError` | Session terminated (HALT, rejection, or expiry) | No — agent should stop |
+| `GuardrailsValidationError` | PII or content policy violation | No — input rejected |
+
+To investigate:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to your agent → **Overview** tab
+3. Open the session to see which rule triggered the block
+
+See **[Error Handling](/developer-guide/langchain-python/error-handling)** for exception types and handling patterns.
+
+---
+
+## Subagent Not Being Governed
+
+In LangChain, subagents are implemented as tool-wrapped functions. The middleware governs the **wrapper tool** (e.g., `research`), not the internal subagent.
+
+If the subagent's operations need governance too, add middleware to the subagent itself:
+
+```python
+def run_researcher(topic: str, save_to: str) -> str:
+    # Add middleware to the subagent for full governance
+    sub_middleware = create_openbox_langchain_middleware(
+        api_url=os.environ["OPENBOX_URL"],
+        api_key=os.environ["OPENBOX_API_KEY"],
+        agent_name="Researcher",  # Separate agent name in dashboard
+    )
+
+    researcher = create_agent(
+        model=model,
+        tools=[web_search, write_file],
+        system_prompt=system_prompt,
+        middleware=[sub_middleware],  # Governance on subagent too
+    )
+    result = researcher.invoke({"messages": [("user", task)]})
+    return "Research complete."
+```
+
+---
+
+## Tool Classification Not Working
+
+If your Rego policies aren't matching `tool_type`, verify:
+
+1. The tool name in `tool_type_map` matches the `@tool` function name exactly:
+
+```python
+# The function name is what matters
+@tool
+def web_search(query: str) -> str:  # Tool name = "web_search"
+    ...
+
+middleware = create_openbox_langchain_middleware(
+    # ...
+    tool_type_map={"web_search": "http"},  # Must match function name
+)
+```
+
+2. The tool isn't in `skip_tool_types` — skipped tools bypass governance entirely.
+
+3. Your Rego policy checks the correct field:
+
+```rego
+# Correct — check tool_type
+result := {"decision": "BLOCK"} if {
+    input.event_type == "ToolStarted"
+    input.tool_type == "http"
+}
+```
+
+---
+
+## Approval Requests Not Appearing
+
+If your agent is paused waiting for approval but nothing shows in the **Approvals** page:
+
+1. Confirm the behavioral rule is set to **Require Approval** (not Block)
+2. Check that the agent's trust tier matches the rule conditions
+3. Verify the approval timeout hasn't already expired
+4. Check `governance_timeout` — if too short, the middleware may time out before the approval is created
+
+See **[Approvals](/approvals)** for how the approval queue works.
+
+---
+
+## OpenAI or LLM API Errors
+
+The demo uses LangChain's `init_chat_model` with the format `provider:model-name`:
+
+| Provider | Example Value |
+|----------|--------------|
+| OpenAI | `openai:gpt-4o-mini` |
+| Anthropic | `anthropic:claude-sonnet-4-5-20250929` |
+| Google | `google-genai:gemini-2.0-flash` |
+
+If you're seeing LLM errors:
+
+1. Check that `OPENAI_API_KEY` (or your provider's key) is set in `.env`
+2. Verify the model string format is `provider:model-name`
+
+<Tabs>
+<TabItem value="test" label="Test your LLM" default>
+
+```bash
+uv run python3 -c "
+from dotenv import load_dotenv
+load_dotenv()
+from langchain.chat_models import init_chat_model
+llm = init_chat_model('openai:gpt-4o-mini')
+print(llm.invoke('Say hello').content)
+"
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## Tavily or Image Generation Errors
+
+The demo's optional features require additional API keys:
+
+| Feature | Environment Variable | Required? |
+|---------|---------------------|-----------|
+| Web search (researcher subagent) | `TAVILY_API_KEY` | Optional — researcher returns error without it |
+| Cover image generation | `GOOGLE_API_KEY` | Optional — `generate_cover` returns error without it |
+| Social media images | `GOOGLE_API_KEY` | Optional — `generate_social_image` returns error without it |
+
+The agent handles missing keys gracefully — tools return error messages instead of crashing. To enable all features, set the keys in `.env`.
+
+---
+
+## Debug Logging
+
+Enable verbose SDK logging to see governance decisions as they happen:
+
+```bash
+OPENBOX_DEBUG=1 python content_writer.py
+```
+
+This logs every middleware hook invocation, governance request, verdict, and tool classification to stderr.
+
+You can also set logging levels programmatically:
+
+```python
+import logging
+logging.getLogger("openbox_langgraph").setLevel(logging.DEBUG)
+logging.getLogger("openbox_langchain").setLevel(logging.DEBUG)
+```
+
+Inspect the full event trace in the OpenBox Dashboard under **Agents** → your agent → **Details** → **Event Log Timeline**.
