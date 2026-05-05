@@ -3,19 +3,168 @@ import Link from '@docusaurus/Link';
 import Head from '@docusaurus/Head';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import React, {useMemo, useState, useRef, useCallback} from 'react';
+import React from 'react';
 
 import CodeBlock from '@theme/CodeBlock';
 import Heading from '@theme/Heading';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 import styles from './index.module.css';
+
+const IntegrationsLive = [
+  {label: 'Deep Agents', to: '/getting-started/deep-agents'},
+  {label: 'LangGraph', to: '/getting-started/langgraph'},
+  {label: 'Mastra', to: '/getting-started/mastra'},
+  {label: 'Temporal', to: '/getting-started/temporal'},
+];
+
+const IntegrationsSoon = [
+  {label: 'CrewAI', to: '/getting-started/crewai'},
+  {label: 'Cursor', to: '/getting-started/cursor'},
+  {label: 'LangChain', to: '/getting-started/langchain'},
+  {label: 'n8n', to: '/getting-started/n8n'},
+  {label: 'OpenClaw', to: '/getting-started/openclaw'},
+];
+
+const DeepAgentsSnippet = `import os
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+from openbox_deepagent import create_openbox_middleware  # Added import
+
+# Create OpenBox middleware
+middleware = create_openbox_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="ResearchBot",
+
+)
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "tools": [search_web]},
+        {"name": "writer", "tools": [write_report]},
+    ],
+    middleware=[middleware],  # Added middleware
+)
+
+result = await agent.ainvoke(
+    {"messages": [{"role": "user", "content": "Research AI safety"}]},
+    config={"configurable": {"thread_id": "session-001"}},
+)`;
+
+const LangGraphSnippet = `import os
+from langgraph.graph import StateGraph, START, END, MessagesState
+from openbox_langgraph import create_openbox_graph_handler  # Added import
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+
+# Wrap with OpenBox governance
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_name="MyAgent",
+)
+
+result = await governed.ainvoke({"messages": [("user", "Hello")]})`;
+
+const MastraSnippet = `import { Mastra } from "@mastra/core/mastra";
+import { getOpenBoxRuntime, withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
+import { myAgent } from "./agents/my-agent";
+import { myWorkflow } from "./workflows/my-workflow";
+import { myTool } from "./tools/my-tool";
+
+const mastra = new Mastra({
+  agents: { myAgent },
+  workflows: { myWorkflow },
+  tools: { myTool }
+});
+
+export const governedMastra = await withOpenBox(mastra, {
+  apiKey: process.env.OPENBOX_API_KEY,
+  apiUrl: process.env.OPENBOX_URL
+});
+
+process.on("SIGTERM", async () => {
+  await getOpenBoxRuntime(governedMastra)?.shutdown();
+});`;
+
+const TemporalSnippet = `import os
+import asyncio
+from temporalio.client import Client
+from temporalio.worker import Worker
+from openbox.plugin import OpenBoxPlugin  # Add OpenBox
+from your_workflows import YourWorkflow
+from your_activities import your_activity
+
+async def main():
+    client = await Client.connect("localhost:7233")
+
+    worker = Worker(
+        client,
+        task_queue="agent-task-queue",
+        workflows=[YourWorkflow],
+        activities=[your_activity],
+        # Add OpenBox plugin
+        plugins=[OpenBoxPlugin(
+            openbox_url=os.getenv("OPENBOX_URL"),
+            openbox_api_key=os.getenv("OPENBOX_API_KEY"),
+        )],
+    )
+
+    await worker.run()
+
+asyncio.run(main())`;
+
+const LifecyclePhases = [
+  {
+    num: '01',
+    title: 'Assess',
+    body: 'Baseline risk across 14 parameters → Trust Tier 1–4.',
+    to: '/trust-lifecycle/assess',
+  },
+  {
+    num: '02',
+    title: 'Authorize',
+    body: 'Guardrails → OPA policies → behavioral rules.',
+    to: '/trust-lifecycle/authorize',
+  },
+  {
+    num: '03',
+    title: 'Monitor',
+    body: 'Real-time runtime visibility, drift, cost, latency.',
+    to: '/trust-lifecycle/monitor',
+  },
+  {
+    num: '04',
+    title: 'Verify',
+    body: 'Goal alignment + tamper-proof Proof Certificates.',
+    to: '/trust-lifecycle/verify',
+  },
+  {
+    num: '05',
+    title: 'Adapt',
+    body: 'HITL approvals and policy suggestions from patterns.',
+    to: '/trust-lifecycle/adapt',
+  },
+];
 
 const ExploreSections = [
   {
     title: 'Try it out',
     links: [
       {label: 'Introduction', to: '/overview'},
-      {label: 'Run the Demo', to: '/getting-started/temporal/run-the-demo'},
-      {label: 'Workflow engines', to: '/developer-guide/temporal-python/integration-walkthrough'},
+      {label: 'Choose your integration', to: '/getting-started'},
+      {label: 'Core concepts', to: '/core-concepts'},
     ],
   },
   {
@@ -35,209 +184,6 @@ const ExploreSections = [
     ],
   },
 ];
-
-function GettingStartedCarousel() {
-  const slides = useMemo(
-    () => [
-      {
-        title: '1. Register your Agent',
-        body: (
-          <>
-            Log in to the <strong>OpenBox Dashboard</strong> to create your agent. You'll get an API Key to secure your integration.
-          </>
-        ),
-        visual: (
-          <div className={styles.tryStepVisual}>
-            <div className={styles.visualCard}>
-              <div className={styles.visualCardHeader}>Add Agent</div>
-              <div className={styles.visualCardBody}>
-                <div className={styles.visualField}>Name: <span>Customer Support Agent</span></div>
-                <div className={styles.visualField}>Workflow: <span>Temporal</span></div>
-                <div className={styles.visualKey}>API Key: <code>obx_live_••••••••</code></div>
-              </div>
-            </div>
-          </div>
-        ),
-        videoSrc: '/img/step_1.mp4',
-        posterSrc: '/img/step_1_poster.webp',
-        mediaLabel: (
-          <>
-            GIF: Dashboard walkthrough
-          </>
-        ),
-      },
-      {
-        title: '2. Install the OpenBox SDK',
-        body: <>Add our thin wrapper to your Python environment using pip or uv.</>,
-        visual: (
-          <div className={styles.tryStepVisual}>
-            <div className={styles.visualTerminal}>
-              <div className={styles.terminalHeader}>
-                <span className={styles.terminalDot} />
-                <span className={styles.terminalDot} />
-                <span className={styles.terminalDot} />
-              </div>
-              <div className={styles.terminalBody}>
-                <code>$ pip install openbox-temporal-sdk-python</code>
-              </div>
-            </div>
-          </div>
-        ),
-        videoSrc: '/img/step_2.mp4',
-        posterSrc: '/img/step_2_poster.webp',
-        mediaLabel: <>GIF: installation command</>,
-      },
-      {
-        title: '3. Wrap your Worker',
-        body: (
-          <>
-            Replace your existing <code>Worker</code> with our <code>create_openbox_worker</code>. 
-            It automatically handles tracing, compliance, and governance.
-          </>
-        ),
-        visual: (
-          <div className={styles.tryStepVisual}>
-            <div className={styles.codeComparison}>
-              <div className={styles.codeCompareItem}>
-                <div className={styles.codeCompareLabel}>Before</div>
-                <CodeBlock language="python" className={styles.miniCode}>{`worker = Worker(...)`}</CodeBlock>
-              </div>
-              <div className={styles.codeCompareArrow}>→</div>
-              <div className={styles.codeCompareItem}>
-                <div className={styles.codeCompareLabel}>After</div>
-                <CodeBlock language="python" className={styles.miniCode}>{`worker = create_openbox_worker(...)`}</CodeBlock>
-              </div>
-            </div>
-            <div className={styles.visualCallout}>
-              <strong>Pro tip:</strong> No changes needed to your Workflows or Activities.
-            </div>
-          </div>
-        ),
-        videoSrc: '/img/step_3.mp4',
-        posterSrc: '/img/step_3_poster.webp',
-        mediaLabel: <>GIF: Code change walkthrough</>,
-      },
-      {
-        title: '4. Setup Environment',
-        body: (
-          <>
-            Configure your worker to communicate with the OpenBox platform.
-            Use your <code>OPENBOX_API_KEY</code> from Step 1.
-          </>
-        ),
-        visual: (
-          <div className={styles.tryStepVisual}>
-            <div className={styles.tryStepCode}>
-              <CodeBlock language="bash">
-                {`OPENBOX_URL=https://core.openbox.ai
-OPENBOX_API_KEY=obx_live_your_key_here`}
-              </CodeBlock>
-            </div>
-            <div className={styles.visualCallout}>
-              <strong>Note:</strong> These can be set in your <code>.env</code> file or CI/CD secrets.
-            </div>
-          </div>
-        ),
-        videoSrc: '/img/step_4.mp4',
-        posterSrc: '/img/step_4_poster.webp',
-        mediaLabel: <>GIF: env setup</>,
-      },
-    ],
-    []
-  );
-
-  const [index, setIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const pendingIndexRef = useRef(null);
-
-  const handleStepChange = useCallback((newIndex) => {
-    if (newIndex === index || pendingIndexRef.current !== null) return;
-    pendingIndexRef.current = newIndex;
-    setIsTransitioning(true);
-  }, [index]);
-
-  const handleTransitionEnd = useCallback((e) => {
-    if (e.propertyName === 'opacity' && pendingIndexRef.current !== null) {
-      setIndex(pendingIndexRef.current);
-      pendingIndexRef.current = null;
-      setIsTransitioning(false);
-    }
-  }, []);
-
-  const goPrev = () => handleStepChange((index - 1 + slides.length) % slides.length);
-  const goNext = () => handleStepChange((index + 1) % slides.length);
-  const slide = slides[index];
-
-  return (
-    <div className={styles.carousel}>
-      <div className={styles.carouselTop}>
-        <div className={styles.carouselTabs} role="tablist" aria-label="Getting started steps">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              id={`step-tab-${i}`}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-controls="step-panel"
-              className={clsx(
-                styles.carouselTab,
-                i === index && styles.carouselTabActive
-              )}
-              onClick={() => handleStepChange(i)}
-            >
-              Step {i + 1}
-            </button>
-          ))}
-        </div>
-        <div className={styles.carouselNav}>
-          <button type="button" className={styles.carouselButton} onClick={goPrev} aria-label="Previous step">
-            ←
-          </button>
-          <button type="button" className={styles.carouselButton} onClick={goNext} aria-label="Next step">
-            →
-          </button>
-        </div>
-      </div>
-
-      <div
-        id="step-panel"
-        role="tabpanel"
-        aria-labelledby={`step-tab-${index}`}
-        aria-live="polite"
-        className={clsx(
-          styles.tryStepRow,
-          isTransitioning && styles.tryStepRowHidden
-        )}
-        onTransitionEnd={handleTransitionEnd}
-      >
-        <div className={styles.tryStepText}>
-          <div className={styles.tryStepTitle}>{slide.title}</div>
-          <div className={styles.tryStepBody}>{slide.body}</div>
-          {slide.visual ? slide.visual : <div className={styles.tryStepCode}>{slide.code}</div>}
-        </div>
-        <div className={styles.tryStepMedia}>
-          {slide.videoSrc ? (
-            <video
-              className={styles.tryMediaImage}
-              src={slide.videoSrc}
-              poster={slide.posterSrc}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="none"
-            />
-          ) : (
-            <div className={styles.tryMediaPlaceholder}>
-              {slide.mediaLabel}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -329,21 +275,93 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={styles.trySection}>
+        <section className={styles.featureSection}>
           <div className="container">
-            <div className={styles.tryHeader}>
-              <div className={styles.tryTitleRow}>
-                <div className={styles.tryTitle}>Try it out</div>
-                <Link className={styles.tryLink} to="/getting-started/temporal/wrap-an-existing-agent">
-                  Wrap an Existing Agent →
+            <Heading as="h2" className={styles.featureHeading}>
+              Works with the agent stack you already use
+            </Heading>
+            <p className={styles.featureKicker}>
+              One SDK, no architectural changes. Your workflow engine remains the system of record.
+            </p>
+            <div className={styles.integrationsGrid}>
+              {IntegrationsLive.map((item) => (
+                <Link key={item.to} to={item.to} className={styles.integrationPill}>
+                  {item.label}
                 </Link>
-              </div>
-              <div className={styles.trySubtitle}>
-                Add OpenBox to your Temporal workers in 4 simple steps.
-              </div>
+              ))}
+              {IntegrationsSoon.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={clsx(styles.integrationPill, styles.integrationPillSoon)}>
+                  {item.label} <span className={styles.integrationSoonTag}>· soon</span>
+                </Link>
+              ))}
             </div>
+          </div>
+        </section>
 
-            <GettingStartedCarousel />
+        <section className={styles.featureSection}>
+          <div className="container">
+            <Heading as="h2" className={styles.featureHeading}>
+              Integrate in 3 steps
+            </Heading>
+            <p className={styles.featureKicker}>
+              Generate an API key, install the SDK, configure governance rules.
+            </p>
+            <div className={styles.tabsWrapper}>
+              <Tabs groupId="quickstart-language" queryString>
+                <TabItem value="deep-agents" label="Deep Agents (Python)" default>
+                  <CodeBlock language="python" title="agent.py">{DeepAgentsSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/deep-agents">
+                    Deep Agents quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="langgraph" label="LangGraph (Python)">
+                  <CodeBlock language="python" title="agent.py">{LangGraphSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/langgraph">
+                    LangGraph quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="mastra" label="Mastra (TypeScript)">
+                  <CodeBlock language="typescript" title="src/mastra/index.ts">{MastraSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/mastra">
+                    Mastra quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="temporal" label="Temporal (Python)">
+                  <CodeBlock language="python" title="worker.py">{TemporalSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/temporal">
+                    Temporal quickstart →
+                  </Link>
+                </TabItem>
+              </Tabs>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.featureSection}>
+          <div className="container">
+            <Heading as="h2" className={styles.featureHeading}>
+              The Trust Lifecycle
+            </Heading>
+            <p className={styles.featureKicker}>
+              Five continuous phases that mirror the dashboard you operate every day.
+            </p>
+            <div className={styles.lifecycleGrid}>
+              {LifecyclePhases.map((phase) => (
+                <Link key={phase.num} to={phase.to} className={styles.lifecycleCard}>
+                  <span className={styles.lifecycleNum}>{phase.num}</span>
+                  <span className={styles.lifecycleTitle}>{phase.title}</span>
+                  <span className={styles.lifecycleBody}>{phase.body}</span>
+                </Link>
+              ))}
+            </div>
+            <div className={styles.lifecycleFooter}>
+              <Link to="/trust-lifecycle" className={styles.lifecycleFooterLink}>
+                Read the full Trust Lifecycle overview →
+              </Link>
+            </div>
           </div>
         </section>
 
