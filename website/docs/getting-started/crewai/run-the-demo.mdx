@@ -1,0 +1,128 @@
+---
+title: Run the Demo
+description: "Run the CrewAI SDK demos from the public repository and watch OpenBox govern agent tasks, tool activity, and approvals."
+llms_description: Hands-on CrewAI SDK demo walkthrough
+sidebar_position: 2
+tags:
+  - getting-started
+  - crewai
+  - python
+  - sdk
+---
+
+# Run the Demo
+
+The CrewAI SDK ships its own runnable demos inside the public SDK repository:
+
+- GitHub: [OpenBox-AI/openbox-crewai-sdk-python](https://github.com/OpenBox-AI/openbox-crewai-sdk-python)
+
+The demos show how OpenBox governs:
+
+- task boundaries with `ActivityStarted` and `ActivityCompleted`
+- multi-agent delegation and hierarchical crews
+- approvals, block, and halt decisions
+- HTTP, database, and optional file I/O telemetry
+
+## Prerequisites
+
+- Python `>=3.10`
+- `uv`
+- an OpenAI API key
+- an OpenBox Core URL
+- at least one OpenBox agent provisioned in OpenBox
+
+## Clone The Repository
+
+```bash
+git clone https://github.com/OpenBox-AI/openbox-crewai-sdk-python
+cd openbox-crewai-sdk-python
+```
+
+## Install Dependencies
+
+From the repository root:
+
+```bash
+uv sync
+```
+
+## Choose A Demo
+
+The SDK repo includes several demos under `demo/`:
+
+- `demo/demo_01_crew_sync` — one governed agent and one governed task
+- `demo/demo_02_crew_async` — the same pattern with `akickoff()`
+- `demo/demo_03_flow` — governed crews inside a CrewAI flow
+- `demo/demo_04_collaboration` — governed delegation between agents
+
+## Configure Environment
+
+Before you fill in a demo `.env` file, provision the agent or agents you plan to use in OpenBox.
+
+At provisioning time, OpenBox provides the values you need for the demo:
+
+- the per-agent API key
+- the agent DID
+- the one-time private key used for AIP signing
+
+For multi-agent demos, provision one OpenBox agent per governed role and keep each credential set separate.
+
+The demo code uses `env_prefix` on each `OpenBoxAgent` to decide which environment variables to read. For example, `env_prefix="OPENBOX_RESEARCHER"` means the SDK looks for:
+
+- `OPENBOX_RESEARCHER_API_KEY`
+- `OPENBOX_RESEARCHER_DID`
+- `OPENBOX_RESEARCHER_PRIVATE_KEY`
+
+Each demo includes its own `.env.example`. For example:
+
+```bash
+cd demo/demo_01_crew_sync
+cp .env.example .env
+```
+
+Set these values:
+
+| Variable | Purpose |
+| --- | --- |
+| `OPENBOX_URL` | OpenBox Core base URL |
+| `OPENBOX_RESEARCHER_API_KEY` | per-agent OpenBox API key from provisioning |
+| `OPENBOX_RESEARCHER_DID` | agent DID from provisioning |
+| `OPENBOX_RESEARCHER_PRIVATE_KEY` | one-time private key from provisioning |
+| `OPENAI_API_KEY` | model access |
+| `OPENAI_MODEL_NAME` | model identifier for CrewAI |
+
+For the multi-agent demos, set one OpenBox credential set per agent prefix.
+
+## Run A Demo
+
+From the selected demo directory:
+
+```bash
+crewai run
+```
+
+Or run the module directly:
+
+```bash
+uv run demo_01_crew_sync
+```
+
+## What You Should See In OpenBox
+
+After a run, OpenBox should show:
+
+- one governed workflow session per agent
+- task-level events for each governed task
+- approvals, block, or halt outcomes when policy requires them
+- HTTP and database telemetry associated with the governed run
+- delegated activity for multi-agent crews when using the collaboration or flow demos
+
+## Good Next Demos
+
+- if you started with `demo_01_crew_sync`, run `demo_04_collaboration` next to see hierarchical or delegated work
+- if your production model uses CrewAI flows, run `demo_03_flow` next
+
+## Next Steps
+
+- [Wrap an Existing Crew](/getting-started/crewai/wrap-an-existing-agent)
+- [CrewAI SDK (Python)](/developer-guide/crewai)

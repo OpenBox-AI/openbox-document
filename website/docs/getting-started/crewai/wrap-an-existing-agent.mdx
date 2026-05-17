@@ -1,0 +1,159 @@
+---
+title: Wrap an Existing Crew
+description: "Add OpenBox to an existing CrewAI codebase without rewriting your agents, tasks, or flows."
+llms_description: How to add OpenBox to an existing CrewAI app
+sidebar_position: 3
+tags:
+  - getting-started
+  - crewai
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Crew
+
+If you already have a working CrewAI application, the integration point is straightforward:
+
+1. replace plain `Agent` and `Task` instances with `OpenBoxAgent` and `OpenBoxTask`
+2. create one `OpenBoxEngine`
+3. run `engine.govern(crew)` before kickoff
+
+## Prerequisites
+
+- an existing CrewAI app
+- Python `>=3.10`
+- an OpenBox Core URL
+- one OpenBox agent provisioned per governed CrewAI role
+
+## Step 1: Install The SDK
+
+Package: `openbox-crewai-sdk-python`
+
+```bash
+pip install openbox-crewai-sdk-python
+```
+
+## Step 2: Provision The Governed Agent
+
+Before wiring environment variables, provision each governed agent in OpenBox.
+
+Provisioning gives you the credential set used by the SDK:
+
+- the agent API key
+- the agent DID
+- the one-time private key used for AIP signing
+
+If your crew has multiple governed roles, provision one OpenBox agent per role.
+
+## Step 3: Add OpenBox Credentials
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+
+OPENBOX_RESEARCHER_API_KEY=obx_live_your_api_key            # from provisioning
+OPENBOX_RESEARCHER_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_RESEARCHER_PRIVATE_KEY=base64_ed25519_seed          # from provisioning
+```
+
+Each governed agent needs its own `env_prefix` and matching environment variables.
+
+`env_prefix` is how the SDK maps an agent to its credentials. For example, `env_prefix="OPENBOX_RESEARCHER"` means the SDK reads:
+
+- `OPENBOX_RESEARCHER_API_KEY`
+- `OPENBOX_RESEARCHER_DID`
+- `OPENBOX_RESEARCHER_PRIVATE_KEY`
+
+## Step 4: Swap In Governed Types
+
+<Tabs>
+<TabItem value="before" label="CrewAI">
+
+```python title="crew.py"
+from crewai import Agent, Crew, Process, Task
+
+researcher = Agent(
+    role="Researcher",
+    goal="Find information",
+)
+
+task = Task(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+result = crew.kickoff()
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="crew.py"
+from crewai import Crew, Process
+from openbox import OpenBoxAgent, OpenBoxTask, create_openbox_engine
+
+researcher = OpenBoxAgent(
+    role="Researcher",
+    goal="Find information",
+    # Reads OPENBOX_RESEARCHER_API_KEY/DID/PRIVATE_KEY
+    env_prefix="OPENBOX_RESEARCHER",
+)
+
+task = OpenBoxTask(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+    activity_type="research",
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+with create_openbox_engine() as engine:
+    result = engine.govern(crew).kickoff()
+```
+
+</TabItem>
+</Tabs>
+
+## Step 5: Verify A Real Run
+
+Trigger the same crew execution you already use in development. In OpenBox, you should now see:
+
+- one governed session per `OpenBoxAgent`
+- task-level boundaries for each `OpenBoxTask`
+- approvals and guardrails where policy requires them
+- HTTP, database, and optional file telemetry attached to the run
+
+## Common Integration Notes
+
+### Agent and task pairing
+
+Use `OpenBoxAgent` with `OpenBoxTask`. A plain `Task` assigned to an `OpenBoxAgent` is a configuration error.
+
+### Multi-agent crews
+
+Give every governed agent its own `env_prefix`. Do not share agent credentials across different roles.
+
+### Flows
+
+If you orchestrate multiple crews inside a CrewAI `Flow`, wrap the flow with `create_openbox_flow()` so related crew runs share `flow_execution_id` correlation.
+
+### Shutdown
+
+Use `with create_openbox_engine() as engine:` unless you have a specific reason to manage `engine.close()` manually.
+
+## Next Step
+
+Continue to the [CrewAI SDK (Python)](/developer-guide/crewai) guide set for configuration, approvals, telemetry, and troubleshooting.
