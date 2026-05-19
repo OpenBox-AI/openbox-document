@@ -30,6 +30,7 @@ This POC demonstrates:
 - an E2B API key
 - an OpenAI API key
 - an OpenBox Core URL and API key
+- an OpenBox agent DID and private key if the registered agent requires DID signing
 
 ## Clone The Repository
 
@@ -64,6 +65,8 @@ Required values:
 | `OPENAI_API_KEY` | model access for the coding agent |
 | `OPENBOX_URL` | OpenBox Core base URL |
 | `OPENBOX_API_KEY` | OpenBox API key |
+| `OPENBOX_AGENT_DID` | agent DID, required only when DID signing is enabled |
+| `OPENBOX_AGENT_PRIVATE_KEY` | base64 raw Ed25519 seed, required only when DID signing is enabled |
 
 Common runtime options:
 
@@ -120,6 +123,7 @@ Verify:
 
 - `OPENBOX_URL` is reachable from your machine
 - `OPENBOX_API_KEY` is correct
+- if DID signing is enabled, `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY` are both set for the same registered agent
 - `OPENBOX_VALIDATE` is set appropriately for the environment
 
 ## Next Steps

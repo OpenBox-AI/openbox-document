@@ -21,13 +21,27 @@ Typical causes:
 - `OPENBOX_URL` is missing
 - `OPENBOX_API_KEY` is missing or malformed
 - the URL is not HTTPS outside localhost development
+- only one of `OPENBOX_AGENT_DID` or `OPENBOX_AGENT_PRIVATE_KEY` is set
 - the API key validation call fails
 
 What to do:
 
 1. Verify `OPENBOX_URL` and `OPENBOX_API_KEY`.
-2. Confirm the service can reach OpenBox Core.
-3. Use `validate: false` only for local mocks or tests.
+2. If DID signing is enabled, verify both `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
+3. Confirm the service can reach OpenBox Core.
+4. Use `validate: false` only for local mocks or tests.
+
+## OpenBox Returns `401 invalid token or agent identity`
+
+This usually means API-key authentication succeeded far enough to reach OpenBox, but the agent identity material did not match the registered agent.
+
+What to verify:
+
+1. The API key belongs to the same OpenBox agent as `OPENBOX_AGENT_DID`.
+2. `OPENBOX_AGENT_DID` uses the `did:aip:<uuid>` format.
+3. `OPENBOX_AGENT_PRIVATE_KEY` is the base64 raw 32-byte Ed25519 seed returned by OpenBox, not a PEM key or public key.
+4. The DID private key has not been rotated since the runtime environment was configured.
+5. The runtime clock is synchronized so signature timestamp checks pass.
 
 ## No Runs Appear In OpenBox
 

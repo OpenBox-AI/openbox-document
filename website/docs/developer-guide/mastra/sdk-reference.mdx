@@ -52,11 +52,15 @@ import { withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
 
 await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
-  apiUrl: process.env.OPENBOX_URL
+  apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
 });
 ```
 
 It validates configuration, creates the OpenBox runtime, installs telemetry, wraps existing registrations, and keeps future Mastra registrations governed.
+
+`agentDid` and `agentPrivateKey` are required only when the registered OpenBox agent requires DID signing. Configure both together, and store the private key as a per-agent secret.
 
 ## Public API Summary
 

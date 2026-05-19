@@ -17,7 +17,7 @@ This is the end-to-end guide for integrating OpenBox with a Mastra service. It c
 
 :::tip Skip ahead
 
-- **Already wrapped your startup?** Jump to [What the Integration Captures](#what-the-integration-captures).
+- **Already wrapped your agent?** Jump to [What the Integration Captures](#what-the-integration-captures).
 - **Need a runnable reference app?** Start with [the Mastra coding-agent POC](/getting-started/mastra/run-the-demo).
 :::
 
@@ -27,6 +27,7 @@ This is the end-to-end guide for integrating OpenBox with a Mastra service. It c
 - `@mastra/core` `^1.8.0`
 - an ESM-capable TypeScript runtime
 - an OpenBox account and agent API key
+- an OpenBox agent DID and private key if your registered agent requires DID signing
 
 ## Part 1: Register Your Agent In OpenBox
 
@@ -34,7 +35,8 @@ This is the end-to-end guide for integrating OpenBox with a Mastra service. It c
 2. Go to **Agents**
 3. Create or open the agent you want to govern
 4. Generate an API key
-5. Keep that key for your Mastra runtime
+5. If DID signing is enabled for the agent, copy the generated DID and private key
+6. Keep those credentials for your Mastra runtime
 
 See [Registering Agents](/dashboard/agents/registering-agents) for the full dashboard flow.
 
@@ -52,7 +54,13 @@ npm install @openbox-ai/openbox-mastra-sdk @mastra/core
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key
 OPENBOX_GOVERNANCE_POLICY=fail_open
+
+# Required only when this OpenBox agent requires DID signing.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
 ```
+
+`OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY` must be configured together. The private key is a per-agent secret returned by OpenBox during identity provision or rotation.
 
 ## Part 4: Wrap Startup
 
@@ -71,7 +79,9 @@ const mastra = new Mastra({
 
 export const governedMastra = await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
-  apiUrl: process.env.OPENBOX_URL
+  apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
 });
 
 process.on("SIGTERM", async () => {
@@ -118,6 +128,7 @@ Trigger one real request through your Mastra service, then check OpenBox for:
 - tool or governed step activities
 - approvals or guardrails where policy requires them
 - agent signals such as `user_input` and `agent_output`
+- successful request authentication when DID signing is enabled
 
 ## What The Integration Captures
 
