@@ -60,7 +60,7 @@ await withOpenBox(mastra, {
 
 It validates configuration, creates the OpenBox runtime, installs telemetry, wraps existing registrations, and keeps future Mastra registrations governed.
 
-`agentDid` and `agentPrivateKey` are required only when the registered OpenBox agent requires DID signing. Configure both together, and store the private key as a per-agent secret.
+Newly created OpenBox agents require DID signing by default. Configure `agentDid` and `agentPrivateKey` together unless **Require signing** is disabled for the registered agent, and store the private key as a per-agent secret.
 
 ## Public API Summary
 
