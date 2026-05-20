@@ -52,7 +52,9 @@ const mastra = new Mastra({
 
 export const governedMastra = await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
-  apiUrl: process.env.OPENBOX_URL
+  apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
 });
 
 process.on("SIGTERM", async () => {
@@ -62,6 +64,8 @@ process.on("SIGTERM", async () => {
 
 </TabItem>
 </Tabs>
+
+Newly created OpenBox agents require DID signing by default. If **Require signing** is disabled for the agent, omit `agentDid` and `agentPrivateKey`. See [Agent DID Identity](/developer-guide/mastra/configuration#agent-did-identity) for the required environment variables.
 
 ## Choose Your Path
 
