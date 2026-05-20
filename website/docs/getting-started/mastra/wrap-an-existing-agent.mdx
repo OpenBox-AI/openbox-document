@@ -21,6 +21,7 @@ If you already have a working Mastra service, the integration point is still the
 - An existing Mastra app with agents, tools, or workflows already registered
 - Node.js `24.10+`
 - An OpenBox agent API key
+- An OpenBox agent DID and private key unless **Require signing** is disabled for the agent
 
 ## Step 1: Install The SDK
 
@@ -35,7 +36,13 @@ npm install @openbox-ai/openbox-mastra-sdk @mastra/core
 ```bash title=".env"
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
 ```
+
+Keep the DID private key in your secret manager or runtime environment. Do not commit it or reuse it across agents. If **Require signing** is disabled for the agent, omit both DID values.
 
 ## Step 3: Wrap Startup
 
@@ -70,6 +77,8 @@ const mastra = new Mastra({
 export const governedMastra = await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
   apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY,
   onApiError: "fail_open"
 });
 

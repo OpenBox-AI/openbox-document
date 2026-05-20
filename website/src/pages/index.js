@@ -91,7 +91,9 @@ const mastra = new Mastra({
 
 export const governedMastra = await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
-  apiUrl: process.env.OPENBOX_URL
+  apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
 });
 
 process.on("SIGTERM", async () => {
@@ -307,7 +309,7 @@ export default function Home() {
               Integrate in 3 steps
             </Heading>
             <p className={styles.featureKicker}>
-              Generate an API key, install the SDK, configure governance rules.
+              Generate agent credentials, install the SDK, configure governance rules.
             </p>
             <div className={styles.tabsWrapper}>
               <Tabs groupId="quickstart-language" queryString>

@@ -68,6 +68,8 @@ Every agent needs an API key to authenticate with OpenBox:
 
 The key format is: `obx_live_xxxxxxxxxxxx`
 
+Newly created agents require cryptographic DID signing by default. OpenBox provides the agent DID and private key during identity provision or rotation. Copy the private key immediately, store it as a per-agent secret, and do not reuse it across agents. Runtime SDKs that support DID signing use this pair to sign agent-facing OpenBox requests. If **Require signing** is disabled for the agent, the SDK can authenticate with the API key only.
+
 ### Initial Risk Assessment
 
 Expand the **Initial Risk Assessment** section and configure your agent's risk profile parameters
