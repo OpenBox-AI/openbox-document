@@ -22,12 +22,12 @@ Every AI agent you want to govern with OpenBox needs to be registered first. Reg
    - **Description**: What your agent does
    - **Teams**: Assign to one or more teams
    - **Icon**: Select an icon
-4. **Generate API Key** — Click **Generate API Key**, copy and store it (shown only once)
-5. Configure **Initial Risk Assessment** and **Attestation** (see details below)
-6. Click **Add Agent**
+4. Configure **Initial Risk Assessment** and **Attestation** (see details below)
+5. Click **Add Agent**
+6. In the **Save Your Agent Credentials** dialog that opens, copy the API key, DID, and private key (or the pre-formatted env-var block) into your secrets manager. All three are shown only once.
 
 :::tip
-Your API key format: `obx_live_xxxxxxxxxxxx` — store it securely, you won't see it again.
+The API key (`obx_live_xxxxxxxxxxxx`) and the agent's Ed25519 private key are shown only once. Lose either and you'll need to rotate from [Agent Settings → API Access](/dashboard/agents/agent-settings#api-access).
 :::
 
 ## Detailed Configuration
@@ -58,17 +58,24 @@ Select the workflow engine your agent uses:
 All of these fields can be edited after creation from the [Agent Settings](/dashboard/agents/agent-settings#general-settings) page.
 :::
 
-### API Key Generation
+### Agent Credentials
 
-Every agent needs an API key to authenticate with OpenBox:
+When you finish registering a new agent, OpenBox opens a **Save Your Agent Credentials** dialog containing everything the agent needs to authenticate:
 
-1. Click **Generate API Key**
-2. Copy the key immediately
-3. Store it securely — you won't see it again
+![Save Your Agent Credentials dialog](/img/agents/agent-credentials-dialog.webp)
 
-The key format is: `obx_live_xxxxxxxxxxxx`
+| Credential | What it does |
+| --- | --- |
+| **API Key** (`obx_live_*` / `obx_test_*`) | Bearer token the SDK uses to authenticate the HTTP call. |
+| **Agent DID** (`did:aip:<uuidv5>`) | The agent's cryptographic [identifier](/core-concepts/agent-identity). |
+| **Agent DID Private Key** (Ed25519) | Used by the SDK to sign governance requests so OpenBox can prove they came from this agent. |
+| **SDK Environment Variables** | `OPENBOX_API_KEY`, `OPENBOX_AGENT_DID`, and `OPENBOX_AGENT_PRIVATE_KEY` pre-formatted for copy-paste into your secret store. |
 
-Newly created agents require cryptographic DID signing by default. OpenBox provides the agent DID and private key during identity provision or rotation. Copy the private key immediately, store it as a per-agent secret, and do not reuse it across agents. Runtime SDKs that support DID signing use this pair to sign agent-facing OpenBox requests. If **Require signing** is disabled for the agent, the SDK can authenticate with the API key only.
+:::warning
+The API key and private key are shown **once** in this dialog and are not stored by OpenBox. Copy them — or the env-var block — into your secrets manager before clicking **I've Saved the Credentials**. If you lose the private key you'll need to [rotate](/dashboard/agents/agent-settings#rotate-private-key) it.
+:::
+
+New agents default to **Require signed requests = on**, so the SDK must present a valid signature on every governance request from the moment the agent goes live. You can toggle this from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests) at any time; with it off, the SDK authenticates with the API key only.
 
 ### Initial Risk Assessment
 
@@ -143,8 +150,8 @@ See **[Attestation](/administration/attestation-and-cryptographic-proof)** for h
 ### Creating the Agent
 
 1. Review all fields
-2. Ensure you've copied the API key
-3. Click **Add Agent**
+2. Click **Add Agent**
+3. In the **Save Your Agent Credentials** dialog, copy the credentials (see [Agent Credentials](#agent-credentials) above) and click **I've Saved the Credentials**
 
 You'll be redirected to the new agent's detail page.
 

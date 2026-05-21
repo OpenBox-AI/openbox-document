@@ -98,6 +98,7 @@ const sidebars = {
         'core-concepts/trust-scores',
         'core-concepts/trust-tiers',
         'core-concepts/governance-decisions',
+        'core-concepts/agent-identity',
       ],
     },
     {

@@ -102,7 +102,7 @@ Exportable certificate containing:
 
 ```
 Session: ses_a1b2c3d4e5f6
-Agent: did:openbox:agent:xyz123
+Agent: did:aip:7c3a9b5f-8d2e-5674-9abc-def012345678
 Hash: sha256:8a7b...
 Signature: ecdsa:MIGk...
 Timestamp: 2024-01-15T09:14:32Z
