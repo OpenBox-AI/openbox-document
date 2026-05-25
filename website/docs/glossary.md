@@ -209,7 +209,9 @@ An interactive dashboard view showing the complete execution timeline of an agen
 
 ## Signing Required
 
-A tri-state flag on every agent that controls whether OpenBox rejects unsigned governance requests. Values: `NULL` (grandfathered — agent predates the [AIP](#aip-agent-identity-protocol) rollout and has never been provisioned), `TRUE` (signing enforced — unsigned requests are rejected), `FALSE` (explicit exemption — DID is provisioned but enforcement is paused). Operators toggle this from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests).
+A per-agent setting that controls whether OpenBox rejects unsigned governance requests. When **On**, requests that aren't signed by the agent's [AIP](#aip-agent-identity-protocol) identity are rejected; when **Off**, unsigned requests are still accepted. Operators toggle it from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests).
+
+The toggle becomes available once an agent has a provisioned identity. Agents that predate the Agent Identity Protocol need to be provisioned first before the setting is available.
 
 **Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
 
