@@ -25,7 +25,7 @@ Use this section to update the core identity and organizational assignment of th
 | **Agent Name**  | Editable display name shown throughout the dashboard                        |
 | **Description** | Free-text summary of what the agent does                                    |
 | **Teams**       | Multi-select dropdown to assign the agent to one or more teams              |
-| **Agent DID**   | Read-only decentralized identifier (`did:openbox:agent:...`). Click to copy |
+| **Agent DID**   | Read-only [decentralized identifier](/core-concepts/agent-identity) (`did:aip:...`). Click to copy. Empty until identity is provisioned in [API Access](#api-access) |
 | **Tags**        | Add freeform tags for filtering and organization                            |
 
 Click **Save Changes** to persist any edits.
@@ -58,15 +58,20 @@ Click **Adjust Risk Level** to modify the underlying risk profile parameters. Se
 
 ![API Access](/img/agents/settings-api-access.webp)
 
-Manage the API key that the agent uses to authenticate with the OpenBox SDK.
+Manage how the agent authenticates with OpenBox. Two independent credentials live here:
 
-The panel shows:
+- The **API key** (`obx_live_*` / `obx_test_*`) — the bearer token used on every request
+- The **agent identity** — a [`did:aip:`](/core-concepts/agent-identity) decentralized identifier and Ed25519 private key used to sign governance requests
+
+The panel shows the API key status and, once provisioned, the agent's DID and signing-enforcement state.
 
 | Detail              | Description                                              |
 | ------------------- | -------------------------------------------------------- |
 | **Primary API Key** | Masked key value with an **Active** status badge         |
 | **Created**         | Date the key was generated                               |
 | **Last used**       | Timestamp of the most recent API call made with this key |
+| **Agent DID**       | `did:aip:<uuidv5>` once identity is provisioned, otherwise empty |
+| **Require signed requests** | Whether OpenBox rejects governance requests for this agent that aren't AIP-signed |
 
 ### Rotate Key
 
@@ -79,6 +84,55 @@ Rotating a key invalidates the old key immediately. Any running agent instances 
 ### Revoke Key
 
 Click **Revoke Key** to permanently revoke the API key. This is a destructive action — the agent will no longer be able to authenticate and a new key must be generated before it can resume operations.
+
+### Provision DID
+
+Visible only when the agent has no identity yet (typically pre-AIP agents).
+
+![Provision DID](/img/agents/settings-api-access-provision.webp)
+
+Click **Provision DID** to generate a new Ed25519 keypair and assign the agent a `did:aip:` identifier. The **Save Your Agent Credentials** dialog opens with the new DID, the plaintext private key, and the SDK environment variables (`OPENBOX_AGENT_DID`, `OPENBOX_AGENT_PRIVATE_KEY`) pre-formatted for copy-paste into your agent's secret store.
+
+![Save Your Agent Credentials dialog](/img/agents/settings-api-access-credentials-dialog.webp)
+
+[Require signed requests](#require-signed-requests) is turned **on** in the same step — enforcement begins immediately.
+
+:::warning
+The private key is shown **once** in this dialog and is not stored by OpenBox. Copy it (or the env-var block) before clicking **I've Saved the Credentials**. If you lose it, use [Rotate Private Key](#rotate-private-key).
+:::
+
+:::warning
+Enforcement starts the instant provisioning completes. If your agent is taking live traffic, deploy it with the new private key **before** clicking Provision DID, or any in-flight unsigned request will be rejected. For a soft cutover, untick **Require signed requests** straight after provisioning, deploy the key, then tick it again.
+:::
+
+### Rotate Private Key
+
+Visible once identity is provisioned.
+
+Click **Rotate Private Key** to issue a fresh Ed25519 keypair for the agent. The DID, API key, and governance history are unchanged. The new private key is shown once.
+
+| What changes | What stays the same |
+| --- | --- |
+| Private key (update the agent's secret) | DID |
+| | API key |
+| | Governance history |
+
+:::warning
+Signatures produced with the old key stop verifying as soon as the rotation completes. Update the agent's environment and redeploy before triggering rotation in production.
+:::
+
+### Require signed requests
+
+A checkbox that appears once the agent has a DID, controlling whether OpenBox rejects unsigned governance requests for it.
+
+| State | Behaviour |
+| --- | --- |
+| **Checked** (default after provisioning) | OpenBox rejects any governance request for this agent that isn't signed or fails signature verification. |
+| **Unchecked** | Explicit exemption — OpenBox accepts unsigned requests. The DID and signing key stay in place so you can re-enable enforcement without re-provisioning. |
+
+Agents without a DID don't show this checkbox; they always accept unsigned requests until you provision identity.
+
+See [Agent Identity](/core-concepts/agent-identity) for the concept overview.
 
 ## Danger Zone
 

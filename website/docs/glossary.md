@@ -24,6 +24,22 @@ A single unit of work inside a [Workflow](#workflow) — calling an LLM, queryin
 
 ---
 
+## Agent DID
+
+The Decentralized Identifier assigned to every OpenBox agent, of the form `did:aip:<uuidv5>`. Derived deterministically from the agent's internal ID using UUIDv5 with the AIP namespace — the same agent always resolves to the same DID, and rotating the signing key does not change it. The DID appears in every signed governance request and on the agent's Settings page.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
+
+---
+
+## AIP (Agent Identity Protocol)
+
+OpenBox's cryptographic agent identity layer. Each agent has an Ed25519 keypair; the SDK signs governance requests with the private key, and OpenBox verifies every signature against the non-extractable public key it holds for the agent. Runs alongside the existing API key — the bearer token authenticates the HTTP call, the AIP signature authenticates the agent that produced the payload.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
+
+---
+
 ## Risk Profile
 
 A risk scoring framework that evaluates AI agents across three weighted categories:
@@ -188,6 +204,16 @@ A synchronous, read-only request to inspect a running [Workflow's](#workflow) st
 An interactive dashboard view showing the complete execution timeline of an agent session. Allows step-by-step walkthrough of every operation with its governance decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.).
 
 **Learn more:** [Session Replay](/trust-lifecycle/session-replay)
+
+---
+
+## Signing Required
+
+A per-agent setting that controls whether OpenBox rejects unsigned governance requests. When **On**, requests that aren't signed by the agent's [AIP](#aip-agent-identity-protocol) identity are rejected; when **Off**, unsigned requests are still accepted. Operators toggle it from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests).
+
+The toggle becomes available once an agent has a provisioned identity. Agents that predate the Agent Identity Protocol need to be provisioned first before the setting is available.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
 
 ---
 
