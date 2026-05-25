@@ -104,10 +104,14 @@ Exportable certificate containing:
 Session: ses_a1b2c3d4e5f6
 Agent: did:aip:7c3a9b5f-8d2e-5674-9abc-def012345678
 Hash: sha256:8a7b...
-Signature: ecdsa:MIGk...
+Session Signature: ecdsa:MIGk...
 Timestamp: 2024-01-15T09:14:32Z
 TSA: timestamp.openbox.ai
 ```
+
+:::note
+The session signature is OpenBox's attestation over the session, not the agent's per-request identity signature.
+:::
 
 Use for compliance audits and legal evidence.
 
