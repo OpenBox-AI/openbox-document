@@ -35,12 +35,14 @@ The Risk Profile evaluates risk across three categories:
 
 Pre-configured profiles simplify Risk Profile setup:
 
-| Risk Tier | Risk Level | Risk Profile Score | Use Cases |
-|-----------|------------|-------------|-----------|
-| **Tier 1** | Low | 0% – 24% | Read-only, public data access |
-| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions |
-| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions |
-| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions |
+| Preset | Risk Profile Score | Use Cases | Initial Tier |
+|--------|--------------------|-----------|--------------|
+| **Low Risk** | 85 – 100 | Log reader, report generator | Tier 1–2 |
+| **Medium Risk** | 55 – 75 | Internal automation, data processor | Tier 2–3 |
+| **High Risk** | 25 – 45 | Customer data agent, API integrator | Tier 3 |
+| **Critical Risk** | 0 – 20 | Production admin, autonomous trader | Tier 3–4 |
+
+Higher Risk Profile Score = lower inherent risk = higher Trust Score ceiling. Initial Tier assumes Behavioral=100 and Alignment=100 (clean slate).
 
 ## Viewing Current Assessment
 

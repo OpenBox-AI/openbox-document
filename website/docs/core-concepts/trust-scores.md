@@ -70,12 +70,13 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 
 ## Score Ranges
 
-| Risk Profile Score | Risk Tier | Risk Level | Description |
-|-------------|-----------|------------|-------------|
-| **0% – 24%** | Tier 1 | Low | Read-only, public data access |
-| **25% – 49%** | Tier 2 | Medium | Internal data, non-critical actions |
-| **50% – 74%** | Tier 3 | High | PII, financial data, critical actions |
-| **75% – 100%** | Tier 4 | Critical | System admin, destructive actions |
+| Trust Score | Trust Tier | Label | Description |
+|-------------|-----------|-------|-------------|
+| **90 – 100** | Tier 1 | Trusted | Long history of compliance, minimal constraints |
+| **75 – 89** | Tier 2 | Confident | Generally compliant, standard policies |
+| **50 – 74** | Tier 3 | Monitor | New agents or recovering, enhanced controls |
+| **25 – 49** | Tier 4 | Restrict | Pattern of non-compliance, strict governance + HITL |
+| **0 – 24** | Untrusted | Decommission | Agent suspended, cannot operate |
 
 ## Score Display
 
@@ -91,10 +92,11 @@ Overall Alignment = weighted_avg(recent_sessions, decay=0.95)
 
 | Tier | Color |
 |------|-------|
-| Tier 1 (0% – 24%) | Green |
-| Tier 2 (25% – 49%) | Blue |
-| Tier 3 (50% – 74%) | Yellow |
-| Tier 4 (75% – 100%) | Red |
+| Tier 1 (90 – 100) | Green |
+| Tier 2 (75 – 89) | Blue |
+| Tier 3 (50 – 74) | Orange |
+| Tier 4 (25 – 49) | Red |
+| Untrusted (0 – 24) | Dark Red |
 
 ## Score Evolution
 
