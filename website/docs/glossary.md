@@ -279,12 +279,13 @@ A 0–100 metric representing an agent's overall trustworthiness, calculated fro
 
 One of four trust levels derived from the [Trust Score](#trust-score) that determines how strictly an agent is governed:
 
-| Tier | Risk Profile Range | Risk Level | Description |
-|------|-------------|------------|-------------|
-| **Tier 1** | 0% – 24% | Low | Minimal oversight, most operations auto-approved |
-| **Tier 2** | 25% – 49% | Medium | Standard controls, approval for sensitive operations |
-| **Tier 3** | 50% – 74% | High | Enhanced monitoring, stricter enforcement |
-| **Tier 4** | 75% – 100% | Critical | Strict controls, frequent HITL, rate limiting |
+| Tier | Trust Score | Label | Description |
+|------|-------------|-------|-------------|
+| **Tier 1** | 90 – 100 | Trusted | Minimal oversight, most operations auto-approved |
+| **Tier 2** | 75 – 89 | Confident | Standard controls, approval for sensitive operations |
+| **Tier 3** | 50 – 74 | Monitor | Enhanced monitoring, stricter enforcement |
+| **Tier 4** | 25 – 49 | Restrict | Strict controls, frequent HITL, rate limiting |
+| **Untrusted** | 0 – 24 | Decommission | Agent suspended, cannot operate |
 
 **Learn more:** [Trust Tiers](/core-concepts/trust-tiers)
 
