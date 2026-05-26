@@ -62,10 +62,11 @@ The main table displays:
 
 | Tier | Color | Description |
 |------|-------|-------------|
-| **TIER 1** | Green | Tier 1 (0% – 24%): Trusted — Minimal oversight, broad permissions |
-| **TIER 2** | Blue | Tier 2 (25% – 49%): Confident — Standard controls, approval for sensitive ops |
-| **TIER 3** | Orange | Tier 3 (50% – 74%): Monitor — Strict controls, monitoring required |
-| **TIER 4** | Red | Tier 4 (75% – 100%): Restrict — Minimal permissions, approval for most ops |
+| **TIER 1** | Green | Tier 1 (90 – 100): Trusted — Minimal oversight, broad permissions |
+| **TIER 2** | Blue | Tier 2 (75 – 89): Confident — Standard controls, approval for sensitive ops |
+| **TIER 3** | Orange | Tier 3 (50 – 74): Monitor — Enhanced controls, monitoring required |
+| **TIER 4** | Red | Tier 4 (25 – 49): Restrict — Minimal permissions, approval for most ops |
+| **UNTRUSTED** | Dark Red | Untrusted (0 – 24): Decommission — Agent suspended, cannot operate |
 
 ## Agent Actions
 

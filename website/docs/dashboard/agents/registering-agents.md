@@ -85,12 +85,14 @@ Expand the **Initial Risk Assessment** section and configure your agent's risk p
 
 Select a preset that matches your agent's intended use:
 
-| Risk Tier | Risk Level | Risk Profile Score | Use Cases | Default Governance |
-|-----------|------------|-------------|-----------|-------------------|
-| **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
-| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
-| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
-| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
+| Preset | Risk Profile Score | Use Cases | Initial Tier | Default Governance |
+|--------|--------------------|-----------|--------------|--------------------|
+| **Low Risk** | 85 – 100 | Log reader, report generator | Tier 1–2 | Fully autonomous |
+| **Medium Risk** | 55 – 75 | Internal automation, data processor | Tier 2–3 | Mostly autonomous |
+| **High Risk** | 25 – 45 | Customer data agent, API integrator | Tier 3 | Approval for sensitive ops |
+| **Critical Risk** | 0 – 20 | Production admin, autonomous trader | Tier 3–4 | HITL for most operations |
+
+Higher Risk Profile Score = lower inherent risk = higher Trust Score ceiling. Initial Tier assumes Behavioral=100 and Alignment=100 (clean slate).
 
 #### Risk Profile Parameters
 
