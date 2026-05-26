@@ -72,6 +72,8 @@ governed = create_openbox_graph_handler(
     graph=app,
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="MyAgent",
 )
 

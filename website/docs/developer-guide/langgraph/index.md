@@ -17,6 +17,11 @@ The OpenBox LangGraph SDK connects your compiled LangGraph graph to OpenBox. It 
 |-------|-------------|
 | **[Configuration](/developer-guide/langgraph/configuration)** | Environment variables and handler parameters |
 | **[Error Handling](/developer-guide/langgraph/error-handling)** | Handle governance decisions and failures in your code |
+| **[Integration Walkthrough](/developer-guide/langgraph/integration-walkthrough)** | End-to-end guide for wiring a governed LangGraph handler into a service |
+| **[Event Model](/developer-guide/langgraph/event-model)** | Understand graph runs, signals, activities, and payload shapes |
+| **[Approvals and Guardrails](/developer-guide/langgraph/approvals-and-guardrails)** | How verdicts, approvals, and guardrails are enforced at runtime |
+| **[Telemetry](/developer-guide/langgraph/telemetry)** | HTTP, database, traced-function, and optional file capture behavior |
+| **[Troubleshooting](/developer-guide/langgraph/troubleshooting)** | Diagnose startup, policy, approvals, telemetry, and UI interpretation issues |
 
 :::info What the SDK Does
 The SDK's primary job is to **connect your LangGraph graph to OpenBox** and send LangGraph events to the platform. All trust logic, policies, and UI management happens on the platform — not in the SDK.
@@ -28,7 +33,7 @@ The SDK is intentionally minimal:
 
 - **One function call** to wrap your compiled graph (`create_openbox_graph_handler`)
 - **Zero graph changes** — keep writing LangGraph as normal; only the invocation changes
-- **Automatic telemetry** — captures LangGraph v2 events, HTTP, database, and file I/O operations
+- **Automatic telemetry** — captures LangGraph v2 events, HTTP, database, and custom traced-function operations
 - **3-layer governance** — event stream, hook interception, and OpenTelemetry spans work together
 
 ## Installation
@@ -51,12 +56,16 @@ def create_openbox_graph_handler(
     *,
     api_url: str,
     api_key: str,
+    agent_did: str | None = None,
+    agent_private_key: str | None = None,
     agent_name: str | None = None,
     # + governance, instrumentation, and handler options
 ) -> OpenBoxLangGraphHandler
 ```
 
 Returns an `OpenBoxLangGraphHandler` that wraps your compiled graph with OpenBox interceptors, telemetry, and governance configured. The handler exposes the same `ainvoke`, `invoke`, and `astream` interface as the underlying graph.
+
+Newly created OpenBox agents require DID signing by default. Configure `agent_did` and `agent_private_key` together unless **Require signing** is disabled for the registered agent, and store the private key as a per-agent secret.
 
 See **[Configuration](/developer-guide/langgraph/configuration)** for the full parameter list.
 
@@ -79,7 +88,7 @@ The SDK automatically captures and sends to OpenBox:
 - SQL queries (PostgreSQL, MySQL, SQLite via SQLAlchemy)
 - NoSQL operations (MongoDB, Redis)
 
-### File I/O (Optional)
+### File I/O (Optional Lower-Level Setup)
 - File read/write operations
 - File paths and sizes
 
@@ -92,7 +101,7 @@ The SDK enforces governance at three layers simultaneously:
 | Layer | Mechanism | What It Covers |
 |-------|-----------|----------------|
 | **Layer 1: Event Stream** | LangGraph v2 callback events | Tool calls, LLM invocations, node transitions |
-| **Layer 2: Hook Governance** | Monkey-patched HTTP/DB/File hooks | External API calls, database queries, file operations |
+| **Layer 2: Hook Governance** | Monkey-patched HTTP/DB hooks and optional file hooks | External API calls, database queries, optional file operations |
 | **Layer 3: Activity Context** | OpenTelemetry spans | Full distributed trace of every operation |
 
 ```mermaid
@@ -106,7 +115,7 @@ flowchart TD
 
     subgraph sdk["OpenBox SDK"]
         events["Layer 1: Event Stream<br/>LangGraph v2 callbacks"]
-        hooks["Layer 2: Hook Governance<br/>HTTP / DB / File I/O"]
+        hooks["Layer 2: Hook Governance<br/>HTTP / DB / optional File I/O"]
         otel["Layer 3: Activity Context<br/>OpenTelemetry spans"]
     end
 
@@ -159,6 +168,8 @@ governed = create_openbox_graph_handler(
     graph=app,
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="MyAgent",
 )
 
@@ -174,5 +185,5 @@ Governance events fire between chunks — a BLOCK verdict raises `GovernanceBloc
 ## Next Steps
 
 1. **[Configuration](/developer-guide/langgraph/configuration)** — Configure timeouts, fail policies, and exclusions
-2. **[Error Handling](/developer-guide/langgraph/error-handling)** — Handle governance decisions in your code
-3. **[Getting Started](/getting-started/langgraph)** — Wrap an existing LangGraph agent in 5 minutes
+2. **[Integration Walkthrough](/developer-guide/langgraph/integration-walkthrough)** — Wire OpenBox into a real LangGraph service
+3. **[Error Handling](/developer-guide/langgraph/error-handling)** — Handle governance decisions in your code
