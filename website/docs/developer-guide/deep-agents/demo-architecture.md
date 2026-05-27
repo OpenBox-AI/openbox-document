@@ -3,7 +3,7 @@ title: Demo Architecture Reference
 sidebar_label: Demo Architecture
 description: "Deep Agents demo architecture: middleware hooks lifecycle, governance event flow, subagent dispatch, and OpenTelemetry instrumentation."
 llms_description: How the Deep Agents demo is structured
-sidebar_position: 6
+sidebar_position: 9
 tags:
   - deep-agents
   - reference
@@ -130,7 +130,7 @@ Every agent invocation produces this sequence of events sent to OpenBox Core:
 When the agent calls the `task` tool to dispatch a subagent, the middleware:
 
 1. **Detects the subagent** — extracts `subagent_type` from tool args via `resolve_subagent_from_tool_call()`
-2. **Classifies as `a2a`** — if the subagent name is in `known_subagents`
+2. **Classifies as `a2a`** — when a subagent name is resolved from the `task` call
 3. **Enriches activity input** — appends `__openbox` sentinel for Rego targeting:
 
 ```json
@@ -207,4 +207,4 @@ The first LLM call in each invocation reuses the pre-screen guardrails response 
 | `openbox_deepagent/middleware_factory.py` | `create_openbox_middleware()` factory function |
 | `openbox_deepagent/middleware.py` | `OpenBoxMiddleware` class — hooks and state management |
 | `openbox_deepagent/middleware_hooks.py` | Stateless hook implementations — event construction and governance calls |
-| `openbox_deepagent/subagent_resolver.py` | Subagent detection, built-in tool constants, HITL conflict detection |
+| `openbox_deepagent/subagent_resolver.py` | Subagent detection, built-in tool constants, and DeepAgents interrupt helpers |

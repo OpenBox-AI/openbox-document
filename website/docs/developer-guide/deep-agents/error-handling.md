@@ -95,7 +95,8 @@ These are raised during `create_openbox_middleware()` initialization — not dur
 | Exception | Cause |
 |-----------|-------|
 | `OpenBoxError` | Base class for all SDK configuration errors |
-| `OpenBoxAuthError` | Invalid or missing API key |
+| `OpenBoxConfigError` | Malformed DID, malformed private key, or only one DID signing value set; import from `openbox_langgraph` or catch `OpenBoxError` |
+| `OpenBoxAuthError` | Invalid API key or server rejected the credential/identity combination |
 | `OpenBoxNetworkError` | Cannot reach OpenBox Core at startup |
 | `OpenBoxInsecureURLError` | HTTP URL used for a non-localhost address |
 
@@ -106,14 +107,20 @@ from openbox_deepagent import (
     OpenBoxNetworkError,
     OpenBoxInsecureURLError,
 )
+from openbox_langgraph import OpenBoxConfigError
 
 try:
     middleware = create_openbox_middleware(
         api_url=os.getenv("OPENBOX_URL"),
         api_key=os.getenv("OPENBOX_API_KEY"),
+        agent_did=os.getenv("OPENBOX_AGENT_DID"),
+        agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     )
 except OpenBoxAuthError:
-    logger.error("Invalid OPENBOX_API_KEY — check your credentials")
+    logger.error("Invalid OpenBox credentials — check API key, DID, and private key")
+    raise
+except OpenBoxConfigError:
+    logger.error("Invalid OpenBox DID configuration")
     raise
 except OpenBoxInsecureURLError:
     logger.error("OPENBOX_URL must use HTTPS for non-localhost URLs")
@@ -145,6 +152,6 @@ You can also inspect the full event trace in the OpenBox Dashboard under **Agent
 
 ## Next Steps
 
-1. **[Event Types](/developer-guide/event-types)** — Understand the semantic event types that trigger governance decisions
-2. **[Approvals](/approvals)** — Review and process HITL requests in the dashboard
+1. **[Event Model](/developer-guide/deep-agents/event-model)** — Understand the semantic event types that trigger governance decisions
+2. **[Approvals and Guardrails](/developer-guide/deep-agents/approvals-and-guardrails)** — Review runtime enforcement behavior
 3. **[Policies](/trust-lifecycle/authorize/policies)** — Write Rego policies that produce these decisions

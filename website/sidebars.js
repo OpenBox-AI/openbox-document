@@ -34,9 +34,16 @@ const sidebars = {
           label: 'Cursor',
         },
         {
-          type: 'doc',
-          id: 'getting-started/deep-agents/index',
+          type: 'category',
           label: 'Deep Agents',
+          link: {
+            type: 'doc',
+            id: 'getting-started/deep-agents/index',
+          },
+          items: [
+            'getting-started/deep-agents/deep-agents-101',
+            'getting-started/deep-agents/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -168,6 +175,9 @@ const sidebars = {
             'developer-guide/deep-agents/configuration',
             'developer-guide/deep-agents/error-handling',
             'developer-guide/deep-agents/integration-walkthrough',
+            'developer-guide/deep-agents/event-model',
+            'developer-guide/deep-agents/approvals-and-guardrails',
+            'developer-guide/deep-agents/telemetry',
             'developer-guide/deep-agents/extending-the-demo-agent',
             'developer-guide/deep-agents/demo-architecture',
             'developer-guide/deep-agents/troubleshooting',

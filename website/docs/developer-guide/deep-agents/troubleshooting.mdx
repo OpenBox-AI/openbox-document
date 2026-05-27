@@ -1,8 +1,8 @@
 ---
 title: Troubleshooting
-description: "Fix common Deep Agents SDK issues: environment variables, HITL conflicts, governance blocks, subagent failures, and API errors."
+description: "Fix common Deep Agents SDK issues: environment variables, DID signing, approval behavior, governance blocks, subagent failures, and API errors."
 llms_description: Common issues and fixes for the Deep Agents SDK
-sidebar_position: 7
+sidebar_position: 10
 tags:
   - getting-started
   - sdk
@@ -25,6 +25,8 @@ Check that your environment variables are set:
 ```bash
 [ -n "$OPENBOX_URL" ] && echo "OPENBOX_URL is set" || echo "OPENBOX_URL is NOT set"
 [ -n "$OPENBOX_API_KEY" ] && echo "OPENBOX_API_KEY is set" || echo "OPENBOX_API_KEY is NOT set"
+[ -n "$OPENBOX_AGENT_DID" ] && echo "OPENBOX_AGENT_DID is set" || echo "OPENBOX_AGENT_DID is NOT set"
+[ -n "$OPENBOX_AGENT_PRIVATE_KEY" ] && echo "OPENBOX_AGENT_PRIVATE_KEY is set" || echo "OPENBOX_AGENT_PRIVATE_KEY is NOT set"
 ```
 
 Verify step by step:
@@ -32,6 +34,7 @@ Verify step by step:
 1. Confirm `OPENBOX_URL` and `OPENBOX_API_KEY` are set (or passed as `api_url`/`api_key` parameters)
 2. Run your agent and check logs for `OpenBox SDK initialized successfully`
 3. If using `.env`, ensure `python-dotenv` is installed and `load_dotenv()` is called before `create_openbox_middleware()`
+4. If **Require signing** is enabled, set both `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`
 
 If you get `OpenBoxInsecureURLError`, your `OPENBOX_URL` uses HTTP for a non-localhost address. Use HTTPS:
 
@@ -51,19 +54,30 @@ If sessions don't appear after running your agent:
 
 1. Ensure the middleware initialized successfully (check for `OpenBox SDK initialized successfully` in logs)
 2. Confirm the agent completed at least one invocation — sessions are created on `abefore_agent`
-3. Verify the API key matches the agent registered in OpenBox (agent names must match exactly)
+3. Verify the API key and DID identity match the agent registered in OpenBox
 4. Check that `validate=True` (default) — this catches bad credentials at startup
 
 ---
 
-## HITL Conflict Warning
+## OpenBox Returns 401 Invalid Token or Agent Identity
 
-```
-WARNING: HITL conflict detected — "export_data" is listed in DeepAgents interrupt_on
-and is also subject to OpenBox REQUIRE_APPROVAL policy.
-```
+When **Require signing** is enabled for the agent, OpenBox validates both the API key and the DID signature.
 
-This means both DeepAgents' built-in `interrupt_on` and OpenBox's HITL approval are targeting the same tool. The SDK continues to function, but you may get double-interruption.
+Check these common causes:
+
+1. `OPENBOX_AGENT_DID` belongs to a different OpenBox agent than `OPENBOX_API_KEY`
+2. `OPENBOX_AGENT_PRIVATE_KEY` is not the base64 raw Ed25519 seed returned by OpenBox
+3. Only one DID value is set; the SDK requires both or neither
+4. The agent identity was rotated in OpenBox but the runtime still uses the old private key
+5. `agent_name` does not match the registered agent, so policy and behavior rules appear to be missing
+
+If **Require signing** is disabled for the agent, remove both DID environment variables and authenticate with `OPENBOX_API_KEY` only.
+
+---
+
+## Double Approval or Pause Behavior
+
+This usually means both DeepAgents' built-in `interrupt_on` and OpenBox's HITL approval are targeting the same tool. The SDK enforces OpenBox approval verdicts, but it does not disable DeepAgents' own interrupt behavior.
 
 **Fix:** Choose one mechanism:
 
@@ -96,7 +110,11 @@ See **[Error Handling](/developer-guide/deep-agents/error-handling)** for except
 
 If subagent dispatches aren't appearing as governed tool calls:
 
-1. **Check `known_subagents`** — the subagent name must be listed:
+1. **Verify the tool name is `task`** — the SDK detects subagents from DeepAgents `task` tool calls. Custom dispatch mechanisms won't be detected as subagents automatically.
+
+2. **Check the `subagent_type` argument** — the subagent resolver extracts the name from `tool_args["subagent_type"]`. If missing, it falls back to `"general-purpose"`.
+
+3. **Keep `known_subagents` aligned** — this keeps middleware introspection and runtime configuration clear, but the actual subagent detection comes from the `task` tool payload:
 
 ```python
 middleware = create_openbox_middleware(
@@ -104,10 +122,6 @@ middleware = create_openbox_middleware(
     known_subagents=["researcher", "editor", "general-purpose"],
 )
 ```
-
-2. **Verify the tool name is `task`** — the SDK only detects subagents from `task` tool calls. Custom dispatch mechanisms won't be detected.
-
-3. **Check the `subagent_type` argument** — the subagent resolver extracts the name from `tool_args["subagent_type"]`. If missing, it falls back to `"general-purpose"`.
 
 Enable debug logging to see subagent detection:
 
