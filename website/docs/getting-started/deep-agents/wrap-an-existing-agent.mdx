@@ -1,0 +1,151 @@
+---
+title: Wrap an Existing DeepAgents Agent
+description: "Add OpenBox governance to an existing DeepAgents agent without changing its model, tools, subagents, or backend."
+llms_description: Wrap an existing DeepAgents agent with OpenBox middleware
+sidebar_position: 3
+tags:
+  - getting-started
+  - deep-agents
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing DeepAgents Agent
+
+Use this guide when you already have a working DeepAgents agent and want to add OpenBox governance.
+
+## Prerequisites
+
+- A DeepAgents app created with `create_deep_agent()`
+- An OpenBox agent registered with workflow engine **Deep Agents**
+- The agent API key
+- The agent DID and private key, unless **Require signing** is disabled for that agent
+
+## 1. Install the SDK
+
+```bash
+uv add openbox-deepagent-sdk-python
+
+# Or with pip
+pip install openbox-deepagent-sdk-python
+```
+
+If DeepAgents is not already installed in the project, install the optional runtime extra:
+
+```bash
+uv add "openbox-deepagent-sdk-python[deepagents]"
+pip install "openbox-deepagent-sdk-python[deepagents]"
+```
+
+## 2. Configure Runtime Secrets
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+If **Require signing** is disabled for the agent, omit `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
+
+## 3. Add Middleware
+
+<Tabs>
+<TabItem value="before" label="Before">
+
+```python title="agent.py"
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "description": "Researches sources", "tools": [search_web]},
+        {"name": "writer", "description": "Drafts reports", "tools": [write_report]},
+    ],
+)
+```
+
+</TabItem>
+<TabItem value="after" label="After" default>
+
+```python title="agent.py"
+import os
+from deepagents import create_deep_agent
+from langchain.chat_models import init_chat_model
+from openbox_deepagent import create_openbox_middleware
+
+middleware = create_openbox_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    agent_name="ResearchBot",
+    known_subagents=["researcher", "writer", "general-purpose"],
+    tool_type_map={"search_web": "http", "export_data": "http"},
+)
+
+agent = create_deep_agent(
+    model=init_chat_model("openai:gpt-4o-mini"),
+    tools=[search_web, write_report, export_data],
+    subagents=[
+        {"name": "researcher", "description": "Researches sources", "tools": [search_web]},
+        {"name": "writer", "description": "Drafts reports", "tools": [write_report]},
+    ],
+    middleware=[middleware],
+)
+```
+
+</TabItem>
+</Tabs>
+
+## 4. Preserve Your Invoke Path
+
+Run the agent exactly as before:
+
+```python
+result = await agent.ainvoke(
+    {"messages": [{"role": "user", "content": "Research AI agents in support"}]},
+    config={"configurable": {"thread_id": "support-research-001"}},
+)
+```
+
+OpenBox uses the `thread_id` as the stable session input and creates a fresh governed workflow/run boundary for each invocation.
+
+## 5. Verify in OpenBox
+
+After the run completes:
+
+1. Open the OpenBox dashboard.
+2. Go to **Agents** and select the registered agent.
+3. Open the latest run.
+4. Confirm the timeline includes workflow, LLM, tool, subagent, and telemetry entries.
+5. Confirm policy and guardrail decisions appear on the governed activity rows.
+
+## Optional: Database Instrumentation
+
+If your database engine is created before OpenBox middleware, pass it explicitly:
+
+```python
+from sqlalchemy import create_engine
+
+engine = create_engine(os.getenv("DATABASE_URL"))
+
+middleware = create_openbox_middleware(
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    agent_name="ResearchBot",
+    sqlalchemy_engine=engine,
+)
+```
+
+## Next Steps
+
+1. Configure runtime settings in [Configuration](/developer-guide/deep-agents/configuration).
+2. Review the DeepAgents [Event Model](/developer-guide/deep-agents/event-model).
+3. Add policy, approval, and guardrail rules in [Approvals and Guardrails](/developer-guide/deep-agents/approvals-and-guardrails).
