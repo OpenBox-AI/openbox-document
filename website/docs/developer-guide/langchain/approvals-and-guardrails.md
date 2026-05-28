@@ -2,7 +2,7 @@
 title: Approvals and Guardrails
 description: "How OpenBox verdicts, approvals, and guardrails are enforced at runtime in LangChain."
 llms_description: LangChain SDK approvals and guardrails behavior
-sidebar_position: 5
+sidebar_position: 6
 tags:
   - sdk
   - langchain

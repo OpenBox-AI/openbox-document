@@ -2,7 +2,7 @@
 title: Telemetry
 description: "See what operational telemetry the OpenBox LangChain SDK captures and how it appears in OpenBox."
 llms_description: LangChain SDK telemetry capture and runtime behavior
-sidebar_position: 6
+sidebar_position: 7
 tags:
   - sdk
   - langchain

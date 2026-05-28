@@ -2,7 +2,7 @@
 title: Event Model
 description: "Understand how LangChain agent runs, model calls, tools, and telemetry are represented in OpenBox."
 llms_description: LangChain SDK event model and payload guidance
-sidebar_position: 4
+sidebar_position: 5
 tags:
   - sdk
   - langchain
