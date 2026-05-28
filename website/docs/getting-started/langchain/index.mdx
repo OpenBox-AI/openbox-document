@@ -1,26 +1,118 @@
 ---
 title: Getting Started with LangChain
-description: "Add OpenBox governance to LangChain agents in TypeScript: policy enforcement, guardrails, and human-in-the-loop approvals with a callback handler."
-llms_description: LangChain TypeScript SDK quickstart and setup
+description: "Add OpenBox governance to LangChain agents with one middleware change."
+llms_description: LangChain integration onboarding and first governed agent
 sidebar_position: 5
 tags:
   - getting-started
   - langchain
-  - typescript
+  - python
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Getting Started with LangChain
 
-:::info Docs coming soon
-The OpenBox SDK for [LangChain](https://www.langchain.com/) is open source.
-Refer to the README for setup instructions:
-**[OpenBox-AI/openbox-langchain-sdk-ts](https://github.com/OpenBox-AI/openbox-langchain-sdk-ts)**
-:::
+OpenBox integrates with [LangChain](https://www.langchain.com/) by adding
+middleware to your agent. Your model, tools, prompts, and invocation pattern stay
+in place while OpenBox adds governance, approvals, guardrails, DID signing, and
+operational telemetry.
 
-OpenBox integrates with LangChain by attaching a callback handler — your agents, tools, and prompts stay exactly as they are while every action is governed, scored, and auditable.
+## One Middleware Change
 
-## What to expect
+<Tabs>
+<TabItem value="before" label="LangChain">
 
-- Attach a governance handler with a single function call
-- Policy enforcement, guardrails, and human-in-the-loop approvals
-- Hook-level governance and mid-execution signal monitoring
+```python title="agent.py"
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+</Tabs>
+
+Newly created OpenBox agents require DID signing by default. If **Require
+signing** is disabled for the agent, omit `agent_did` and `agent_private_key`.
+See [Agent DID Identity](/developer-guide/langchain/configuration#agent_did-and-agent_private_key)
+for the required configuration.
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--6">
+
+### [LangChain 101](/getting-started/langchain/langchain-101)
+
+Get the LangChain concepts that matter for OpenBox before you wire governance
+into a real agent.
+
+</div>
+<div className="col col--6">
+
+### [Wrap an Existing Agent](/getting-started/langchain/wrap-an-existing-agent)
+
+Add OpenBox to an existing LangChain codebase without rewriting your model,
+tools, or prompts.
+
+</div>
+</div>
+
+## What OpenBox Captures
+
+From a single middleware integration point, OpenBox captures:
+
+- Agent lifecycle events for each run
+- Model call lifecycle events, including token metadata when the provider returns it
+- Tool call lifecycle events for governed tool execution
+- User prompt signals for auditability
+- HTTP, database, file, and traced-function telemetry
+- Governance decisions, approvals, and guardrail outcomes
+
+## What To Expect In The UI
+
+After integration, OpenBox gives you:
+
+- A run timeline for agent, model, and tool events
+- Policy and guardrail decisions on governed boundaries
+- Session replay with runtime context
+- Model and token usage when provider metadata is available
+- Tool health metrics for agents that actually execute tools
+
+## Next Steps
+
+1. Read [LangChain 101](/getting-started/langchain/langchain-101) if you want the conceptual model first.
+2. Use [Wrap an Existing Agent](/getting-started/langchain/wrap-an-existing-agent) if you already have LangChain in production.
+3. Read [LangChain SDK (Python)](/developer-guide/langchain) for the full SDK reference.
