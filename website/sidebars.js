@@ -46,9 +46,16 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'getting-started/langchain/index',
+          type: 'category',
           label: 'LangChain',
+          link: {
+            type: 'doc',
+            id: 'getting-started/langchain/index',
+          },
+          items: [
+            'getting-started/langchain/langchain-101',
+            'getting-started/langchain/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'category',
@@ -191,9 +198,21 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'developer-guide/langchain/index',
-          label: 'LangChain SDK (TypeScript)',
+          type: 'category',
+          label: 'LangChain SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/langchain/sdk-reference',
+          },
+          items: [
+            'developer-guide/langchain/integration-walkthrough',
+            'developer-guide/langchain/configuration',
+            'developer-guide/langchain/error-handling',
+            'developer-guide/langchain/event-model',
+            'developer-guide/langchain/approvals-and-guardrails',
+            'developer-guide/langchain/telemetry',
+            'developer-guide/langchain/troubleshooting',
+          ],
         },
         {
           type: 'category',
