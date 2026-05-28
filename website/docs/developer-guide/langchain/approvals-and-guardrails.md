@@ -21,7 +21,6 @@ that the SDK enforces at runtime.
 | Verdict | Meaning | Runtime effect |
 | --- | --- | --- |
 | `ALLOW` | Continue normally | Execution proceeds |
-| `CONSTRAIN` | Continue with advisory constraints | Execution proceeds with constraints available in the response |
 | `REQUIRE_APPROVAL` | Human review required | The SDK waits for approval or raises if approval is rejected or expires |
 | `BLOCK` | Operation must not continue | Execution raises `GovernanceBlockedError` |
 | `HALT` | Agent run must stop | Execution raises `GovernanceHaltError` |
