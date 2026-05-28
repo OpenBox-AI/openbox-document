@@ -20,7 +20,6 @@ OpenBox evaluates governed DeepAgents boundaries and returns verdicts that the S
 | Verdict | Meaning | Runtime effect |
 | --- | --- | --- |
 | `allow` | Continue normally | Execution proceeds |
-| `constrain` | Continue with advisory constraints | Execution proceeds with constraints available in the response |
 | `require_approval` | Human review required | Execution waits for approval at HITL-capable boundaries; rejection or expiration halts the run |
 | `block` | Operation must not continue | Execution raises `GovernanceBlockedError` |
 | `halt` | Agent run must stop | Execution raises `GovernanceHaltError` |
