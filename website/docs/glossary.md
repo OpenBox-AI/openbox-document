@@ -24,6 +24,22 @@ A single unit of work inside a [Workflow](#workflow) — calling an LLM, queryin
 
 ---
 
+## Agent DID
+
+The Decentralized Identifier assigned to every OpenBox agent, of the form `did:aip:<uuidv5>`. Derived deterministically from the agent's internal ID using UUIDv5 with the AIP namespace — the same agent always resolves to the same DID, and rotating the signing key does not change it. The DID appears in every signed governance request and on the agent's Settings page.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
+
+---
+
+## AIP (Agent Identity Protocol)
+
+OpenBox's cryptographic agent identity layer. Each agent has an Ed25519 keypair; the SDK signs governance requests with the private key, and OpenBox verifies every signature against the non-extractable public key it holds for the agent. Runs alongside the existing API key — the bearer token authenticates the HTTP call, the AIP signature authenticates the agent that produced the payload.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
+
+---
+
 ## Risk Profile
 
 A risk scoring framework that evaluates AI agents across three weighted categories:
@@ -191,6 +207,16 @@ An interactive dashboard view showing the complete execution timeline of an agen
 
 ---
 
+## Signing Required
+
+A per-agent setting that controls whether OpenBox rejects unsigned governance requests. When **On**, requests that aren't signed by the agent's [AIP](#aip-agent-identity-protocol) identity are rejected; when **Off**, unsigned requests are still accepted. Operators toggle it from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests).
+
+The toggle becomes available once an agent has a provisioned identity. Agents that predate the Agent Identity Protocol need to be provisioned first before the setting is available.
+
+**Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
+
+---
+
 ## Signal
 
 An asynchronous message sent to a running [Workflow](#workflow) from the outside. Signals let external systems inject data or trigger decisions mid-execution — for example, delivering a human approval result back to a paused agent.
@@ -253,12 +279,13 @@ A 0–100 metric representing an agent's overall trustworthiness, calculated fro
 
 One of four trust levels derived from the [Trust Score](#trust-score) that determines how strictly an agent is governed:
 
-| Tier | Risk Profile Range | Risk Level | Description |
-|------|-------------|------------|-------------|
-| **Tier 1** | 0% – 24% | Low | Minimal oversight, most operations auto-approved |
-| **Tier 2** | 25% – 49% | Medium | Standard controls, approval for sensitive operations |
-| **Tier 3** | 50% – 74% | High | Enhanced monitoring, stricter enforcement |
-| **Tier 4** | 75% – 100% | Critical | Strict controls, frequent HITL, rate limiting |
+| Tier | Trust Score | Label | Description |
+|------|-------------|-------|-------------|
+| **Tier 1** | 90 – 100 | Trusted | Minimal oversight, most operations auto-approved |
+| **Tier 2** | 75 – 89 | Confident | Standard controls, approval for sensitive operations |
+| **Tier 3** | 50 – 74 | Monitor | Enhanced monitoring, stricter enforcement |
+| **Tier 4** | 25 – 49 | Restrict | Strict controls, frequent HITL, rate limiting |
+| **Untrusted** | 0 – 24 | Decommission | Agent suspended, cannot operate |
 
 **Learn more:** [Trust Tiers](/core-concepts/trust-tiers)
 

@@ -17,13 +17,12 @@ OpenBox evaluates governed Mastra boundaries and returns verdicts that the SDK e
 
 ## Verdicts
 
-| Verdict | Meaning | Runtime effect |
-| --- | --- | --- |
-| `allow` | Continue normally | Execution proceeds |
-| `constrain` | Continue with advisory constraints | Execution proceeds with constraints available in the response |
-| `require_approval` | Human review required | Execution suspends or polls for approval |
-| `block` | Operation must not continue | Execution throws a stop-style error |
-| `halt` | Workflow or agent run must stop | Execution throws a halt error |
+| Verdict            | Meaning                         | Runtime effect                           |
+| ------------------ | ------------------------------- | ---------------------------------------- |
+| `allow`            | Continue normally               | Execution proceeds                       |
+| `require_approval` | Human review required           | Execution suspends or polls for approval |
+| `block`            | Operation must not continue     | Execution throws a stop-style error      |
+| `halt`             | Workflow or agent run must stop | Execution throws a halt error            |
 
 ## Enforcement Model
 
@@ -57,11 +56,11 @@ For live activity guardrails, match on `ActivityStarted` whenever possible.
 
 Recommended fields:
 
-| Activity type | Field to check | Example use |
-| --- | --- | --- |
-| `writeFile` | `input.content` | Banned content or PII in file contents |
-| `writeFile` | `input.path` | Path restrictions |
-| `runCommand` | `input.command` | Banned shell commands |
+| Activity type | Field to check  | Example use                            |
+| ------------- | --------------- | -------------------------------------- |
+| `writeFile`   | `input.content` | Banned content or PII in file contents |
+| `writeFile`   | `input.path`    | Path restrictions                      |
+| `runCommand`  | `input.command` | Banned shell commands                  |
 
 Important:
 
@@ -94,13 +93,13 @@ Approval is not limited to requested action. `ActivityCompleted` can also return
 
 ## Runtime Errors You Should Expect
 
-| Error | Meaning |
-| --- | --- |
-| `GovernanceHaltError` | OpenBox returned a stop or halt verdict, or fail-closed converted an API failure into a halt |
-| `GuardrailsValidationError` | Guardrail validation failed |
-| `ApprovalPendingError` | Approval is still pending or polling timed out |
-| `ApprovalRejectedError` | Approval explicitly rejected the activity |
-| `ApprovalExpiredError` | Approval expired before resolution |
+| Error                       | Meaning                                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| `GovernanceHaltError`       | OpenBox returned a stop or halt verdict, or fail-closed converted an API failure into a halt |
+| `GuardrailsValidationError` | Guardrail validation failed                                                                  |
+| `ApprovalPendingError`      | Approval is still pending or polling timed out                                               |
+| `ApprovalRejectedError`     | Approval explicitly rejected the activity                                                    |
+| `ApprovalExpiredError`      | Approval expired before resolution                                                           |
 
 ## Production Recommendations
 

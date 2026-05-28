@@ -54,12 +54,13 @@ Trust Score = (Risk Profile Score × 40%) + (Behavioral × 35%) + (Alignment × 
 
 The Trust Score maps to Trust Tiers that determine governance strictness:
 
-| Tier | Risk Profile Score | Risk Level | Governance Level |
-|------|-------------|------------|------------------|
-| **Tier 1** | 0% – 24% | Low | Minimal constraints, high autonomy |
-| **Tier 2** | 25% – 49% | Medium | Standard policies, normal monitoring |
-| **Tier 3** | 50% – 74% | High | Enhanced controls, frequent checks |
-| **Tier 4** | 75% – 100% | Critical | Strict governance, HITL required |
+| Tier | Trust Score | Label | Governance Level |
+|------|-------------|-------|------------------|
+| **Tier 1** | 90 – 100 | Trusted | Minimal constraints, high autonomy |
+| **Tier 2** | 75 – 89 | Confident | Standard policies, normal monitoring |
+| **Tier 3** | 50 – 74 | Monitor | Enhanced controls, frequent checks |
+| **Tier 4** | 25 – 49 | Restrict | Strict governance, HITL required |
+| **Untrusted** | 0 – 24 | Decommission | Agent suspended, cannot operate |
 
 ## Lifecycle Flow
 

@@ -22,12 +22,12 @@ Every AI agent you want to govern with OpenBox needs to be registered first. Reg
    - **Description**: What your agent does
    - **Teams**: Assign to one or more teams
    - **Icon**: Select an icon
-4. **Generate API Key** — Click **Generate API Key**, copy and store it (shown only once)
-5. Configure **Initial Risk Assessment** and **Attestation** (see details below)
-6. Click **Add Agent**
+4. Configure **Initial Risk Assessment** and **Attestation** (see details below)
+5. Click **Add Agent**
+6. In the **Save Your Agent Credentials** dialog that opens, copy the API key, DID, and private key (or the pre-formatted env-var block) into your secrets manager. All three are shown only once.
 
 :::tip
-Your API key format: `obx_live_xxxxxxxxxxxx` — store it securely, you won't see it again.
+The API key (`obx_live_xxxxxxxxxxxx`) and the agent's Ed25519 private key are shown only once. Lose either and you'll need to rotate from [Agent Settings → API Access](/dashboard/agents/agent-settings#api-access).
 :::
 
 ## Detailed Configuration
@@ -58,15 +58,24 @@ Select the workflow engine your agent uses:
 All of these fields can be edited after creation from the [Agent Settings](/dashboard/agents/agent-settings#general-settings) page.
 :::
 
-### API Key Generation
+### Agent Credentials
 
-Every agent needs an API key to authenticate with OpenBox:
+When you finish registering a new agent, OpenBox opens a **Save Your Agent Credentials** dialog containing everything the agent needs to authenticate:
 
-1. Click **Generate API Key**
-2. Copy the key immediately
-3. Store it securely — you won't see it again
+![Save Your Agent Credentials dialog](/img/agents/agent-credentials-dialog.webp)
 
-The key format is: `obx_live_xxxxxxxxxxxx`
+| Credential | What it does |
+| --- | --- |
+| **API Key** (`obx_live_*` / `obx_test_*`) | Bearer token the SDK uses to authenticate the HTTP call. |
+| **Agent DID** (`did:aip:<uuidv5>`) | The agent's cryptographic [identifier](/core-concepts/agent-identity). |
+| **Agent DID Private Key** (Ed25519) | Used by the SDK to sign governance requests so OpenBox can prove they came from this agent. |
+| **SDK Environment Variables** | `OPENBOX_API_KEY`, `OPENBOX_AGENT_DID`, and `OPENBOX_AGENT_PRIVATE_KEY` pre-formatted for copy-paste into your secret store. |
+
+:::warning
+The API key and private key are shown **once** in this dialog and are not stored by OpenBox. Copy them — or the env-var block — into your secrets manager before clicking **I've Saved the Credentials**. If you lose the private key you'll need to [rotate](/dashboard/agents/agent-settings#rotate-private-key) it.
+:::
+
+New agents default to **Require signed requests = on**, so the SDK must present a valid signature on every governance request from the moment the agent goes live. You can toggle this from [Agent Settings → API Access](/dashboard/agents/agent-settings#require-signed-requests) at any time; with it off, the SDK authenticates with the API key only.
 
 ### Initial Risk Assessment
 
@@ -76,12 +85,14 @@ Expand the **Initial Risk Assessment** section and configure your agent's risk p
 
 Select a preset that matches your agent's intended use:
 
-| Risk Tier | Risk Level | Risk Profile Score | Use Cases | Default Governance |
-|-----------|------------|-------------|-----------|-------------------|
-| **Tier 1** | Low | 0% – 24% | Read-only, public data access | Fully autonomous |
-| **Tier 2** | Medium | 25% – 49% | Internal data, non-critical actions | Mostly autonomous |
-| **Tier 3** | High | 50% – 74% | PII, financial data, critical actions | Approval for sensitive ops |
-| **Tier 4** | Critical | 75% – 100% | System admin, destructive actions | HITL for most operations |
+| Preset | Risk Profile Score | Use Cases | Initial Tier | Default Governance |
+|--------|--------------------|-----------|--------------|--------------------|
+| **Low Risk** | 85 – 100 | Log reader, report generator | Tier 1–2 | Fully autonomous |
+| **Medium Risk** | 55 – 75 | Internal automation, data processor | Tier 2–3 | Mostly autonomous |
+| **High Risk** | 25 – 45 | Customer data agent, API integrator | Tier 3 | Approval for sensitive ops |
+| **Critical Risk** | 0 – 20 | Production admin, autonomous trader | Tier 3–4 | HITL for most operations |
+
+Higher Risk Profile Score = lower inherent risk = higher Trust Score ceiling. Initial Tier assumes Behavioral=100 and Alignment=100 (clean slate).
 
 #### Risk Profile Parameters
 
@@ -141,8 +152,8 @@ See **[Attestation](/administration/attestation-and-cryptographic-proof)** for h
 ### Creating the Agent
 
 1. Review all fields
-2. Ensure you've copied the API key
-3. Click **Add Agent**
+2. Click **Add Agent**
+3. In the **Save Your Agent Credentials** dialog, copy the credentials (see [Agent Credentials](#agent-credentials) above) and click **I've Saved the Credentials**
 
 You'll be redirected to the new agent's detail page.
 

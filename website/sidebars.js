@@ -24,9 +24,16 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'getting-started/crewai/index',
+          type: 'category',
           label: 'CrewAI',
+          link: {
+            type: 'doc',
+            id: 'getting-started/crewai/index',
+          },
+          items: [
+            'getting-started/crewai/run-the-demo',
+            'getting-started/crewai/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -34,19 +41,40 @@ const sidebars = {
           label: 'Cursor',
         },
         {
-          type: 'doc',
-          id: 'getting-started/deep-agents/index',
+          type: 'category',
           label: 'Deep Agents',
+          link: {
+            type: 'doc',
+            id: 'getting-started/deep-agents/index',
+          },
+          items: [
+            'getting-started/deep-agents/deep-agents-101',
+            'getting-started/deep-agents/wrap-an-existing-agent',
+          ],
         },
         {
-          type: 'doc',
-          id: 'getting-started/langchain/index',
+          type: 'category',
           label: 'LangChain',
+          link: {
+            type: 'doc',
+            id: 'getting-started/langchain/index',
+          },
+          items: [
+            'getting-started/langchain/langchain-101',
+            'getting-started/langchain/wrap-an-existing-agent',
+          ],
         },
         {
-          type: 'doc',
-          id: 'getting-started/langgraph/index',
+          type: 'category',
           label: 'LangGraph',
+          link: {
+            type: 'doc',
+            id: 'getting-started/langgraph/index',
+          },
+          items: [
+            'getting-started/langgraph/langgraph-101',
+            'getting-started/langgraph/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'category',
@@ -98,6 +126,7 @@ const sidebars = {
         'core-concepts/trust-scores',
         'core-concepts/trust-tiers',
         'core-concepts/governance-decisions',
+        'core-concepts/agent-identity',
       ],
     },
     {
@@ -147,9 +176,19 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'developer-guide/crewai/index',
-          label: 'CrewAI',
+          type: 'category',
+          label: 'CrewAI SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/crewai/sdk-reference',
+          },
+          items: [
+            'developer-guide/crewai/configuration',
+            'developer-guide/crewai/integration-walkthrough',
+            'developer-guide/crewai/approvals-and-guardrails',
+            'developer-guide/crewai/telemetry',
+            'developer-guide/crewai/troubleshooting',
+          ],
         },
         {
           type: 'doc',
@@ -164,18 +203,33 @@ const sidebars = {
             id: 'developer-guide/deep-agents/index',
           },
           items: [
+            'developer-guide/deep-agents/integration-walkthrough',
             'developer-guide/deep-agents/configuration',
             'developer-guide/deep-agents/error-handling',
-            'developer-guide/deep-agents/integration-walkthrough',
+            'developer-guide/deep-agents/event-model',
+            'developer-guide/deep-agents/approvals-and-guardrails',
+            'developer-guide/deep-agents/telemetry',
             'developer-guide/deep-agents/extending-the-demo-agent',
             'developer-guide/deep-agents/demo-architecture',
             'developer-guide/deep-agents/troubleshooting',
           ],
         },
         {
-          type: 'doc',
-          id: 'developer-guide/langchain/index',
-          label: 'LangChain SDK (TypeScript)',
+          type: 'category',
+          label: 'LangChain SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/langchain/sdk-reference',
+          },
+          items: [
+            'developer-guide/langchain/integration-walkthrough',
+            'developer-guide/langchain/configuration',
+            'developer-guide/langchain/error-handling',
+            'developer-guide/langchain/event-model',
+            'developer-guide/langchain/approvals-and-guardrails',
+            'developer-guide/langchain/telemetry',
+            'developer-guide/langchain/troubleshooting',
+          ],
         },
         {
           type: 'category',
@@ -187,6 +241,11 @@ const sidebars = {
           items: [
             'developer-guide/langgraph/configuration',
             'developer-guide/langgraph/error-handling',
+            'developer-guide/langgraph/integration-walkthrough',
+            'developer-guide/langgraph/event-model',
+            'developer-guide/langgraph/approvals-and-guardrails',
+            'developer-guide/langgraph/telemetry',
+            'developer-guide/langgraph/troubleshooting',
           ],
         },
         {

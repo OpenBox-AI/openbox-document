@@ -1,0 +1,110 @@
+---
+title: CrewAI SDK (Python)
+description: "OpenBox SDK reference for CrewAI: govern agents, tasks, flows, approvals, and operational telemetry."
+llms_description: CrewAI SDK reference and guide set
+sidebar_position: 1
+slug: /developer-guide/crewai
+tags:
+  - sdk
+  - crewai
+  - python
+---
+
+# CrewAI SDK (Python)
+
+The OpenBox CrewAI SDK connects CrewAI crews and flows to OpenBox. It governs task boundaries, captures operational telemetry, supports approvals and guardrails, and preserves per-agent identity for governed runs.
+
+Published package: `openbox-crewai-sdk-python`
+
+Public repository:
+
+- [OpenBox-AI/openbox-crewai-sdk-python](https://github.com/OpenBox-AI/openbox-crewai-sdk-python)
+
+| Guide | Description |
+|-------|-------------|
+| **[Integration Walkthrough](/developer-guide/crewai/integration-walkthrough)** | End-to-end guide for replacing plain CrewAI types, governing a crew, and understanding runtime behavior |
+| **[Configuration](/developer-guide/crewai/configuration)** | Environment variables, engine options, defaults, and production guidance |
+| **[Approvals and Guardrails](/developer-guide/crewai/approvals-and-guardrails)** | How verdicts are enforced and how to test live policy and guardrail behavior correctly |
+| **[Telemetry](/developer-guide/crewai/telemetry)** | Task events, HTTP/database/file capture, flow correlation, and attribution model |
+| **[Troubleshooting](/developer-guide/crewai/troubleshooting)** | Diagnose startup, policy, approval, telemetry, and runtime integration issues |
+
+:::info What the SDK Does
+The SDK connects CrewAI runtimes to OpenBox. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside the SDK.
+:::
+
+## Philosophy
+
+The integration is intentionally minimal:
+
+- replace governed `Agent` and `Task` instances with OpenBox-aware subclasses
+- create one standard engine for the process
+- wrap crews with `engine.govern(crew)`
+- keep the rest of your CrewAI structure recognizable
+
+## Recommended Entry Point
+
+For most applications, use `create_openbox_engine()`:
+
+```python
+from openbox import create_openbox_engine
+
+with create_openbox_engine() as engine:
+    governed = engine.govern(crew)
+    result = governed.kickoff()
+```
+
+It validates configuration, creates the OpenBox runtime, installs telemetry, and binds governance to standard CrewAI crews.
+
+## Public API Summary
+
+Most integrations only need these exports:
+
+- `create_openbox_engine()`
+- `create_openbox_flow()`
+- `OpenBoxAgent`
+- `OpenBoxTask`
+- `GovernedCrew`
+- `OpenBoxEngine`
+
+## What The SDK Captures
+
+OpenBox receives:
+
+### Workflow Session Boundaries
+
+- `WorkflowStarted`
+- `WorkflowCompleted`
+
+These are emitted per governed agent session.
+
+### Task Boundaries
+
+- `ActivityStarted`
+- `ActivityCompleted`
+
+These apply to governed `OpenBoxTask` instances.
+
+### Signals
+
+- `SignalReceived` for approval resume and related runtime signals
+
+### Operational Telemetry
+
+- HTTP requests
+- supported database activity
+- file operations when enabled
+- LLM-gate decisions at the CrewAI before-LLM-call hook
+
+## Supported Runtime Conditions
+
+| Requirement | Value |
+| --- | --- |
+| Python | `>=3.10` |
+| CrewAI | `>=1.14.1` |
+| OpenBox Core | reachable over HTTPS except localhost development |
+
+## Next Steps
+
+1. Start with the [Integration Walkthrough](/developer-guide/crewai/integration-walkthrough).
+2. Configure runtime behavior in [Configuration](/developer-guide/crewai/configuration).
+3. Read [Telemetry](/developer-guide/crewai/telemetry) before writing policy for hook-level data.
