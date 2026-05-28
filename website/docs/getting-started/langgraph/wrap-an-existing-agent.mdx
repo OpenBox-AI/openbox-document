@@ -1,0 +1,133 @@
+---
+title: Wrap an Existing Graph
+description: "Add OpenBox governance to an existing LangGraph application without changing the graph topology."
+llms_description: Wrap an existing LangGraph graph with OpenBox
+sidebar_position: 3
+tags:
+  - getting-started
+  - langgraph
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Graph
+
+Use this guide when you already have a compiled LangGraph graph and want to add OpenBox governance, monitoring, and compliance evidence.
+
+## Prerequisites
+
+- an existing compiled LangGraph graph
+- Python `3.11+`
+- an OpenBox API key, agent DID, and private key unless **Require signing** is disabled for the agent
+
+## Step 1: Install The SDK
+
+```bash
+uv add openbox-langgraph-sdk-python
+
+# Or with pip
+pip install openbox-langgraph-sdk-python
+```
+
+## Step 2: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+Keep the DID private key in your secret manager or runtime environment. Do not commit it or reuse it across agents. If **Require signing** is disabled for the agent, omit both DID values.
+
+## Step 3: Wrap The Compiled Graph
+
+<Tabs>
+<TabItem value="before" label="LangGraph">
+
+```python title="agent.py"
+from langgraph.graph import END, START, MessagesState, StateGraph
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+result = await app.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+from langgraph.graph import END, START, MessagesState, StateGraph
+from openbox_langgraph import create_openbox_graph_handler
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    agent_name="MyAgent",
+)
+
+result = await governed.ainvoke({"messages": [("user", "Hello")]})
+```
+
+</TabItem>
+</Tabs>
+
+## Step 4: Run A Live Request
+
+Start your service normally and invoke the governed handler. After the run completes:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents**
+3. Open the registered agent
+4. Confirm the new run appears with graph, tool, LLM, and telemetry events
+
+## Step 5: Add Optional Context
+
+If tool calls represent other agents, configure `resolve_subagent_name` so OpenBox can show agent-to-agent activity:
+
+```python
+from openbox_langgraph.types import LangGraphStreamEvent
+
+def resolve_subagent_name(event: LangGraphStreamEvent) -> str | None:
+    if event.name == "invoke_research_agent":
+        return "ResearchAgent"
+    return None
+
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    resolve_subagent_name=resolve_subagent_name,
+)
+```
+
+## Next Steps
+
+- [Integration Walkthrough](/developer-guide/langgraph/integration-walkthrough)
+- [Event Model](/developer-guide/langgraph/event-model)
+- [Troubleshooting](/developer-guide/langgraph/troubleshooting)

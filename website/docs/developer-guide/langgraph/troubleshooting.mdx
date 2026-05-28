@@ -1,0 +1,119 @@
+---
+title: Troubleshooting
+description: "Common LangGraph SDK integration issues and how to diagnose them quickly."
+llms_description: LangGraph SDK troubleshooting guide
+sidebar_position: 8
+tags:
+  - sdk
+  - langgraph
+  - configuration
+  - integration
+---
+
+# Troubleshooting
+
+Use this page to diagnose the most common startup, runtime, and UI interpretation issues with the OpenBox LangGraph SDK.
+
+## Startup Validation Fails
+
+Typical causes:
+
+- `OPENBOX_URL` is missing
+- `OPENBOX_API_KEY` is missing or malformed
+- the URL is not HTTPS outside localhost development
+- only one of `OPENBOX_AGENT_DID` or `OPENBOX_AGENT_PRIVATE_KEY` is set
+- the API key validation call fails
+
+What to do:
+
+1. Verify `OPENBOX_URL` and `OPENBOX_API_KEY`.
+2. If **Require signing** is enabled, verify both `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
+3. Confirm the service can reach OpenBox Core.
+4. Use `validate=False` only for local mocks or tests.
+
+## OpenBox Returns `401 invalid token or agent identity`
+
+This usually means API-key authentication succeeded far enough to reach OpenBox, but the agent identity material did not match the registered agent.
+
+What to verify:
+
+1. The API key belongs to the same OpenBox agent as `OPENBOX_AGENT_DID`.
+2. `OPENBOX_AGENT_DID` uses the `did:aip:<uuid>` format.
+3. `OPENBOX_AGENT_PRIVATE_KEY` is the base64 raw 32-byte Ed25519 seed returned by OpenBox, not a PEM key or public key.
+4. The DID private key has not been rotated since the runtime environment was configured.
+5. The runtime clock is synchronized so signature timestamp checks pass.
+
+## No Runs Appear In OpenBox
+
+Check these first:
+
+1. The service can reach `OPENBOX_URL` from its runtime environment.
+2. The agent API key is valid for the intended OpenBox agent.
+3. The service invokes the governed handler returned by `create_openbox_graph_handler()`, not the raw compiled graph.
+4. The process was restarted after configuration changes.
+5. The graph invocation actually completed or emitted events through `ainvoke()`, `invoke()`, `astream()`, or `astream_events()`.
+
+## I See The User Prompt But No Tool Activity
+
+This usually means the graph did not execute a tool path for that request. LangGraph can complete entirely through an LLM node.
+
+What to verify:
+
+- the model selected a tool call
+- the graph's conditional edge routed to the tool node
+- the tool name is not listed in `skip_tool_types`
+- the event stream includes `on_tool_start` and `on_tool_end`
+
+## A Guardrail UI Test Passes But The Live Run Does Not Fire
+
+This usually means the live event shape differs from the test payload, or policy returned a non-`allow` verdict before the guardrail ran.
+
+What to verify:
+
+- the live event returns `allow` from policy
+- the guardrail targets the correct event type, usually `ActivityStarted` for tool input
+- the field selector matches the emitted payload shape, such as `input.query`, `input.path`, `input.command`, or `prompt`
+
+## I Do Not See Model Usage
+
+Model usage depends on the provider response and event metadata. Some providers or model wrappers do not expose token usage in the callback payload.
+
+What to verify:
+
+- the provider returns token usage metadata
+- the model call has human-turn prompt content and is not skipped as an internal promptless call
+- `send_llm_start_event` is enabled so the SDK creates the LLM row that completion telemetry can close
+
+## I See Runs But No Tool Health
+
+Tool health only appears for agents that actually execute tools. A graph that only performs model generation, routing, or delegation may not populate tool health for that run.
+
+## Approval Never Resumes
+
+Check these first:
+
+1. `hitl.enabled` is set to `True`.
+2. The approval request appears in OpenBox.
+3. The process can reach OpenBox while polling.
+4. The approval has not expired.
+5. The runtime is not shutting down while the SDK waits for the decision.
+
+## The Dashboard Shows Hook Telemetry But I Expected A Business Activity
+
+OpenBox can attach internal span-derived telemetry around the same runtime path. That telemetry is operational evidence, not a second business step.
+
+Recommended interpretation:
+
+- tool, LLM, and resolved subagent events are business activities
+- HTTP, DB, traced-function, and optional file spans are supporting telemetry
+- use `activity_id` to correlate started and completed boundaries
+
+## Debug Logging
+
+Enable verbose SDK logging to trace governance decisions:
+
+```bash
+OPENBOX_DEBUG=1 python agent.py
+```
+
+This helps diagnose missing events, unexpected verdicts, and configuration problems.

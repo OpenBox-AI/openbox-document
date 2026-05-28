@@ -1,0 +1,179 @@
+---
+title: Integration Walkthrough
+sidebar_label: LangGraph (Python)
+description: "Govern a LangGraph application with OpenBox: install the SDK, wrap your compiled graph, configure identity, and verify live runs."
+llms_description: LangGraph-specific integration walkthrough
+sidebar_position: 4
+tags:
+  - sdk
+  - langgraph
+  - python
+  - integration
+---
+
+# Integration Walkthrough
+
+This is the end-to-end guide for integrating OpenBox with a LangGraph application. It covers the standard handler path, identity configuration, optional instrumentation, and what should appear in OpenBox once the integration is live.
+
+:::tip Skip ahead
+
+- **Already wrapped your graph?** Jump to [What the Integration Captures](#what-the-integration-captures).
+- **Need the short path?** Start with [Getting Started with LangGraph](/getting-started/langgraph).
+:::
+
+## Prerequisites
+
+- Python `3.11+`
+- a compiled LangGraph graph
+- an OpenBox account and agent API key
+- an OpenBox agent DID and private key unless **Require signing** is disabled for the agent
+
+## Part 1: Register Your Agent In OpenBox
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to **Agents**
+3. Create or open the agent you want to govern
+4. Generate an API key
+5. Copy the generated DID and private key unless **Require signing** is disabled
+6. Keep those credentials for your LangGraph runtime
+
+See [Registering Agents](/dashboard/agents/registering-agents) for the full dashboard flow.
+
+## Part 2: Install The SDK
+
+Published package: `openbox-langgraph-sdk-python`
+
+```bash
+uv add openbox-langgraph-sdk-python
+
+# Or with pip
+pip install openbox-langgraph-sdk-python
+```
+
+## Part 3: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+`OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY` must be configured together. The private key is a per-agent secret returned by OpenBox during identity provision or rotation.
+
+## Part 4: Wrap Your Compiled Graph
+
+```python title="agent.py"
+import os
+from langgraph.graph import END, START, MessagesState, StateGraph
+from openbox_langgraph import create_openbox_graph_handler
+
+graph = StateGraph(MessagesState)
+graph.add_node("agent", call_model)
+graph.add_node("tools", tool_node)
+graph.add_edge(START, "agent")
+graph.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
+graph.add_edge("tools", "agent")
+
+app = graph.compile()
+
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    agent_name="CustomerSupportAgent",
+)
+```
+
+The handler exposes graph-compatible methods such as `ainvoke()`, `invoke()`, `astream()`, and `astream_events()`.
+
+## Part 5: Invoke The Governed Graph
+
+```python
+result = await governed.ainvoke(
+    {"messages": [("user", "Summarize the latest support incident")]},
+    config={"configurable": {"thread_id": "support-session-001"}},
+)
+```
+
+Use a stable `thread_id` for the logical conversation. The SDK creates a fresh governed workflow/run boundary for each invocation so OpenBox can seal and attest each execution cleanly.
+
+## Part 6: Add Optional Instrumentation
+
+If your graph uses a SQLAlchemy engine created before OpenBox setup, pass it explicitly:
+
+```python
+from sqlalchemy import create_engine
+
+engine = create_engine(os.getenv("DATABASE_URL"))
+
+governed = create_openbox_graph_handler(
+    graph=app,
+    api_url=os.getenv("OPENBOX_URL"),
+    api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
+    sqlalchemy_engine=engine,
+)
+```
+
+For custom operations that should appear as spans, use `traced()`:
+
+```python
+from openbox_langgraph.tracing import traced
+
+@traced(name="enrich-ticket")
+async def enrich_ticket(ticket_id: str) -> dict:
+    return await load_ticket_context(ticket_id)
+```
+
+## Part 7: Verify A Live Run
+
+Trigger one real request through your LangGraph service, then check OpenBox for:
+
+- a run under your registered agent
+- the initiating `SignalReceived(user_prompt)` event
+- workflow lifecycle events
+- tool or subagent activities where applicable
+- LLM activity and model/token usage where human prompt content is present
+- HTTP, database, or traced-function telemetry if those surfaces ran
+- successful request authentication when **Require signing** is enabled
+
+## What The Integration Captures
+
+### Graph Runs
+
+The root graph invocation becomes a governed workflow-like run in OpenBox.
+
+### User Prompt Signal
+
+The initiating human prompt is emitted as `SignalReceived(user_prompt)` before the workflow starts.
+
+### Tools And Subagents
+
+Tool calls and resolved subagent calls become governed activities with started and completed boundaries.
+
+### LLM Calls
+
+Human-turn model calls are governed before the provider request and completed with output/model telemetry where available.
+
+### Operational Telemetry
+
+HTTP, database, and traced-function spans are attached to the surrounding governed activity or workflow context. File spans are available only when lower-level file instrumentation is enabled.
+
+## What To Expect In The UI
+
+- Tool calls show up as activities.
+- LLM usage is associated with governed LLM activity and run summaries.
+- Hook telemetry is operational evidence, not a separate business step.
+- A routing graph that only delegates to other agents may show little or no direct model usage of its own.
+
+## Next Steps
+
+- [Configuration](/developer-guide/langgraph/configuration)
+- [Error Handling](/developer-guide/langgraph/error-handling)
+- [Event Model](/developer-guide/langgraph/event-model)
