@@ -11,19 +11,21 @@ tags:
 
 # Configuration
 
-The SDK can be configured via environment variables or function parameters passed to `create_openbox_graph_handler()`.
+Configure the SDK through parameters passed to `create_openbox_graph_handler()`. In production, load secrets from environment variables or a secret manager and pass them into the handler.
 
 ## Environment Variables
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `OPENBOX_URL` | Yes | — | OpenBox Core API URL (HTTPS required for non-localhost) |
-| `OPENBOX_API_KEY` | Yes | — | API key for authentication (`obx_live_*` or `obx_test_*`) |
+| `OPENBOX_URL` | Recommended | — | OpenBox Core API URL to pass as `api_url` |
+| `OPENBOX_API_KEY` | Recommended | — | API key to pass as `api_key` (`obx_live_*` or `obx_test_*`) |
+| `OPENBOX_AGENT_DID` | Yes, unless disabled | — | DID assigned to this OpenBox agent; used automatically when `agent_did` is omitted |
+| `OPENBOX_AGENT_PRIVATE_KEY` | Yes, unless disabled | — | Base64 raw Ed25519 seed; used automatically when `agent_private_key` is omitted |
 | `OPENBOX_DEBUG` | No | `false` | Enable verbose SDK logging |
 
 ## Handler Parameters
 
-Parameters passed to `create_openbox_graph_handler()` override environment variables.
+`api_url` and `api_key` are required handler parameters. `agent_did` and `agent_private_key` are optional parameters because the SDK falls back to `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
 
 ### Connection
 
@@ -42,6 +44,22 @@ Your API key (`obx_live_*` or `obx_test_*`). Always use environment variables in
 
 ```python
 api_key=os.getenv("OPENBOX_API_KEY")
+```
+
+#### agent_did
+
+The DID assigned to the registered OpenBox agent. The SDK falls back to `OPENBOX_AGENT_DID` when this parameter is omitted.
+
+```python
+agent_did=os.getenv("OPENBOX_AGENT_DID")
+```
+
+#### agent_private_key
+
+Base64 raw Ed25519 seed returned by OpenBox during identity provision or rotation. The SDK falls back to `OPENBOX_AGENT_PRIVATE_KEY` when this parameter is omitted.
+
+```python
+agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY")
 ```
 
 #### agent_name
@@ -84,7 +102,7 @@ If timeout is exceeded, behavior follows `on_api_error`.
 
 #### hitl.enabled
 
-Enable Human-in-the-Loop approvals. When `True`, a `REQUIRE_APPROVAL` verdict suspends the graph and waits for a human decision in the dashboard.
+Configure Human-in-the-Loop approval polling. When OpenBox returns `REQUIRE_APPROVAL` at a HITL-capable boundary, the SDK waits for a human decision in the dashboard.
 
 ```python
 hitl={"enabled": True, "poll_interval_ms": 5000}
@@ -92,10 +110,10 @@ hitl={"enabled": True, "poll_interval_ms": 5000}
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `hitl.enabled` | `bool` | `False` | Enable HITL approval flow |
+| `hitl.enabled` | `bool` | `True` | HITL flow setting; leave enabled for normal approval handling |
 | `hitl.poll_interval_ms` | `int` | `5000` | Milliseconds between approval status polls |
 
-When `hitl.enabled=False`, a `REQUIRE_APPROVAL` verdict is treated as a BLOCK and raises `GovernanceBlockedError`.
+Use policy to decide which actions require approval. `poll_interval_ms` controls how often the SDK checks OpenBox for the human decision.
 
 ### Event Filtering
 
@@ -108,7 +126,7 @@ Control which events the SDK sends to OpenBox. All default to `True`.
 | `send_tool_start_event` | `bool` | `True` | Send tool execution started event |
 | `send_tool_end_event` | `bool` | `True` | Send tool execution completed event |
 | `send_llm_start_event` | `bool` | `True` | Send LLM call started event |
-| `send_llm_end_event` | `bool` | `True` | Send LLM call completed event |
+| `send_llm_end_event` | `bool` | `True` | Accepted for configuration parity; LLM completion closes an existing LLM-start row |
 
 #### skip_chain_types
 
@@ -177,11 +195,11 @@ governed = create_openbox_graph_handler(
 )
 ```
 
-## Configuration Precedence
+## Configuration Resolution
 
-1. Function parameters (highest priority)
-2. Environment variables
-3. Default values (lowest priority)
+1. `api_url` and `api_key` must be passed to `create_openbox_graph_handler()`.
+2. `agent_did` and `agent_private_key` use explicit parameters first, then fall back to `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
+3. Optional handler settings use explicit parameters first, then SDK defaults.
 
 ## Example: Full Configuration
 
@@ -198,6 +216,8 @@ governed = create_openbox_graph_handler(
     # Connection
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="ProductionAgent",
 
     # Governance behavior
@@ -228,8 +248,43 @@ governed = create_openbox_graph_handler(
 )
 ```
 
+## Important Behavioral Notes
+
+### Agent DID Identity
+
+Newly created OpenBox agents require cryptographic DID signing by default. When **Require signing** is enabled for the registered agent, the LangGraph SDK signs validation, governance evaluation, and approval requests with the agent's DID identity.
+
+Set both values together:
+
+```bash title=".env"
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+Rules:
+
+- `OPENBOX_AGENT_DID` must use the `did:aip:<uuid>` format.
+- `OPENBOX_AGENT_PRIVATE_KEY` must be the base64 raw 32-byte Ed25519 seed returned by OpenBox.
+- Setting only one of the two values fails SDK configuration parsing.
+- The SDK never logs the private key.
+
+The private key is returned only when the agent identity is provisioned or rotated. Store it as a per-agent secret and rotate it from OpenBox if it is exposed.
+
+If **Require signing** is disabled for the agent, omit both DID values and authenticate with `OPENBOX_API_KEY` only.
+
+### Validation
+
+Startup validation checks:
+
+- API key format
+- OpenBox URL format
+- DID identity pair consistency when DID signing values are present
+- live API key validation unless `validate=False`
+
+Use `validate=False` only for tests, local mocks, or fixture servers.
+
 ## Next Steps
 
 1. **[Error Handling](/developer-guide/langgraph/error-handling)** — Handle governance decisions in your code
-2. **[Event Types](/developer-guide/event-types)** — Understand the semantic event types captured by the SDK
-3. **[Approvals](/approvals)** — Review and act on HITL approval requests
+2. **[Event Model](/developer-guide/langgraph/event-model)** — Understand the LangGraph event shapes captured by the SDK
+3. **[Approvals and Guardrails](/developer-guide/langgraph/approvals-and-guardrails)** — Review runtime enforcement behavior

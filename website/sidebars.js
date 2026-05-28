@@ -44,9 +44,16 @@ const sidebars = {
           label: 'LangChain',
         },
         {
-          type: 'doc',
-          id: 'getting-started/langgraph/index',
+          type: 'category',
           label: 'LangGraph',
+          link: {
+            type: 'doc',
+            id: 'getting-started/langgraph/index',
+          },
+          items: [
+            'getting-started/langgraph/langgraph-101',
+            'getting-started/langgraph/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'category',
@@ -188,6 +195,11 @@ const sidebars = {
           items: [
             'developer-guide/langgraph/configuration',
             'developer-guide/langgraph/error-handling',
+            'developer-guide/langgraph/integration-walkthrough',
+            'developer-guide/langgraph/event-model',
+            'developer-guide/langgraph/approvals-and-guardrails',
+            'developer-guide/langgraph/telemetry',
+            'developer-guide/langgraph/troubleshooting',
           ],
         },
         {
