@@ -26,6 +26,32 @@ const IntegrationsSoon = [
   {label: 'OpenClaw', to: '/getting-started/openclaw'},
 ];
 
+const CrewAISnippet = `from crewai import Crew, Process
+from openbox import OpenBoxAgent, OpenBoxTask, create_openbox_engine
+
+researcher = OpenBoxAgent(
+    role="Researcher",
+    goal="Find information",
+    # Reads OPENBOX_RESEARCHER_API_KEY, _DID, _PRIVATE_KEY
+    env_prefix="OPENBOX_RESEARCHER",
+)
+
+task = OpenBoxTask(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+    activity_type="research",
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+with create_openbox_engine() as engine:
+    result = engine.govern(crew).kickoff()`;
+
 const DeepAgentsSnippet = `import os
 from deepagents import create_deep_agent
 from langchain.chat_models import init_chat_model
@@ -338,7 +364,13 @@ export default function Home() {
             </p>
             <div className={styles.tabsWrapper}>
               <Tabs groupId="quickstart-language" queryString>
-                <TabItem value="deep-agents" label="Deep Agents (Python)" default>
+                <TabItem value="crewai" label="CrewAI (Python)" default>
+                  <CodeBlock language="python" title="crew.py">{CrewAISnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/crewai">
+                    CrewAI quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="deep-agents" label="Deep Agents (Python)">
                   <CodeBlock language="python" title="agent.py">{DeepAgentsSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/deep-agents">
                     Deep Agents quickstart →
