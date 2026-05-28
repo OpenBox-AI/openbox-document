@@ -1,0 +1,208 @@
+---
+title: CrewAI Integration Guide (Python)
+sidebar_label: CrewAI (Python)
+description: "Govern CrewAI crews in Python: replace governed types, wrap the crew once, and capture task boundaries plus operational telemetry."
+llms_description: Python-specific CrewAI integration guide
+sidebar_position: 2
+tags:
+  - sdk
+  - crewai
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# CrewAI Integration Guide (Python)
+
+This is the end-to-end guide for integrating OpenBox with a CrewAI application. You will install the SDK, configure agent credentials, replace governed types, run a real crew, and understand how CrewAI runs appear in OpenBox.
+
+:::tip Skip ahead
+
+- **Already have a CrewAI app?** See **[Wrap an Existing Crew](/getting-started/crewai/wrap-an-existing-agent)** first.
+- **Want a runnable example?** Start with **[Run the Demo](/getting-started/crewai/run-the-demo)**.
+:::
+
+## Prerequisites
+
+- Python `>=3.10`
+- `crewai >=1.14.1`
+- an OpenAI API key
+- an OpenBox Core URL
+- one OpenBox agent provisioned per governed role
+
+## Part 1: Install The SDK
+
+```bash
+pip install openbox-crewai-sdk-python
+```
+
+Or with `uv`:
+
+```bash
+uv add openbox-crewai-sdk-python
+```
+
+## Part 2: Provision OpenBox Agents
+
+Before configuring environment variables, provision each governed CrewAI role in OpenBox.
+
+Provisioning gives you the identity material the SDK uses:
+
+- the per-agent API key
+- the agent DID
+- the one-time private key used for AIP signing
+
+For multi-agent crews, provision one OpenBox agent per governed role and keep each credential set mapped to a distinct `env_prefix`.
+
+## Part 3: Configure Agent Identity
+
+Each governed agent needs an `env_prefix` and matching environment variables:
+
+```bash
+OPENBOX_URL=https://core.openbox.ai
+
+OPENBOX_RESEARCHER_API_KEY=obx_live_your_api_key
+OPENBOX_RESEARCHER_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_RESEARCHER_PRIVATE_KEY=base64_ed25519_seed
+```
+
+For multi-agent crews, repeat the pattern for each role-specific prefix.
+
+The prefix comes from `env_prefix` on each `OpenBoxAgent`. For example, `env_prefix="OPENBOX_RESEARCHER"` maps to:
+
+- `OPENBOX_RESEARCHER_API_KEY`
+- `OPENBOX_RESEARCHER_DID`
+- `OPENBOX_RESEARCHER_PRIVATE_KEY`
+
+## Part 4: Replace Governed Types
+
+The governed integration point is simple:
+
+- replace `Agent` with `OpenBoxAgent`
+- replace governed `Task` with `OpenBoxTask`
+- run the crew through `engine.govern(crew)`
+
+<Tabs>
+<TabItem value="before" label="CrewAI">
+
+```python title="crew.py"
+from crewai import Agent, Crew, Process, Task
+
+researcher = Agent(
+    role="Researcher",
+    goal="Find information",
+)
+
+task = Task(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+result = crew.kickoff()
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="crew.py"
+from crewai import Crew, Process
+from openbox import OpenBoxAgent, OpenBoxTask, create_openbox_engine
+
+researcher = OpenBoxAgent(
+    role="Researcher",
+    goal="Find information",
+    # Reads OPENBOX_RESEARCHER_API_KEY/DID/PRIVATE_KEY
+    env_prefix="OPENBOX_RESEARCHER",
+)
+
+task = OpenBoxTask(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+    activity_type="research",
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+with create_openbox_engine() as engine:
+    result = engine.govern(crew).kickoff()
+```
+
+</TabItem>
+</Tabs>
+
+## Part 5: Run The Crew
+
+Run the same crew execution you already use locally.
+
+For async crews:
+
+```python
+with create_openbox_engine() as engine:
+    result = await engine.govern(crew).akickoff()
+```
+
+## What You Should See In OpenBox
+
+After a governed run, OpenBox should show:
+
+1. a session per governed agent
+2. `ActivityStarted` and `ActivityCompleted` for each governed task
+3. approvals, blocks, or halts where policy requires them
+4. HTTP and database telemetry attached to the governed activity
+5. flow correlation metadata when the crew runs inside a wrapped CrewAI flow
+
+## How The Integration Works
+
+The SDK uses three layers of governance around CrewAI execution:
+
+- **Layer 1** — before each governed task (`ActivityStarted`)
+- **Layer 2** — after each governed task (`ActivityCompleted`)
+- **Layer 3** — during HTTP, DB, file, and LLM-gate activity
+
+The core runtime pieces are:
+
+- `OpenBoxAgent` — resolves per-agent credentials and manages task/session governance
+- `OpenBoxTask` — adds the `activity_type` field used in governance payloads
+- `OpenBoxEngine` — owns shared runtime state and instrumentation for the process
+- `GovernedCrew` — the crew returned by `engine.govern(crew)`
+
+## Flows And Multi-Crew Correlation
+
+If you orchestrate multiple governed crews inside a CrewAI `Flow`, wrap the flow class with `create_openbox_flow()`:
+
+```python
+from openbox import create_openbox_flow
+
+GovernedFlow = create_openbox_flow(MyFlow)
+flow = GovernedFlow()
+flow.kickoff()
+```
+
+This does not govern the flow itself. It adds correlation so governed crew runs share `flow_execution_id`.
+
+## Common Integration Rules
+
+- use `OpenBoxAgent` with `OpenBoxTask`
+- keep one engine per process
+- give each governed agent its own `env_prefix`
+- enable file instrumentation only when you need file governance
+- use the OpenBox dashboard to inspect approvals, guardrails, and replay
+
+## Next Steps
+
+1. Configure runtime behavior in [Configuration](/developer-guide/crewai/configuration).
+2. Read [Approvals and Guardrails](/developer-guide/crewai/approvals-and-guardrails) before testing block and approval scenarios.
+3. Read [Telemetry](/developer-guide/crewai/telemetry) before writing hook-level policy.

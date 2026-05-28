@@ -1,0 +1,72 @@
+---
+title: Troubleshooting
+description: "Diagnose CrewAI SDK startup, policy, approval, telemetry, and runtime integration issues."
+llms_description: CrewAI SDK troubleshooting and diagnostics
+tags:
+  - sdk
+  - crewai
+  - python
+---
+
+# Troubleshooting
+
+## Startup Errors
+
+| Error | Check |
+| --- | --- |
+| `OpenBoxConfigError` | `OPENBOX_URL` is set; `{PREFIX}_API_KEY` is set; DID/private key are paired when used |
+| `OpenBoxAuthError` | API key format and validation against OpenBox Core |
+| `OpenBoxInsecureURLError` | non-localhost URL uses HTTPS |
+| `OpenBoxNetworkError` | runtime can reach `OPENBOX_URL` |
+
+Validation runs at `engine.govern(crew)`, not just engine creation.
+
+## No Events In OpenBox
+
+- make sure you run the governed crew returned by `engine.govern(crew)`
+- make sure governed agents are `OpenBoxAgent`
+- make sure governed tasks are `OpenBoxTask`
+- make sure the engine is not closed before kickoff
+
+## Guardrail UI Test Passes But Live Run Does Not Fire
+
+Policy executes before guardrails. If the earlier policy verdict is not `ALLOW`, the guardrail may never run.
+
+## Hook-Level Block Looks Wrong
+
+If a Layer 3 policy fires inside a CrewAI tool path, the user-visible error may surface later as a generic `ValueError` rather than `GovernanceBlockedError`.
+
+Move the trigger to `ActivityStarted` if you want a clearer task-boundary failure.
+
+## Duplicate Approval Requests
+
+You are likely governing hook payloads as if they were business actions. Limit approval policy to task boundaries unless hook-level approval is intentional.
+
+## Approval Never Resolves
+
+Check:
+
+- `hitl_enabled=True`
+- the crew is not in `exclude_crews_hitl`
+- OpenBox eventually returns `allow`, `block`, or `halt`
+- the approval window has not expired
+
+## Multiple Engines In One Process
+
+Use one `OpenBoxEngine` per process. Re-initializing the engine with different instrumentation settings can raise a configuration error.
+
+## Local SDK Changes Are Not Reflected
+
+When testing a local checkout of the SDK:
+
+```bash
+uv pip install -e /path/to/openbox-crewai-sdk-python
+```
+
+## Debug Logging
+
+```python
+engine = create_openbox_engine(debug_log=True)
+```
+
+This enables per-agent trace logging for evaluate payloads, verdicts, and approval polling cycles.
