@@ -1,0 +1,191 @@
+---
+title: Integration Walkthrough
+sidebar_label: Integration Walkthrough
+description: "End-to-end guide for governing LangChain agents with OpenBox: install the SDK, register an agent, add middleware, configure DID signing, and verify live runs."
+llms_description: LangChain Python integration walkthrough
+sidebar_position: 4
+tags:
+  - sdk
+  - langchain
+  - python
+  - integration
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# LangChain Integration Walkthrough
+
+This guide shows how to add OpenBox governance to an existing LangChain agent
+without rewriting the agent. The integration point is LangChain middleware:
+create an `OpenBoxLangChainMiddleware` instance and pass it to
+`create_agent(..., middleware=[...])`.
+
+:::tip Existing agent?
+If you only need the shortest setup path, start with
+**[Getting Started with LangChain](/getting-started/langchain)**.
+:::
+
+## Prerequisites
+
+- Python 3.11+
+- LangChain 0.3+ with an agent builder that accepts middleware
+- `openbox-langchain-sdk-python` 0.2.0+
+- an OpenBox agent registration with an API key
+- the OpenBox agent DID and private key unless **Require signing** is disabled
+
+## Part 1: Register Your Agent In OpenBox
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents**
+3. Create or open the agent you want to govern
+4. Generate an API key
+5. Copy the generated DID and private key unless **Require signing** is disabled
+6. Keep the credentials in your runtime secret store
+
+See **[Registering Agents](/dashboard/agents/registering-agents)** for the
+dashboard flow.
+
+## Part 2: Install The SDK
+
+```bash
+uv add openbox-langchain-sdk-python
+
+# Or with pip
+pip install openbox-langchain-sdk-python
+```
+
+The LangChain SDK reuses the shared OpenBox LangGraph governance core, so the
+package depends on `openbox-langgraph-sdk-python >= 0.2.0`.
+
+## Part 3: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:your_agent_did
+OPENBOX_AGENT_PRIVATE_KEY=your_agent_private_key
+```
+
+`OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY` must be configured together.
+Supplying only one value fails during SDK configuration.
+
+## Part 4: Add Middleware
+
+<Tabs>
+<TabItem value="before" label="LangChain">
+
+```python title="agent.py"
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+
+from dotenv import load_dotenv
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+load_dotenv()
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+    tool_type_map={
+        "search_web": "http",
+        "lookup_customer": "database",
+    },
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+</Tabs>
+
+## Part 5: Verify A Live Run
+
+Run one real request through the governed agent, then check OpenBox for:
+
+- a run under the registered agent
+- model call events with prompt and response metadata
+- tool call activities with started and completed events
+- hook-level telemetry for HTTP, database, or file I/O when instrumentation is active
+- governance decisions for allowed, blocked, halted, or approval-required operations
+- signed request authentication when **Require signing** is enabled
+
+Open the [OpenBox Dashboard](https://platform.openbox.ai), navigate to
+**Agents**, open the agent, and inspect the latest run.
+
+## How The Integration Works
+
+The SDK uses LangChain `AgentMiddleware` hooks:
+
+| Hook | Purpose |
+|------|---------|
+| `before_agent` / `abefore_agent` | Starts the OpenBox run and pre-screens the user prompt |
+| `wrap_model_call` / `awrap_model_call` | Records model start/completion and applies LLM governance |
+| `wrap_tool_call` / `awrap_tool_call` | Evaluates tool calls before and after execution |
+| `after_agent` / `aafter_agent` | Completes the run and flushes telemetry |
+
+The SDK also initializes hook-level OpenTelemetry instrumentation so lower-level
+HTTP, database, and file operations can be attributed to the active LangChain
+activity.
+
+## Tool Classification
+
+Use `tool_type_map` to classify tools for policy targeting:
+
+```python
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    tool_type_map={
+        "search_web": "http",
+        "lookup_customer": "database",
+        "send_email": "communication",
+    },
+)
+```
+
+Policies can then target semantic tool categories rather than individual tool
+names.
+
+## Human-in-the-Loop Approvals
+
+If OpenBox returns `REQUIRE_APPROVAL`, the SDK follows the approval behavior from
+the shared governance core. Approval requests appear in the
+**[Approvals](/approvals)** queue. If the request is rejected or expires, the SDK
+raises a governance exception.
+
+See **[Error Handling](/developer-guide/langchain/error-handling)** for the
+exception types and recommended handling patterns.
+
+## Next Steps
+
+1. **[Configuration](/developer-guide/langchain/configuration)** - Review all middleware options
+2. **[Error Handling](/developer-guide/langchain/error-handling)** - Handle governance decisions in code
+3. **[Troubleshooting](/developer-guide/langchain/troubleshooting)** - Diagnose missing sessions, identity errors, and telemetry gaps

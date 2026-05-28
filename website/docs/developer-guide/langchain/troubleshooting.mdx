@@ -1,0 +1,152 @@
+---
+title: Troubleshooting
+description: "Fix common LangChain SDK issues: missing sessions, DID configuration, governance blocks, approval behavior, and telemetry gaps."
+llms_description: Common issues and fixes for the LangChain SDK
+sidebar_position: 5
+tags:
+  - sdk
+  - langchain
+  - python
+  - configuration
+---
+
+# Troubleshooting
+
+Use this page to diagnose the most common LangChain SDK integration issues.
+
+## Middleware Not Connecting To OpenBox
+
+Check that the required values are present before creating the middleware:
+
+```bash
+[ -n "$OPENBOX_URL" ] && echo "OPENBOX_URL is set" || echo "OPENBOX_URL is NOT set"
+[ -n "$OPENBOX_API_KEY" ] && echo "OPENBOX_API_KEY is set" || echo "OPENBOX_API_KEY is NOT set"
+```
+
+Then verify:
+
+1. `OPENBOX_URL` is passed as `api_url`
+2. `OPENBOX_API_KEY` is passed as `api_key`
+3. `.env` is loaded before `create_openbox_langchain_middleware()` if you use `python-dotenv`
+4. `validate=True` is enabled in production so bad credentials fail during startup
+
+If you get `OpenBoxInsecureURLError`, use HTTPS for non-localhost OpenBox URLs:
+
+```bash
+# Wrong
+OPENBOX_URL=http://core.openbox.ai
+
+# Correct
+OPENBOX_URL=https://core.openbox.ai
+```
+
+## DID Configuration Fails
+
+DID signing is enabled by default for newly registered OpenBox agents. Configure
+both identity values:
+
+```bash
+OPENBOX_AGENT_DID=did:aip:your_agent_did
+OPENBOX_AGENT_PRIVATE_KEY=your_agent_private_key
+```
+
+Common causes:
+
+1. Only one of `OPENBOX_AGENT_DID` or `OPENBOX_AGENT_PRIVATE_KEY` is set
+2. The DID/private key belongs to a different OpenBox agent than the API key
+3. The key has been rotated in OpenBox but the runtime still uses the old value
+4. Signing is required in OpenBox but the runtime is configured as if signing is disabled
+
+If **Require signing** is disabled for the agent in OpenBox, you can omit both
+identity values.
+
+## No Sessions In The Dashboard
+
+If your agent runs but no sessions appear:
+
+1. Confirm `create_openbox_langchain_middleware()` is called successfully
+2. Confirm the returned middleware is passed to `create_agent(..., middleware=[middleware])`
+3. Verify the API key belongs to the same agent you are viewing in OpenBox
+4. Run a full agent invocation, not only module import or agent construction
+5. Check network access from the runtime to `OPENBOX_URL`
+
+## Tool Calls Do Not Show The Expected Type
+
+Tool type is optional and comes from `tool_type_map`.
+
+```python
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    tool_type_map={
+        "search_web": "http",
+        "lookup_customer": "database",
+    },
+)
+```
+
+The keys must match the LangChain tool names seen by the middleware.
+
+## Governance Blocks Or Halts The Agent
+
+Governance exceptions mean OpenBox policy enforcement is working.
+
+| Exception | Meaning |
+|-----------|---------|
+| `GovernanceBlockedError` | A model call, tool call, or hook operation was blocked |
+| `GovernanceHaltError` | The whole agent session should stop, including approval rejection or expiry |
+| `GuardrailsValidationError` | A configured guardrail matched restricted content |
+| `ApprovalRejectedError` | Lower-level direct approval polling received a rejection |
+| `ApprovalExpiredError` | Lower-level direct approval polling timed out |
+
+To investigate:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to **Agents**
+3. Open the agent and latest run
+4. Review the event timeline and the policy or guardrail message
+
+See **[Error Handling](/developer-guide/langchain/error-handling)** for handling
+patterns.
+
+## Approval Requests Do Not Appear
+
+If your policy should require approval but no request appears:
+
+1. Confirm the policy returns `REQUIRE_APPROVAL`, not `BLOCK`
+2. Confirm the policy targets the correct event type and tool name/type
+3. Check the run timeline to see whether another policy blocked the event first
+4. Confirm the agent is connected to the expected OpenBox organization
+
+See **[Approvals](/approvals)** for the approval queue.
+
+## Missing HTTP, Database, Or File Telemetry
+
+The LangChain SDK sends model and tool lifecycle events through middleware. It
+also initializes hook-level OpenTelemetry instrumentation for lower-level
+operations.
+
+If lower-level telemetry is missing:
+
+1. Confirm the code path actually performs HTTP, database, or file I/O during the agent run
+2. For SQL telemetry, pass the SQLAlchemy engine through `sqlalchemy_engine`
+3. Confirm the operation happens inside the active agent invocation, not before middleware starts
+4. Check logs for OpenTelemetry setup warnings
+
+## Debug Logging
+
+Enable SDK debug output:
+
+```bash
+OPENBOX_DEBUG=1 python agent.py
+```
+
+Then rerun the agent and inspect the OpenBox run timeline.
+
+## Next Steps
+
+1. **[Integration Walkthrough](/developer-guide/langchain/integration-walkthrough)** - Review the full wiring path
+2. **[Configuration](/developer-guide/langchain/configuration)** - Check middleware options and identity setup
+3. **[Error Handling](/developer-guide/langchain/error-handling)** - Handle governance exceptions safely
