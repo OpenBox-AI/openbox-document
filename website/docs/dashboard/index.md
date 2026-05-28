@@ -38,12 +38,13 @@ The top of the dashboard displays four key performance indicators:
 
 A donut chart showing the distribution of agents across Trust Tiers:
 
-| Tier | Risk Level | Description |
-|------|------------|-------------|
-| **Tier 1 (0% – 24%): Trusted - Green** | Low | Highly trusted, minimal constraints |
-| **Tier 2 (25% – 49%): Confident - Blue** | Medium | Standard policies, normal monitoring |
-| **Tier 3 (50% – 74%): Monitor - Orange** | High | Enhanced controls, some HITL required |
-| **Tier 4 (75% – 100%): Restrict - Red** | Critical | Strict governance, frequent HITL |
+| Tier | Trust Score | Description |
+|------|-------------|-------------|
+| **Tier 1: Trusted - Green** | 90 – 100 | Highly trusted, minimal constraints |
+| **Tier 2: Confident - Blue** | 75 – 89 | Standard policies, normal monitoring |
+| **Tier 3: Monitor - Orange** | 50 – 74 | Enhanced controls, some HITL required |
+| **Tier 4: Restrict - Red** | 25 – 49 | Strict governance, frequent HITL |
+| **Untrusted: Decommission - Dark Red** | 0 – 24 | Agent suspended, cannot operate |
 
 Click any tier in the legend to filter the agents list.
 

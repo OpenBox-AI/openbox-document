@@ -23,6 +23,7 @@ from openbox_langgraph import (
     GuardrailsValidationError,
     ApprovalRejectedError,
     ApprovalExpiredError,
+    OpenBoxConfigError,
 )
 ```
 
@@ -34,7 +35,7 @@ from openbox_langgraph import (
 | `GovernanceHaltError` | HALT verdict | Entire agent session terminated by policy |
 | `GuardrailsValidationError` | Guardrails match | PII, toxic content, or restricted data detected |
 | `ApprovalRejectedError` | HITL rejected | A human rejected the approval request |
-| `ApprovalExpiredError` | HITL timeout | No human decision before the approval deadline |
+| `ApprovalExpiredError` | HITL expired | No human decision before the server-side approval deadline |
 
 All governance exceptions carry the human-readable decision message from OpenBox as the exception message (`str(e)`).
 
@@ -108,7 +109,7 @@ except ApprovalRejectedError as e:
 
 ### ApprovalExpiredError
 
-Raised when no human decision is made before the approval deadline.
+Raised when no human decision is made before the server-side approval deadline.
 
 ```python
 from openbox_langgraph import ApprovalExpiredError
@@ -143,12 +144,14 @@ These are raised during `create_openbox_graph_handler()` — at initialization t
 |-----------|-------|
 | `OpenBoxError` | Base class for all SDK errors |
 | `OpenBoxAuthError` | Invalid or missing API key |
+| `OpenBoxConfigError` | Invalid SDK configuration, including incomplete agent DID identity values |
 | `OpenBoxNetworkError` | Cannot reach OpenBox Core |
 | `OpenBoxInsecureURLError` | HTTP used for a non-localhost URL |
 
 ```python
 from openbox_langgraph import (
     OpenBoxAuthError,
+    OpenBoxConfigError,
     OpenBoxNetworkError,
     OpenBoxInsecureURLError,
 )
@@ -158,14 +161,30 @@ try:
         graph=app,
         api_url=os.getenv("OPENBOX_URL"),
         api_key=os.getenv("OPENBOX_API_KEY"),
+        agent_did=os.getenv("OPENBOX_AGENT_DID"),
+        agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     )
 except OpenBoxInsecureURLError:
     raise RuntimeError("OPENBOX_URL must use HTTPS in production")
+except OpenBoxConfigError as e:
+    raise RuntimeError(f"Invalid OpenBox SDK configuration: {e}")
 except OpenBoxAuthError:
     raise RuntimeError("Invalid OPENBOX_API_KEY — check your credentials")
 except OpenBoxNetworkError as e:
     raise RuntimeError(f"Cannot reach OpenBox Core: {e}")
 ```
+
+## OpenBox Returns `401 invalid token or agent identity`
+
+This usually means API-key authentication succeeded far enough to reach OpenBox, but the agent identity material did not match the registered agent.
+
+What to verify:
+
+1. The API key belongs to the same OpenBox agent as `OPENBOX_AGENT_DID`.
+2. `OPENBOX_AGENT_DID` uses the `did:aip:<uuid>` format.
+3. `OPENBOX_AGENT_PRIVATE_KEY` is the base64 raw 32-byte Ed25519 seed returned by OpenBox, not a PEM key or public key.
+4. The DID private key has not been rotated since the runtime environment was configured.
+5. The runtime clock is synchronized so signature timestamp checks pass.
 
 ## Best Practices
 
@@ -188,5 +207,5 @@ This logs the full event payload sent to OpenBox and the raw verdict received, w
 ## Next Steps
 
 1. **[Configuration](/developer-guide/langgraph/configuration)** — Configure `on_api_error`, timeouts, and HITL behavior
-2. **[Event Types](/developer-guide/event-types)** — Understand the semantic event types that trigger governance decisions
-3. **[Approvals](/approvals)** — Review and process HITL requests in the dashboard
+2. **[Event Model](/developer-guide/langgraph/event-model)** — Understand the semantic event types that trigger governance decisions
+3. **[Approvals and Guardrails](/developer-guide/langgraph/approvals-and-guardrails)** — Review and process HITL requests in the dashboard

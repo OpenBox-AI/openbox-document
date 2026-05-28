@@ -29,6 +29,8 @@ Configuration is resolved in this order:
 |----------|----------|---------|---------|
 | `OPENBOX_URL` | Yes | - | OpenBox Core base URL |
 | `OPENBOX_API_KEY` | Yes | - | OpenBox API key |
+| `OPENBOX_AGENT_DID` | Yes, unless disabled | - | DID assigned to this OpenBox agent |
+| `OPENBOX_AGENT_PRIVATE_KEY` | Yes, unless disabled | - | Base64 raw Ed25519 seed returned during identity provision or rotation |
 | `OPENBOX_VALIDATE` | No | `true` | Validate the API key at startup |
 | `OPENBOX_GOVERNANCE_POLICY` | No | `fail_open` | Behavior when OpenBox is unavailable |
 | `OPENBOX_GOVERNANCE_TIMEOUT` | No | `30` | Timeout in seconds for evaluate and approval calls |
@@ -49,6 +51,8 @@ Configuration is resolved in this order:
 | --- | --- | --- |
 | `apiUrl` | required | Point the SDK at OpenBox Core |
 | `apiKey` | required | Authenticate evaluate and approval calls |
+| `agentDid` | unset | Identify the agent for DID-signed OpenBox requests |
+| `agentPrivateKey` | unset | Sign OpenBox requests when the registered agent requires signing |
 | `validate` | `true` | Fail fast on invalid credentials or insecure URLs |
 | `onApiError` | `"fail_open"` | Choose availability versus strict enforcement during outages |
 | `governanceTimeout` | `30` | Set the API timeout in seconds |
@@ -69,6 +73,7 @@ Configuration is resolved in this order:
 | `instrumentDatabases` | `true` | Low-friction visibility into data access |
 | `instrumentFileIo` | `false` until needed | Reduce noise and sensitive-path exposure |
 | `skipSignals` | Do not skip `agent_output` by default | That signal carries agent output and model telemetry |
+| `OPENBOX_AGENT_PRIVATE_KEY` | Secret manager only when signing is required | Prevents agent identity material from being shared or committed |
 
 ## Example
 
@@ -78,6 +83,8 @@ import { withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
 await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
   apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY,
   validate: true,
   onApiError: "fail_open",
   governanceTimeout: 30,
@@ -95,12 +102,35 @@ await withOpenBox(mastra, {
 
 ## Important Behavioral Notes
 
+### Agent DID Identity
+
+Newly created OpenBox agents require cryptographic DID signing by default. When **Require signing** is enabled for the registered agent, the Mastra SDK signs validation, governance evaluation, and approval requests with the agent's DID identity.
+
+Set both values together:
+
+```bash title=".env"
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+Rules:
+
+- `OPENBOX_AGENT_DID` must use the `did:aip:<uuid>` format.
+- `OPENBOX_AGENT_PRIVATE_KEY` must be the base64 raw 32-byte Ed25519 seed returned by OpenBox.
+- Setting only one of the two values fails SDK configuration parsing.
+- The SDK never logs the private key.
+
+The private key is returned only when the agent identity is provisioned or rotated. Store it as a per-agent secret and rotate it from OpenBox if it is exposed.
+
+If **Require signing** is disabled for the agent, omit both DID values and authenticate with `OPENBOX_API_KEY` only.
+
 ### Validation
 
 Startup validation checks:
 
 - API key format
 - OpenBox URL format
+- DID identity pair consistency when DID signing values are present
 - live API key validation unless `validate: false`
 
 Use `validate: false` only for tests, local mocks, or fixture servers.

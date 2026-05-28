@@ -12,19 +12,45 @@ import TabItem from '@theme/TabItem';
 import styles from './index.module.css';
 
 const IntegrationsLive = [
+  {label: 'CrewAI', to: '/getting-started/crewai'},
   {label: 'Deep Agents', to: '/getting-started/deep-agents'},
+  {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'LangGraph', to: '/getting-started/langgraph'},
   {label: 'Mastra', to: '/getting-started/mastra'},
   {label: 'Temporal', to: '/getting-started/temporal'},
 ];
 
 const IntegrationsSoon = [
-  {label: 'CrewAI', to: '/getting-started/crewai'},
   {label: 'Cursor', to: '/getting-started/cursor'},
-  {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'OpenClaw', to: '/getting-started/openclaw'},
 ];
+
+const CrewAISnippet = `from crewai import Crew, Process
+from openbox import OpenBoxAgent, OpenBoxTask, create_openbox_engine
+
+researcher = OpenBoxAgent(
+    role="Researcher",
+    goal="Find information",
+    # Reads OPENBOX_RESEARCHER_API_KEY, _DID, _PRIVATE_KEY
+    env_prefix="OPENBOX_RESEARCHER",
+)
+
+task = OpenBoxTask(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+    activity_type="research",
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+with create_openbox_engine() as engine:
+    result = engine.govern(crew).kickoff()`;
 
 const DeepAgentsSnippet = `import os
 from deepagents import create_deep_agent
@@ -35,8 +61,10 @@ from openbox_deepagent import create_openbox_middleware  # Added import
 middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="ResearchBot",
-
+    known_subagents=["researcher", "writer", "general-purpose"],
 )
 
 agent = create_deep_agent(
@@ -53,6 +81,27 @@ result = await agent.ainvoke(
     {"messages": [{"role": "user", "content": "Research AI safety"}]},
     config={"configurable": {"thread_id": "session-001"}},
 )`;
+
+const LangChainSnippet = `import os
+
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})`;
 
 const LangGraphSnippet = `import os
 from langgraph.graph import StateGraph, START, END, MessagesState
@@ -72,6 +121,8 @@ governed = create_openbox_graph_handler(
     graph=app,
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="MyAgent",
 )
 
@@ -91,7 +142,9 @@ const mastra = new Mastra({
 
 export const governedMastra = await withOpenBox(mastra, {
   apiKey: process.env.OPENBOX_API_KEY,
-  apiUrl: process.env.OPENBOX_URL
+  apiUrl: process.env.OPENBOX_URL,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
 });
 
 process.on("SIGTERM", async () => {
@@ -307,14 +360,26 @@ export default function Home() {
               Integrate in 3 steps
             </Heading>
             <p className={styles.featureKicker}>
-              Generate an API key, install the SDK, configure governance rules.
+              Generate agent credentials, install the SDK, configure governance rules.
             </p>
             <div className={styles.tabsWrapper}>
               <Tabs groupId="quickstart-language" queryString>
-                <TabItem value="deep-agents" label="Deep Agents (Python)" default>
+                <TabItem value="crewai" label="CrewAI (Python)" default>
+                  <CodeBlock language="python" title="crew.py">{CrewAISnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/crewai">
+                    CrewAI quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="deep-agents" label="Deep Agents (Python)">
                   <CodeBlock language="python" title="agent.py">{DeepAgentsSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/deep-agents">
                     Deep Agents quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="langchain" label="LangChain (Python)">
+                  <CodeBlock language="python" title="agent.py">{LangChainSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/langchain">
+                    LangChain quickstart →
                   </Link>
                 </TabItem>
                 <TabItem value="langgraph" label="LangGraph (Python)">

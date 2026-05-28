@@ -11,20 +11,21 @@ tags:
 
 # Trust Tiers
 
-Trust Tiers translate the numeric Trust Score (0-100) into trust levels that determine how strictly an agent is controlled.
+Trust Tiers translate the numeric Trust Score (0-100) into trust levels that determine how strictly an agent is controlled. Higher Trust Score = higher tier (lower number) = more autonomy.
 
 ## Tier Definitions
 
-| Tier | Risk Profile Score | Risk Level | Description |
-|------|-------------|------------|-------------|
-| **Tier 1** | 0% – 24% | Low | Read-only, public data access |
-| **Tier 2** | 25% – 49% | Medium | Internal data, non-critical actions |
-| **Tier 3** | 50% – 74% | High | PII, financial data, critical actions |
-| **Tier 4** | 75% – 100% | Critical | System admin, destructive actions |
+| Tier | Trust Score | Label | Description |
+|------|-------------|-------|-------------|
+| **Tier 1** | 90 – 100 | Trusted | Long history of compliance, minimal constraints |
+| **Tier 2** | 75 – 89 | Confident | Generally compliant, standard policies |
+| **Tier 3** | 50 – 74 | Monitor | New agents or recovering, enhanced controls |
+| **Tier 4** | 25 – 49 | Restrict | Pattern of non-compliance, strict governance + HITL |
+| **Untrusted** | 0 – 24 | Decommission | Agent suspended, cannot operate |
 
 ## Trust Controls by Tier
 
-### Tier 1: Highly Trusted
+### Tier 1: Trusted
 
 **Characteristics:**
 - Long history of compliant behavior
@@ -39,7 +40,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 **Example agents:** Production assistants with 6+ months of clean history.
 
-### Tier 2: Trusted
+### Tier 2: Confident
 
 **Characteristics:**
 - Generally compliant
@@ -54,7 +55,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 **Example agents:** Most production agents after initial period.
 
-### Tier 3: Developing
+### Tier 3: Monitor
 
 **Characteristics:**
 - New agents (starting tier for most)
@@ -69,7 +70,7 @@ Trust Tiers translate the numeric Trust Score (0-100) into trust levels that det
 
 **Example agents:** New agents, agents recovering from incidents.
 
-### Tier 4: Low Trust
+### Tier 4: Restrict
 
 **Characteristics:**
 - Multiple recent violations
@@ -97,18 +98,17 @@ Trust Score drops from 76 to 74
 → Stricter policies applied
 ```
 
-### Upgrade (Sustained)
+### Upgrade (Immediate)
 
-Agents are upgraded only after sustained improvement:
+Agents are immediately upgraded when Trust Score crosses upper bound. Tier 1 upgrades additionally require admin approval.
 
 ```
 Trust Score rises from 74 to 76
-→ Score must stay ≥75 for 7 days
-→ Then upgrade: Tier 3 → Tier 2
+→ Immediate upgrade: Tier 3 → Tier 2
 → Notification sent
 ```
 
-This prevents oscillation at tier boundaries.
+Both directions are symmetric — no stabilization periods or cooldowns. Trust recovery is earned through clean sessions pushing penalties out of the rolling window, not granted by idle time.
 
 ## Tier-Based Policy Defaults
 
@@ -134,8 +134,9 @@ require_approval {
 |------|-------------|------|
 | Tier 1 | Green | Shield with check |
 | Tier 2 | Blue | Shield |
-| Tier 3 | Yellow | Shield with warning |
+| Tier 3 | Orange | Shield with warning |
 | Tier 4 | Red | Shield with exclamation |
+| Untrusted | Dark Red | Shield with cross |
 
 ## Related
 
