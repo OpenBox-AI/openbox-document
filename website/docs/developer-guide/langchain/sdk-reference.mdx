@@ -1,0 +1,135 @@
+---
+title: LangChain SDK (Python)
+description: "OpenBox SDK reference for LangChain: govern agents, model calls, tools, approvals, guardrails, and operational telemetry."
+llms_description: LangChain SDK reference and guide set
+sidebar_position: 1
+slug: /developer-guide/langchain
+tags:
+  - sdk
+  - langchain
+  - python
+---
+
+# LangChain SDK (Python)
+
+The OpenBox LangChain SDK connects LangChain agents to OpenBox through
+LangChain's middleware interface. It governs agent lifecycle hooks, model calls,
+tool calls, and hook-level operational telemetry while keeping your existing
+agent logic unchanged.
+
+Published package: `openbox-langchain-sdk-python`
+
+| Guide | Description |
+|-------|-------------|
+| **[Integration Walkthrough](/developer-guide/langchain/integration-walkthrough)** | End-to-end guide for wiring `create_openbox_langchain_middleware()`, tool classification, DID signing, and telemetry into a LangChain agent |
+| **[Configuration](/developer-guide/langchain/configuration)** | Environment variables, middleware options, defaults, and production guidance |
+| **[Error Handling](/developer-guide/langchain/error-handling)** | Runtime errors, approval outcomes, guardrail failures, and startup validation issues |
+| **[Event Model](/developer-guide/langchain/event-model)** | Understand agent runs, model calls, tool calls, signals, and how LangChain events appear in OpenBox |
+| **[Approvals and Guardrails](/developer-guide/langchain/approvals-and-guardrails)** | How verdicts are enforced and how to test live guardrails correctly |
+| **[Telemetry](/developer-guide/langchain/telemetry)** | HTTP, database, file, and traced-function capture behavior |
+| **[Troubleshooting](/developer-guide/langchain/troubleshooting)** | Diagnose startup, policy, approvals, telemetry, and UI interpretation issues |
+
+:::info What the SDK Does
+The SDK's job is to connect a LangChain runtime to OpenBox. Trust policy,
+approvals, guardrails, dashboards, and operator workflows live on the OpenBox
+platform, not inside the SDK.
+:::
+
+## Philosophy
+
+The integration is intentionally minimal:
+
+- One standard middleware factory with `create_openbox_langchain_middleware()`
+- No rewrite of existing model, tool, or prompt logic
+- Automatic governance at LangChain middleware boundaries
+- Automatic telemetry capture through the shared OpenBox OpenTelemetry layer
+
+## Recommended Entry Point
+
+For most services, create middleware and pass it to `create_agent()`:
+
+```python
+import os
+
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+```
+
+Newly created OpenBox agents require DID signing by default. Configure
+`agent_did` and `agent_private_key` together unless **Require signing** is
+disabled for the registered agent, and store the private key as a per-agent
+secret.
+
+## Public API Summary
+
+Most integrations only need these exports:
+
+- `create_openbox_langchain_middleware()`
+- `OpenBoxLangChainMiddleware`
+- `OpenBoxLangChainMiddlewareOptions`
+- `GovernanceBlockedError`
+- `GovernanceHaltError`
+- `ApprovalRejectedError`
+- `ApprovalExpiredError`
+- `GuardrailsValidationError`
+- `traced()`
+
+The package re-exports the shared OpenBox LangGraph governance core types so
+LangChain and LangGraph integrations behave consistently.
+
+## What The SDK Captures
+
+OpenBox receives:
+
+### Agent Boundaries
+
+- `WorkflowStarted`
+- `WorkflowCompleted`
+- `SignalReceived(user_prompt)`
+
+### Model Boundaries
+
+- `LLMStarted`
+- `LLMCompleted`
+
+### Tool Boundaries
+
+- `ToolStarted`
+- `ToolCompleted`
+
+### Operational Telemetry
+
+- HTTP requests
+- SQLAlchemy-backed database activity when an engine is configured
+- file operations when captured by the shared telemetry layer
+- custom traced functions
+
+## Supported Runtime Conditions
+
+| Requirement | Value |
+| --- | --- |
+| Python | `>=3.11` |
+| LangChain | `>=0.3.0` |
+| LangGraph | `>=0.2.0` |
+| OpenBox LangGraph SDK | `>=0.2.0` |
+| OpenBox Core | reachable over HTTPS except localhost development |
+
+## Next Steps
+
+1. Start with the [Integration Walkthrough](/developer-guide/langchain/integration-walkthrough).
+2. Configure production behavior in [Configuration](/developer-guide/langchain/configuration).
+3. Read [Event Model](/developer-guide/langchain/event-model) before writing policy or guardrails.

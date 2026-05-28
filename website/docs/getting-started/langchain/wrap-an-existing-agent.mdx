@@ -1,0 +1,165 @@
+---
+title: Wrap an Existing Agent
+description: "Add OpenBox to an existing LangChain agent without changing your model, tools, or prompt logic."
+llms_description: How to add OpenBox to an existing LangChain agent
+sidebar_position: 2
+tags:
+  - getting-started
+  - langchain
+  - python
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Agent
+
+If you already have a working LangChain agent, the integration point is a
+middleware object passed to `create_agent()`.
+
+## Prerequisites
+
+- An existing LangChain agent that accepts middleware
+- Python 3.11+
+- `openbox-langchain-sdk-python` 0.2.0+
+- An OpenBox agent API key
+- An OpenBox agent DID and private key unless **Require signing** is disabled for the agent
+
+## Step 1: Install The SDK
+
+Package: `openbox-langchain-sdk-python`
+
+```bash
+uv add openbox-langchain-sdk-python
+
+# Or with pip
+pip install openbox-langchain-sdk-python
+```
+
+## Step 2: Add OpenBox Credentials
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:your_agent_did
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+Keep the DID private key in your secret manager or runtime environment. Do not
+commit it or reuse it across agents. If **Require signing** is disabled for the
+agent, omit both DID values.
+
+## Step 3: Add The Middleware
+
+<Tabs>
+<TabItem value="before" label="LangChain">
+
+```python title="agent.py"
+from langchain.agents import create_agent
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="agent.py"
+import os
+
+from dotenv import load_dotenv
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+load_dotenv()
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+    on_api_error="fail_open",
+    tool_type_map={
+        "search_web": "http",
+        "lookup_customer": "database",
+    },
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})
+```
+
+</TabItem>
+</Tabs>
+
+## Step 4: Verify A Real Run
+
+Trigger the same agent request you already use in development. In OpenBox, you
+should now see:
+
+- agent lifecycle events
+- model call start and completion events
+- tool call start and completion events if tools execute
+- approvals and guardrails where policy requires them
+- runtime telemetry attached to the run
+
+## Common Integration Notes
+
+### Startup Order
+
+Create the middleware before constructing the governed agent. If you use
+`python-dotenv`, call `load_dotenv()` before
+`create_openbox_langchain_middleware()`.
+
+### Tool Classification
+
+Use `tool_type_map` to make policy and UI interpretation clearer:
+
+```python
+tool_type_map={
+    "search_web": "http",
+    "lookup_customer": "database",
+    "send_email": "communication",
+}
+```
+
+### Database Telemetry
+
+If you want SQL telemetry, pass your SQLAlchemy engine:
+
+```python
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    sqlalchemy_engine=engine,
+)
+```
+
+## When To Tune Configuration
+
+Start with defaults, then tune:
+
+- `on_api_error="fail_closed"` for high-risk agents
+- `governance_timeout` for network latency
+- `skip_tool_types` for low-value internal tool names
+- event emission flags only when you intentionally want less telemetry
+
+## Next Steps
+
+- [LangChain SDK Configuration](/developer-guide/langchain/configuration)
+- [LangChain Event Model](/developer-guide/langchain/event-model)
+- [LangChain Troubleshooting](/developer-guide/langchain/troubleshooting)
