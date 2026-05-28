@@ -13,6 +13,7 @@ import styles from './index.module.css';
 
 const IntegrationsLive = [
   {label: 'Deep Agents', to: '/getting-started/deep-agents'},
+  {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'LangGraph', to: '/getting-started/langgraph'},
   {label: 'Mastra', to: '/getting-started/mastra'},
   {label: 'Temporal', to: '/getting-started/temporal'},
@@ -21,7 +22,6 @@ const IntegrationsLive = [
 const IntegrationsSoon = [
   {label: 'CrewAI', to: '/getting-started/crewai'},
   {label: 'Cursor', to: '/getting-started/cursor'},
-  {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'OpenClaw', to: '/getting-started/openclaw'},
 ];
@@ -55,6 +55,27 @@ result = await agent.ainvoke(
     {"messages": [{"role": "user", "content": "Research AI safety"}]},
     config={"configurable": {"thread_id": "session-001"}},
 )`;
+
+const LangChainSnippet = `import os
+
+from langchain.agents import create_agent
+from openbox_langchain import create_openbox_langchain_middleware
+
+middleware = create_openbox_langchain_middleware(
+    api_url=os.environ["OPENBOX_URL"],
+    api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    agent_name="SupportAgent",
+)
+
+agent = create_agent(
+    model="openai:gpt-4o",
+    tools=[search_web, lookup_customer],
+    middleware=[middleware],
+)
+
+result = agent.invoke({"messages": [("user", "Check this customer issue")]})`;
 
 const LangGraphSnippet = `import os
 from langgraph.graph import StateGraph, START, END, MessagesState
@@ -321,6 +342,12 @@ export default function Home() {
                   <CodeBlock language="python" title="agent.py">{DeepAgentsSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/deep-agents">
                     Deep Agents quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="langchain" label="LangChain (Python)">
+                  <CodeBlock language="python" title="agent.py">{LangChainSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/langchain">
+                    LangChain quickstart →
                   </Link>
                 </TabItem>
                 <TabItem value="langgraph" label="LangGraph (Python)">
