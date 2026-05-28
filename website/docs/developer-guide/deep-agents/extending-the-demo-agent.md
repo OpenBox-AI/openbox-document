@@ -3,7 +3,7 @@ title: Extending the Demo Agent
 sidebar_label: Extending the Demo Agent
 description: "Customize the Deep Agents demo: add tools, subagents, skills, and brand voice configuration for your use case."
 llms_description: Customizing the Deep Agents demo for your use case
-sidebar_position: 5
+sidebar_position: 8
 tags:
   - sdk
   - deep-agents
@@ -82,6 +82,8 @@ If you want category-level governance policies, add it to `tool_type_map`:
 ```python
 openbox_middleware = create_openbox_middleware(
     # ...
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
     tool_type_map={
         "web_search": "http",
         "fetch_page": "http",  # Added — same policy as web_search
@@ -138,7 +140,7 @@ fact_checker:
 
 ### Step 2: Register the Subagent
 
-The `load_subagents()` function in `content_writer.py` reads `subagents.yaml` automatically. Update `known_subagents` in the middleware to enable per-subagent governance:
+The `load_subagents()` function in `content_writer.py` reads `subagents.yaml` automatically. Update `known_subagents` in the middleware so the runtime configuration stays aligned with your DeepAgents subagent list:
 
 ```python title="content_writer.py"
 subagent_defs = load_subagents(EXAMPLE_DIR / "subagents.yaml")
@@ -146,11 +148,13 @@ known_subagents = [s["name"] for s in subagent_defs] + ["general-purpose"]
 
 openbox_middleware = create_openbox_middleware(
     # ...
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
     known_subagents=known_subagents,  # Includes your new subagent
 )
 ```
 
-The SDK automatically classifies `task` calls to known subagents as `a2a` and includes the subagent name in governance metadata.
+The SDK automatically classifies resolved `task` calls as `a2a` and includes the subagent name in governance metadata.
 
 ## Adding a Skill
 
@@ -232,7 +236,7 @@ Edit `AGENTS.md` to change the agent's personality and writing standards. This f
 
 1. Add entry to `subagents.yaml` with name, description, system prompt
 2. If it needs tools, list them under `tools:` and ensure the tool function is in `available_tools` in `load_subagents()`
-3. Verify `known_subagents` includes the new name (automatic if using `load_subagents()`)
+3. Keep `known_subagents` aligned with the configured subagent names (automatic if using `load_subagents()`)
 
 ### Adding a Skill
 

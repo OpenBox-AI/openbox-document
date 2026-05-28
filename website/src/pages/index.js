@@ -35,8 +35,10 @@ from openbox_deepagent import create_openbox_middleware  # Added import
 middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="ResearchBot",
-
+    known_subagents=["researcher", "writer", "general-purpose"],
 )
 
 agent = create_deep_agent(

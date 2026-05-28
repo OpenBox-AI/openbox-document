@@ -1,6 +1,6 @@
 ---
 title: Getting Started with Deep Agents
-description: "Add OpenBox governance to DeepAgents workflows: HITL conflict detection, policy enforcement, and built-in tool classification."
+description: "Add OpenBox governance to DeepAgents workflows: DID signing, policy enforcement, approvals, telemetry, and built-in tool classification."
 llms_description: DeepAgents integration quickstart and setup
 sidebar_position: 4
 tags:
@@ -20,9 +20,9 @@ Refer to the README for setup instructions:
 **[OpenBox-AI/openbox-deepagent-sdk-python](https://github.com/OpenBox-AI/openbox-deepagent-sdk-python)**
 :::
 
-## One Code Change
+## One Integration Point
 
-The entire integration adds one import and two lines:
+The integration adds one import, one middleware object, and the middleware list on `create_deep_agent()`:
 
 <Tabs>
 <TabItem value="before" label="DeepAgents">
@@ -59,8 +59,10 @@ from openbox_deepagent import create_openbox_middleware  # Added import
 middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="ResearchBot",
-
+    known_subagents=["researcher", "writer", "general-purpose"],
 )
 
 agent = create_deep_agent(
@@ -82,21 +84,30 @@ result = await agent.ainvoke(
 </TabItem>
 </Tabs>
 
+Newly created OpenBox agents require DID signing by default. If **Require signing** is disabled for the agent, omit `agent_did` and `agent_private_key`. See [Agent DID Identity](/developer-guide/deep-agents/configuration#agent-did-identity) for the required environment variables.
+
 ## Choose Your Path
 
 <div className="row">
-<div className="col col--6">
+<div className="col col--4">
 
-### [I already use DeepAgents](#wrap-an-existing-agent)
+### [Deep Agents 101](/getting-started/deep-agents/deep-agents-101)
+
+Get the DeepAgents concepts that matter for OpenBox before you wire governance into a real multi-agent workflow.
+
+</div>
+<div className="col col--4">
+
+### [I already use DeepAgents](/getting-started/deep-agents/wrap-an-existing-agent)
 
 Add the trust layer to your existing agent in 5 minutes. Install the SDK, create middleware, and your agent is governed.
 
 </div>
-<div className="col col--6">
+<div className="col col--4">
 
 ### [Show me the SDK reference](/developer-guide/deep-agents)
 
-Full developer reference: middleware hooks, HITL conflict detection, and all configuration options.
+Full developer reference: middleware hooks, DID signing, HITL behavior, telemetry, and all configuration options.
 
 </div>
 </div>
@@ -114,6 +125,13 @@ uv add openbox-deepagent-sdk-python
 pip install openbox-deepagent-sdk-python
 ```
 
+If this is a new project that does not already include DeepAgents, install the optional runtime extra:
+
+```bash
+uv add "openbox-deepagent-sdk-python[deepagents]"
+pip install "openbox-deepagent-sdk-python[deepagents]"
+```
+
 **Requires Python 3.11+.**
 
 ### Step 2: Configure Environment Variables
@@ -121,6 +139,8 @@ pip install openbox-deepagent-sdk-python
 ```bash
 export OPENBOX_URL=https://core.openbox.ai
 export OPENBOX_API_KEY=obx_live_your_api_key_here
+export OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+export OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
 ```
 
 <details>
@@ -129,6 +149,8 @@ export OPENBOX_API_KEY=obx_live_your_api_key_here
 ```bash title=".env"
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
 ```
 
 Install `python-dotenv` and load it before creating middleware:
@@ -175,8 +197,10 @@ from openbox_deepagent import create_openbox_middleware
 middleware = create_openbox_middleware(
     api_url=os.getenv("OPENBOX_URL"),
     api_key=os.getenv("OPENBOX_API_KEY"),
+    agent_did=os.getenv("OPENBOX_AGENT_DID"),
+    agent_private_key=os.getenv("OPENBOX_AGENT_PRIVATE_KEY"),
     agent_name="ResearchBot",
-
+    known_subagents=["researcher", "writer", "general-purpose"],
 )
 
 agent = create_deep_agent(
@@ -207,7 +231,6 @@ The SDK initializes on first call and connects to OpenBox. You will see output s
 OpenBox SDK initialized successfully
   - Agent: ResearchBot
   - Governance policy: fail_open
-
 ```
 
 ### Step 5: See It in Action
@@ -227,14 +250,15 @@ Under the hood, the OpenBox middleware:
 
 - **Intercepted every model call** — recorded prompts and completions, ran PII redaction before sending to the LLM
 - **Governed every tool call** — evaluated your policies before each tool executed, blocking or flagging as needed
-- **Captured HTTP, database, and file I/O** — automatic telemetry via OpenTelemetry instrumentation
+- **Captured HTTP, database, and file I/O** — automatic telemetry via OpenTelemetry instrumentation; pass `sqlalchemy_engine` for database engines created before middleware initialization
 - **Evaluated governance policies** — every action was checked against your trust rules on the OpenBox platform
-- **Detected HITL conflicts** — if your DeepAgents `interrupt_on` config clashes with OpenBox HITL, the SDK warns you at startup
+- **Signed governance requests** — used the agent DID identity when signing is required for the registered agent
+- **Enforced OpenBox approvals** — if policy returns `require_approval`, the SDK waits for the OpenBox decision; avoid also using DeepAgents `interrupt_on` for the same tool
 
 This runs on every agent invocation automatically.
 
 ## Next Steps
 
-- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
-- **[Monitor Sessions](/trust-lifecycle/session-replay)** — Use Session Replay to debug and audit agent behavior
-- **[Deep Agents SDK Reference](/developer-guide/deep-agents)** — Full developer reference for middleware hooks, configuration, and error handling
+1. Read [Deep Agents 101](/getting-started/deep-agents/deep-agents-101) if you want the conceptual model first.
+2. Use [Wrap an Existing Agent](/getting-started/deep-agents/wrap-an-existing-agent) if you already have DeepAgents in production.
+3. Continue to the [Deep Agents Developer Guide](/developer-guide/deep-agents) for configuration, event semantics, telemetry, and troubleshooting.
