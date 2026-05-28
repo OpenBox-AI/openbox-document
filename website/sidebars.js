@@ -24,9 +24,16 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'getting-started/crewai/index',
+          type: 'category',
           label: 'CrewAI',
+          link: {
+            type: 'doc',
+            id: 'getting-started/crewai/index',
+          },
+          items: [
+            'getting-started/crewai/run-the-demo',
+            'getting-started/crewai/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -169,9 +176,19 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'developer-guide/crewai/index',
-          label: 'CrewAI',
+          type: 'category',
+          label: 'CrewAI SDK (Python)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/crewai/sdk-reference',
+          },
+          items: [
+            'developer-guide/crewai/configuration',
+            'developer-guide/crewai/integration-walkthrough',
+            'developer-guide/crewai/approvals-and-guardrails',
+            'developer-guide/crewai/telemetry',
+            'developer-guide/crewai/troubleshooting',
+          ],
         },
         {
           type: 'doc',

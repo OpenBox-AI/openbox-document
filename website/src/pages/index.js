@@ -12,6 +12,7 @@ import TabItem from '@theme/TabItem';
 import styles from './index.module.css';
 
 const IntegrationsLive = [
+  {label: 'CrewAI', to: '/getting-started/crewai'},
   {label: 'Deep Agents', to: '/getting-started/deep-agents'},
   {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'LangGraph', to: '/getting-started/langgraph'},
@@ -20,7 +21,6 @@ const IntegrationsLive = [
 ];
 
 const IntegrationsSoon = [
-  {label: 'CrewAI', to: '/getting-started/crewai'},
   {label: 'Cursor', to: '/getting-started/cursor'},
   {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'OpenClaw', to: '/getting-started/openclaw'},

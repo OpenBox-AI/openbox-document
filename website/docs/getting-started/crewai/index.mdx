@@ -1,32 +1,121 @@
 ---
 title: Getting Started with CrewAI
 description: "Add OpenBox governance to CrewAI agents: trust scoring, policy enforcement, and audit-grade evidence for multi-agent crews."
-llms_description: CrewAI integration onboarding (coming soon)
+llms_description: CrewAI integration onboarding and quick start
 sidebar_position: 3
 tags:
   - getting-started
   - crewai
   - python
+  - sdk
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Getting Started with CrewAI
 
-:::info Docs coming soon
-The OpenBox SDK for [CrewAI](https://www.crewai.com/) is in development.
-This page will be updated with a full getting-started guide when the integration is available.
-:::
+OpenBox integrates with [CrewAI](https://www.crewai.com/) by wrapping crew execution with a governed engine and replacing governed agents and tasks with OpenBox-aware subclasses. Your crew structure stays recognizable while OpenBox adds approvals, guardrails, telemetry, and audit-grade evidence.
 
-OpenBox will integrate with CrewAI by wrapping crew execution — your agents, tasks, and tools stay exactly as they are while every action is governed, scored, and auditable.
+## One Bootstrap Change
 
-## What to expect
+<Tabs>
+<TabItem value="before" label="CrewAI">
 
-- Wrap your `Crew` with a single function call
-- Trust scoring and policy enforcement for every agent action
-- Full session replay across multi-agent crews
-- HTTP call recording for all LLM and tool invocations
+```python title="crew.py"
+from crewai import Agent, Crew, Process, Task
 
-## In the meantime
+researcher = Agent(role="Researcher", goal="Find information")
+task = Task(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+)
 
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+result = crew.kickoff()
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```python title="crew.py"
+from crewai import Crew, Process
+from openbox import OpenBoxAgent, OpenBoxTask, create_openbox_engine
+
+researcher = OpenBoxAgent(
+    role="Researcher",
+    goal="Find information",
+    env_prefix="OPENBOX_RESEARCHER",
+)
+
+task = OpenBoxTask(
+    description="Research AI governance patterns.",
+    expected_output="A short summary.",
+    agent=researcher,
+    activity_type="research",
+)
+
+crew = Crew(
+    agents=[researcher],
+    tasks=[task],
+    process=Process.sequential,
+)
+
+with create_openbox_engine() as engine:
+    result = engine.govern(crew).kickoff()
+```
+
+</TabItem>
+</Tabs>
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--6">
+
+### [Run the Demo](/getting-started/crewai/run-the-demo)
+
+Use the demos in the public SDK repository to see governed single-agent, async, flow, and collaborative CrewAI runs.
+
+</div>
+<div className="col col--6">
+
+### [Wrap an Existing Crew](/getting-started/crewai/wrap-an-existing-agent)
+
+Add OpenBox to an existing CrewAI codebase by swapping in `OpenBoxAgent`, `OpenBoxTask`, and `engine.govern(crew)`.
+
+</div>
+</div>
+
+## What OpenBox Captures
+
+From a single integration point, OpenBox captures:
+
+- task boundary events for governed tasks
+- governed session lifecycle per agent
+- approvals, blocks, halts, and guardrail outcomes
+- HTTP and database telemetry by default
+- file I/O telemetry when enabled
+- flow correlation metadata for governed crews inside CrewAI flows
+
+## What To Expect In The UI
+
+After integration, OpenBox gives you:
+
+- a governed run timeline for each agent session
+- policy and guardrail decisions at task boundaries
+- telemetry attached to the governed crew execution
+- session replay and audit context for multi-agent runs
+- clearer attribution across delegated or hierarchical work
+
+## Next Steps
+
+1. Use [Run the Demo](/getting-started/crewai/run-the-demo) if you want the fastest working path.
+2. Use [Wrap an Existing Crew](/getting-started/crewai/wrap-an-existing-agent) if you already have CrewAI in development or production.
+3. Continue to the [CrewAI SDK (Python)](/developer-guide/crewai) guide set for configuration, approvals, telemetry, and troubleshooting.
