@@ -2,7 +2,7 @@
 title: Configuration
 description: "All configuration options for the OpenBox Deep Agents SDK: environment variables, middleware parameters, and tool type mapping."
 llms_description: All Deep Agents SDK configuration options
-sidebar_position: 2
+sidebar_position: 3
 tags:
   - sdk
   - reference

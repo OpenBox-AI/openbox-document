@@ -2,7 +2,7 @@
 title: Error Handling
 description: "Handle OpenBox governance errors in DeepAgents: exception types, try/except patterns, and debugging guidance."
 llms_description: Error codes and recovery patterns for the Deep Agents SDK
-sidebar_position: 3
+sidebar_position: 4
 tags:
   - sdk
   - reference
