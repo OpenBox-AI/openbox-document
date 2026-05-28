@@ -35,7 +35,6 @@ OpenBox Core API URL. HTTPS required for non-localhost.
 
 ```python
 api_url="https://core.openbox.ai"          # Production
-api_url="https://core.staging.openbox.ai"  # Staging
 ```
 
 #### api_key

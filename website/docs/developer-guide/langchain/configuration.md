@@ -54,7 +54,6 @@ OpenBox Core API URL.
 
 ```python
 api_url="https://core.openbox.ai"          # Production
-api_url="https://core.staging.openbox.ai"  # Staging
 api_url="http://localhost:8000"            # Local dev
 ```
 
