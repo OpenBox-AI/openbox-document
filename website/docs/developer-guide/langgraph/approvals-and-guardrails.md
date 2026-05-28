@@ -17,13 +17,12 @@ OpenBox evaluates governed LangGraph boundaries and returns verdicts that the SD
 
 ## Verdicts
 
-| Verdict | Meaning | Runtime effect |
-| --- | --- | --- |
-| `allow` | Continue normally | Execution proceeds |
-| `constrain` | Continue with advisory constraints | Execution proceeds with constraints available in the response |
-| `require_approval` | Human review required | Execution waits for approval at HITL-capable boundaries; otherwise it raises `GovernanceBlockedError` |
-| `block` | Operation must not continue | Execution raises `GovernanceBlockedError` |
-| `halt` | Graph run must stop | Execution raises `GovernanceHaltError` |
+| Verdict            | Meaning                     | Runtime effect                                                                                        |
+| ------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `allow`            | Continue normally           | Execution proceeds                                                                                    |
+| `require_approval` | Human review required       | Execution waits for approval at HITL-capable boundaries; otherwise it raises `GovernanceBlockedError` |
+| `block`            | Operation must not continue | Execution raises `GovernanceBlockedError`                                                             |
+| `halt`             | Graph run must stop         | Execution raises `GovernanceHaltError`                                                                |
 
 ## Enforcement Model
 
@@ -54,12 +53,12 @@ For live activity guardrails, match on `ActivityStarted` whenever possible.
 
 Recommended fields:
 
-| Activity type | Field to check | Example use |
-| --- | --- | --- |
-| tool call | `input.query` | Search or retrieval restrictions |
-| tool call | `input.path` | Path restrictions |
-| tool call | `input.command` | Banned shell commands |
-| `llm_call` | `prompt` | Prompt-side safety checks |
+| Activity type | Field to check  | Example use                      |
+| ------------- | --------------- | -------------------------------- |
+| tool call     | `input.query`   | Search or retrieval restrictions |
+| tool call     | `input.path`    | Path restrictions                |
+| tool call     | `input.command` | Banned shell commands            |
+| `llm_call`    | `prompt`        | Prompt-side safety checks        |
 
 For provider responses and tool outputs, use `ActivityCompleted`.
 
@@ -88,13 +87,13 @@ Approval is not limited to requested action. `ActivityCompleted` can also return
 
 ## Runtime Errors You Should Expect
 
-| Error | Meaning |
-| --- | --- |
-| `GovernanceBlockedError` | OpenBox returned `block`, or `require_approval` was not eligible for HITL |
-| `GovernanceHaltError` | OpenBox returned `halt` |
-| `GuardrailsValidationError` | Guardrail validation failed |
-| `ApprovalRejectedError` | Human reviewer rejected the activity |
-| `ApprovalExpiredError` | Approval expired before resolution |
+| Error                       | Meaning                                                                   |
+| --------------------------- | ------------------------------------------------------------------------- |
+| `GovernanceBlockedError`    | OpenBox returned `block`, or `require_approval` was not eligible for HITL |
+| `GovernanceHaltError`       | OpenBox returned `halt`                                                   |
+| `GuardrailsValidationError` | Guardrail validation failed                                               |
+| `ApprovalRejectedError`     | Human reviewer rejected the activity                                      |
+| `ApprovalExpiredError`      | Approval expired before resolution                                        |
 
 ## Production Recommendations
 
