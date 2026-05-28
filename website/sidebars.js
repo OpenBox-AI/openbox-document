@@ -172,9 +172,9 @@ const sidebars = {
             id: 'developer-guide/deep-agents/index',
           },
           items: [
+            'developer-guide/deep-agents/integration-walkthrough',
             'developer-guide/deep-agents/configuration',
             'developer-guide/deep-agents/error-handling',
-            'developer-guide/deep-agents/integration-walkthrough',
             'developer-guide/deep-agents/event-model',
             'developer-guide/deep-agents/approvals-and-guardrails',
             'developer-guide/deep-agents/telemetry',
