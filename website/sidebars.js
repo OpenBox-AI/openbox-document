@@ -188,9 +188,9 @@ const sidebars = {
             id: 'developer-guide/langchain/sdk-reference',
           },
           items: [
+            'developer-guide/langchain/integration-walkthrough',
             'developer-guide/langchain/configuration',
             'developer-guide/langchain/error-handling',
-            'developer-guide/langchain/integration-walkthrough',
             'developer-guide/langchain/event-model',
             'developer-guide/langchain/approvals-and-guardrails',
             'developer-guide/langchain/telemetry',

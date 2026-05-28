@@ -2,7 +2,7 @@
 title: Error Handling
 description: "Handle OpenBox governance errors in LangChain agents: exception types, try/except patterns, and debugging guidance."
 llms_description: Error codes and recovery patterns for the LangChain SDK
-sidebar_position: 5
+sidebar_position: 4
 tags:
   - sdk
   - reference
