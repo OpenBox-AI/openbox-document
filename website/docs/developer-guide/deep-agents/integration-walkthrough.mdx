@@ -3,7 +3,7 @@ title: Deep Agents Integration Guide (Python)
 sidebar_label: Integration Walkthrough
 description: "End-to-end guide for governing DeepAgents with OpenBox: clone the demo, register your agent, run with governance, and explore the dashboard."
 llms_description: Python-specific Deep Agents integration guide
-sidebar_position: 4
+sidebar_position: 2
 tags:
   - sdk
   - deep-agents
@@ -56,9 +56,10 @@ uv sync
    - **Description** _(optional)_: Content builder agent demo
    - **Teams** _(optional)_: assign the agent to one or more teams
    - **Icon** _(optional)_: select an icon
-4. **API Key Generation**:
+4. **API Key and Identity Generation**:
    - Click **Generate API Key**
    - Copy and store the key (shown only once)
+   - Copy the agent DID and private key if **Require signing** is enabled
 5. Configure platform settings:
    - **Initial Risk Assessment** (**[Risk Profile](/trust-lifecycle/assess)**) — select a risk profile (Tier 1-4)
    - **Attestation** (**[Execution Evidence](/administration/attestation-and-cryptographic-proof)**) — select an attestation provider
@@ -75,9 +76,11 @@ See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-b
 # OpenAI — main agent LLM
 OPENAI_API_KEY=sk-...
 
-# OpenBox (use the API key from Part 2)
+# OpenBox (use the API key and identity values from Part 2)
 OPENBOX_URL=https://core.openbox.ai
 OPENBOX_API_KEY=obx_live_your_api_key_here
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
 OPENBOX_AGENT_NAME=ContentWriter
 
 # Google Gemini — image generation (optional)
@@ -86,6 +89,8 @@ GOOGLE_API_KEY=AI...
 # Tavily — web search for researcher subagent (optional)
 TAVILY_API_KEY=tvly-...
 ```
+
+If **Require signing** is disabled for this agent in OpenBox, omit `OPENBOX_AGENT_DID` and `OPENBOX_AGENT_PRIVATE_KEY`.
 
 ## Part 4: Run the Demo
 
@@ -120,7 +125,8 @@ When you ran the demo, the OpenBox middleware:
 2. **Governed every tool call** — evaluated governance policies before each tool executed (web search, file writes, image generation)
 3. **Captured subagent dispatches** — the `researcher` subagent's `task` call was treated as a governed tool call with `a2a` classification
 4. **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded outbound requests to OpenAI, Tavily, and Gemini
-5. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+5. **Signed governance requests** — the DID identity tied runtime requests to the registered OpenBox agent when signing is required
+6. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
 
 ## How the Integration Works
 
@@ -161,6 +167,8 @@ def create_content_writer():
     openbox_middleware = create_openbox_middleware(
         api_url=os.environ["OPENBOX_URL"],
         api_key=os.environ["OPENBOX_API_KEY"],
+        agent_did=os.environ["OPENBOX_AGENT_DID"],
+        agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
         agent_name=os.environ.get("OPENBOX_AGENT_NAME", "ContentWriter"),
         known_subagents=known_subagents,
         tool_type_map={"web_search": "http"},
@@ -245,6 +253,8 @@ Map tool names to semantic types for category-level policies:
 middleware = create_openbox_middleware(
     api_url=os.environ["OPENBOX_URL"],
     api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
 
     # Classify tools
     tool_type_map={
@@ -253,8 +263,8 @@ middleware = create_openbox_middleware(
         "write_report": "file",
     },
 
-    # Skip governance for internal tools
-    skip_tool_types={"internal", "logging"},
+    # Skip governance for selected tool names
+    skip_tool_types={"read_file", "write_todos"},
 )
 ```
 
@@ -266,6 +276,8 @@ from sqlalchemy import create_engine
 middleware = create_openbox_middleware(
     api_url=os.environ["OPENBOX_URL"],
     api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
 
     # Database governance
     sqlalchemy_engine=create_engine(os.environ["DATABASE_URL"]),
@@ -286,8 +298,8 @@ See **[Error Handling](/developer-guide/deep-agents/error-handling)** for except
 
 1. **[Extending the Demo Agent](/developer-guide/deep-agents/extending-the-demo-agent)** — Add your own tools, subagents, and skills
 2. **[Configuration](/developer-guide/deep-agents/configuration)** — Fine-tune timeouts, fail policies, and tool classification
-3. **[Error Handling](/developer-guide/deep-agents/error-handling)** — Handle governance decisions in your code
-4. **[Set Up Approvals](/approvals)** — Add human-in-the-loop for sensitive operations
+3. **[Event Model](/developer-guide/deep-agents/event-model)** — Understand session, activity, subagent, and telemetry events
+4. **[Approvals and Guardrails](/developer-guide/deep-agents/approvals-and-guardrails)** — Add human-in-the-loop for sensitive operations
 5. **[Demo Architecture Reference](/developer-guide/deep-agents/demo-architecture)** — Middleware lifecycle, event flow, and subagent dispatch
 
 Having issues? See the **[Troubleshooting](/developer-guide/deep-agents/troubleshooting)** guide for common problems and solutions.
