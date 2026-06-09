@@ -328,7 +328,31 @@ const sidebars = {
         id: 'administration/index',
       },
       items: [
-        'administration/organization',
+        {
+          type: 'category',
+          label: 'Organization',
+          link: {
+            type: 'doc',
+            id: 'administration/organization/index',
+          },
+          items: [
+            {
+              type: 'category',
+              label: 'Teams',
+              link: {
+                type: 'doc',
+                id: 'administration/organization/teams/index',
+              },
+              items: [
+                {
+                  type: 'doc',
+                  id: 'administration/organization/teams/multi-agent-sessions',
+                  label: 'Multi-Agent Sessions',
+                },
+              ],
+            },
+          ],
+        },
         'administration/compliance-and-audit',
         'administration/attestation-and-cryptographic-proof',
         'administration/organization-audit-log',

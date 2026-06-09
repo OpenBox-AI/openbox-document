@@ -17,14 +17,7 @@ Manage your organization's teams, members, and settings. Access from the sidebar
 
 ## Teams
 
-Organize agents and members into teams for access control.
-
-### Creating Teams
-
-1. Go to **Organization → Teams**
-2. Click **Create Team**
-3. Enter team name and description
-
+Organize agents and members into teams for access control. See [Teams](./teams) for the full reference.
 
 ## Members
 
@@ -39,7 +32,7 @@ Organize agents and members into teams for access control.
 Team assignment is only available for non-administrator roles (e.g., Developer, Viewer). Organization-level admins have access across all teams.
 :::
 
-### Permissions
+## Permissions
 
 Configure what each role can access and modify within the organization. Go to **Organization → Permissions**.
 
