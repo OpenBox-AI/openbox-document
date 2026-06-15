@@ -33,6 +33,10 @@ Package exports:
 The integration connects the CopilotKit runtime to OpenBox, then uses the current LangGraph bridge to instrument the backend agent process. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside CopilotKit.
 :::
 
+## Required OpenBox Setup
+
+Before wiring the CopilotKit runtime, [register an OpenBox agent](/dashboard/agents/registering-agents), generate its runtime key, and configure its trust controls in [Authorize](/trust-lifecycle/authorize). CopilotKit sends events to the registered agent; OpenBox evaluates the agent's [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+
 ## Recommended Architecture
 
 Use OpenBox above CopilotKit, and use the current LangGraph bridge for backend instrumentation:
@@ -96,4 +100,5 @@ Governed tool results use schema version `openbox.copilotkit.result.v1`.
 
 1. Run the [OpenBox-on-CopilotKit demo](/getting-started/copilotkit/run-the-demo).
 2. Add the integration to an existing app with [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit).
-3. Configure production behavior in [Configuration](/developer-guide/copilotkit/configuration).
+3. Configure OpenBox trust controls in [Authorize](/trust-lifecycle/authorize).
+4. Configure production behavior in [Configuration](/developer-guide/copilotkit/configuration).

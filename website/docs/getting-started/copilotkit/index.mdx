@@ -33,6 +33,16 @@ The integration has three layers:
 | CopilotKit | owns the application assistant UI, runtime route, HITL surfaces, and agent bridge |
 | LangGraph | runs the agent graph behind CopilotKit |
 
+## Before You Run
+
+CopilotKit does not create OpenBox agents or rules for you. Start from the same OpenBox setup used by the other integrations:
+
+1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
+2. Generate an agent runtime key.
+3. Copy the agent DID and private key unless **Require signing** is disabled.
+4. Configure the OpenBox controls you want this CopilotKit app to enforce in [Authorize](/trust-lifecycle/authorize): [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+5. Use the demo or your existing CopilotKit app to send live requests through that registered agent.
+
 <Tabs>
 <TabItem value="runtime" label="CopilotKit Runtime" default>
 
@@ -217,4 +227,5 @@ From the OpenBox-on-CopilotKit integration point, OpenBox can capture:
 
 1. Use [Run the Demo](/getting-started/copilotkit/run-the-demo) to verify the end-to-end path.
 2. Use [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit) for an existing app.
-3. Continue to the [CopilotKit Developer Guide](/developer-guide/copilotkit) for configuration and runtime details.
+3. Configure trust controls in [Authorize](/trust-lifecycle/authorize).
+4. Continue to the [CopilotKit Developer Guide](/developer-guide/copilotkit) for configuration and runtime details.
