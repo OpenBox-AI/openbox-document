@@ -70,8 +70,10 @@ Optional values:
 | `AGENT_URL` | local or deployed LangGraph backend URL, defaults to `http://localhost:8123` |
 | `APP_URL` | local app URL used by verification scripts |
 | `LANGSMITH_API_KEY` | LangSmith key when using a LangGraph deployment that requires it |
-| `OPENBOX_API_URL` | OpenBox platform/backend URL for approval decisions submitted from the CopilotKit UI |
-| `OPENBOX_BACKEND_API_KEY` | org/backend key for approval decisions submitted from the CopilotKit UI |
+| `OPENBOX_API_URL` | server-side OpenBox platform/backend URL for approval decisions submitted from the CopilotKit UI |
+| `OPENBOX_BACKEND_API_KEY` | server-side org/backend key for posting CopilotKit UI approval decisions back to OpenBox |
+
+`OPENBOX_BACKEND_API_KEY` is not sent to the browser and is not required for normal runtime governance.
 
 ## Run Locally
 
