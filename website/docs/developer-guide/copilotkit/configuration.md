@@ -46,15 +46,15 @@ Runtime governance requires an OpenBox Core URL and an agent runtime key.
 | `OPENAI_MODEL` | Usually | - | chat model for the reference agent |
 | `OPENAI_API_KEY` | Usually | - | model provider API key |
 
-### Platform And Approvals
+### Platform And Optional Approval Route
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `OPENBOX_API_URL` | Only for readiness checks or CopilotKit UI approval decisions | - | OpenBox platform/backend API URL |
-| `OPENBOX_BACKEND_API_KEY` | Only for readiness checks or CopilotKit UI approval decisions | - | org/backend key, `obx_key_*` |
-| `OPENBOX_AGENT_ID` | Only for readiness checks or CopilotKit UI approval decisions | - | platform agent ID |
+| `OPENBOX_API_URL` | Only for readiness checks or the optional demo-style approval route | - | OpenBox platform/backend API URL |
+| `OPENBOX_BACKEND_API_KEY` | Only for readiness checks or the optional demo-style approval route | - | org/backend key, `obx_key_*` |
+| `OPENBOX_AGENT_ID` | Only for readiness checks or the optional demo-style approval route | - | platform agent ID |
 
-Runtime governance uses `OPENBOX_CORE_URL` and `OPENBOX_API_KEY`. Approval creation, waiting, and enforcement do not require the backend key. `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID` are only needed when your server-side CopilotKit approval route posts a human approve/reject decision back to OpenBox.
+Runtime governance uses `OPENBOX_CORE_URL` and `OPENBOX_API_KEY`. Approval creation, waiting, and enforcement do not require the backend key. `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID` are only needed for readiness checks or if you use the demo-style approval-decision route that posts a human approve/reject decision back to OpenBox.
 
 Do not expose `OPENBOX_BACKEND_API_KEY` to the browser. Store it only in server-side environment variables.
 
@@ -67,10 +67,10 @@ Do not expose `OPENBOX_BACKEND_API_KEY` to the browser. Store it only in server-
 | `apiKey` | `OPENBOX_API_KEY` | set the agent runtime key |
 | `agentIdentity` | `OPENBOX_AGENT_DID` + `OPENBOX_AGENT_PRIVATE_KEY` | sign OpenBox requests with the registered agent identity |
 | `coreTimeoutMs` | Core client default | set governance evaluation timeout |
-| `apiUrl` | `OPENBOX_API_URL` | set platform/backend API URL for readiness and approval decisions |
-| `backendApiKey` | `OPENBOX_BACKEND_API_KEY` | set platform/backend key for readiness and approval decisions |
+| `apiUrl` | `OPENBOX_API_URL` | set platform/backend API URL for readiness and optional approval-route helpers |
+| `backendApiKey` | `OPENBOX_BACKEND_API_KEY` | set platform/backend key for readiness and optional approval-route helpers |
 | `backendTimeoutMs` | backend client default | set platform/backend timeout |
-| `agentId` | `OPENBOX_AGENT_ID` | identify the platform agent for readiness and approvals |
+| `agentId` | `OPENBOX_AGENT_ID` | identify the platform agent for readiness and optional approval-route helpers |
 | `clientName` | `openbox-copilotkit` | label SDK traffic |
 | `agentWorkflowType` | `CopilotKitAgent` | set workflow type for runtime or LangGraph backend sessions |
 | `taskQueue` | `copilotkit` | set the OpenBox task queue label |
@@ -126,7 +126,7 @@ Rules:
 
 ## Approval Decisions
 
-Use `createOpenBoxApprovalRoute()` when CopilotKit renders a human approval control that should call back into OpenBox:
+Use `createOpenBoxApprovalRoute()` only when your app wants a server-side route that receives CopilotKit-rendered approve/reject clicks and posts those decisions back to OpenBox:
 
 ```ts title="src/app/api/openbox/approvals/decide/route.ts"
 import { NextResponse } from "next/server";
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
 }
 ```
 
-This route requires `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and a `governanceEventId`.
+This route matches the reference demo approval-decision path. It requires `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and a `governanceEventId`, but that credential set is not required for normal runtime governance.
 
 ## Failure Policy
 
