@@ -86,12 +86,12 @@ export const POST = handler;
 ```ts title="agent/src/agent.ts"
 import { createAgent } from "langchain";
 import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
-import { createOpenBoxGovernanceMiddleware } from "./openbox_governance";
+import { createOpenBoxGovernanceMiddleware } from "./openbox_governance.js";
 import {
   openbox_governed_action,
   openbox_governed_approval_action,
   openbox_resume_governed_action,
-} from "./openbox_scenarios";
+} from "./openbox_scenarios.js";
 
 export const graph = createAgent({
   model,

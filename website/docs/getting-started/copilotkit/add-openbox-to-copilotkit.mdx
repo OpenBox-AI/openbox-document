@@ -164,12 +164,14 @@ export function createOpenBoxGovernanceMiddleware(): AgentMiddleware {
 }
 ```
 
+Later imports of `./openbox_governance.js` refer to this local `agent/src/openbox_governance.ts` file. The `.js` extension is used because the LangGraph backend runs as Node ESM after TypeScript compilation.
+
 Then install it before CopilotKit middleware:
 
 ```ts title="agent/src/agent.ts"
 import { createAgent } from "langchain";
 import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
-import { createOpenBoxGovernanceMiddleware } from "./openbox_governance";
+import { createOpenBoxGovernanceMiddleware } from "./openbox_governance.js";
 
 export const graph = createAgent({
   model,
@@ -187,7 +189,7 @@ Use `createGovernedCopilotTool()` for actions that should return OpenBox decisio
 
 ```ts title="agent/src/openbox_action_governance.ts"
 import { createGovernedCopilotTool } from "openbox-sdk/copilotkit";
-import { openBoxAdapter } from "./openbox_governance";
+import { openBoxAdapter } from "./openbox_governance.js";
 
 const governedCopilotTool = createGovernedCopilotTool({
   adapter: openBoxAdapter,
