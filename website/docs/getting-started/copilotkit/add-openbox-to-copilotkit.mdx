@@ -43,16 +43,6 @@ OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
 AGENT_URL=http://localhost:8123
 ```
 
-If your CopilotKit UI lets users approve or reject OpenBox approval requests directly, add the platform/backend values to the server environment for your approval route:
-
-```bash title=".env"
-OPENBOX_API_URL=https://api.openbox.ai
-OPENBOX_BACKEND_API_KEY=obx_key_org_or_backend_api_key
-OPENBOX_AGENT_ID=openbox_agent_id
-```
-
-The backend key is not used by the browser and is not required for normal runtime governance. It is only used by the server-side approval decision route that posts the human's approve/reject decision back to OpenBox.
-
 ## Step 2: Govern The CopilotKit Runtime
 
 <Tabs>
@@ -210,6 +200,8 @@ const governedCopilotTool = createGovernedCopilotTool({
 For human approval, expose an approval tool and resume tool. The OpenBox result schema carries `workflowId`, `runId`, `activityId`, `approvalId`, and `governanceEventId` so the React UI can render the approval and call your decision route.
 
 ## Step 5: Render OpenBox Decisions In CopilotKit
+
+Point the approval client at the server-side route your app uses to submit approve/reject decisions. The reference demo uses `/api/openbox/approvals/decide`; your production app can use the same helper or a different server-owned approval path.
 
 ```tsx title="src/hooks/use-openbox-copilotkit.tsx"
 import { z } from "zod";

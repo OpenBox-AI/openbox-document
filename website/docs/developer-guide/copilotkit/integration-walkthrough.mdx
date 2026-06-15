@@ -63,15 +63,7 @@ OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
 AGENT_URL=http://localhost:8123
 ```
 
-Add backend variables only if your CopilotKit UI lets users approve or reject OpenBox approval requests directly. Keep these values in the server environment for your approval route:
-
-```bash title=".env"
-OPENBOX_API_URL=https://api.openbox.ai
-OPENBOX_BACKEND_API_KEY=obx_key_org_or_backend_api_key
-OPENBOX_AGENT_ID=openbox_agent_id
-```
-
-The backend key is not used by the browser and is not required for normal runtime governance. It is only used by the server-side approval decision route that posts the human's approve/reject decision back to OpenBox.
+These are the credentials for the generic runtime integration. Demo-specific platform/backend variables are only needed by the reference demo's optional approval-decision route.
 
 ## Part 3: Wire The CopilotKit Runtime
 
@@ -221,7 +213,9 @@ export async function governAction(input, config) {
 
 The result carries schema version `openbox.copilotkit.result.v1`, verdict status, workflow IDs, approval IDs when needed, guardrail details, and optional transformed artifacts.
 
-## Part 6: Add Approval Decision Route
+## Part 6: Add An Approval Decision Route
+
+If your CopilotKit UI renders approve/reject controls, point those controls at a server-side route owned by your app. The reference demo uses `createOpenBoxApprovalRoute()` for that route. That helper posts the human decision back to OpenBox through the platform/backend API, so its credentials stay server-side.
 
 ```ts title="src/app/api/openbox/approvals/decide/route.ts"
 import { NextResponse } from "next/server";
@@ -250,6 +244,8 @@ export async function POST(request: Request) {
 ## Part 7: Render OpenBox Results
 
 Use the React helpers to register approval, interactive review, governance decision, and action-result renderers:
+
+The approval client endpoint should match the server route from Part 6, or your app's equivalent approval-decision path.
 
 ```tsx title="src/hooks/use-openbox-copilotkit.tsx"
 import { z } from "zod";
