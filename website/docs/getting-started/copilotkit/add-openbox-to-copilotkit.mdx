@@ -1,0 +1,260 @@
+---
+title: Add OpenBox to CopilotKit
+description: "Add OpenBox governance to an existing CopilotKit app that uses a LangGraph backend."
+llms_description: Add OpenBox to CopilotKit with a LangGraph backend
+sidebar_position: 3
+tags:
+  - getting-started
+  - copilotkit
+  - langgraph
+  - typescript
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Add OpenBox to CopilotKit
+
+Use this guide when you already have a CopilotKit app backed by LangGraph and want OpenBox to sit above CopilotKit to govern runtime prompts, tool activity, assistant output, and approval decisions.
+
+:::info Backend model
+OpenBox governs the CopilotKit layer. CopilotKit then talks to the agent framework backend. This guide uses LangGraph as the backend example, and future backend bridges can follow the same pattern.
+:::
+
+## Prerequisites
+
+- a Next.js CopilotKit runtime route
+- a LangGraph JavaScript backend reachable from the CopilotKit runtime
+- `@copilotkit/react-core`, `@copilotkit/runtime`, `@copilotkit/sdk-js`, and `@langchain/langgraph`
+- `openbox-sdk` with the `openbox-sdk/copilotkit` and `openbox-sdk/copilotkit/react` exports
+- OpenBox Core credentials and agent identity values
+
+## Step 1: Configure Environment
+
+```bash title=".env"
+OPENBOX_ENABLED=true
+OPENBOX_CORE_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_or_obx_test_agent_runtime_key
+
+# Required when the OpenBox agent has signing enabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
+
+AGENT_URL=http://localhost:8123
+```
+
+For inline approval decisions, add the platform/backend values:
+
+```bash title=".env"
+OPENBOX_API_URL=https://api.openbox.ai
+OPENBOX_BACKEND_API_KEY=obx_key_org_or_backend_api_key
+OPENBOX_AGENT_ID=openbox_agent_id
+```
+
+## Step 2: Govern The CopilotKit Runtime
+
+<Tabs>
+<TabItem value="before" label="CopilotKit">
+
+```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+import {
+  CopilotRuntime,
+  createCopilotRuntimeHandler,
+  InMemoryAgentRunner,
+} from "@copilotkit/runtime/v2";
+import { LangGraphAgent } from "@copilotkit/runtime/langgraph";
+
+const runner = new InMemoryAgentRunner();
+const runtime = new CopilotRuntime({
+  agents: {
+    default: new LangGraphAgent({
+      deploymentUrl: process.env.AGENT_URL ?? "http://localhost:8123",
+      graphId: "openbox_copilotkit_agent",
+      langsmithApiKey: process.env.LANGSMITH_API_KEY ?? "",
+    }),
+  },
+  runner,
+});
+
+const handler = createCopilotRuntimeHandler({
+  runtime,
+  basePath: "/api/copilotkit",
+});
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+import {
+  CopilotRuntime,
+  createCopilotRuntimeHandler,
+  InMemoryAgentRunner,
+} from "@copilotkit/runtime/v2";
+import { LangGraphAgent } from "@copilotkit/runtime/langgraph";
+import {
+  createOpenBoxCopilotKitAdapter,
+  createOpenBoxCopilotRuntime,
+} from "openbox-sdk/copilotkit";
+
+const runner = new InMemoryAgentRunner();
+const runtime = new CopilotRuntime({
+  agents: {
+    default: new LangGraphAgent({
+      deploymentUrl: process.env.AGENT_URL ?? "http://localhost:8123",
+      graphId: "openbox_copilotkit_agent",
+      langsmithApiKey: process.env.LANGSMITH_API_KEY ?? "",
+    }),
+  },
+  runner,
+});
+
+const openboxRuntime = createOpenBoxCopilotRuntime({
+  runtime,
+  runner,
+  agents: ["default"],
+  adapter: createOpenBoxCopilotKitAdapter({
+    agentWorkflowType: "CopilotKitRuntime",
+    taskQueue: "copilotkit-runtime",
+    selfGovernedToolNames: [
+      "openbox_governed_action",
+      "openbox_governed_approval_action",
+      "openbox_resume_governed_action",
+    ],
+  }),
+});
+
+const handler = createCopilotRuntimeHandler({
+  runtime: openboxRuntime.runtime,
+  basePath: "/api/copilotkit",
+  hooks: openboxRuntime.hooks,
+});
+
+export const GET = handler;
+export const POST = handler;
+```
+
+</TabItem>
+</Tabs>
+
+## Step 3: Add LangGraph Backend Middleware
+
+```ts title="agent/src/openbox_governance.ts"
+import { AIMessage } from "@langchain/core/messages";
+import { createMiddleware, type AgentMiddleware } from "langchain";
+import {
+  createOpenBoxCopilotKitAdapter,
+} from "openbox-sdk/copilotkit";
+
+export const openBoxAdapter = createOpenBoxCopilotKitAdapter({
+  agentWorkflowType: "CopilotKitLangGraphAgent",
+  taskQueue: "copilotkit-langgraph",
+  selfGovernedToolNames: [
+    "openbox_governed_action",
+    "openbox_governed_approval_action",
+    "openbox_resume_governed_action",
+  ],
+});
+
+export function createOpenBoxGovernanceMiddleware(): AgentMiddleware {
+  return openBoxAdapter.createLangChainMiddleware({
+    createMiddleware,
+    AIMessage,
+  }) as AgentMiddleware;
+}
+```
+
+Then install it before CopilotKit middleware:
+
+```ts title="agent/src/agent.ts"
+import { createAgent } from "langchain";
+import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
+import { createOpenBoxGovernanceMiddleware } from "./openbox_governance";
+
+export const graph = createAgent({
+  model,
+  tools,
+  middleware: [
+    createOpenBoxGovernanceMiddleware(),
+    copilotkitMiddleware,
+  ],
+});
+```
+
+## Step 4: Use Governed Tools For Business Actions
+
+Use `createGovernedCopilotTool()` for actions that should return OpenBox decisions and business artifacts together:
+
+```ts title="agent/src/openbox_action_governance.ts"
+import { createGovernedCopilotTool } from "openbox-sdk/copilotkit";
+import { openBoxAdapter } from "./openbox_governance";
+
+const governedCopilotTool = createGovernedCopilotTool({
+  adapter: openBoxAdapter,
+  toolName: "openbox_governed_action",
+  description: "Execute a governed business action.",
+  normalizeInput: (input) => input,
+  execute: async (input) => {
+    return {
+      type: "business_result",
+      request: input.request,
+    };
+  },
+});
+```
+
+For human approval, expose an approval tool and resume tool. The OpenBox result schema carries `workflowId`, `runId`, `activityId`, `approvalId`, and `governanceEventId` so the React UI can render the approval and call your decision route.
+
+## Step 5: Render OpenBox Decisions In CopilotKit
+
+```tsx title="src/hooks/use-openbox-copilotkit.tsx"
+import { z } from "zod";
+import {
+  useHumanInTheLoop,
+  useDefaultRenderTool,
+} from "@copilotkit/react-core/v2";
+import {
+  createOpenBoxApprovalClient,
+  OpenBoxGovernanceDecision,
+  useOpenBoxCopilotKit,
+} from "openbox-sdk/copilotkit/react";
+
+export function useOpenBoxRendering() {
+  useOpenBoxCopilotKit({
+    bindings: {
+      useHumanInTheLoop,
+      useDefaultRenderTool,
+    },
+    approvalParameters: z.object({
+      workflowId: z.string(),
+      runId: z.string(),
+      activityId: z.string(),
+      governanceEventId: z.string(),
+      action: z.string(),
+      request: z.string(),
+    }),
+    approvalClient: createOpenBoxApprovalClient({
+      endpoint: "/api/openbox/approvals/decide",
+    }),
+    renderGovernanceDecision: (props) => (
+      <OpenBoxGovernanceDecision {...props} />
+    ),
+  });
+}
+```
+
+## Step 6: Verify A Live Request
+
+Run one request through the Copilot UI, then check OpenBox for:
+
+- a CopilotKit runtime workflow
+- a LangGraph backend workflow
+- governed tool activity
+- prompt, tool-input, tool-output, and assistant-output decisions
+- approval state when a tool returns `approval_required`
+
+## Next Steps
+
+- [Configuration](/developer-guide/copilotkit/configuration)
+- [Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough)
+- [LangGraph SDK (Python)](/developer-guide/langgraph) for non-CopilotKit LangGraph services

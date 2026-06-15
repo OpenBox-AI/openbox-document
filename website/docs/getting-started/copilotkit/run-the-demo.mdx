@@ -1,0 +1,133 @@
+---
+title: Run the Demo
+description: "Run the OpenBox on CopilotKit demo with LangGraph locally."
+llms_description: Hands-on OpenBox on CopilotKit with LangGraph demo
+sidebar_position: 2
+tags:
+  - getting-started
+  - copilotkit
+  - langgraph
+  - typescript
+---
+
+# Run the Demo
+
+The demo shows OpenBox on top of CopilotKit, with CopilotKit on top of LangGraph. It is a Next.js app with a local LangGraph TypeScript agent. CopilotKit handles the chat runtime and generative UI. OpenBox governs prompts, tool inputs, tool outputs, assistant output, and approval decisions.
+
+:::info Backend model
+This demo uses LangGraph as the backend behind CopilotKit. The OpenBox boundary is CopilotKit, so future CopilotKit backend bridges can follow the same layering.
+:::
+
+Reference repository:
+
+- [OpenBox-AI/openbox-x-copilotkit](https://github.com/OpenBox-AI/openbox-x-copilotkit)
+
+## Prerequisites
+
+- Node.js `22+`
+- npm
+- access to the `OpenBox-AI/openbox-x-copilotkit` repository
+- an OpenAI-compatible model endpoint
+- an OpenBox Core URL and agent runtime key
+- an OpenBox agent DID and private key when the registered agent requires signing
+
+## Clone The Repository
+
+```bash
+git clone https://github.com/OpenBox-AI/openbox-x-copilotkit
+cd openbox-x-copilotkit
+```
+
+## Install Dependencies
+
+```bash
+cp .env.example .env
+npm install
+```
+
+The demo currently installs `openbox-sdk` from the OpenBox GitHub organization. You do not need to clone the SDK as a sibling repository for the demo path.
+
+## Configure Environment
+
+Required values:
+
+| Variable | Purpose |
+| --- | --- |
+| `OPENAI_BASE_URL` | OpenAI-compatible chat provider base URL |
+| `OPENAI_MODEL` | chat model used by the LangGraph backend |
+| `OPENAI_API_KEY` | model provider API key |
+| `OPENBOX_ENABLED` | set to `true` to enable OpenBox governance |
+| `OPENBOX_CORE_URL` | OpenBox Core base URL |
+| `OPENBOX_API_KEY` | OpenBox agent runtime key, `obx_live_*` or `obx_test_*` |
+| `OPENBOX_AGENT_ID` | OpenBox platform agent ID for readiness checks |
+| `OPENBOX_AGENT_DID` | agent DID, required when signing is enabled |
+| `OPENBOX_AGENT_PRIVATE_KEY` | base64 raw Ed25519 private key, required when signing is enabled |
+
+Optional values:
+
+| Variable | Purpose |
+| --- | --- |
+| `AGENT_URL` | local or deployed LangGraph backend URL, defaults to `http://localhost:8123` |
+| `APP_URL` | local app URL used by verification scripts |
+| `LANGSMITH_API_KEY` | LangSmith key when using a LangGraph deployment that requires it |
+| `OPENBOX_API_URL` | OpenBox platform/backend URL for inline approval decisions |
+| `OPENBOX_BACKEND_API_KEY` | org/backend key for inline approval decisions |
+
+## Run Locally
+
+```bash
+npm run dev
+```
+
+Default services:
+
+| Service | URL |
+| --- | --- |
+| LangGraph agent | `http://localhost:8123` |
+| Next.js app | the port printed by Next.js |
+
+For a fixed app port:
+
+```bash
+npm run dev:agent
+AGENT_URL=http://localhost:8123 npm run dev:ui -- -p 3001
+```
+
+Open `http://localhost:3001`.
+
+## What To Try
+
+Use the demo suggestion chips or enter a natural business request:
+
+- `Review Work Queue`
+- `Prepare Exception Report`
+- `Draft Customer Update`
+- `Issue Service Credit`
+- `Send Exception IDs`
+- `Update Vendor Bank`
+
+Depending on your OpenBox policy and guardrails, the request may be allowed, redacted, blocked, halted, or routed through human approval.
+
+## Verify
+
+Fast local checks:
+
+```bash
+npm run build
+npx tsc --noEmit
+cd agent && npx tsc --noEmit
+```
+
+Maintainer checks that call live OpenBox services:
+
+```bash
+npm run openbox:verify
+npm run openbox:e2e
+```
+
+`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh demo guardrails, behavior rules, and policy setup.
+
+## Next Steps
+
+- [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit)
+- [CopilotKit Developer Guide](/developer-guide/copilotkit)

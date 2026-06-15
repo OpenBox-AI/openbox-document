@@ -1,0 +1,99 @@
+---
+title: OpenBox on CopilotKit (LangGraph)
+description: "OpenBox SDK reference for CopilotKit apps that use LangGraph as the agent framework."
+llms_description: OpenBox on CopilotKit with LangGraph SDK reference and guide set
+sidebar_position: 1
+slug: /developer-guide/copilotkit
+tags:
+  - sdk
+  - copilotkit
+  - langgraph
+  - typescript
+---
+
+# OpenBox on CopilotKit (LangGraph)
+
+OpenBox sits on top of CopilotKit. CopilotKit sits on top of the agent framework. This guide uses LangGraph as the backend example.
+
+The integration governs CopilotKit runtime prompts, tool input, tool output, assistant output, and approval decisions while preserving the CopilotKit UI and the LangGraph agent shape behind it.
+
+Package exports:
+
+- `openbox-sdk/copilotkit`
+- `openbox-sdk/copilotkit/react`
+
+| Guide | Description |
+|-------|-------------|
+| **[Run the Demo](/getting-started/copilotkit/run-the-demo)** | Clone and run the OpenBox-on-CopilotKit reference app with LangGraph |
+| **[Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit)** | Add OpenBox above CopilotKit in an app where CopilotKit uses LangGraph as the backend |
+| **[Configuration](/developer-guide/copilotkit/configuration)** | Environment variables, adapter options, and runtime behavior |
+| **[Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough)** | End-to-end guide for wiring the runtime, LangGraph middleware, governed tools, and React renderers |
+
+:::info What The Integration Does
+The integration connects the CopilotKit runtime boundary to OpenBox. The current reference app uses LangGraph as the backend behind CopilotKit. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside CopilotKit.
+:::
+
+## Recommended Architecture
+
+Use OpenBox above CopilotKit, and use the LangGraph bridge currently supported by the reference app:
+
+| Layer | OpenBox hook | Purpose |
+| --- | --- | --- |
+| OpenBox on CopilotKit runtime route | `createOpenBoxCopilotRuntime()` | governs prompt ingress and assistant output around `/api/copilotkit` |
+| OpenBox CopilotKit adapter | `createOpenBoxCopilotKitAdapter()` | configures Core credentials, gate behavior, session state, and tool names |
+| CopilotKit on LangGraph middleware | `adapter.createLangChainMiddleware()` | governs LangGraph model/tool activity inside the agent process |
+| Business tools | `createGovernedCopilotTool()` | returns OpenBox decisions and releasable artifacts through the same tool result |
+| Approval route | `createOpenBoxApprovalRoute()` | submits human approval decisions back to OpenBox |
+| React UI | `useOpenBoxCopilotKit()` | renders OpenBox decision, interactive review, approval, and action-result components |
+
+## Public API Summary
+
+Server-side exports:
+
+- `createOpenBoxCopilotKitAdapter()`
+- `createOpenBoxCopilotRuntime()`
+- `createOpenBoxGovernedRunner()`
+- `createOpenBoxRuntimeHooks()`
+- `createGovernedCopilotTool()`
+- `createOpenBoxApprovalRoute()`
+- `createOpenBoxReadinessCheck()`
+- `OPENBOX_COPILOTKIT_RESULT_SCHEMA_VERSION`
+
+React exports:
+
+- `useOpenBoxCopilotKit()`
+- `createOpenBoxApprovalClient()`
+- `createOpenBoxCustomMessageRenderer()`
+- `OpenBoxGovernanceDecision`
+- `OpenBoxApprovalReview`
+- `OpenBoxInteractiveReview`
+- `OpenBoxActionResult`
+
+## Governance Boundaries
+
+OpenBox can evaluate these CopilotKit gates:
+
+| Gate | What is evaluated |
+| --- | --- |
+| `prompt` | user prompt and recent runtime messages before agent execution |
+| `tool_input` | normalized tool arguments before business execution |
+| `tool_output` | raw tool result before rendering |
+| `assistant_output` | final assistant content before it reaches the user |
+
+Governed tool results use schema version `openbox.copilotkit.result.v1`.
+
+## Supported Runtime Conditions
+
+| Requirement | Value |
+| --- | --- |
+| Node.js | `>=22` for the reference app |
+| CopilotKit | `@copilotkit/react-core` and `@copilotkit/runtime` `^1.59` in the reference app |
+| LangGraph JS | `@langchain/langgraph` `^1.3` in the reference app |
+| OpenBox SDK | `openbox-sdk` with `copilotkit` and `copilotkit/react` exports |
+| CopilotKit runtime | Next.js App Router route backed by `/api/copilotkit` |
+
+## Next Steps
+
+1. Run the [OpenBox-on-CopilotKit demo](/getting-started/copilotkit/run-the-demo).
+2. Add the integration to an existing app with [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit).
+3. Configure production behavior in [Configuration](/developer-guide/copilotkit/configuration).
