@@ -15,7 +15,7 @@ tags:
 The demo shows OpenBox on top of CopilotKit, with CopilotKit on top of LangGraph. It is a Next.js app with a local LangGraph TypeScript agent. CopilotKit handles the chat runtime and generative UI. OpenBox governs prompts, tool inputs, tool outputs, assistant output, and approval decisions.
 
 :::info Backend model
-This demo uses LangGraph as the backend behind CopilotKit. The OpenBox boundary is CopilotKit, so future CopilotKit backend bridges can follow the same layering.
+This demo uses LangGraph as the backend behind CopilotKit. OpenBox is layered above CopilotKit, and the current LangGraph bridge also instruments the backend graph so both sides share one governed session. Future CopilotKit backend bridges can follow the same layering.
 :::
 
 Reference repository:

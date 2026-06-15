@@ -63,7 +63,7 @@ OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
 AGENT_URL=http://localhost:8123
 ```
 
-These are the credentials for the generic runtime integration. Demo-specific platform/backend variables are only needed by the reference demo's optional approval-decision route.
+These are the credentials for the generic runtime integration. Platform/backend variables are only needed by optional server-side helpers, such as an approval-decision route that posts human approve/reject decisions back to OpenBox.
 
 ## Part 3: Wire The CopilotKit Runtime
 
@@ -122,6 +122,8 @@ export const POST = handler;
 This governs the runtime prompt before CopilotKit calls the LangGraph backend and gives OpenBox a chance to govern assistant output as events stream back.
 
 ## Part 4: Add LangGraph Middleware
+
+Create a local helper in your LangGraph backend. The file name is arbitrary; this walkthrough uses `agent/src/openbox_governance.ts` to keep the OpenBox adapter setup in one place.
 
 ```ts title="agent/src/openbox_governance.ts"
 import { AIMessage } from "@langchain/core/messages";
@@ -187,21 +189,34 @@ export const graph = createAgent({
 
 ## Part 5: Govern Business Tools
 
-OpenBox-owned tools should produce one result that contains the governance decision and the releasable business artifact:
+App-owned tools that return OpenBox-governed results should produce one result that contains the governance decision and the releasable business artifact:
 
 ```ts title="agent/src/openbox_action_governance.ts"
-import { createGovernedCopilotTool } from "openbox-sdk/copilotkit";
+import {
+  createGovernedCopilotTool,
+  type OpenBoxCopilotActionInput,
+} from "openbox-sdk/copilotkit";
 import { openBoxCopilotKitAdapter } from "./openbox_governance.js";
 
-const governedCopilotTool = createGovernedCopilotTool({
+type SupportTicketInput = OpenBoxCopilotActionInput & {
+  customerId: string;
+  summary: string;
+  priority: "low" | "medium" | "high";
+};
+
+const governedCopilotTool = createGovernedCopilotTool<SupportTicketInput>({
   adapter: openBoxCopilotKitAdapter,
   toolName: "openbox_governed_action",
-  description: "Execute a governed business action.",
+  description: "Create a governed customer support ticket.",
   normalizeInput: (input) => input,
   execute: async (input) => {
     return {
-      type: "business_result",
-      request: input.request,
+      type: "support_ticket",
+      ticketId: `SUP-${Date.now()}`,
+      customerId: input.customerId,
+      summary: input.summary,
+      priority: input.priority,
+      status: "created",
     };
   },
 });

@@ -20,7 +20,7 @@ OpenBox sits on top of [CopilotKit](https://www.copilotkit.ai/). CopilotKit sits
 Use this path when your app has a CopilotKit frontend and a LangGraph backend. If you only need to govern a standalone Python LangGraph graph without CopilotKit, start with [Getting Started with LangGraph](/getting-started/langgraph).
 
 :::info Backend model
-The OpenBox boundary is CopilotKit. LangGraph is the backend used by the current guide and reference app. Other CopilotKit backend bridges can fit the same layering as examples and support expand.
+OpenBox is layered above CopilotKit. In the current LangGraph path, the SDK also installs middleware in the backend so CopilotKit and the graph share one governed session. Future CopilotKit backend bridges can follow the same layering.
 :::
 
 ## Integration Stack
@@ -92,7 +92,15 @@ import { createOpenBoxCopilotKitAdapter } from "openbox-sdk/copilotkit";
 import { z } from "zod";
 
 const createSupportTicket = tool(
-  async ({ customerId, summary, priority }) => {
+  async ({
+    customerId,
+    summary,
+    priority,
+  }: {
+    customerId: string;
+    summary: string;
+    priority: "low" | "medium" | "high";
+  }) => {
     return JSON.stringify({
       ticketId: `SUP-${Date.now()}`,
       customerId,
@@ -132,7 +140,7 @@ export const graph = createAgent({
 });
 ```
 
-`createSupportTicket` is a normal LangChain tool. OpenBox is added by `createOpenBoxCopilotKitAdapter()` and the middleware it creates. A file named `openbox_governance.ts` in the reference app is only a local helper that wraps the adapter setup above.
+`createSupportTicket` is a normal LangChain tool. OpenBox is added by `createOpenBoxCopilotKitAdapter()` and the middleware it creates. The reference app keeps the adapter setup in a local helper file named `openbox_governance.ts`; that file name is not an SDK import.
 
 </TabItem>
 <TabItem value="react" label="React UI">

@@ -74,7 +74,7 @@ Do not expose `OPENBOX_BACKEND_API_KEY` to the browser. Store it only in server-
 | `clientName` | `openbox-copilotkit` | label SDK traffic |
 | `agentWorkflowType` | `CopilotKitAgent` | set workflow type for runtime or LangGraph backend sessions |
 | `taskQueue` | `copilotkit` | set the OpenBox task queue label |
-| `selfGovernedToolNames` | OpenBox default governed tool names | prevent recursive self-governance for OpenBox-owned tools |
+| `selfGovernedToolNames` | OpenBox default governed tool names | prevent recursive governance for tools that already call `createGovernedCopilotTool()` |
 | `governanceMode` | `enforce` | evaluate in observe or enforce mode |
 | `failClosed` | `true` | choose runtime behavior when OpenBox is unavailable |
 | `strict` | `true` | keep strict validation and enforcement behavior |

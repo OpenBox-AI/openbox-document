@@ -131,6 +131,8 @@ export const POST = handler;
 
 ## Step 3: Add LangGraph Backend Middleware
 
+Create a local helper in your LangGraph backend. The file name is arbitrary; this guide uses `agent/src/openbox_governance.ts` to keep the OpenBox adapter setup in one place.
+
 ```ts title="agent/src/openbox_governance.ts"
 import { AIMessage } from "@langchain/core/messages";
 import { createMiddleware, type AgentMiddleware } from "langchain";
@@ -177,21 +179,34 @@ export const graph = createAgent({
 
 ## Step 4: Use Governed Tools For Business Actions
 
-Use `createGovernedCopilotTool()` for actions that should return OpenBox decisions and business artifacts together:
+Use `createGovernedCopilotTool()` for app-owned actions that should return OpenBox decisions and business artifacts together:
 
 ```ts title="agent/src/openbox_action_governance.ts"
-import { createGovernedCopilotTool } from "openbox-sdk/copilotkit";
+import {
+  createGovernedCopilotTool,
+  type OpenBoxCopilotActionInput,
+} from "openbox-sdk/copilotkit";
 import { openBoxAdapter } from "./openbox_governance.js";
 
-const governedCopilotTool = createGovernedCopilotTool({
+type SupportTicketInput = OpenBoxCopilotActionInput & {
+  customerId: string;
+  summary: string;
+  priority: "low" | "medium" | "high";
+};
+
+const governedCopilotTool = createGovernedCopilotTool<SupportTicketInput>({
   adapter: openBoxAdapter,
   toolName: "openbox_governed_action",
-  description: "Execute a governed business action.",
+  description: "Create a governed customer support ticket.",
   normalizeInput: (input) => input,
   execute: async (input) => {
     return {
-      type: "business_result",
-      request: input.request,
+      type: "support_ticket",
+      ticketId: `SUP-${Date.now()}`,
+      customerId: input.customerId,
+      summary: input.summary,
+      priority: input.priority,
+      status: "created",
     };
   },
 });
