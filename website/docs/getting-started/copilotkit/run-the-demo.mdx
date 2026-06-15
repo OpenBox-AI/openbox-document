@@ -47,6 +47,17 @@ npm install
 
 The demo currently installs `openbox-sdk` from the OpenBox GitHub organization. You do not need to clone the SDK as a sibling repository for the demo path.
 
+## Prepare An OpenBox Agent
+
+Use the same OpenBox setup flow as the other framework demos:
+
+1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
+2. Generate an agent runtime key for the demo.
+3. Copy the agent DID and private key unless **Require signing** is disabled.
+4. Configure the demo controls in [Authorize](/trust-lifecycle/authorize): [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+
+The demo does not require CopilotKit to author OpenBox rules. CopilotKit sends prompts, tool activity, assistant output, and approval decisions through the OpenBox integration, and OpenBox evaluates the controls configured on the registered agent.
+
 ## Configure Environment
 
 Required values:
@@ -127,7 +138,7 @@ npm run openbox:verify
 npm run openbox:e2e
 ```
 
-`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh demo guardrails, behavior rules, and policy setup.
+`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
 
 ## Next Steps
 

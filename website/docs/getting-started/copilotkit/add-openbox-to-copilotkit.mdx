@@ -29,7 +29,18 @@ OpenBox governs the CopilotKit layer. CopilotKit then talks to the agent framewo
 - `openbox-sdk` with the `openbox-sdk/copilotkit` and `openbox-sdk/copilotkit/react` exports
 - OpenBox Core credentials and agent identity values
 
-## Step 1: Configure Environment
+## Step 1: Register And Configure The OpenBox Agent
+
+Before changing CopilotKit code, prepare the OpenBox agent that will govern this app:
+
+1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
+2. Generate an agent runtime key.
+3. Copy the generated DID and private key unless **Require signing** is disabled.
+4. Configure the OpenBox-side controls for this app in [Authorize](/trust-lifecycle/authorize): [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+
+The CopilotKit integration sends runtime events to OpenBox. It does not author or store those controls; OpenBox does.
+
+## Step 2: Configure Environment
 
 ```bash title=".env"
 OPENBOX_ENABLED=true
@@ -43,7 +54,7 @@ OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
 AGENT_URL=http://localhost:8123
 ```
 
-## Step 2: Govern The CopilotKit Runtime
+## Step 3: Govern The CopilotKit Runtime
 
 <Tabs>
 <TabItem value="before" label="CopilotKit">
@@ -129,7 +140,7 @@ export const POST = handler;
 </TabItem>
 </Tabs>
 
-## Step 3: Add LangGraph Backend Middleware
+## Step 4: Add LangGraph Backend Middleware
 
 Create a local helper in your LangGraph backend. The file name is arbitrary; this guide uses `agent/src/openbox_governance.ts` to keep the OpenBox adapter setup in one place.
 
@@ -177,7 +188,7 @@ export const graph = createAgent({
 });
 ```
 
-## Step 4: Use Governed Tools For Business Actions
+## Step 5: Use Governed Tools For Business Actions
 
 Use `createGovernedCopilotTool()` for app-owned actions that should return OpenBox decisions and business artifacts together:
 
@@ -214,7 +225,7 @@ const governedCopilotTool = createGovernedCopilotTool<SupportTicketInput>({
 
 For human approval, expose an approval tool and resume tool. The OpenBox result schema carries `workflowId`, `runId`, `activityId`, `approvalId`, and `governanceEventId` so the React UI can render the approval and call your decision route.
 
-## Step 5: Render OpenBox Decisions In CopilotKit
+## Step 6: Render OpenBox Decisions In CopilotKit
 
 Point the approval client at the server-side route your app uses to submit approve/reject decisions. The reference demo uses `/api/openbox/approvals/decide`; your production app can use the same helper or a different server-owned approval path.
 
@@ -254,7 +265,7 @@ export function useOpenBoxRendering() {
 }
 ```
 
-## Step 6: Verify A Live Request
+## Step 7: Verify A Live Request
 
 Run one request through the Copilot UI, then check OpenBox for:
 
