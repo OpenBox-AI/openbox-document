@@ -134,6 +134,11 @@ crewai:
   permalink: /crewai
   description: CrewAI multi-agent framework integration
 
+copilotkit:
+  label: CopilotKit
+  permalink: /copilotkit
+  description: CopilotKit application UI and runtime integration
+
 cursor:
   label: Cursor
   permalink: /cursor
