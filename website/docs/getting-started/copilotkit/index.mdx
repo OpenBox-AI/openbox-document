@@ -84,28 +84,33 @@ export const POST = handler;
 <TabItem value="agent" label="LangGraph Backend">
 
 ```ts title="agent/src/agent.ts"
-import { createAgent } from "langchain";
+import { AIMessage } from "@langchain/core/messages";
+import { createAgent, createMiddleware } from "langchain";
 import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
-import { createOpenBoxGovernanceMiddleware } from "./openbox_governance.js";
-import {
-  openbox_governed_action,
-  openbox_governed_approval_action,
-  openbox_resume_governed_action,
-} from "./openbox_scenarios.js";
+import { createOpenBoxCopilotKitAdapter } from "openbox-sdk/copilotkit";
+import { tools } from "./tools.js";
+
+const openboxAdapter = createOpenBoxCopilotKitAdapter({
+  agentWorkflowType: "CopilotKitLangGraphAgent",
+  taskQueue: "copilotkit-langgraph",
+});
+
+const openboxMiddleware = openboxAdapter.createLangChainMiddleware({
+  createMiddleware,
+  AIMessage,
+});
 
 export const graph = createAgent({
   model,
-  tools: [
-    openbox_governed_action,
-    openbox_governed_approval_action,
-    openbox_resume_governed_action,
-  ],
+  tools,
   middleware: [
-    createOpenBoxGovernanceMiddleware(),
+    openboxMiddleware,
     copilotkitMiddleware,
   ],
 });
 ```
+
+The SDK import is `openbox-sdk/copilotkit`. A file named `openbox_governance.ts` in the reference app is only a local helper that wraps the adapter setup above.
 
 </TabItem>
 <TabItem value="react" label="React UI">
