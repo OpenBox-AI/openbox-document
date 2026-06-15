@@ -30,12 +30,12 @@ Package exports:
 | **[Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough)** | End-to-end guide for wiring the runtime, LangGraph middleware, governed tools, and React renderers |
 
 :::info What The Integration Does
-The integration connects the CopilotKit runtime boundary to OpenBox. The current reference app uses LangGraph as the backend behind CopilotKit. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside CopilotKit.
+The integration connects the CopilotKit runtime to OpenBox, then uses the current LangGraph bridge to instrument the backend agent process. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside CopilotKit.
 :::
 
 ## Recommended Architecture
 
-Use OpenBox above CopilotKit, and use the LangGraph bridge currently supported by the reference app:
+Use OpenBox above CopilotKit, and use the current LangGraph bridge for backend instrumentation:
 
 | Layer | OpenBox hook | Purpose |
 | --- | --- | --- |
