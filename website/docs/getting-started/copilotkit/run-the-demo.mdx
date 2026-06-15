@@ -58,6 +58,11 @@ Use the same OpenBox setup flow as the other framework demos:
 
 The demo does not require CopilotKit to author OpenBox rules. CopilotKit sends prompts, tool activity, assistant output, and approval decisions through the OpenBox integration, and OpenBox evaluates the controls configured on the registered agent.
 
+For a predictable demo matrix, configure those controls one of two ways:
+
+- **Normal user path:** create the guardrails, policies, and behavior rules in Authorize, then use the suggestion chips below to see how your controls behave.
+- **Maintainer seeded path:** if you have an org/backend API key, set `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`, then run `npm run openbox:admin:setup`. This creates or updates the demo guardrails, behavior rules, goal-alignment config, and policy on the configured OpenBox agent.
+
 ## Configure Environment
 
 Required values:
@@ -108,18 +113,27 @@ AGENT_URL=http://localhost:8123 npm run dev:ui -- -p 3001
 
 Open `http://localhost:3001`.
 
-## What To Try
+## Test The Demo Manually
 
 Use the demo suggestion chips or enter a natural business request:
 
-- `Review Work Queue`
-- `Prepare Exception Report`
-- `Draft Customer Update`
-- `Issue Service Credit`
-- `Send Exception IDs`
-- `Update Vendor Bank`
+| Suggestion | Expected path when demo controls are seeded |
+| --- | --- |
+| `Review Work Queue` | allowed result |
+| `Prepare Exception Report` | output redaction or constrained result |
+| `Draft Customer Update` | final-output governance with redaction or constraint |
+| `Prepare Vendor Handoff` | interactive choice, then OpenBox governance |
+| `Draft Billing Escalation` | manual edit, then OpenBox governance |
+| `Issue Service Credit` | human approval |
+| `Send Exception IDs` | block |
+| `Update Vendor Bank` | halt |
 
-Depending on your OpenBox policy and guardrails, the request may be allowed, redacted, blocked, halted, or routed through human approval.
+If you skipped `npm run openbox:admin:setup`, the same chips still test the integration, but the exact verdicts come from the guardrails, policies, and behavior rules you configured in OpenBox.
+
+After each run, check both surfaces:
+
+1. In the CopilotKit UI, confirm the OpenBox decision card and any released business result.
+2. In the OpenBox Dashboard, open the registered agent and confirm the new session, governance events, guardrail/policy evaluations, approval records, or halted state.
 
 ## Verify
 
@@ -134,11 +148,14 @@ cd agent && npx tsc --noEmit
 Maintainer checks that call live OpenBox services:
 
 ```bash
+npm run openbox:admin:setup
 npm run openbox:verify
 npm run openbox:e2e
 ```
 
-`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
+`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, goal-alignment config, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
+
+`npm run openbox:e2e` can start the local agent and app automatically. If you already started them yourself, set `APP_URL` and `AGENT_URL` in `.env` so Playwright targets the running services.
 
 ## Next Steps
 
