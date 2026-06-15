@@ -85,13 +85,32 @@ export const POST = handler;
 
 ```ts title="agent/src/agent.ts"
 import { AIMessage } from "@langchain/core/messages";
+import { tool } from "@langchain/core/tools";
 import { createAgent, createMiddleware } from "langchain";
 import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
 import { createOpenBoxCopilotKitAdapter } from "openbox-sdk/copilotkit";
+import { z } from "zod";
 
-const existingTools = [
-  // your existing LangGraph tools
-];
+const createSupportTicket = tool(
+  async ({ customerId, summary, priority }) => {
+    return JSON.stringify({
+      ticketId: `SUP-${Date.now()}`,
+      customerId,
+      summary,
+      priority,
+      status: "created",
+    });
+  },
+  {
+    name: "create_support_ticket",
+    description: "Create a customer support ticket.",
+    schema: z.object({
+      customerId: z.string().describe("Customer account ID."),
+      summary: z.string().min(1).describe("Issue summary."),
+      priority: z.enum(["low", "medium", "high"]),
+    }),
+  },
+);
 
 const openboxAdapter = createOpenBoxCopilotKitAdapter({
   agentWorkflowType: "CopilotKitLangGraphAgent",
@@ -105,7 +124,7 @@ const openboxMiddleware = openboxAdapter.createLangChainMiddleware({
 
 export const graph = createAgent({
   model,
-  tools: existingTools,
+  tools: [createSupportTicket],
   middleware: [
     openboxMiddleware,
     copilotkitMiddleware,
@@ -113,7 +132,7 @@ export const graph = createAgent({
 });
 ```
 
-The SDK import is `openbox-sdk/copilotkit`. A file named `openbox_governance.ts` in the reference app is only a local helper that wraps the adapter setup above.
+`createSupportTicket` is a normal LangChain tool. OpenBox is added by `createOpenBoxCopilotKitAdapter()` and the middleware it creates. A file named `openbox_governance.ts` in the reference app is only a local helper that wraps the adapter setup above.
 
 </TabItem>
 <TabItem value="react" label="React UI">
