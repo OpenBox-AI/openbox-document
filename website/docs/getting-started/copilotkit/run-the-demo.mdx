@@ -56,6 +56,8 @@ Use the OpenBox setup flow before running live demo traffic:
 3. Copy the agent DID and private key unless **Require signing** is disabled.
 4. Configure the demo controls in [Authorize](/trust-lifecycle/authorize): [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
 
+New OpenBox agents require signing by default. Use the DID and private key from agent registration unless you intentionally disable signing in the agent settings.
+
 The demo does not require CopilotKit to author OpenBox rules. CopilotKit sends prompts, tool activity, assistant output, and approval decisions through the OpenBox integration, and OpenBox evaluates the controls configured on the registered agent.
 
 For a predictable demo matrix, create guardrails, policies, and behavior rules in Authorize, then use the suggestion chips below to see how your controls behave.
@@ -101,14 +103,7 @@ Default services:
 | LangGraph agent | `http://localhost:8123` |
 | Next.js app | the port printed by Next.js |
 
-For a fixed app port:
-
-```bash
-npm run dev:agent
-AGENT_URL=http://localhost:8123 npm run dev:ui -- -p 3001
-```
-
-Open `http://localhost:3001`.
+Open the URL printed by Next.js.
 
 ## Test The Demo Manually
 
