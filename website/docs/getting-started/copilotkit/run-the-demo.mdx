@@ -15,7 +15,7 @@ tags:
 The demo shows OpenBox on top of CopilotKit, with CopilotKit on top of LangGraph. It is a Next.js app with a local LangGraph TypeScript agent. CopilotKit handles the chat runtime and generative UI. OpenBox governs prompts, tool inputs, tool outputs, assistant output, and approval decisions.
 
 :::info Backend model
-This demo uses LangGraph as the backend behind CopilotKit. OpenBox is layered above CopilotKit, and the current LangGraph bridge also instruments the backend graph so both sides share one governed session. Future CopilotKit backend bridges can follow the same layering.
+CopilotKit can connect to multiple backend agent frameworks. This demo uses LangGraph, with OpenBox layered above CopilotKit and the current LangGraph bridge instrumenting the backend graph so both sides share one governed session.
 :::
 
 Reference repository:
@@ -49,7 +49,7 @@ The demo currently installs `openbox-sdk` from the OpenBox GitHub organization. 
 
 ## Prepare An OpenBox Agent
 
-Use the same OpenBox setup flow as the other framework demos:
+Use the OpenBox setup flow before running live demo traffic:
 
 1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
 2. Generate an agent runtime key for the demo.
@@ -58,10 +58,7 @@ Use the same OpenBox setup flow as the other framework demos:
 
 The demo does not require CopilotKit to author OpenBox rules. CopilotKit sends prompts, tool activity, assistant output, and approval decisions through the OpenBox integration, and OpenBox evaluates the controls configured on the registered agent.
 
-For a predictable demo matrix, configure those controls one of two ways:
-
-- **Normal user path:** create the guardrails, policies, and behavior rules in Authorize, then use the suggestion chips below to see how your controls behave.
-- **Maintainer seeded path:** if you have an org/backend API key, set `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`, then run `npm run openbox:admin:setup`. This creates or updates the demo guardrails, behavior rules, goal-alignment config, and policy on the configured OpenBox agent.
+For a predictable demo matrix, create guardrails, policies, and behavior rules in Authorize, then use the suggestion chips below to see how your controls behave.
 
 ## Configure Environment
 
@@ -75,11 +72,10 @@ Required values:
 | `OPENBOX_ENABLED` | set to `true` to enable OpenBox governance |
 | `OPENBOX_CORE_URL` | OpenBox Core base URL |
 | `OPENBOX_API_KEY` | OpenBox agent runtime key, `obx_live_*` or `obx_test_*` |
-| `OPENBOX_AGENT_ID` | OpenBox platform agent ID for readiness checks |
 | `OPENBOX_AGENT_DID` | agent DID, required when signing is enabled |
 | `OPENBOX_AGENT_PRIVATE_KEY` | base64 raw Ed25519 private key, required when signing is enabled |
 
-Optional values:
+Optional and maintainer values:
 
 | Variable | Purpose |
 | --- | --- |
@@ -88,6 +84,7 @@ Optional values:
 | `LANGSMITH_API_KEY` | LangSmith key when using a LangGraph deployment that requires it |
 | `OPENBOX_API_URL` | server-side OpenBox platform/backend URL for the demo approval-decision route |
 | `OPENBOX_BACKEND_API_KEY` | server-side org/backend key for the demo approval-decision route |
+| `OPENBOX_AGENT_ID` | OpenBox platform agent ID for readiness checks and maintainer setup |
 
 `OPENBOX_BACKEND_API_KEY` is not sent to the browser and is not required for normal runtime governance. It is only used by this demo path that posts CopilotKit-rendered approve/reject decisions back to OpenBox.
 
@@ -135,7 +132,7 @@ After each run, check both surfaces:
 1. In the CopilotKit UI, confirm the OpenBox decision card and any released business result.
 2. In the OpenBox Dashboard, open the registered agent and confirm the new session, governance events, guardrail/policy evaluations, approval records, or halted state.
 
-## Verify
+## Verify The Local Build
 
 Fast local checks:
 
@@ -145,6 +142,8 @@ npx tsc --noEmit
 cd agent && npx tsc --noEmit
 ```
 
+## Maintainer Verification
+
 Maintainer checks that call live OpenBox services:
 
 ```bash
@@ -153,9 +152,9 @@ npm run openbox:verify
 npm run openbox:e2e
 ```
 
-`npm run openbox:admin:setup` mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, goal-alignment config, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
+`npm run openbox:admin:setup` requires `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`. It mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, goal-alignment config, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
 
-`npm run openbox:e2e` can start the local agent and app automatically. If you already started them yourself, set `APP_URL` and `AGENT_URL` in `.env` so Playwright targets the running services.
+`npm install` installs the Playwright dependency used by `npm run openbox:e2e`. The e2e script can start the local agent and app automatically. If you already started them yourself, set `APP_URL` and `AGENT_URL` in `.env` so Playwright targets the running services.
 
 ## Next Steps
 

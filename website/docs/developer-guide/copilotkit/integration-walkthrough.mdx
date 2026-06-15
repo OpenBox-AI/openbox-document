@@ -1,7 +1,7 @@
 ---
 title: Integration Walkthrough
-sidebar_label: OpenBox on CopilotKit
-description: "Govern a CopilotKit app that uses LangGraph as the agent framework: wire the runtime, agent middleware, governed tools, approval route, and React rendering."
+sidebar_label: Integration Walkthrough
+description: "Govern a CopilotKit app using the LangGraph backend path: wire the runtime, agent middleware, governed tools, approval route, and React rendering."
 llms_description: OpenBox on CopilotKit with LangGraph integration walkthrough
 sidebar_position: 3
 tags:
@@ -14,7 +14,7 @@ tags:
 
 # Integration Walkthrough
 
-This guide shows the standard OpenBox-on-CopilotKit path. OpenBox sits on top of CopilotKit, and CopilotKit sits on top of the agent framework. The reference path here uses LangGraph as the backend example.
+This guide shows the standard OpenBox-on-CopilotKit path. OpenBox sits on top of CopilotKit, and CopilotKit can connect to multiple backend agent frameworks. The reference path here uses LangGraph.
 
 It follows the same shape as the OpenBox-on-CopilotKit reference app.
 
@@ -35,7 +35,7 @@ It follows the same shape as the OpenBox-on-CopilotKit reference app.
 - an OpenBox agent DID and private key unless signing is disabled for the registered agent
 
 :::info Backend model
-OpenBox governs CopilotKit. CopilotKit talks to the agent framework backend. This walkthrough uses LangGraph as that backend, while leaving the same layering available for future backend bridges.
+OpenBox governs CopilotKit. CopilotKit talks to the backend agent framework. This walkthrough uses LangGraph as that backend.
 :::
 
 ## Part 1: Register Your Agent In OpenBox
@@ -77,7 +77,7 @@ These are the credentials for the generic runtime integration. Platform/backend 
 
 ## Part 4: Wire The CopilotKit Runtime
 
-```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+```ts title="route.ts"
 import {
   CopilotRuntime,
   createCopilotRuntimeHandler,

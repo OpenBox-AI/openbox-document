@@ -1,6 +1,6 @@
 ---
 title: Add OpenBox to CopilotKit
-description: "Add OpenBox governance to an existing CopilotKit app that uses a LangGraph backend."
+description: "Add OpenBox governance to an existing CopilotKit app using the LangGraph backend path."
 llms_description: Add OpenBox to CopilotKit with a LangGraph backend
 sidebar_position: 3
 tags:
@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 Use this guide when you already have a CopilotKit app backed by LangGraph and want OpenBox to sit above CopilotKit to govern runtime prompts, tool activity, assistant output, and approval decisions.
 
 :::info Backend model
-OpenBox governs the CopilotKit layer. CopilotKit then talks to the agent framework backend. This guide uses LangGraph as the backend example, and future backend bridges can follow the same pattern.
+OpenBox governs the CopilotKit layer. CopilotKit can connect to multiple backend agent frameworks; this guide shows the LangGraph backend path.
 :::
 
 ## Prerequisites
@@ -59,7 +59,7 @@ AGENT_URL=http://localhost:8123
 <Tabs>
 <TabItem value="before" label="CopilotKit">
 
-```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+```ts title="route.ts"
 import {
   CopilotRuntime,
   createCopilotRuntimeHandler,
@@ -88,7 +88,7 @@ const handler = createCopilotRuntimeHandler({
 </TabItem>
 <TabItem value="after" label="OpenBox" default>
 
-```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+```ts title="route.ts"
 import {
   CopilotRuntime,
   createCopilotRuntimeHandler,
