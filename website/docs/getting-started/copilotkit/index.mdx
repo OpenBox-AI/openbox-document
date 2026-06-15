@@ -1,6 +1,6 @@
 ---
 title: Getting Started with OpenBox on CopilotKit
-description: "Add OpenBox governance on top of CopilotKit apps that use LangGraph as the agent framework."
+description: "Add OpenBox governance on top of CopilotKit apps using the LangGraph backend path."
 llms_description: OpenBox on CopilotKit with LangGraph TypeScript quickstart
 sidebar_position: 2
 tags:
@@ -15,12 +15,12 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started with OpenBox on CopilotKit
 
-OpenBox sits on top of [CopilotKit](https://www.copilotkit.ai/). CopilotKit sits on top of the agent framework. This guide uses LangGraph as the backend example.
+OpenBox sits on top of [CopilotKit](https://www.copilotkit.ai/). CopilotKit can connect to multiple backend agent frameworks. This guide shows the LangGraph backend path.
 
 Use this path when your app has a CopilotKit frontend and a LangGraph backend. If you only need to govern a standalone Python LangGraph graph without CopilotKit, start with [Getting Started with LangGraph](/getting-started/langgraph).
 
 :::info Backend model
-OpenBox is layered above CopilotKit. In the current LangGraph path, the SDK also installs middleware in the backend so CopilotKit and the graph share one governed session. Future CopilotKit backend bridges can follow the same layering.
+OpenBox is layered above CopilotKit. In the current LangGraph path, the SDK also installs middleware in the backend so CopilotKit and the graph share one governed session.
 :::
 
 ## Integration Stack
@@ -35,7 +35,7 @@ The integration has three layers:
 
 ## Before You Run
 
-CopilotKit does not create OpenBox agents or rules for you. Start from the same OpenBox setup used by the other integrations:
+CopilotKit does not create OpenBox agents or rules for you. Prepare the OpenBox agent and controls before sending live CopilotKit traffic:
 
 1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
 2. Generate an agent runtime key.
@@ -46,7 +46,7 @@ CopilotKit does not create OpenBox agents or rules for you. Start from the same 
 <Tabs>
 <TabItem value="runtime" label="CopilotKit Runtime" default>
 
-```ts title="src/app/api/copilotkit/[[...slug]]/route.ts"
+```ts title="route.ts"
 import {
   CopilotRuntime,
   createCopilotRuntimeHandler,
@@ -222,6 +222,16 @@ From the OpenBox-on-CopilotKit integration point, OpenBox can capture:
 - assistant-output governance before content reaches the user
 - human approval decisions returned through CopilotKit UI components
 - redacted or blocked results rendered through OpenBox React helpers
+
+## What To Expect In The UI
+
+After integration, OpenBox gives CopilotKit users:
+
+- OpenBox decision cards inside the CopilotKit chat flow
+- governed action results that render only after OpenBox allows or transforms them
+- approval controls when an OpenBox policy requires human review
+- interactive review and manual-edit surfaces for governed business actions
+- a matching OpenBox Dashboard session with prompt, tool, output, and approval events
 
 ## Next Steps
 

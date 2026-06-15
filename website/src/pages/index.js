@@ -414,7 +414,7 @@ export default function Home() {
                   </Link>
                 </TabItem>
                 <TabItem value="copilotkit" label="CopilotKit (TypeScript)">
-                  <CodeBlock language="typescript" title="src/app/api/copilotkit/[[...slug]]/route.ts">{CopilotKitSnippet}</CodeBlock>
+                  <CodeBlock language="typescript" title="route.ts">{CopilotKitSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/copilotkit">
                     CopilotKit quickstart →
                   </Link>

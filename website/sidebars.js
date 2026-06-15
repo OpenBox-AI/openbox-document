@@ -209,14 +209,14 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'OpenBox on CopilotKit',
+          label: 'CopilotKit SDK (TypeScript)',
           link: {
             type: 'doc',
             id: 'developer-guide/copilotkit/index',
           },
           items: [
-            'developer-guide/copilotkit/configuration',
             'developer-guide/copilotkit/integration-walkthrough',
+            'developer-guide/copilotkit/configuration',
           ],
         },
         {
