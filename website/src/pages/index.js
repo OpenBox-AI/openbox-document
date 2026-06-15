@@ -13,6 +13,7 @@ import styles from './index.module.css';
 
 const IntegrationsLive = [
   {label: 'CrewAI', to: '/getting-started/crewai'},
+  {label: 'CopilotKit', to: '/getting-started/copilotkit'},
   {label: 'Deep Agents', to: '/getting-started/deep-agents'},
   {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'LangGraph', to: '/getting-started/langgraph'},
@@ -51,6 +52,48 @@ crew = Crew(
 
 with create_openbox_engine() as engine:
     result = engine.govern(crew).kickoff()`;
+
+const CopilotKitSnippet = `import {
+  CopilotRuntime,
+  createCopilotRuntimeHandler,
+  InMemoryAgentRunner,
+} from "@copilotkit/runtime/v2";
+import { LangGraphAgent } from "@copilotkit/runtime/langgraph";
+import {
+  createOpenBoxCopilotKitAdapter,
+  createOpenBoxCopilotRuntime,
+} from "openbox-sdk/copilotkit";
+
+const runner = new InMemoryAgentRunner();
+const runtime = new CopilotRuntime({
+  agents: {
+    default: new LangGraphAgent({
+      deploymentUrl: process.env.AGENT_URL ?? "http://localhost:8123",
+      graphId: "openbox_copilotkit_agent",
+      langsmithApiKey: process.env.LANGSMITH_API_KEY ?? "",
+    }),
+  },
+  runner,
+});
+
+const openboxRuntime = createOpenBoxCopilotRuntime({
+  runtime,
+  runner,
+  agents: ["default"],
+  adapter: createOpenBoxCopilotKitAdapter({
+    agentWorkflowType: "CopilotKitRuntime",
+    taskQueue: "copilotkit-runtime",
+  }),
+});
+
+const handler = createCopilotRuntimeHandler({
+  runtime: openboxRuntime.runtime,
+  basePath: "/api/copilotkit",
+  hooks: openboxRuntime.hooks,
+});
+
+export const GET = handler;
+export const POST = handler;`;
 
 const DeepAgentsSnippet = `import os
 from deepagents import create_deep_agent
@@ -368,6 +411,12 @@ export default function Home() {
                   <CodeBlock language="python" title="crew.py">{CrewAISnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/crewai">
                     CrewAI quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="copilotkit" label="CopilotKit (TypeScript)">
+                  <CodeBlock language="typescript" title="src/app/api/copilotkit/[[...slug]]/route.ts">{CopilotKitSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/copilotkit">
+                    CopilotKit quickstart →
                   </Link>
                 </TabItem>
                 <TabItem value="deep-agents" label="Deep Agents (Python)">

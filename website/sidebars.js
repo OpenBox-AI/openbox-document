@@ -36,6 +36,18 @@ const sidebars = {
           ],
         },
         {
+          type: 'category',
+          label: 'CopilotKit',
+          link: {
+            type: 'doc',
+            id: 'getting-started/copilotkit/index',
+          },
+          items: [
+            'getting-started/copilotkit/run-the-demo',
+            'getting-started/copilotkit/add-openbox-to-copilotkit',
+          ],
+        },
+        {
           type: 'doc',
           id: 'getting-started/cursor/index',
           label: 'Cursor',
@@ -194,6 +206,18 @@ const sidebars = {
           type: 'doc',
           id: 'developer-guide/cursor/index',
           label: 'Cursor',
+        },
+        {
+          type: 'category',
+          label: 'OpenBox on CopilotKit',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/copilotkit/index',
+          },
+          items: [
+            'developer-guide/copilotkit/configuration',
+            'developer-guide/copilotkit/integration-walkthrough',
+          ],
         },
         {
           type: 'category',
