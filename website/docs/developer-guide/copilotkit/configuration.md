@@ -50,11 +50,11 @@ Runtime governance requires an OpenBox Core URL and an agent runtime key.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `OPENBOX_API_URL` | Only for readiness or inline approval decisions | - | OpenBox platform/backend API URL |
-| `OPENBOX_BACKEND_API_KEY` | Only for readiness or inline approval decisions | - | org/backend key, `obx_key_*` |
-| `OPENBOX_AGENT_ID` | Only for readiness or inline approval decisions | - | platform agent ID |
+| `OPENBOX_API_URL` | Only for readiness checks or CopilotKit UI approval decisions | - | OpenBox platform/backend API URL |
+| `OPENBOX_BACKEND_API_KEY` | Only for readiness checks or CopilotKit UI approval decisions | - | org/backend key, `obx_key_*` |
+| `OPENBOX_AGENT_ID` | Only for readiness checks or CopilotKit UI approval decisions | - | platform agent ID |
 
-Runtime governance uses `OPENBOX_CORE_URL` and `OPENBOX_API_KEY`. Inline approval decisions use `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`.
+Runtime governance uses `OPENBOX_CORE_URL` and `OPENBOX_API_KEY`. Approval decisions submitted from the CopilotKit UI use `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`.
 
 ## Adapter Options
 
