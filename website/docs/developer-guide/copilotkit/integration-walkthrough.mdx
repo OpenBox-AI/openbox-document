@@ -63,13 +63,15 @@ OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_private_key
 AGENT_URL=http://localhost:8123
 ```
 
-Add backend variables only if your CopilotKit UI lets users approve or reject OpenBox approval requests directly:
+Add backend variables only if your CopilotKit UI lets users approve or reject OpenBox approval requests directly. Keep these values in the server environment for your approval route:
 
 ```bash title=".env"
 OPENBOX_API_URL=https://api.openbox.ai
 OPENBOX_BACKEND_API_KEY=obx_key_org_or_backend_api_key
 OPENBOX_AGENT_ID=openbox_agent_id
 ```
+
+The backend key is not used by the browser and is not required for normal runtime governance. It is only used by the server-side approval decision route that posts the human's approve/reject decision back to OpenBox.
 
 ## Part 3: Wire The CopilotKit Runtime
 
