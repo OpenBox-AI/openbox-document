@@ -88,7 +88,10 @@ import { AIMessage } from "@langchain/core/messages";
 import { createAgent, createMiddleware } from "langchain";
 import { copilotkitMiddleware } from "@copilotkit/sdk-js/langgraph";
 import { createOpenBoxCopilotKitAdapter } from "openbox-sdk/copilotkit";
-import { tools } from "./tools.js";
+
+const existingTools = [
+  // your existing LangGraph tools
+];
 
 const openboxAdapter = createOpenBoxCopilotKitAdapter({
   agentWorkflowType: "CopilotKitLangGraphAgent",
@@ -102,7 +105,7 @@ const openboxMiddleware = openboxAdapter.createLangChainMiddleware({
 
 export const graph = createAgent({
   model,
-  tools,
+  tools: existingTools,
   middleware: [
     openboxMiddleware,
     copilotkitMiddleware,
