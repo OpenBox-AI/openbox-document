@@ -85,7 +85,7 @@ hitl_enabled=False  # REQUIRE_APPROVAL treated as BLOCK
 
 ### send_start_event
 
-Send `WORKFLOW_START` / WorkflowStarted events.
+Send `WorkflowStarted` events.
 
 ```python
 send_start_event=True  # Default
@@ -94,7 +94,7 @@ send_start_event=False
 
 ### send_activity_start_event
 
-Send `ACTIVITY_START` / ActivityStarted events.
+Send `ActivityStarted` events.
 
 ```python
 send_activity_start_event=True  # Default

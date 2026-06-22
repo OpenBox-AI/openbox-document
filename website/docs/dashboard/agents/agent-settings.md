@@ -11,7 +11,7 @@ tags:
 
 The **Settings** tab on an agent's detail page lets you manage every aspect of the agent after it has been registered. Open it by navigating to **Agents → select an agent → Settings**, or by choosing **Settings** from the **⋮** actions menu in the agent table.
 
-Settings is divided into four sections: [General](#general-settings), [Risk Configuration](#risk-configuration), [API Access](#api-access), and [Danger Zone](#danger-zone).
+Settings is divided into five sections: [General](#general-settings), [Risk Configuration](#risk-configuration), [Trust Evaluation](#trust-evaluation), [API Access](#api-access), and [Danger Zone](#danger-zone).
 
 ## General Settings
 
@@ -53,6 +53,17 @@ Click **Recalculate Trust Score** to trigger a fresh calculation based on the cu
 ### Adjust Risk Level
 
 Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
+
+## Trust Evaluation
+
+This section controls how the agent's behavioral trust is evaluated over time. See [Trust Scores → Recovery](/core-concepts/trust-scores#recovery) for how the rolling window drives score recovery.
+
+| Setting | Description | Range | Default |
+| --- | --- | --- | --- |
+| **Trust Window Size** | Rolling window of the agent's last N **completed** sessions. Behavioral penalties age out as clean sessions push older ones out of this window. | 1–500 sessions | 50 |
+| **Flag Threshold** | Number of rule triggers within a single session that flags that session for admin review. | 1–100 triggers | 5 |
+
+Tune the window to the agent's operational pattern — e.g. a smaller window (~20) for long-running pipelines, a larger one (~100) for high-frequency chatbots.
 
 ## API Access
 

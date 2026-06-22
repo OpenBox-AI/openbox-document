@@ -118,25 +118,25 @@ Example: Risk Profile Score = 98, Behavioral = 100, Alignment = 100
 ### Over Time
 
 ```
-Day 1:  92 ━━━━━━━━━━━━━━━━━━ Tier 1
-Day 7:  88 ━━━━━━━━━━━━━━━━━━ Tier 2 (minor violations)
-Day 14: 84 ━━━━━━━━━━━━━━━━━━ Tier 2 (stable)
-Day 21: 86 ━━━━━━━━━━━━━━━━━━ Tier 2 (recovering)
-Day 30: 89 ━━━━━━━━━━━━━━━━━━ Tier 2 (approaching Tier 1)
+Session 10:   92 ━━━━━━━━━━━━━━━━━━ Tier 1
+Session 40:   88 ━━━━━━━━━━━━━━━━━━ Tier 2 (minor violations)
+Session 70:   84 ━━━━━━━━━━━━━━━━━━ Tier 2 (penalties active in window)
+Session 120:  86 ━━━━━━━━━━━━━━━━━━ Tier 2 (bad sessions rolling out of window)
+Session 160:  89 ━━━━━━━━━━━━━━━━━━ Tier 2 (window clean, approaching Tier 1)
 ```
 
 ### Recovery
 
+Recovery is **session-based, not time-based**. Behavioral penalties live in a rolling window of the agent's last **N completed sessions** (default **50**, configurable per agent in [Settings → Trust Evaluation](/dashboard/agents/agent-settings#trust-evaluation)). A penalty ages out when newer clean completed sessions push the session that incurred it out of the window — trust is earned through demonstrated clean behavior, not granted by idle time.
+
 To improve a degraded score:
 
-1. **Consecutive compliance** - No violations for 7+ days
-2. **High operation volume** - More compliant operations
+1. **Consecutive clean sessions** - Completing sessions with no violations rolls penalty-bearing sessions out of the window
+2. **High operation volume** - More compliant operations within the window
 3. **HITL success** - Approved requests
 4. **Goal alignment** - Consistent alignment scores
 
-Recovery rate:
-- Tier 1-3: +1 pt/day
-- Tier 4: +0.5 pt/day
+Only **completed** sessions (`WorkflowCompleted` or `WorkflowFailed`) advance the window; sessions terminated mid-flight do not count.
 
 ## Related
 

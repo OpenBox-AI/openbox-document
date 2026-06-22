@@ -106,12 +106,12 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 [Session Replay](/trust-lifecycle/session-replay) shows decisions at each operation:
 
 ```
-09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW
-09:14:32.045  LLM_CALL          gpt-4             ✓ ALLOW
-09:14:32.892  EXTERNAL_API_CALL stripe.com        ⏸ REQUIRE_APPROVAL
+09:14:32.001  database_select   customers.find    ✓ ALLOW
+09:14:32.045  llm_completion    gpt-4             ✓ ALLOW
+09:14:32.892  http_post         api.stripe.com    ⏸ REQUIRE_APPROVAL
 09:14:45.002  APPROVAL_GRANTED  user: john@co     ✓ APPROVED
-09:14:45.123  EXTERNAL_API_CALL stripe.com        ✓ ALLOW (resumed)
-09:14:46.001  DATABASE_WRITE    audit.log         ✓ ALLOW
+09:14:45.123  http_post         api.stripe.com    ✓ ALLOW (resumed)
+09:14:46.001  database_insert   audit.log         ✓ ALLOW
 ```
 
 ## Customizing Decisions

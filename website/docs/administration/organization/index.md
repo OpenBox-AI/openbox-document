@@ -50,25 +50,9 @@ Configure what each role can access and modify within the organization. Go to **
 - Default timezone
 - Notification preferences
 
-<!-- ### Integrations
+### Integrations
 
-Configure external integrations:
-
-| Integration | Purpose |
-|-------------|---------|
-| **Slack** | Approval notifications |
-| **PagerDuty** | Critical alerts |
-| **Datadog** | Metrics export |
-| **Splunk** | Log forwarding |
-| **Webhooks** | Custom integrations |
-
-### Billing
-
-- Current plan details
-- Usage metrics
-- Invoice history
-- Payment methods
-- Upgrade/downgrade -->
+Send governance events to external systems via [Webhooks](/administration/webhooks), which support two endpoint modes — **HTTP** and **Slack**. Slack notifications are delivered as a webhook mode, not a separate integration.
 
 ## Audit Log
 

@@ -337,6 +337,7 @@ const sidebars = {
           items: [
             'dashboard/agents/registering-agents',
             'dashboard/agents/agent-settings',
+            'dashboard/agents/compliance',
           ],
         },
         'dashboard/trust-overview',
@@ -377,6 +378,7 @@ const sidebars = {
             },
           ],
         },
+        'administration/webhooks',
         'administration/compliance-and-audit',
         'administration/attestation-and-cryptographic-proof',
         'administration/organization-audit-log',

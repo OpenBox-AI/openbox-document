@@ -15,6 +15,8 @@ tags:
 
 OpenBox records all AI agent governance decisions in an immutable audit trail. The platform collects evidence from governance workflows and supports on-demand audit log export.
 
+This page covers organization-wide compliance and audit. For a single agent's posture, see [Agent Compliance](/dashboard/agents/compliance).
+
 ---
 
 ## Immutable Audit Trail
