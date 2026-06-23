@@ -33,7 +33,7 @@ Each webhook subscribes to one or more event types and can target specific agent
 | `governance.verdict.block` | An operation was blocked by a policy or guardrail. |
 | `governance.verdict.halt` | An agent session was halted. |
 | `governance.verdict.require_approval` | An operation was paused for human approval. |
-| `governance.verdict.constrain` | An operation was allowed with constraints applied. |
+| `governance.verdict.constrain` | An operation was allowed with constraints applied. *(Reserved: subscribable, but not emitted by the current governance engine — the active verdicts are HALT, BLOCK, REQUIRE_APPROVAL, ALLOW.)* |
 | `approval.decided` | An approval request was approved or rejected. |
 | `approval.expired` | An approval request reached its 24-hour hard expiry. |
 | `trust_score.decreased` | An agent's trust score dropped. |

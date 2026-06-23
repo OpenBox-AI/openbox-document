@@ -117,13 +117,13 @@ Policies can reference Trust Tier:
 ```rego
 # Allow database writes only for Tier 1-2
 allow {
-    input.event_type == "db.write"
+    input.spans[_].semantic_type == "database_insert"
     input.trust_tier <= 2
 }
 
-# Require approval for Tier 3+ agents
+# Require approval for external calls by Tier 3+ agents
 require_approval {
-    input.event_type == "api.call"
+    input.spans[_].semantic_type == "http_post"
     input.trust_tier >= 3
 }
 ```
