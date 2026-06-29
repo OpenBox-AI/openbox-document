@@ -55,45 +55,36 @@ with create_openbox_engine() as engine:
 
 const CopilotKitSnippet = `import {
   CopilotRuntime,
-  createCopilotRuntimeHandler,
+  createCopilotEndpoint,
   InMemoryAgentRunner,
 } from "@copilotkit/runtime/v2";
-import { LangGraphAgent } from "@copilotkit/runtime/langgraph";
-import {
-  createOpenBoxCopilotKitAdapter,
-  createOpenBoxCopilotRuntime,
-} from "openbox-sdk/copilotkit";
+import { withOpenBoxRuntime } from "@openbox-ai/openbox-copilotkit";
+import { handle } from "hono/vercel";
 
-const runner = new InMemoryAgentRunner();
-const runtime = new CopilotRuntime({
-  agents: {
-    default: new LangGraphAgent({
-      deploymentUrl: process.env.AGENT_URL ?? "http://localhost:8123",
-      graphId: "openbox_copilotkit_agent",
-      langsmithApiKey: process.env.LANGSMITH_API_KEY ?? "",
-    }),
+export const runtime = "nodejs";
+
+const options = {
+  agents,
+  runner: new InMemoryAgentRunner(),
+} satisfies ConstructorParameters<typeof CopilotRuntime>[0];
+
+const { runtime: copilotRuntime } = await withOpenBoxRuntime(
+  options,
+  {
+    middlewareOptions: {
+      frontendToolNames: ["setThemeColor"],
+      enforceApprovals: false,
+    },
   },
-  runner,
-});
+);
 
-const openboxRuntime = createOpenBoxCopilotRuntime({
-  runtime,
-  runner,
-  agents: ["default"],
-  adapter: createOpenBoxCopilotKitAdapter({
-    agentWorkflowType: "CopilotKitRuntime",
-    taskQueue: "copilotkit-runtime",
-  }),
-});
-
-const handler = createCopilotRuntimeHandler({
-  runtime: openboxRuntime.runtime,
+const app = createCopilotEndpoint({
+  runtime: copilotRuntime,
   basePath: "/api/copilotkit",
-  hooks: openboxRuntime.hooks,
 });
 
-export const GET = handler;
-export const POST = handler;`;
+export const GET = handle(app);
+export const POST = handle(app);`;
 
 const DeepAgentsSnippet = `import os
 from deepagents import create_deep_agent

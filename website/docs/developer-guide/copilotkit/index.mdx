@@ -1,104 +1,135 @@
 ---
-title: OpenBox on CopilotKit
-description: "OpenBox SDK reference for CopilotKit apps using the LangGraph backend path."
-llms_description: OpenBox on CopilotKit with LangGraph SDK reference and guide set
+title: OpenBox CopilotKit SDK
+description: "OpenBox SDK reference for CopilotKit Runtime v2 apps using the standalone TypeScript package."
+llms_description: OpenBox CopilotKit Runtime v2 SDK reference
 sidebar_position: 1
 slug: /developer-guide/copilotkit
 tags:
   - sdk
   - copilotkit
-  - langgraph
   - typescript
 ---
 
-# OpenBox on CopilotKit
+# OpenBox CopilotKit SDK
 
-OpenBox sits on top of CopilotKit. CopilotKit can connect to multiple backend agent frameworks. This guide documents the LangGraph backend path.
+[`@openbox-ai/openbox-copilotkit`](https://www.npmjs.com/package/@openbox-ai/openbox-copilotkit) is the standalone OpenBox SDK for CopilotKit Runtime v2. It attaches at the CopilotKit / AG-UI boundary, so your existing CopilotKit runtime route and agents stay in place while OpenBox records workflow events, tool calls, assistant output, governance verdicts, and optional multi-agent handoff markers.
 
-The integration governs CopilotKit runtime prompts, tool input, tool output, assistant output, and approval decisions while preserving the CopilotKit UI and the LangGraph agent shape behind it.
+The SDK is server-only. It targets Node.js and CopilotKit Runtime v2; it does not publish React renderers or the older `openbox-sdk/copilotkit` adapter helpers.
 
-Package exports:
+## Package Exports
 
-- `openbox-sdk/copilotkit`
-- `openbox-sdk/copilotkit/react`
+Install the [npm package](https://www.npmjs.com/package/@openbox-ai/openbox-copilotkit) in the app that owns your CopilotKit runtime route:
+
+```bash
+npm install @openbox-ai/openbox-copilotkit
+```
+
+Primary exports from [`@openbox-ai/openbox-copilotkit`](https://www.npmjs.com/package/@openbox-ai/openbox-copilotkit):
+
+| Export | Purpose |
+| --- | --- |
+| `withOpenBoxRuntime()` | recommended entry point; wraps `CopilotRuntimeOptions`, constructs a `CopilotRuntime`, and returns `{ runtime, shutdown }` |
+| `createOpenBoxMiddleware()` | advanced AG-UI middleware factory for manual per-agent attachment |
+| `OpenBoxClient` | OpenBox Core HTTP client used by the runtime wrapper |
+| `parseOpenBoxConfig()` | resolves `OPENBOX_*` environment variables and explicit config |
+| `runWithOpenBoxExecutionContext()` | advanced request/context scoping helper |
+| public types | `OpenBoxMiddlewareOptions`, `OpenBoxMultiAgentOptions`, `OpenBoxRuntimeController`, `OpenBoxMultiAgentContext`, and related SDK types |
+
+Published subpaths include:
+
+- `@openbox-ai/openbox-copilotkit/client`
+- `@openbox-ai/openbox-copilotkit/config`
+- `@openbox-ai/openbox-copilotkit/copilotkit`
+- `@openbox-ai/openbox-copilotkit/governance`
+- `@openbox-ai/openbox-copilotkit/identity`
+- `@openbox-ai/openbox-copilotkit/types`
+
+## Guide Set
 
 | Guide | Description |
-|-------|-------------|
-| **[Run the Demo](/getting-started/copilotkit/run-the-demo)** | Clone and run the OpenBox-on-CopilotKit reference app with LangGraph |
-| **[Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit)** | Add OpenBox above CopilotKit in an app where CopilotKit uses LangGraph as the backend |
-| **[Configuration](/developer-guide/copilotkit/configuration)** | Environment variables, adapter options, and runtime behavior |
-| **[Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough)** | End-to-end guide for wiring the runtime, LangGraph middleware, governed tools, and React renderers |
-
-:::info What The Integration Does
-The integration connects the CopilotKit runtime to OpenBox, then uses the current LangGraph bridge to instrument the backend agent process. Trust policy, approvals, guardrails, dashboards, and operator workflows live on the OpenBox platform, not inside CopilotKit.
-:::
-
-## Required OpenBox Setup
-
-Before wiring the CopilotKit runtime, [register an OpenBox agent](/dashboard/agents/registering-agents), generate its runtime key, and configure its trust controls in [Authorize](/trust-lifecycle/authorize). CopilotKit sends events to the registered agent; OpenBox evaluates the agent's [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+| --- | --- |
+| **[Run the Demo](/getting-started/copilotkit/run-the-demo)** | Run the CopilotKit + Mastra demo from an SDK checkout that includes `demo/mastra` |
+| **[Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit)** | Add the SDK to an existing CopilotKit Runtime v2 route |
+| **[Configuration](/developer-guide/copilotkit/configuration)** | Environment variables, wrapper config, middleware options, and multi-agent settings |
+| **[Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough)** | Detailed Runtime v2 integration flow with frontend-tool labelling and optional handoff wiring |
 
 ## Recommended Architecture
 
-Use OpenBox above CopilotKit, and use the current LangGraph bridge for backend instrumentation:
+Use `withOpenBoxRuntime()` in the server route that creates your CopilotKit runtime:
 
-| Layer | OpenBox hook | Purpose |
-| --- | --- | --- |
-| OpenBox on CopilotKit runtime route | `createOpenBoxCopilotRuntime()` | governs prompt ingress and assistant output around `/api/copilotkit` |
-| OpenBox CopilotKit adapter | `createOpenBoxCopilotKitAdapter()` | configures Core credentials, gate behavior, session state, and tool names |
-| CopilotKit on LangGraph middleware | `adapter.createLangChainMiddleware()` | governs LangGraph model/tool activity inside the agent process |
-| Business tools | `createGovernedCopilotTool()` | returns OpenBox decisions and releasable artifacts through the same tool result |
-| Approval route | `createOpenBoxApprovalRoute()` | submits human approval decisions back to OpenBox |
-| React UI | `useOpenBoxCopilotKit()` | renders OpenBox decision, interactive review, approval, and action-result components |
+```ts
+import { CopilotRuntime, createCopilotEndpoint } from "@copilotkit/runtime/v2";
+import { withOpenBoxRuntime } from "@openbox-ai/openbox-copilotkit";
 
-## Public API Summary
+export const runtime = "nodejs";
 
-Server-side exports:
+const options = {
+  agents,
+} satisfies ConstructorParameters<typeof CopilotRuntime>[0];
 
-- `createOpenBoxCopilotKitAdapter()`
-- `createOpenBoxCopilotRuntime()`
-- `createOpenBoxGovernedRunner()`
-- `createOpenBoxRuntimeHooks()`
-- `createGovernedCopilotTool()`
-- `createOpenBoxApprovalRoute()`
-- `createOpenBoxReadinessCheck()`
-- `OPENBOX_COPILOTKIT_RESULT_SCHEMA_VERSION`
+const { runtime: copilotRuntime, shutdown } = await withOpenBoxRuntime(
+  options,
+  {
+    middlewareOptions: {
+      frontendToolNames: ["setThemeColor"],
+      enforceApprovals: false,
+    },
+  },
+);
 
-React exports:
+const app = createCopilotEndpoint({
+  runtime: copilotRuntime,
+  basePath: "/api/copilotkit",
+});
+```
 
-- `useOpenBoxCopilotKit()`
-- `createOpenBoxApprovalClient()`
-- `createOpenBoxCustomMessageRenderer()`
-- `OpenBoxGovernanceDecision`
-- `OpenBoxApprovalReview`
-- `OpenBoxInteractiveReview`
-- `OpenBoxActionResult`
+`withOpenBoxRuntime()` accepts the same `CopilotRuntimeOptions` that you would pass to `new CopilotRuntime(...)`. Passing an already constructed `CopilotRuntime` is not supported because OpenBox needs to wrap the runtime options, compose request middleware, and proxy agent clones before serving requests.
+
+## What The SDK Emits
+
+| CopilotKit / AG-UI boundary | OpenBox event |
+| --- | --- |
+| run start | `WorkflowStarted` and `SignalReceived(user_input)` |
+| tool-call args complete | `ActivityStarted` with parsed `activity_input` |
+| tool-call result available | `ActivityCompleted` with `activity_output` |
+| final assistant text | `SignalReceived(agent_output)` and `WorkflowCompleted` |
+| run error | `WorkflowFailed` |
+| mapped delegation tool | optional child-authenticated `Handoff` |
+
+Every event uses `workflow_type: "copilotkit"` and `task_queue: "copilotkit"`.
 
 ## Governance Boundaries
 
-OpenBox can evaluate these CopilotKit gates:
+The SDK is telemetry-first. With default options, it records CopilotKit runtime activity and OpenBox verdicts without stopping the user stream.
 
-| Gate | What is evaluated |
-| --- | --- |
-| `prompt` | user prompt and recent runtime messages before agent execution |
-| `tool_input` | normalized tool arguments before business execution |
-| `tool_output` | raw tool result before rendering |
-| `assistant_output` | final assistant content before it reaches the user |
+Set `middlewareOptions.enforceApprovals: true` to stop the AG-UI stream when OpenBox returns a block or halt verdict after full tool-call input is known. The client receives a redacted `governance_blocked` error frame with only a correlation id.
 
-Governed tool results use schema version `openbox.copilotkit.result.v1`.
+Output-side enforcement after the response has streamed is not part of this SDK version. Assistant output is recorded for governance visibility, and final output policy should be designed with that timing in mind.
 
 ## Supported Runtime Conditions
 
 | Requirement | Value |
 | --- | --- |
-| Node.js | `>=22` for the reference app |
-| CopilotKit | `@copilotkit/react-core` and `@copilotkit/runtime` `^1.59` in the reference app |
-| LangGraph JS | `@langchain/langgraph` `^1.3` in the reference app |
-| OpenBox SDK | `openbox-sdk` with `copilotkit` and `copilotkit/react` exports |
-| CopilotKit runtime | Next.js App Router route backed by `/api/copilotkit` |
+| Node.js | `>=24.10.0` |
+| CopilotKit | `@copilotkit/runtime` `^1.61.0`, Runtime v2 APIs |
+| AG-UI | `@ag-ui/client` `^0.0.57` |
+| Runtime | server-side Node route; edge runtimes are unsupported |
+| OpenBox SDK | [`@openbox-ai/openbox-copilotkit`](https://www.npmjs.com/package/@openbox-ai/openbox-copilotkit) |
+
+## Multi-Agent Scope
+
+By default, a CopilotKit request is one OpenBox session. Enable `middlewareOptions.multiAgent` only when a CopilotKit tool delegates to a distinct OpenBox-governed child agent and you want one grouped timeline.
+
+Multi-agent grouping needs three things:
+
+1. The CopilotKit parent stamps `multi_agent_session_id` on its events.
+2. A mapped delegation tool emits one `Handoff`, authenticated as the child when child credentials are provided.
+3. The child runtime stamps the same `multi_agent_session_id` and `parent_workflow_id` on its own events.
+
+The SDK can build and surface the parent-side context; your application owns forwarding that context into the child runtime invocation.
 
 ## Next Steps
 
-1. Run the [OpenBox-on-CopilotKit demo](/getting-started/copilotkit/run-the-demo).
-2. Add the integration to an existing app with [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit).
-3. Configure OpenBox trust controls in [Authorize](/trust-lifecycle/authorize).
-4. Configure production behavior in [Configuration](/developer-guide/copilotkit/configuration).
+1. Start with [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit) for the short path.
+2. Use [Configuration](/developer-guide/copilotkit/configuration) for environment variables and SDK options.
+3. Use [Integration Walkthrough](/developer-guide/copilotkit/integration-walkthrough) for a longer end-to-end setup.
