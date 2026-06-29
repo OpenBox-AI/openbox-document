@@ -1,42 +1,47 @@
 ---
 title: Run the Demo
-description: "Run the OpenBox on CopilotKit demo with LangGraph locally."
-llms_description: Hands-on OpenBox on CopilotKit with LangGraph demo
+description: "Run the OpenBox CopilotKit SDK demo with a CopilotKit UI and Mastra backend."
+llms_description: Hands-on OpenBox CopilotKit SDK demo
 sidebar_position: 2
 tags:
   - getting-started
   - copilotkit
-  - langgraph
+  - mastra
   - typescript
 ---
 
 # Run the Demo
 
-The demo shows OpenBox on top of CopilotKit, with CopilotKit on top of LangGraph. It is a Next.js app with a local LangGraph TypeScript agent. CopilotKit handles the chat runtime and generative UI. OpenBox governs prompts, tool inputs, tool outputs, assistant output, and approval decisions.
-
-:::info Backend model
-CopilotKit can connect to multiple backend agent frameworks. This demo uses LangGraph, with OpenBox layered above CopilotKit and the current LangGraph bridge instrumenting the backend graph so both sides share one governed session.
-:::
+The demo in the SDK release workspace runs a CopilotKit UI with a Mastra weather agent. It shows how [`@openbox-ai/openbox-copilotkit`](https://www.npmjs.com/package/@openbox-ai/openbox-copilotkit) wraps the CopilotKit runtime route, while `@openbox-ai/openbox-mastra-sdk` can also wrap the Mastra backend for deeper agent-runtime telemetry.
 
 Reference repository:
 
-- [OpenBox-AI/openbox-x-copilotkit](https://github.com/OpenBox-AI/openbox-x-copilotkit)
+- [OpenBox-AI/openbox-copilotkit-sdk](https://github.com/OpenBox-AI/openbox-copilotkit-sdk)
+
+Demo path:
+
+```text
+demo/mastra
+```
+
+If your cloned SDK checkout does not include `demo/mastra` yet, use [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit) until the demo folder is published with the SDK release.
 
 ## Prerequisites
 
-- Node.js `22+`
+- Node.js `>=24.10.0`
 - npm
-- access to the `OpenBox-AI/openbox-x-copilotkit` repository
-- an OpenAI-compatible model endpoint
-- an OpenBox Core URL and agent runtime key
-- an OpenBox agent DID and private key when the registered agent requires signing
+- an OpenAI API key, or another model/provider configuration supported by the demo
+- optional OpenBox Core URL and agent runtime keys if you want to send events to OpenBox
+- optional CopilotKit license/intelligence values if you want to run CopilotKit Intelligence instead of the in-memory runner
 
 ## Clone The Repository
 
 ```bash
-git clone https://github.com/OpenBox-AI/openbox-x-copilotkit
-cd openbox-x-copilotkit
+git clone https://github.com/OpenBox-AI/openbox-copilotkit-sdk
+cd openbox-copilotkit-sdk/demo/mastra
 ```
+
+The demo installs the local SDK from the repository root with `file:../..`, so you do not need to publish or install the package from npm to run it locally. Run these commands from a checkout that includes `demo/mastra`.
 
 ## Install Dependencies
 
@@ -45,50 +50,47 @@ cp .env.example .env
 npm install
 ```
 
-The demo currently installs `openbox-sdk` from the OpenBox GitHub organization. You do not need to clone the SDK as a sibling repository for the demo path.
+Fill in `OPENAI_API_KEY` in `.env`. Without OpenBox keys, the app still runs as a normal CopilotKit + Mastra demo.
 
-## Prepare An OpenBox Agent
+## Prepare OpenBox Agents
 
-Use the OpenBox setup flow before running live demo traffic:
+For basic CopilotKit governance, register one OpenBox agent for the CopilotKit parent/orchestrator:
 
 1. [Register or open an OpenBox agent](/dashboard/agents/registering-agents).
-2. Generate an agent runtime key for the demo.
+2. Generate an agent runtime key.
 3. Copy the agent DID and private key unless **Require signing** is disabled.
-4. Configure the demo controls in [Authorize](/trust-lifecycle/authorize): [guardrails](/trust-lifecycle/authorize/guardrails), [policies](/trust-lifecycle/authorize/policies), and [behavior rules](/trust-lifecycle/authorize/behaviors).
+4. Configure guardrails, policies, and behavior rules in [Authorize](/trust-lifecycle/authorize).
 
-New OpenBox agents require signing by default. Use the DID and private key from agent registration unless you intentionally disable signing in the agent settings.
-
-The demo does not require CopilotKit to author OpenBox rules. CopilotKit sends prompts, tool activity, assistant output, and approval decisions through the OpenBox integration, and OpenBox evaluates the controls configured on the registered agent.
-
-For a predictable demo matrix, create guardrails, policies, and behavior rules in Authorize, then use the suggestion chips below to see how your controls behave.
+For multi-agent testing, register a second distinct OpenBox agent for the Mastra child/subagent. Do not reuse the same DID for the CopilotKit parent and the Mastra child. OpenBox Core resolves the handoff's receiving agent from the authenticated child request.
 
 ## Configure Environment
 
-Required values:
+Required to run the demo app:
 
 | Variable | Purpose |
 | --- | --- |
-| `OPENAI_BASE_URL` | OpenAI-compatible chat provider base URL |
-| `OPENAI_MODEL` | chat model used by the LangGraph backend |
-| `OPENAI_API_KEY` | model provider API key |
-| `OPENBOX_ENABLED` | set to `true` to enable OpenBox governance |
-| `OPENBOX_CORE_URL` | OpenBox Core base URL |
-| `OPENBOX_API_KEY` | OpenBox agent runtime key, `obx_live_*` or `obx_test_*` |
-| `OPENBOX_AGENT_DID` | agent DID, required when signing is enabled |
-| `OPENBOX_AGENT_PRIVATE_KEY` | base64 raw Ed25519 private key, required when signing is enabled |
+| `OPENAI_API_KEY` | model provider API key used by the Mastra agent |
 
-Optional and maintainer values:
+Required to enable OpenBox on the CopilotKit parent:
 
 | Variable | Purpose |
 | --- | --- |
-| `AGENT_URL` | local or deployed LangGraph backend URL, defaults to `http://localhost:8123` |
-| `APP_URL` | local app URL used by verification scripts |
-| `LANGSMITH_API_KEY` | LangSmith key when using a LangGraph deployment that requires it |
-| `OPENBOX_API_URL` | server-side OpenBox platform/backend URL for the demo approval-decision route |
-| `OPENBOX_BACKEND_API_KEY` | server-side org/backend key for the demo approval-decision route |
-| `OPENBOX_AGENT_ID` | OpenBox platform agent ID for readiness checks and maintainer setup |
+| `OPENBOX_URL` | OpenBox Core base URL |
+| `OPENBOX_COPILOTKIT_API_KEY` | CopilotKit parent OpenBox runtime key, `obx_live_*` or `obx_test_*` |
+| `OPENBOX_COPILOTKIT_AGENT_DID` | CopilotKit parent DID, required when signing is enabled |
+| `OPENBOX_COPILOTKIT_AGENT_PRIVATE_KEY` | CopilotKit parent Ed25519 private key, required when signing is enabled |
 
-`OPENBOX_BACKEND_API_KEY` is not sent to the browser and is not required for normal runtime governance. It is only used by this demo path that posts CopilotKit-rendered approve/reject decisions back to OpenBox.
+Optional values for the Mastra child stream:
+
+| Variable | Purpose |
+| --- | --- |
+| `OPENBOX_MASTRA_API_KEY` | Mastra child OpenBox runtime key |
+| `OPENBOX_MASTRA_AGENT_DID` | Mastra child DID |
+| `OPENBOX_MASTRA_AGENT_PRIVATE_KEY` | Mastra child Ed25519 private key |
+| `OPENBOX_MASTRA_MULTI_AGENT_ENABLED` | set to `false` to disable Mastra child multi-agent stamping |
+| `OPENBOX_MASTRA_MULTI_AGENT_SESSION_ID` | fixed multi-agent session id for child-side testing |
+
+The demo route also accepts the generic `OPENBOX_API_KEY`, `OPENBOX_AGENT_DID`, and `OPENBOX_AGENT_PRIVATE_KEY` fallbacks for simple single-agent testing. Use the explicit `OPENBOX_COPILOTKIT_*` and `OPENBOX_MASTRA_*` variables when testing parent and child identities together.
 
 ## Run Locally
 
@@ -96,62 +98,50 @@ Optional and maintainer values:
 npm run dev
 ```
 
-Default services:
-
-| Service | URL |
-| --- | --- |
-| LangGraph agent | `http://localhost:8123` |
-| Next.js app | the port printed by Next.js |
+This script builds the local `@openbox-ai/openbox-copilotkit` package, then starts the Next.js UI and Mastra agent server together.
 
 Open the URL printed by Next.js.
 
 ## Test The Demo Manually
 
-Use the demo suggestion chips or enter a natural business request:
+Use the built-in suggestions or enter similar requests:
 
-| Suggestion | Expected path when demo controls are seeded |
+| Prompt | Expected path |
 | --- | --- |
-| `Review Work Queue` | allowed result |
-| `Prepare Exception Report` | output redaction or constrained result |
-| `Draft Customer Update` | final-output governance with redaction or constraint |
-| `Prepare Vendor Handoff` | interactive choice, then OpenBox governance |
-| `Draft Billing Escalation` | manual edit, then OpenBox governance |
-| `Issue Service Credit` | human approval |
-| `Send Exception IDs` | block |
-| `Update Vendor Bank` | halt |
+| `Get the weather in San Francisco.` | CopilotKit frontend tool and Mastra weather tool activity |
+| `Set the theme to green.` | frontend tool labelled by the CopilotKit wrapper |
+| `Please go to the moon.` | CopilotKit human-in-the-loop UI path |
 
-If you skipped `npm run openbox:admin:setup`, the same chips still test the integration, but the exact verdicts come from the guardrails, policies, and behavior rules you configured in OpenBox.
+After each run, check the OpenBox Dashboard for:
 
-After each run, check both surfaces:
+1. A `workflow_type: "copilotkit"` session from the CopilotKit runtime route.
+2. `WorkflowStarted`, `SignalReceived(user_input)`, `ActivityStarted`, `ActivityCompleted`, `SignalReceived(agent_output)`, and `WorkflowCompleted` events.
+3. `frontend: true` on tool names configured in the demo route's `frontendToolNames` list.
+4. A separate Mastra child stream when the Mastra OpenBox SDK credentials are configured.
 
-1. In the CopilotKit UI, confirm the OpenBox decision card and any released business result.
-2. In the OpenBox Dashboard, open the registered agent and confirm the new session, governance events, guardrail/policy evaluations, approval records, or halted state.
+## Multi-Agent Demo Notes
+
+When `OPENBOX_COPILOTKIT_AGENT_DID` plus the `OPENBOX_MASTRA_*` child credentials are present, the CopilotKit wrapper enables multi-agent mode and maps the `weatherTool` / `get-weather` delegation tools to the Mastra child.
+
+That lets the CopilotKit parent emit a child-authenticated `Handoff` event with:
+
+- `from_agent_did` set to the CopilotKit parent DID
+- `multi_agent_session_id` set on the parent stream
+- child metadata such as `child_workflow_type: "weather-agent"` and `child_task_queue: "mastra"`
+
+The current demo path shows the CopilotKit parent stream and parent-side `Handoff`. A fully grouped parent and child timeline also requires the Mastra child events to carry the exact same `multi_agent_session_id` and `parent_workflow_id` generated by the parent. Setting only `OPENBOX_MASTRA_MULTI_AGENT_SESSION_ID` does not make it match the parent default `mas:${runId}` automatically; production apps should forward the parent `OpenBoxMultiAgentContext` into the child invocation.
 
 ## Verify The Local Build
 
-Fast local checks:
+Fast local checks from `demo/mastra`:
 
 ```bash
 npm run build
-npx tsc --noEmit
-cd agent && npx tsc --noEmit
 ```
 
-## Maintainer Verification
-
-Maintainer checks that call live OpenBox services:
-
-```bash
-npm run openbox:admin:setup
-npm run openbox:verify
-npm run openbox:e2e
-```
-
-`npm run openbox:admin:setup` requires `OPENBOX_API_URL`, `OPENBOX_BACKEND_API_KEY`, and `OPENBOX_AGENT_ID`. It mutates the configured OpenBox agent. Use it only when you intend to refresh the demo's OpenBox-side guardrails, behavior rules, goal-alignment config, and policy setup. If you already configured your own controls in Authorize, skip that setup script.
-
-`npm install` installs the Playwright dependency used by `npm run openbox:e2e`. The e2e script can start the local agent and app automatically. If you already started them yourself, set `APP_URL` and `AGENT_URL` in `.env` so Playwright targets the running services.
+The script builds the local SDK package first, then builds the Next.js app.
 
 ## Next Steps
 
 - [Add OpenBox to CopilotKit](/getting-started/copilotkit/add-openbox-to-copilotkit)
-- [CopilotKit Developer Guide](/developer-guide/copilotkit)
+- [CopilotKit SDK reference](https://github.com/OpenBox-AI/openbox-copilotkit-sdk/tree/main/docs)
