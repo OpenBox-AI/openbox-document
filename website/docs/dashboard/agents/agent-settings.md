@@ -11,7 +11,7 @@ tags:
 
 The **Settings** tab on an agent's detail page lets you manage every aspect of the agent after it has been registered. Open it by navigating to **Agents → select an agent → Settings**, or by choosing **Settings** from the **⋮** actions menu in the agent table.
 
-Settings is divided into four sections: [General](#general-settings), [Risk Configuration](#risk-configuration), [API Access](#api-access), and [Danger Zone](#danger-zone).
+Settings is divided into five sections: [General](#general-settings), [Risk Configuration](#risk-configuration), [Lineage](#lineage), [API Access](#api-access), and [Danger Zone](#danger-zone).
 
 ## General Settings
 
@@ -53,6 +53,29 @@ Click **Recalculate Trust Score** to trigger a fresh calculation based on the cu
 ### Adjust Risk Level
 
 Click **Adjust Risk Level** to modify the underlying risk profile parameters. See the [Assess](/trust-lifecycle/assess) documentation for a full description of each parameter and how it influences the trust score.
+
+## Lineage
+
+The **Lineage** section appears when the agent runtime is linked to a [Project](/dashboard/projects). Use it to inspect and update how the runtime maps back to repository history.
+
+| Field | Description |
+|-------|-------------|
+| **Project** | Repository project the runtime belongs to. |
+| **Repository Agent** | Logical path-mapped agent inside the project. |
+| **Linked Branch** | Branch associated with this runtime. |
+| **Branch Status** | Whether the linked branch still exists in the connected repository. |
+
+### Update Linked Branch
+
+Use the branch dropdown to move the runtime to another synced repository branch. This is useful when a developer changes feature branches, a runtime moves from development to staging, or the previous branch is deleted.
+
+If the linked branch no longer exists, OpenBox shows a warning in the **Lineage** tab and in this settings section:
+
+```
+Update linked branch to continue receiving lifecycle updates.
+```
+
+Changing the linked branch affects future lineage attribution only. Existing sessions, governance snapshots, and lifecycle events remain preserved for audit history.
 
 ## API Access
 

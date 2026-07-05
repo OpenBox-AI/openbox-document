@@ -20,6 +20,7 @@ The sidebar navigation includes:
 
 - **Dashboard** - Organization overview (this page)
 - **Agents** - Manage and monitor agents
+- **Projects** - Repository-to-runtime lineage for governed agents
 - **Approvals** - Human-in-the-loop queue (shows pending count badge)
 - **Organization** - Teams, members, API keys, settings
 
@@ -97,5 +98,6 @@ See **[Registering Agents](/dashboard/agents/registering-agents)** for a field-b
 From the Dashboard, you'll typically:
 
 1. **[View Agents](/dashboard/agents)** - Click an agent to see its details and configure trust controls
-2. **[Handle Approvals](/approvals)** - Review pending HITL requests when the badge shows pending items
-3. **[Add a New Agent](/dashboard/agents/registering-agents)** - Register another agent to bring under the trust layer
+2. **[Review Projects](/dashboard/projects)** - Connect repositories and inspect agent lineage across code, runtime, sessions, and governance snapshots
+3. **[Handle Approvals](/approvals)** - Review pending HITL requests when the badge shows pending items
+4. **[Add a New Agent](/dashboard/agents/registering-agents)** - Register another agent to bring under the trust layer
