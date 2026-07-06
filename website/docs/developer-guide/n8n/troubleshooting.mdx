@@ -1,0 +1,112 @@
+---
+title: Troubleshooting
+description: "Fix common OpenBox n8n integration issues: installation, credentials, governance blocks, approval behavior, and telemetry gaps."
+llms_description: Common issues and fixes for the n8n node
+sidebar_position: 8
+tags:
+  - sdk
+  - n8n
+  - javascript
+  - configuration
+---
+
+# Troubleshooting
+
+Use this page to diagnose the most common OpenBox n8n integration issues.
+
+## Node Not Appearing After Install
+
+1. Confirm **Settings → Community Nodes** shows `n8n-nodes-openbox-hook` as installed.
+2. Restart n8n — some installs require a restart before the node appears in the node panel.
+3. Search "OpenBox" in the node panel to find **OpenBox: Agent**.
+4. If you built a custom n8n image, confirm the package was installed before the image was built and that `N8N_CUSTOM_EXTENSIONS` (or your image's install path) includes it.
+
+## "No Chat Model Connected" Error
+
+The node throws this before governance runs at all. Drag a language model
+sub-node (for example "OpenAI Chat Model") into the node's **Chat Model**
+input — it is a required connection.
+
+## "No Prompt Found On Item" Error
+
+This means the node could not resolve a user message for that item.
+
+1. If **Source for Prompt** is set to **Connected Chat Trigger Node**,
+   confirm a Chat Trigger is connected and the incoming item actually has a
+   `chatInput` (or `text`/`message`/`input`/`query`/`prompt`) string field.
+2. Otherwise, switch to **Define Below** and set the **Prompt** field
+   explicitly.
+
+## Credential Test Fails
+
+1. Confirm the **API Key** is correct and not expired.
+2. If **Require signing** is enabled for the agent, confirm both **Agent
+   DID** and **Agent Private Key** are set — partial identity configuration
+   will fail requests.
+3. Confirm the runtime running n8n can reach `https://core.openbox.ai`.
+
+## No Runs In The Dashboard
+
+If your agent executes but no run appears in OpenBox:
+
+1. Confirm the **OpenBox API** credential is attached to the **OpenBox: Agent** node (it is optional at the type level, so it's easy to forget).
+2. Confirm the workflow actually executed the node — check n8n's **Executions** tab.
+3. Verify the API key belongs to the same agent you are viewing in OpenBox.
+4. Check n8n's logs for network errors reaching `core.openbox.ai`.
+
+## Tool Calls Do Not Show A Tool Type
+
+There is currently no `tool_type_map` equivalent in the node UI —
+`ToolStarted` / `ToolCompleted` events are sent without a `tool_type` tag.
+Target policies on `tool_name` instead. See
+[Event Model](/developer-guide/n8n/event-model#tool-payload-shape-guidance).
+
+## Governance Blocks Or Halts The Agent
+
+Governance errors mean OpenBox policy enforcement is working.
+
+| Error | Meaning |
+|-----------|-------------|
+| `GovernanceBlockedError` | A model call, tool call, or run was blocked |
+| `GovernanceHaltError` | The whole run should stop, including approval rejection or expiry |
+| `GuardrailsValidationError` | A configured guardrail matched restricted content |
+
+All three surface as one `NodeOperationError`. To investigate:
+
+1. Open the [OpenBox Dashboard](https://dashboard.openbox.ai)
+2. Go to **Agents**
+3. Open the agent and the latest run
+4. Review the event timeline and the policy or guardrail message
+
+See **[Error Handling](/developer-guide/n8n/error-handling)** for handling
+patterns, including **Continue On Fail**.
+
+## Approval Requests Do Not Appear
+
+If your policy should require approval but no request appears:
+
+1. Confirm the policy returns `REQUIRE_APPROVAL`, not `BLOCK`.
+2. Confirm the policy targets the correct event type and tool name.
+3. Check the run timeline to see whether another policy blocked the event first.
+4. Confirm the agent is connected to the expected OpenBox organization.
+
+## Agent Run Silently Stops After A Tool Call
+
+If a Tool sub-node returns an HTTP error body as a string instead of
+throwing (this is common with n8n's HTTP Request Tool on non-2xx
+responses), the agent node detects it and stops with
+`Tool "<name>" failed: <message>` instead of looping further. This is
+expected behavior, not a governance block — check the tool's underlying HTTP
+call for the actual failure.
+
+## Missing HTTP Or Database Telemetry
+
+1. Confirm the code path actually performs HTTP or database I/O during the agent run.
+2. Confirm the operation happens inside the active node execution, not in an unrelated node earlier in the workflow.
+3. Remember n8n's own internal Postgres connection is filtered out by design — only your workflow's own database calls appear.
+
+## Next Steps
+
+1. **[Integration Walkthrough](/developer-guide/n8n/integration-walkthrough)** - Review the full wiring path
+2. **[Configuration](/developer-guide/n8n/configuration)** - Check credential fields and current defaults
+3. **[Error Handling](/developer-guide/n8n/error-handling)** - Handle governance exceptions safely

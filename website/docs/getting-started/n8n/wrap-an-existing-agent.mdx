@@ -1,0 +1,165 @@
+---
+title: Wrap an Existing Agent
+description: "Add OpenBox to an existing n8n AI Agent node without changing your model, tools, or prompt logic."
+llms_description: How to add OpenBox to an existing n8n AI Agent node
+sidebar_position: 2
+tags:
+  - getting-started
+  - n8n
+  - javascript
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Agent
+
+If you already have a working n8n AI Agent node, the integration point is
+swapping its node type for **OpenBox: Agent**. The same **Chat Model**,
+**Memory**, and **Tool** connections it already has stay exactly as they are.
+
+## Prerequisites
+
+- An existing n8n workflow with a standard AI Agent node
+  (`@n8n/n8n-nodes-langchain.agent`) connected to a Chat Model sub-node
+- n8n with Community Nodes enabled (self-hosted, or n8n Cloud with community
+  node installs allowed)
+- An OpenBox agent API key
+- An OpenBox agent DID and private key, unless **Require signing** is
+  disabled for the agent
+
+## Step 1: Install The Node
+
+Package: `n8n-nodes-openbox-hook`
+
+In n8n, go to **Settings → Community Nodes → Install** and enter:
+
+```
+n8n-nodes-openbox-hook
+```
+
+Restart n8n if prompted.
+
+## Step 2: Add OpenBox Credentials
+
+In n8n, go to **Settings → Credentials → Add Credential** and create an
+**OpenBox API** credential:
+
+| Field | Required | Description |
+|---|---|---|
+| **API Key** | Yes | Agent API key issued by OpenBox. Live keys start with `obx_live_`; test keys with `obx_test_`. |
+| **Agent DID** | No | Agent decentralised identifier (`did:aip:<uuid>`). Required for agents with `signing_required = true`. Pair with Agent Private Key. |
+| **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed. Every request is signed locally with this key. Pair with Agent DID. |
+
+Get your API key from [dashboard.openbox.ai](https://dashboard.openbox.ai).
+
+Keep the private key in your n8n credential store only. Do not export it in
+workflow JSON or reuse it across agents. If **Require signing** is disabled
+for the agent, leave both DID fields blank.
+
+## Step 3: Replace The Node
+
+<Tabs>
+<TabItem value="before" label="n8n">
+
+```json title="workflow.json (node excerpt)"
+{
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "typeVersion": 1.7,
+  "parameters": {
+    "promptType": "auto",
+    "options": {
+      "systemMessage": "You are a helpful assistant"
+    }
+  }
+}
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```json title="workflow.json (node excerpt)"
+{
+  "type": "n8n-nodes-openbox-hook.openBoxAgent",
+  "typeVersion": 1,
+  "parameters": {
+    "promptType": "auto",
+    "options": {
+      "systemMessage": "You are a helpful assistant"
+    }
+  },
+  "credentials": {
+    "openBoxApi": {
+      "id": "1",
+      "name": "OpenBox API"
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+In the n8n editor:
+
+1. Add an **OpenBox: Agent** node next to your existing AI Agent node.
+2. Reconnect the same sub-nodes the original agent had — **Chat Model**,
+   **Memory** (if any), and **Tool** connections — to the new node's
+   matching inputs.
+3. Copy over the **Prompt** setting (auto-detect from a connected Chat
+   Trigger, or a defined expression) and any **Options** you had set
+   (System Message, Max Iterations, Return Intermediate Steps, Automatically
+   Passthrough Binary Images).
+4. Attach the **OpenBox API** credential you created in Step 2.
+5. Reconnect the node's output to whatever consumed the original agent's
+   output, then delete the old AI Agent node.
+
+## Step 4: Verify A Real Run
+
+Trigger the same request you already use in development. In OpenBox, you
+should now see:
+
+- an agent lifecycle event for the run
+- model call start and completion events
+- tool call start and completion events, if tools executed
+- approvals and guardrails where policy requires them
+- `_openbox` metadata (workflow ID, run ID, tool call count, iterations)
+  attached to the node's output JSON
+
+## Common Integration Notes
+
+### Node Placement
+
+The **OpenBox: Agent** node builds fresh governance state on every
+`execute()` call — there is nothing extra to wire up beyond connecting the
+node itself.
+
+### Tool Connections
+
+Every **Tool** sub-node you connect is invoked through the governed tool
+boundary automatically; there is no separate classification step in the node
+UI. Give tools clear, specific names — the name the agent calls is the name
+that shows up in OpenBox tool events.
+
+### Memory
+
+If you connect a **Memory** sub-node, it loads before the agent's first
+model call and saves after a successful run. Memory reads and writes are
+non-fatal — if memory fails, the agent run continues.
+
+### Error Behavior
+
+Governance errors surface as typed node errors:
+
+- `GovernanceHaltError` — the run is stopped outright.
+- `GovernanceBlockedError` — the call needed approval that did not clear.
+- `GuardrailsValidationError` — a guardrail rejected the input or output.
+
+Enable **Continue On Fail** on the node if you want these routed as error
+output items instead of failing the whole execution.
+
+## Next Steps
+
+- [n8n Node Reference Configuration](/developer-guide/n8n/configuration)
+- [n8n Event Model](/developer-guide/n8n/event-model)
+- [n8n Troubleshooting](/developer-guide/n8n/troubleshooting)
