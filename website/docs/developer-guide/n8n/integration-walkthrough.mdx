@@ -1,0 +1,175 @@
+---
+title: Integration Walkthrough
+sidebar_label: Integration Walkthrough
+description: "End-to-end guide for governing an n8n agent with OpenBox: install the node, register an agent, add credentials, replace the AI Agent node, and verify live runs."
+llms_description: n8n integration walkthrough
+sidebar_position: 2
+tags:
+  - sdk
+  - n8n
+  - javascript
+  - integration
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# n8n Integration Walkthrough
+
+This guide shows how to add OpenBox governance to an n8n agent without
+rewriting it. The integration point is a single node: **OpenBox: Agent**
+replaces n8n's standard AI Agent node and accepts the same Chat Model,
+Memory, and Tool connections.
+
+:::tip Existing agent?
+If you only need the shortest setup path, start with
+**[Getting Started with n8n](/getting-started/n8n)**.
+:::
+
+## Prerequisites
+
+- n8n with Community Nodes enabled (self-hosted, or n8n Cloud with community
+  node installs allowed)
+- An existing (or new) AI Agent node connected to a Chat Model sub-node
+- An OpenBox agent registration with an API key
+- The OpenBox agent DID and private key unless **Require signing** is
+  disabled
+
+## Part 1: Register Your Agent In OpenBox
+
+1. Open the [OpenBox Dashboard](https://dashboard.openbox.ai)
+2. Navigate to **Agents**
+3. Create or open the agent you want to govern
+4. Generate an API key
+5. Copy the generated DID and private key unless **Require signing** is disabled
+6. Keep the credentials in your n8n credential store
+
+## Part 2: Install The Node
+
+Package: `n8n-nodes-openbox-hook`
+
+In n8n, go to **Settings → Community Nodes → Install** and enter:
+
+```
+n8n-nodes-openbox-hook
+```
+
+Restart n8n if prompted.
+
+If you build your own n8n image instead of installing through the UI,
+install it as a regular dependency and rebuild:
+
+```bash
+npm install n8n-nodes-openbox-hook
+```
+
+## Part 3: Add OpenBox Credentials
+
+In n8n, go to **Settings → Credentials → Add Credential** and create an
+**OpenBox API** credential:
+
+| Field | Required | Description |
+|---|---|---|
+| **API Key** | Yes | Agent API key issued by OpenBox. |
+| **Agent DID** | No | Required for agents with `signing_required = true`. |
+| **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed, paired with Agent DID. |
+
+There is no separate OpenBox URL field to set — the credential talks to
+`https://core.openbox.ai` directly.
+
+## Part 4: Replace The Node
+
+<Tabs>
+<TabItem value="before" label="n8n">
+
+```json title="workflow.json (node excerpt)"
+{
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "typeVersion": 1.7,
+  "parameters": {
+    "promptType": "auto",
+    "options": {}
+  }
+}
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```json title="workflow.json (node excerpt)"
+{
+  "type": "n8n-nodes-openbox-hook.openBoxAgent",
+  "typeVersion": 1,
+  "parameters": {
+    "promptType": "auto",
+    "options": {}
+  },
+  "credentials": {
+    "openBoxApi": {
+      "id": "1",
+      "name": "OpenBox API"
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+Reconnect the same **Chat Model**, **Memory**, and **Tool** sub-nodes the
+original agent had, and copy over the **Prompt** setting and any **Options**
+(System Message, Max Iterations, Return Intermediate Steps, Automatically
+Passthrough Binary Images).
+
+## Part 5: Verify A Live Run
+
+Run one real request through the governed agent, then check OpenBox for:
+
+- a run under the registered agent
+- model call events with prompt and response metadata
+- tool call activities with started and completed events, if tools executed
+- HTTP and database telemetry captured during the run
+- governance decisions for allowed, blocked, halted, or approval-required operations
+- signed request authentication when **Require signing** is enabled
+
+Open the [OpenBox Dashboard](https://dashboard.openbox.ai), navigate to
+**Agents**, open the agent, and inspect the latest run.
+
+## How The Integration Works
+
+The node runs the same four lifecycle stages as the LangChain SDK's
+middleware, called directly inside the node's `execute()` function:
+
+| Stage | Purpose |
+|------|---------|
+| `beforeAgent` | Emits `SignalReceived(user_prompt)` and `WorkflowStarted`, and starts the OpenBox run |
+| `wrapModelCall` | Emits `LLMStarted`, applies input-side guardrails, invokes the connected Chat Model, then emits `LLMCompleted` |
+| `wrapToolCall` | Emits `ToolStarted`, invokes the connected Tool sub-node, then emits `ToolCompleted` |
+| `afterAgent` | Emits `WorkflowCompleted` with a `completed` or `failed` status — this always fires, even when the agent loop errors |
+
+The node also patches Node's `https` module and instruments outbound
+database queries for the duration of the run, so HTTP and database activity
+during a model or tool call is captured as telemetry attached to that call.
+
+## Tool Invocation
+
+Every **Tool** sub-node connected to the agent is governed automatically —
+there is no `tool_type_map`-style classification step in the node UI. The
+tool name the agent calls (the LangChain tool's `name`) is the name that
+appears on `ToolStarted` / `ToolCompleted` events.
+
+## Human-in-the-Loop Approvals
+
+If OpenBox returns `REQUIRE_APPROVAL`, the node polls the OpenBox approval
+endpoint every 5 seconds for up to 5 minutes by default. If the request is
+rejected or the poll times out, the node raises `GovernanceHaltError` and the
+agent run stops.
+
+See **[Error Handling](/developer-guide/n8n/error-handling)** for the
+exception types and recommended handling patterns.
+
+## Next Steps
+
+1. **[Configuration](/developer-guide/n8n/configuration)** — Review credential fields, node parameters, and current defaults
+2. **[Error Handling](/developer-guide/n8n/error-handling)** — Handle governance decisions with Continue On Fail
+3. **[Troubleshooting](/developer-guide/n8n/troubleshooting)** — Diagnose missing runs, credential errors, and telemetry gaps
