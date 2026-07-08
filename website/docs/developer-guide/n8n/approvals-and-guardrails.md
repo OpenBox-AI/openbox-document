@@ -89,7 +89,7 @@ endpoint every 5 seconds for up to 5 minutes by default.
 Typical behavior:
 
 - OpenBox creates an approval request
-- The request appears in the [OpenBox dashboard](https://dashboard.openbox.ai)
+- The request appears in the [OpenBox dashboard](https://platform.openbox.ai)
 - A human reviewer approves, rejects, or lets the request expire
 - The node continues only after approval is granted
 

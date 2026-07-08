@@ -80,7 +80,7 @@ Check the execution in n8n's **Executions** tab, then open the
 **OpenBox: Agent** node's output to see the error and, on success runs, the
 `_openbox` metadata block (workflow ID, run ID, tool call count,
 iterations). Cross-reference the workflow/run ID in the
-[OpenBox Dashboard](https://dashboard.openbox.ai) to see the full event
+[OpenBox Dashboard](https://platform.openbox.ai) to see the full event
 timeline and the policy or guardrail message.
 
 ## Next Steps
