@@ -1,7 +1,7 @@
 ---
 title: Getting Started with n8n
-description: "Add OpenBox governance to n8n workflows: wrap LLM calls with govern() for policy checks, trust scoring, and compliance evidence."
-llms_description: n8n integration onboarding (coming soon)
+description: "Add OpenBox governance to n8n workflows with one node change: policy evaluation, approvals, guardrails, and audit traces for your AI Agent node."
+llms_description: n8n integration onboarding and first governed agent
 sidebar_position: 2
 tags:
   - getting-started
@@ -9,24 +9,108 @@ tags:
   - javascript
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started with n8n
 
-:::info Docs coming soon
-The OpenBox SDK for [n8n](https://n8n.io/) is in development.
-This page will be updated with a full getting-started guide when the integration is available.
-:::
+OpenBox integrates with [n8n](https://n8n.io/) through **n8n-nodes-openbox-hook**, a
+community node that wraps n8n's AI Agent node with governance. Your Chat
+Model, Memory, and Tool connections stay in place while OpenBox adds policy
+evaluation, approvals, guardrails, and operational telemetry.
 
-OpenBox will integrate with n8n by wrapping workflow execution — your existing workflows stay exactly as they are while every action is governed, scored, and auditable.
+## One Node Change
 
-## What to expect
+<Tabs>
+<TabItem value="before" label="n8n">
 
-- Wrap your n8n workflows with the `govern()` function
-- Trust scoring and policy enforcement for every LLM call
-- Full session replay across workflow executions
-- HTTP call recording for all LLM and tool invocations
+```json title="workflow.json (node excerpt)"
+{
+  "type": "@n8n/n8n-nodes-langchain.agent",
+  "typeVersion": 1.7,
+  "parameters": {
+    "promptType": "auto",
+    "options": {}
+  }
+}
+```
 
-## In the meantime
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
 
-- **[Getting Started with Temporal](/getting-started/temporal)** — see how OpenBox governance works with a live integration
-- **[Core Concepts](/core-concepts)** — understand Trust Scores, Trust Tiers, and Governance Decisions
-- **[Trust Lifecycle](/trust-lifecycle)** — learn the Assess, Authorize, Monitor, Verify, Adapt framework
+```json title="workflow.json (node excerpt)"
+{
+  "type": "n8n-nodes-openbox-hook.openBoxAgent",
+  "typeVersion": 1,
+  "parameters": {
+    "promptType": "auto",
+    "options": {}
+  },
+  "credentials": {
+    "openBoxApi": {
+      "id": "1",
+      "name": "OpenBox API"
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+Everything downstream — the Chat Model, Memory, and Tool sub-nodes, and
+whatever consumes the agent's output — is untouched.
+
+Newly created OpenBox agents require DID signing by default. If **Require
+signing** is disabled for the agent, leave the credential's Agent DID and
+Agent Private Key fields blank. See
+[Agent DID and Agent Private Key](/developer-guide/n8n/configuration#agent-did-and-agent-private-key)
+for the required credential fields.
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--6">
+
+### [n8n 101](/getting-started/n8n/n8n-101)
+
+Get the n8n concepts that matter for OpenBox before you wire governance into
+a real workflow.
+
+</div>
+<div className="col col--6">
+
+### [Wrap an Existing Agent](/getting-started/n8n/wrap-an-existing-agent)
+
+Add OpenBox to an existing n8n AI Agent node without rewriting your model,
+tools, or prompts.
+
+</div>
+</div>
+
+## What OpenBox Captures
+
+From a single node, OpenBox captures:
+
+- Agent run lifecycle events for each node execution
+- Model call lifecycle events, including token metadata when the provider returns it
+- Tool call lifecycle events for every connected Tool sub-node that executes
+- User prompt signals for auditability
+- HTTP and database telemetry for outbound calls made during the run
+- Governance decisions, approvals, and guardrail outcomes
+
+## What To Expect In The UI
+
+After integration, OpenBox gives you:
+
+- A run timeline for the agent, model, and tool events behind each node execution
+- Policy and guardrail decisions on governed boundaries
+- `_openbox` metadata (workflow ID, run ID, tool call count, iterations) on the node's output JSON
+- Model and token usage when the connected Chat Model returns provider metadata
+- Tool health metrics for agents that actually execute tools
+
+## Next Steps
+
+1. Read [n8n 101](/getting-started/n8n/n8n-101) if you want the conceptual model first.
+2. Use [Wrap an Existing Agent](/getting-started/n8n/wrap-an-existing-agent) if you already have an AI Agent node in production.
+3. Read [n8n Node Reference](/developer-guide/n8n) for the full reference.

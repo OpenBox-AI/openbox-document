@@ -1,0 +1,113 @@
+---
+title: n8n Node Reference
+description: "OpenBox reference for n8n: govern the AI Agent node, model calls, tools, approvals, guardrails, and operational telemetry."
+llms_description: n8n community node reference and guide set
+sidebar_position: 1
+tags:
+  - sdk
+  - n8n
+  - javascript
+---
+
+# n8n Node Reference
+
+The OpenBox n8n integration connects an n8n AI Agent node to OpenBox through
+a community node that ports the same governance middleware used by the
+OpenBox LangChain SDK. It governs agent lifecycle, model calls, and tool
+calls while keeping your existing Chat Model, Memory, and Tool connections
+unchanged.
+
+Published package: `n8n-nodes-openbox-hook`
+
+| Guide | Description |
+|-------|-------------|
+| **[Integration Walkthrough](/developer-guide/n8n/integration-walkthrough)** | End-to-end guide for installing the node, adding credentials, replacing your AI Agent node, and verifying live runs |
+| **[Configuration](/developer-guide/n8n/configuration)** | Credential fields, node parameters, and current governance defaults |
+| **[Error Handling](/developer-guide/n8n/error-handling)** | Node errors, approval outcomes, guardrail failures, and Continue On Fail behavior |
+| **[Event Model](/developer-guide/n8n/event-model)** | Understand agent runs, model calls, tools, signals, and how they appear in OpenBox |
+| **[Approvals and Guardrails](/developer-guide/n8n/approvals-and-guardrails)** | How verdicts are enforced and how to test live guardrails correctly |
+| **[Telemetry](/developer-guide/n8n/telemetry)** | HTTP and database capture behavior |
+| **[Troubleshooting](/developer-guide/n8n/troubleshooting)** | Diagnose installation, credential, policy, and telemetry issues |
+
+:::info What The Node Does
+The node's job is to connect an n8n agent to OpenBox. Trust policy,
+approvals, guardrails, dashboards, and operator workflows live on the
+OpenBox platform, not inside the node.
+:::
+
+## Philosophy
+
+The integration is intentionally minimal:
+
+- One node, **OpenBox: Agent**, that replaces the standard AI Agent node
+- No rewrite of existing Chat Model, Memory, or Tool sub-nodes
+- Automatic governance at agent, model, and tool boundaries
+- Automatic HTTP and database telemetry through the node's built-in instrumentation
+
+## Recommended Entry Point
+
+For most workflows, add the node and attach the sub-nodes your agent already
+uses:
+
+```json title="workflow.json (node excerpt)"
+{
+  "type": "n8n-nodes-openbox-hook.openBoxAgent",
+  "typeVersion": 1,
+  "parameters": {
+    "promptType": "auto",
+    "options": {
+      "systemMessage": "You are a helpful assistant"
+    }
+  },
+  "credentials": {
+    "openBoxApi": {
+      "id": "1",
+      "name": "OpenBox API"
+    }
+  }
+}
+```
+
+Newly created OpenBox agents require DID signing by default. Configure
+**Agent DID** and **Agent Private Key** together on the credential unless
+**Require signing** is disabled for the registered agent.
+
+## What The Node Captures
+
+OpenBox receives:
+
+### Agent Boundaries
+
+- `WorkflowStarted`
+- `WorkflowCompleted`
+- `SignalReceived(user_prompt)`
+
+### Model Boundaries
+
+- `LLMStarted`
+- `LLMCompleted`
+
+### Tool Boundaries
+
+- `ToolStarted`
+- `ToolCompleted`
+
+### Operational Telemetry
+
+- HTTP requests, including the model provider call itself
+- database queries when the workflow uses a database node or tool, excluding n8n's own internal Postgres connection
+
+## Supported Runtime Conditions
+
+| Requirement | Value |
+| --- | --- |
+| n8n | Community Nodes enabled |
+| Node.js | n8n's supported runtime |
+| n8n-workflow (peer dependency) | `>=1.0.0` |
+| OpenBox Core | `https://core.openbox.ai` (fixed; not user-configurable in the credential) |
+
+## Next Steps
+
+1. Start with the [Integration Walkthrough](/developer-guide/n8n/integration-walkthrough).
+2. Review current defaults in [Configuration](/developer-guide/n8n/configuration).
+3. Read [Event Model](/developer-guide/n8n/event-model) before writing policy or guardrails.
