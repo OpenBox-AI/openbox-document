@@ -1,6 +1,6 @@
 ---
 title: Event Types
-description: "Track every decision your AI agents make: 12 event types for governance decisions, policy checks, trust changes, and violations."
+description: "Track every operation your AI agents make: 21 semantic operation types for governance decisions, policy checks, and analytics."
 llms_description: Reference for all emitted event types
 sidebar_position: 6
 tags:
@@ -11,96 +11,77 @@ tags:
 
 # Event Types
 
-OpenBox classifies agent operations into 24 semantic event types. These types enable precise policy writing and meaningful analytics.
+OpenBox classifies every agent operation into one of **21 semantic operation types**, grouped as HTTP (6), LLM (4), DB (5), File (4), and Other (2). The platform derives them from raw SDK telemetry (OpenTelemetry spans) for observability and analytics. Governance policies can also gate on them: each operation's `semantic_type` is carried on the activity's telemetry spans, so a Rego rule can match specific operations via `input.spans[_].semantic_type` (see [Policies](/trust-lifecycle/authorize/policies)). The types here describe *what* an operation did.
 
-## Event Categories
+## Operation Categories
 
-### LLM Operations
+### HTTP
+| Type | Description |
+|------|-------------|
+| `http_get` | HTTP GET request |
+| `http_post` | HTTP POST request |
+| `http_put` | HTTP PUT request |
+| `http_patch` | HTTP PATCH request |
+| `http_delete` | HTTP DELETE request |
+| `http` | Generic/unclassified HTTP request |
 
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `LLM_CALL` | Call to language model for completion/chat | Medium |
-| `LLM_EMBEDDING` | Generate embeddings from text | Low |
+### LLM
+| Type | Description |
+|------|-------------|
+| `llm_completion` | Completion / chat call to a language model |
+| `llm_embedding` | Generate embeddings from text |
+| `llm_tool_call` | Model-invoked tool/function call |
+| `llm_gen_ai` | Generative-AI operation (OTel `gen_ai.*`) |
 
-### Data Operations
+### Database
+| Type | Description |
+|------|-------------|
+| `database_select` | Read rows (SELECT) |
+| `database_insert` | Insert rows |
+| `database_update` | Update rows |
+| `database_delete` | Delete rows |
+| `database_query` | Other/unclassified query |
 
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `DATABASE_READ` | Read from database | Low-Medium |
-| `DATABASE_WRITE` | Write/update/delete database records | Medium-High |
-| `FILE_READ` | Read from filesystem | Low-Medium |
-| `FILE_WRITE` | Write to filesystem | Medium-High |
-| `CACHE_READ` | Read from cache layer | Low |
-| `CACHE_WRITE` | Write to cache layer | Low |
+### File
+| Type | Description |
+|------|-------------|
+| `file_read` | Read from filesystem |
+| `file_write` | Write to filesystem |
+| `file_open` | Open a file handle |
+| `file_delete` | Delete a file |
 
-### External Operations
-
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `EXTERNAL_API_CALL` | Call to external API | Medium-High |
-| `WEBHOOK_SEND` | Send webhook to external system | Medium-High |
-| `EMAIL_SEND` | Send email | Medium |
-
-### Messaging Operations
-
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `MESSAGE_QUEUE_SEND` | Publish to message queue | Medium |
-| `MESSAGE_QUEUE_RECEIVE` | Consume from message queue | Low |
-
-### Authentication Operations
-
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `AUTH_REQUEST` | Request authentication/authorization | Low |
-| `AUTH_GRANT` | Authentication granted | Low |
-| `AUTH_DENY` | Authentication denied | Low |
-
-### Workflow Operations
-
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `WORKFLOW_START` | Workflow execution begins | Low |
-| `WORKFLOW_COMPLETE` | Workflow execution ends | Low |
-| `ACTIVITY_START` | Activity execution begins | Low |
-| `ACTIVITY_COMPLETE` | Activity execution ends | Low |
-
-### Agent Operations
-
-| Type | Description | Risk Level |
-|------|-------------|------------|
-| `AGENT_GOAL_SET` | Agent goal defined | Low |
-| `AGENT_GOAL_UPDATE` | Agent goal modified | Medium |
-| `AGENT_DECISION` | Agent makes autonomous decision | Medium |
-| `AGENT_ACTION` | Agent takes action | Variable |
+### Other
+| Type | Description |
+|------|-------------|
+| `mcp_tool_call` | Model Context Protocol client tool call |
+| `internal` | Fallback for spans with no specific classification |
 
 ## Using Event Types
 
 ### In Policies
 
-Reference event types in OPA policies:
+Policies gate on the agent's risk tier and match an operation's semantic type via its telemetry spans:
 
 ```rego
 package openbox
 
-import rego.v1
+import future.keywords.if
+import future.keywords.in
 
-default result := {"decision": "CONTINUE", "reason": ""}
+default result := {"decision": "ALLOW", "reason": ""}
 
-# Allow all read operations
-result := {"decision": "CONTINUE", "reason": "Database read allowed"} if {
-    input.operation.type == "DATABASE_READ"
+# Require approval for database writes by Tier 2+ agents
+result := {"decision": "REQUIRE_APPROVAL", "reason": "Database writes require review"} if {
+    input.risk_tier >= 2
+    some span in input.spans
+    span.semantic_type in {"database_insert", "database_update", "database_delete"}
 }
 
-# Require approval for external calls
-result := {"decision": "REQUIRE_APPROVAL", "reason": "External API calls require review"} if {
-    input.operation.type == "EXTERNAL_API_CALL"
-}
-
-# Block file writes for low-trust agents
-result := {"decision": "BLOCK", "reason": "File writes blocked for lower-tier agents"} if {
-    input.operation.type == "FILE_WRITE"
-    input.agent.trust_tier >= 3
+# Block destructive file operations for the lowest-trust tier
+result := {"decision": "BLOCK", "reason": "Destructive file operations blocked for Tier 4"} if {
+    input.risk_tier == 4
+    some span in input.spans
+    span.semantic_type == "file_delete"
 }
 ```
 
@@ -108,9 +89,9 @@ result := {"decision": "BLOCK", "reason": "File writes blocked for lower-tier ag
 
 Filter sessions by event type:
 
-- View all `EXTERNAL_API_CALL` events
-- Track `DATABASE_WRITE` frequency
-- Alert on `AUTH_DENY` spikes
+- View all `http_post` events
+- Track `database_update` frequency
+- Alert on `file_delete` spikes
 
 ## Event Metadata
 
@@ -119,7 +100,7 @@ Each event includes:
 ```json
 {
   "event_id": "evt_abc123",
-  "type": "DATABASE_WRITE",
+  "type": "database_update",
   "timestamp": "2026-02-26T09:14:32.001Z",
   "session_id": "ses_xyz789",
   "agent_id": "agt_def456",

@@ -85,13 +85,14 @@ Click the **Add Agent** button (top right) to register a new agent. See [Registe
 
 Click any agent to view its detail page with these tabs:
 
-- **[Overview](/trust-lifecycle/overview)** - Active sessions, completed, failed, and halted sessions
+- **[Overview](/trust-lifecycle/overview)** - Operational dashboard: live activity, telemetry, and health at a glance
+- **[Sessions](/trust-lifecycle/monitor)** - Recent workflow executions: active, completed, failed, and halted
 - **[Assess](/trust-lifecycle/assess)** - Risk profile configuration
 - **[Authorize](/trust-lifecycle/authorize)** - Guardrails, policies, and behavioral rules
-- **[Monitor](/trust-lifecycle/monitor)** - Operational dashboard and telemetry
 - **[Verify](/trust-lifecycle/verify)** - Goal alignment and drift detection
-- **[Adapt](/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
-- **[Settings](/dashboard/agents/agent-settings)** - Agent configuration, risk profile, API keys, and lifecycle management
+- **[Adapt](/trust-lifecycle/adapt)** - Trust evolution, approvals, and policy/insight suggestions
+- **[Compliance](/dashboard/agents/compliance)** - Per-agent control coverage across EU AI Act, ISO/IEC 42001, and NIST AI RMF
+- **[Settings](/dashboard/agents/agent-settings)** - Agent configuration, risk profile, trust evaluation, API keys, and lifecycle management
 
 ## Next Steps
 

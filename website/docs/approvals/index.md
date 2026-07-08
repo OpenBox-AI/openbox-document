@@ -30,7 +30,7 @@ Five metrics across the top:
 | **Pending** | Approval requests awaiting review (orange) |
 | **Approved Today** | Requests approved in the last 24h (green) |
 | **Rejected Today** | Requests rejected in the last 24h (red) |
-| **Expired Today** | Requests that timed out (gray) |
+| **Expired Today** | Requests that reached the 24h hard expiry (gray) |
 | **Avg Response Time** | Average time to respond with trend indicator |
 
 ## SLA Summary
@@ -40,7 +40,8 @@ A summary bar shows SLA performance:
 - **Within** - Percentage of approvals resolved within SLA target (green)
 - **At Risk** - Approaching SLA deadline (orange)
 - **Breached** - Exceeded SLA target (red)
-- **SLA Target** - Configured target time (default: 5 min)
+- **SLA Target** - Responsiveness goal for SLA reporting (Within / At Risk / Breached). Default: **5 min**. Missing the SLA target does **not** expire the request.
+- **Hard expiry** - Every approval auto-expires **24 hours** after it is raised, independent of the SLA target. On expiry the operation does **not** proceed (treated as denied) and the rule's `on_timeout` behavior (block or halt) applies. The UI shows a live countdown to this 24h deadline.
 
 Click **Analytics** to view detailed SLA analytics.
 
@@ -53,7 +54,7 @@ Use the status dropdown to filter the queue:
 - **Pending** - Requests awaiting action
 - **Approved** - Recently approved requests
 - **Rejected** - Recently rejected requests
-- **Expired** - Requests that timed out
+- **Expired** - Requests that reached the 24h hard expiry
 
 ### Approval Cards
 
@@ -110,17 +111,19 @@ For each pending request:
 
 **Result:**
 - Operation is rejected
-- Trust score decreases (-2)
+- Counts as a rule trigger; a trust penalty applies only if the rule's threshold is exceeded in the rolling window (no flat per-event penalty)
 - Event logged in audit trail
 
-### Timeout
+### Expiry
 
-If no action is taken:
+Two independent clocks apply to every approval:
 
-- Default timeout: 5 minutes per approval request (configurable per behavioral rule, 5-60 min range)
-- Request expires and the operation does not proceed
-- Trust score slightly decreases (-1)
-- Appears in "Expired Today" stat
+- **SLA target (default 5 min)** — a responsiveness goal for reporting only. Missing it moves the request to **At Risk** / **Breached** but does **not** expire it.
+- **Hard expiry (24h)** — if no decision is made within 24 hours, the request auto-expires:
+  - The operation does not proceed — expiry is treated as a denial, and the rule's `on_timeout` setting (block or halt) is applied.
+  - The request appears in the "Expired Today" stat and under the "Expired" status filter.
+
+Expiry carries no flat trust penalty. Like any denied outcome it counts as one rule trigger; a trust penalty applies only if that rule's trigger count exceeds its threshold within the rolling window (see [Trust Scores → Recovery](/core-concepts/trust-scores#recovery)).
 
 ## Filtering
 
