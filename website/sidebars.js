@@ -102,9 +102,16 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'getting-started/n8n/index',
+          type: 'category',
           label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'getting-started/n8n/index',
+          },
+          items: [
+            'getting-started/n8n/n8n-101',
+            'getting-started/n8n/wrap-an-existing-agent',
+          ],
         },
         {
           type: 'doc',
@@ -290,9 +297,21 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'developer-guide/n8n/index',
+          type: 'category',
           label: 'n8n',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/n8n/index',
+          },
+          items: [
+            'developer-guide/n8n/integration-walkthrough',
+            'developer-guide/n8n/configuration',
+            'developer-guide/n8n/error-handling',
+            'developer-guide/n8n/event-model',
+            'developer-guide/n8n/approvals-and-guardrails',
+            'developer-guide/n8n/telemetry',
+            'developer-guide/n8n/troubleshooting',
+          ],
         },
         {
           type: 'doc',
