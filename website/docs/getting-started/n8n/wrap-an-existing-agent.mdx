@@ -24,9 +24,9 @@ swapping its node type for **OpenBox: Agent**. The same **Chat Model**,
   (`@n8n/n8n-nodes-langchain.agent`) connected to a Chat Model sub-node
 - n8n with Community Nodes enabled (self-hosted, or n8n Cloud with community
   node installs allowed)
-- An OpenBox agent API key
-- An OpenBox agent DID and private key, unless **Require signing** is
-  disabled for the agent
+- An OpenBox agent, registered at [platform.openbox.ai](https://platform.openbox.ai),
+  which provides the agent API key and, unless **Require signing** is
+  disabled for the agent, the agent DID and private key
 
 ## Step 1: Install The Node
 
@@ -51,7 +51,10 @@ In n8n, go to **Settings → Credentials → Add Credential** and create an
 | **Agent DID** | No | Agent decentralised identifier (`did:aip:<uuid>`). Required for agents with `signing_required = true`. Pair with Agent Private Key. |
 | **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed. Every request is signed locally with this key. Pair with Agent DID. |
 
-Get your API key from [dashboard.openbox.ai](https://dashboard.openbox.ai).
+Get your API key, and — unless **Require signing** is disabled for the
+agent — the Agent DID and private key, from the agent's registration page at
+[platform.openbox.ai](https://platform.openbox.ai). All three are generated
+when you register the agent.
 
 Keep the private key in your n8n credential store only. Do not export it in
 workflow JSON or reuse it across agents. If **Require signing** is disabled

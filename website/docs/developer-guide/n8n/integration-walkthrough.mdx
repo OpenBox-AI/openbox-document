@@ -23,7 +23,7 @@ Memory, and Tool connections.
 
 :::tip Existing agent?
 If you only need the shortest setup path, start with
-**[Getting Started with n8n](/getting-started/n8n)**.
+**[Wrap an Existing Agent](/getting-started/n8n/wrap-an-existing-agent)**.
 :::
 
 ## Prerequisites
@@ -37,7 +37,7 @@ If you only need the shortest setup path, start with
 
 ## Part 1: Register Your Agent In OpenBox
 
-1. Open the [OpenBox Dashboard](https://dashboard.openbox.ai)
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
 2. Navigate to **Agents**
 3. Create or open the agent you want to govern
 4. Generate an API key
@@ -73,9 +73,6 @@ In n8n, go to **Settings → Credentials → Add Credential** and create an
 | **API Key** | Yes | Agent API key issued by OpenBox. |
 | **Agent DID** | No | Required for agents with `signing_required = true`. |
 | **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed, paired with Agent DID. |
-
-There is no separate OpenBox URL field to set — the credential talks to
-`https://core.openbox.ai` directly.
 
 ## Part 4: Replace The Node
 
@@ -132,7 +129,7 @@ Run one real request through the governed agent, then check OpenBox for:
 - governance decisions for allowed, blocked, halted, or approval-required operations
 - signed request authentication when **Require signing** is enabled
 
-Open the [OpenBox Dashboard](https://dashboard.openbox.ai), navigate to
+Open the [OpenBox Dashboard](https://platform.openbox.ai), navigate to
 **Agents**, open the agent, and inspect the latest run.
 
 ## How The Integration Works

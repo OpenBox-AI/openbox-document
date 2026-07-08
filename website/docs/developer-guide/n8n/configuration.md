@@ -25,9 +25,6 @@ Create this once under **Settings → Credentials → Add Credential**.
 | **Agent DID** | No | Agent decentralised identifier (`did:aip:<uuid>`). |
 | **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed. |
 
-There is no OpenBox URL field. The credential always talks to
-`https://core.openbox.ai`.
-
 ### Agent DID and Agent Private Key
 
 DID signing is enabled by default for newly registered agents. If signing is
