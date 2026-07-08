@@ -18,12 +18,12 @@ const IntegrationsLive = [
   {label: 'LangChain', to: '/getting-started/langchain'},
   {label: 'LangGraph', to: '/getting-started/langgraph'},
   {label: 'Mastra', to: '/getting-started/mastra'},
+  {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'Temporal', to: '/getting-started/temporal'},
 ];
 
 const IntegrationsSoon = [
   {label: 'Cursor', to: '/getting-started/cursor'},
-  {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'OpenClaw', to: '/getting-started/openclaw'},
 ];
 
