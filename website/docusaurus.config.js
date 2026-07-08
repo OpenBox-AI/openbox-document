@@ -145,18 +145,18 @@ const config = {
         },
       },
       navbar: {
-        title: 'Docs',
         logo: {
-          alt: 'OpenBox Logo',
+          alt: 'OpenBox',
           src: 'img/logo.svg',
+          href: 'https://www.openbox.ai',
+          target: '_blank',
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'docs',
+            to: '/',
             label: 'Docs',
             position: 'left',
-            className: 'navbar-docs-link-mobile-only',
+            className: 'navbar-docs-link',
           },
           {
             href: 'https://discord.gg/YjRYvV6QJw',
@@ -207,6 +207,7 @@ const config = {
           {
             title: 'Product',
             items: [
+              {label: 'openbox.ai', href: 'https://www.openbox.ai'},
               {label: 'Dashboard', href: 'https://platform.openbox.ai'},
               {label: 'Discord', href: 'https://discord.gg/YjRYvV6QJw'},
               {label: 'GitHub', href: 'https://github.com/OpenBox-AI'},
