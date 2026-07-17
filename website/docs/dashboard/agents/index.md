@@ -91,9 +91,11 @@ Click any agent to view its detail page with these tabs:
 - **[Monitor](/trust-lifecycle/monitor)** - Operational dashboard and telemetry
 - **[Verify](/trust-lifecycle/verify)** - Goal alignment and drift detection
 - **[Adapt](/trust-lifecycle/adapt)** - Trust evolution and policy suggestions
+- **Lineage** - Repository, branch, runtime, session, and governance snapshot history when the agent is linked to a [Project](/dashboard/projects)
 - **[Settings](/dashboard/agents/agent-settings)** - Agent configuration, risk profile, API keys, and lifecycle management
 
 ## Next Steps
 
 1. **[Register a New Agent](/dashboard/agents/registering-agents)** - Add a new agent to OpenBox
-2. **[Trust Overview](/dashboard/trust-overview)** - View trust scores and trends across all agents
+2. **[Projects](/dashboard/projects)** - Connect repositories and link registered runtimes to agent lineage
+3. **[Trust Overview](/dashboard/trust-overview)** - View trust scores and trends across all agents
