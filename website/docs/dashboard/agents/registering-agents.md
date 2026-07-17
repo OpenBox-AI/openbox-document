@@ -23,8 +23,9 @@ Every AI agent you want to govern with OpenBox needs to be registered first. Reg
    - **Teams**: Assign to one or more teams
    - **Icon**: Select an icon
 4. Configure **Initial Risk Assessment** and **Attestation** (see details below)
-5. Click **Add Agent**
-6. In the **Save Your Agent Credentials** dialog that opens, copy the API key, DID, and private key (or the pre-formatted env-var block) into your secrets manager. All three are shown only once.
+5. Optionally link the runtime to a [Project](/dashboard/projects) for repository lineage
+6. Click **Add Agent**
+7. In the **Save Your Agent Credentials** dialog that opens, copy the API key, DID, and private key (or the pre-formatted env-var block) into your secrets manager. All three are shown only once.
 
 :::tip
 The API key (`obx_live_xxxxxxxxxxxx`) and the agent's Ed25519 private key are shown only once. Lose either and you'll need to rotate from [Agent Settings → API Access](/dashboard/agents/agent-settings#api-access).
@@ -56,6 +57,22 @@ Select the workflow engine your agent uses:
 
 :::tip
 All of these fields can be edited after creation from the [Agent Settings](/dashboard/agents/agent-settings#general-settings) page.
+:::
+
+### Project Lineage
+
+If your organization uses [Projects](/dashboard/projects), you can link the new runtime to repository lineage during registration.
+
+| Field | Description |
+|-------|-------------|
+| **Project** | Existing repository project that owns the agent code. |
+| **Repository Agent** | Logical agent inside the project. In monorepos, this is the path-mapped agent that matches the runtime. |
+| **Branch** | Repository branch associated with this runtime. OpenBox uses the synced branch list from the connected repository. |
+
+This link lets OpenBox show the runtime in the agent's **Lineage** tab and connect future sessions to repository lifecycle events and governance snapshots.
+
+:::tip
+You can skip project lineage during registration and link the runtime later from [Agent Settings → Lineage](/dashboard/agents/agent-settings#lineage).
 :::
 
 ### Agent Credentials
