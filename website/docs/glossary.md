@@ -32,6 +32,24 @@ The Decentralized Identifier assigned to every OpenBox agent, of the form `did:a
 
 ---
 
+## Agent Lineage
+
+The provenance model that connects an agent's repository changes, registered runtime, [Agent DID](#agent-did), governed sessions, and governance configuration snapshots.
+
+**OpenBox connection:** OpenBox shows lineage in [Projects](/dashboard/projects) and in the agent detail **Lineage** tab when a runtime is linked to a project.
+
+**Learn more:** [Agent Lineage](/core-concepts/agent-lineage)
+
+---
+
+## Agent Paths
+
+Included and ignored repository path rules that define which files belong to a [Repository Agent](#repository-agent). OpenBox uses these paths to decide whether a commit should become a lifecycle event for that agent.
+
+**Learn more:** [Projects](/dashboard/projects#repository-agents)
+
+---
+
 ## AIP (Agent Identity Protocol)
 
 OpenBox's cryptographic agent identity layer. Each agent has an Ed25519 keypair; the SDK signs governance requests with the private key, and OpenBox verifies every signature against the non-extractable public key it holds for the agent. Runs alongside the existing API key — the bearer token authenticates the HTTP call, the AIP signature authenticates the agent that produced the payload.
@@ -129,6 +147,22 @@ The outcome produced when OpenBox evaluates an agent operation. There are four p
 
 ---
 
+## Governance Snapshot
+
+A point-in-time record of the policy, guardrail, and behavioral-rule version hashes associated with an agent runtime.
+
+Snapshots are created when lineage-relevant context changes:
+
+- Runtime linked to a project
+- Commit touches the runtime's repository agent paths
+- Policy version changes
+- Guardrail version changes
+- Behavioral-rule version changes
+
+**Learn more:** [Agent Lineage](/core-concepts/agent-lineage#governance-snapshots)
+
+---
+
 ## Guardrail
 
 Pre- or post-processing validation and transformation rules applied to agent inputs and outputs. Multiple guardrails execute as a chained pipeline — the output of one feeds into the next.
@@ -157,6 +191,14 @@ A workflow pattern where an agent operation is paused pending human approval bef
 
 ---
 
+## Lifecycle Event
+
+A repository, branch, runtime-link, or governance event that changes the lineage context for an agent. Lifecycle events help explain how code and configuration changed over time for a specific repository agent or runtime.
+
+**Learn more:** [Projects](/dashboard/projects#lifecycle-events)
+
+---
+
 ## Merkle Tree
 
 A cryptographic data structure used to combine individual event hashes into a single session root hash. Uses SHA-256 with sorted-pair hashing to ensure consistent tree construction regardless of processing order. Enables tamper-proof verification of governance events.
@@ -172,6 +214,16 @@ Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (
 Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
 
 **Learn more:** [Authorize Phase: Policies](/trust-lifecycle/authorize/policies)
+
+---
+
+## Project
+
+A repository-level grouping in OpenBox. One project maps to one connected repository and contains one or more [Repository Agents](#repository-agent).
+
+**OpenBox connection:** Projects let OpenBox connect repository events to governed runtimes, sessions, and governance snapshots.
+
+**Learn more:** [Projects](/dashboard/projects)
 
 ---
 
@@ -196,6 +248,24 @@ A synchronous, read-only request to inspect a running [Workflow's](#workflow) st
 **OpenBox connection:** OpenBox uses Queries to inspect governance state during execution — for example, checking whether an approval is still pending. Queries do not trigger governance evaluation since they are read-only.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
+
+---
+
+## Repository Agent
+
+The logical agent definition inside an OpenBox [Project](#project). A repository agent is defined by [Agent Paths](#agent-paths), which tell OpenBox which files belong to that agent.
+
+**OpenBox connection:** In a monorepo, each repository agent can own different paths so commits are attributed to the correct agent.
+
+**Learn more:** [Projects](/dashboard/projects#repository-agents)
+
+---
+
+## Runtime
+
+A registered OpenBox agent instance with its own API key, [Agent DID](#agent-did), sessions, and governance history. A runtime can be linked to a [Project](#project), [Repository Agent](#repository-agent), and branch for lineage.
+
+**Learn more:** [Agent Lineage](/core-concepts/agent-lineage#runtime-linking)
 
 ---
 

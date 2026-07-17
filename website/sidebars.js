@@ -146,6 +146,7 @@ const sidebars = {
         'core-concepts/trust-tiers',
         'core-concepts/governance-decisions',
         'core-concepts/agent-identity',
+        'core-concepts/agent-lineage',
       ],
     },
     {
@@ -358,6 +359,7 @@ const sidebars = {
             'dashboard/agents/agent-settings',
           ],
         },
+        'dashboard/projects',
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],
