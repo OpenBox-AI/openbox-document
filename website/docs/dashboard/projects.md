@@ -103,7 +103,7 @@ Lifecycle events are scoped by the repository agent's included and ignored paths
 
 ### <mark className="diff-mark">Commits From a Governed Dev Session</mark>
 
-<mark className="diff-mark">If a commit was produced by a governed coding-agent session (for example [Claude Code](/getting-started/claude-code)), OpenBox recognizes the `OpenBox-Session` trailer it leaves on the commit and attributes the lifecycle event to that dev session in addition to the repository agent its paths matched. Click the event to see the originating session alongside the usual commit and branch details. See [Agent Lineage → Shift-Left](/core-concepts/agent-lineage#shift-left-one-hop-earlier) for the full dev-session-to-runtime chain.</mark>
+<mark className="diff-mark">If a commit was produced by a governed coding-agent session (for example [Claude Code](/getting-started/claude-code)), OpenBox recognizes the `OpenBox-Session` trailer it leaves on the commit and attributes the lifecycle event to that dev session in addition to the repository agent its paths matched. Click the event to see the originating session alongside the usual commit and branch details. See [Agent Lineage → Shift-Left](/core-concepts/agent-lineage#shift-left-governance) for the full dev-session-to-runtime chain.</mark>
 
 ## Registered Runtimes
 

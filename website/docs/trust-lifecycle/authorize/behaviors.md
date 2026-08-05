@@ -73,7 +73,7 @@ Note: the Approvals page does not update in real time. If you don't see an appro
 
 ## Fail-Open by Design
 
-Behavioral rules fail **open** with a circuit breaker: if the behavior-analytics service backing this layer is ever unreachable, operations proceed without that check rather than being blocked, and the SDK stops calling the unreachable service until it recovers. This is the deliberate opposite of how [Policies](./policies) fail closed on outage: analytics outages never block work, so a temporary loss of this layer never halts agent operations. The response is flagged so this fallback path is visible in the event log rather than indistinguishable from a normal ALLOW. See [Authorize → Fail-Safe By Design](./index#fail-safe-by-design) for how the layers compare.
+Behavioral rules fail **open** with a circuit breaker: if the behavior-analytics service backing this layer is ever unreachable, operations proceed without that check rather than being blocked, and the SDK stops calling the unreachable service until it recovers. This is the deliberate opposite of how [Policies](./policies) fail closed on outage: analytics outages never block work, so a temporary loss of this layer never halts agent operations. The response is flagged so this fallback path is visible in the event log rather than indistinguishable from a normal ALLOW. See [Authorize → Fail-Safe By Design](./#fail-safe-by-design) for how the layers compare.
 
 ## How Prior State and Trigger Work
 
