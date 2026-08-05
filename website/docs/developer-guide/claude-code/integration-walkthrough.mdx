@@ -1,0 +1,123 @@
+---
+title: Integration Walkthrough
+sidebar_label: Claude Code
+description: "Govern a Claude Code project with OpenBox: register a dev-session agent, configure hooks, and verify a live session."
+llms_description: Claude Code-specific integration walkthrough
+sidebar_position: 3
+tags:
+  - sdk
+  - claude-code
+  - integration
+---
+
+# Integration Walkthrough
+
+:::tip 🆕 New page in this review
+Everything on this page is new.
+:::
+
+This is the end-to-end guide for integrating OpenBox with a project you use Claude Code on. It covers registration, hook configuration, mode selection, and what should appear in OpenBox once the integration is live.
+
+:::tip Skip ahead
+- **Already added the hooks?** Jump to [Verify A Live Session](#verify-a-live-session).
+- **Need the short path?** Start with [Getting Started with Claude Code](/getting-started/claude-code).
+:::
+
+## Prerequisites
+
+- Node.js `18+`
+- An existing project you use Claude Code on
+- An OpenBox account and agent API key
+- An OpenBox agent DID and private key unless **Require signing** is disabled for the agent
+
+## Part 1: Register The Dev-Session Agent
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to **Agents** → **Add Agent**
+3. Choose **Claude Code** as the integration
+4. Copy the generated API key, DID, and private key
+
+See [Registering Agents](/dashboard/agents/registering-agents) for the full dashboard flow.
+
+## Part 2: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+
+OPENBOX_CLAUDE_CODE_MODE=observe
+```
+
+## Part 3: Add The Hooks
+
+```json title=".claude/settings.json"
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook user-prompt-submit" }] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook pre-tool-use" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook post-tool-use" }] }
+    ]
+  }
+}
+```
+
+## Part 4: Run A Session In Observe Mode
+
+```bash
+claude
+```
+
+Work normally. Every prompt and tool call is recorded and scored in OpenBox, but nothing is blocked while `OPENBOX_CLAUDE_CODE_MODE=observe`.
+
+## Part 5: Switch To Enforce
+
+Once governance decisions look right in the dashboard, flip the mode:
+
+```bash title=".env"
+OPENBOX_CLAUDE_CODE_MODE=enforce
+```
+
+`PreToolUse` hook invocations now exit non-zero when OpenBox returns `BLOCK` or `HALT`, per Claude Code's hook exit-code contract; the tool call does not run.
+
+## Verify A Live Session
+
+Trigger one real Claude Code session, then check OpenBox for:
+
+- a session under your registered dev-session agent
+- the initiating user-prompt event
+- tool-call activities for each file edit, shell command, or MCP call
+- successful request authentication when **Require signing** is enabled
+
+## What The Integration Captures
+
+### User Prompts
+
+Each prompt submitted to the session is evaluated on `UserPromptSubmit` before Claude Code acts on it.
+
+### Tool Calls
+
+Each tool call becomes a governed activity: evaluated pre-execution on `PreToolUse`, completed with results on `PostToolUse`.
+
+### Commits
+
+If the session's changes are committed, the commit carries an `OpenBox-Session` trailer linking it back to this session; see [Agent Lineage → Shift-Left](/core-concepts/agent-lineage#shift-left-one-hop-earlier).
+
+## What To Expect In The UI
+
+- The dev session appears as a governed agent session, same as a runtime agent
+- Tool calls show up as activities with pre/post-execution governance decisions
+- [Session Replay](/trust-lifecycle/session-replay) works the same way it does for any other integration
+
+## Next Steps
+
+- [Configuration](/developer-guide/claude-code/configuration)
+- [Troubleshooting](/developer-guide/claude-code/troubleshooting)

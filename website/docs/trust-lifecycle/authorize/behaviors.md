@@ -2,7 +2,7 @@
 title: Behavioral Rules
 description: "Define allowed AI agent behaviors: Specify permitted actions, data access patterns, API calls, and interaction boundaries per agent."
 llms_description: Stateful multi-step pattern detection
-sidebar_position: 3
+sidebar_position: 4
 tags:
   - policy-authoring
   - governance
@@ -11,7 +11,7 @@ tags:
 
 # Behavioral Rules
 
-Behavioral rules are stateful authorization rules that detect multi-step patterns across an agent's session. Unlike [policies](./policies), behavioral rules track prior actions to identify sequences, frequencies, or combinations.
+Behavioral rules are stateful authorization rules that detect multi-step patterns across an agent's session, plus continuous goal-alignment scoring that compares what the agent is doing against what it was originally asked to do. Unlike [policies](./policies), behavioral rules track prior actions to identify sequences, frequencies, or combinations that no single-operation check could express.
 
 | Pattern | Example |
 |---------|---------|
@@ -25,23 +25,23 @@ Rules are evaluated in priority order and stop at the first rule that triggers a
 
 Behavioral rules are created through a 4-step wizard under **Agent → Authorize → Behavioral Rules**.
 
-### Step 1 — Basic Info
+### Step 1: Basic Info
 
 - **Rule Name (required):** Human-readable label for the rule.
 - **Description:** Optional operator context.
 - **Priority (1–100):** Higher priority rules are evaluated first.
 
-### Step 2 — Trigger
+### Step 2: Trigger
 
 Select the **Trigger semantic type**. This is the action that will be checked (for example: `file_write`, `database_select`, `llm_completion`, `http_get`).
 
-### Step 3 — States (Required Prior States)
+### Step 3: States (Required Prior States)
 
 Select one or more **Required Prior States**. These semantic types must occur before the trigger. When multiple prior states are selected, **all** of them must have occurred (AND logic) for the prerequisite to be met.
 
 This step defines the **Prior State** prerequisite described below.
 
-### Step 4 — Enforcement
+### Step 4: Enforcement
 
 - **Verdict:** What to do when the prerequisite is not met.
 - **On Reject Message (required):** Message shown/logged when the verdict is applied.
@@ -49,7 +49,7 @@ This step defines the **Prior State** prerequisite described below.
 Finish by clicking **Create Rule**.
 
 :::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes — see [Error Handling](/developer-guide/temporal-python/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes. See [Error Handling](/developer-guide/temporal-python/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
 :::
 
 ## Verdicts
@@ -59,6 +59,7 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | Verdict | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
+| `CONSTRAIN` | Permit, but under recorded constraints (for example, a tier-3 default requiring isolation on an external send) |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
@@ -69,6 +70,10 @@ When a rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the 
 - **Adapt** tab (on the agent page)
 
 Note: the Approvals page does not update in real time. If you don't see an approval immediately, refresh the page.
+
+## Fail-Open by Design
+
+Behavioral rules fail **open** with a circuit breaker: if the behavior-analytics service backing this layer is ever unreachable, operations proceed without that check rather than being blocked, and the SDK stops calling the unreachable service until it recovers. This is the deliberate opposite of how [Policies](./policies) fail closed on outage: analytics outages never block work, so a temporary loss of this layer never halts agent operations. The response is flagged so this fallback path is visible in the event log rather than indistinguishable from a normal ALLOW. See [Authorize → Fail-Safe By Design](./index#fail-safe-by-design) for how the layers compare.
 
 ## How Prior State and Trigger Work
 
@@ -84,7 +89,7 @@ The prior state acts as a prerequisite. If the prerequisite is met, the action c
 | Prior state happened before trigger | Continue (prerequisite met) |
 | Prior state happened after trigger (or never) | Verdict applied (`BLOCK`, `REQUIRE_APPROVAL`, etc.) |
 
-**Example — prerequisite met:**
+**Example (prerequisite met):**
 
 - Trigger = `llm_completion`
 - Prior State = `http_get`
@@ -94,7 +99,7 @@ Activity sequence: `http_get → file_write → file_read → http_post → llm_
 
 `http_get` happened before `llm_completion` → prerequisite met → continues normally.
 
-**Example — prerequisite not met:**
+**Example (prerequisite not met):**
 
 - Trigger = `http_get`
 - Prior State = `llm_completion`
@@ -106,7 +111,7 @@ Activity sequence: `http_get → file_write → file_read → http_post → llm_
 
 Use these two sample rules to make runtime behavior obvious while testing. Enable only one rule at a time.
 
-### Rule 1 — `HALT`
+### Rule 1: `HALT`
 
 - **Rule Name:** `Query Data Before Generating Reports`
 - **Trigger:** `file_write`
@@ -115,7 +120,7 @@ Use these two sample rules to make runtime behavior obvious while testing. Enabl
 - **Priority:** `50`
 - **Reject Message:** `File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
-Why this matters: a reporting agent skips the database query and goes straight to file generation. The LLM fills in convincing figures from its own knowledge — properly formatted, realistic numbers, but entirely fabricated. This rule ensures the agent has queried real data before producing any file output.
+Why this matters: a reporting agent skips the database query and goes straight to file generation. The LLM fills in convincing figures from its own knowledge (properly formatted, realistic numbers, but entirely fabricated). This rule ensures the agent has queried real data before producing any file output.
 
 Result in terminal:
 
@@ -123,7 +128,7 @@ Result in terminal:
 
 The chat/session ends immediately after the halt.
 
-### Rule 2 — `REQUIRE_APPROVAL`
+### Rule 2: `REQUIRE_APPROVAL`
 
 - **Rule Name:** `Review Payment Before Processing`
 - **Trigger:** `http_post`

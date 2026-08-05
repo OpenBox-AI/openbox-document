@@ -11,6 +11,10 @@ tags:
 
 # Projects
 
+:::info Gated
+Projects is a gated feature that rolls out per organization. Contact OpenBox if you don't see **Projects** in your dashboard sidebar yet. The underlying lineage mechanism it surfaces (commit-trailer attribution, path-based commit matching, and governance snapshots) is generally available; see [Agent Lineage](/core-concepts/agent-lineage).
+:::
+
 Projects connect repository activity to governed OpenBox agents. Use Projects to see which commits affected an agent, which runtime and DID are linked to that code path, and which governance configuration was active when sessions ran.
 
 Access Projects from the sidebar by clicking **Projects**.
@@ -96,6 +100,10 @@ Each event row includes:
 | **Timestamp** | When the event occurred. |
 
 Lifecycle events are scoped by the repository agent's included and ignored paths. Runtime session events are not duplicated here; sessions are shown in the runtime lineage view.
+
+### <mark className="diff-mark">Commits From a Governed Dev Session</mark>
+
+<mark className="diff-mark">If a commit was produced by a governed coding-agent session (for example [Claude Code](/getting-started/claude-code)), OpenBox recognizes the `OpenBox-Session` trailer it leaves on the commit and attributes the lifecycle event to that dev session in addition to the repository agent its paths matched. Click the event to see the originating session alongside the usual commit and branch details. See [Agent Lineage → Shift-Left](/core-concepts/agent-lineage#shift-left-one-hop-earlier) for the full dev-session-to-runtime chain.</mark>
 
 ## Registered Runtimes
 

@@ -1,0 +1,83 @@
+---
+title: Troubleshooting
+description: "Common Claude Code integration issues and how to diagnose them quickly."
+llms_description: Claude Code integration troubleshooting guide
+sidebar_position: 5
+tags:
+  - sdk
+  - claude-code
+  - configuration
+  - integration
+---
+
+# Troubleshooting
+
+:::tip 🆕 New page in this review
+Everything on this page is new.
+:::
+
+Use this page to diagnose the most common configuration, runtime, and UI interpretation issues with the OpenBox Claude Code integration.
+
+## Hooks Don't Run At All
+
+Typical causes:
+
+- `.claude/settings.json` hasn't been saved, or is in the wrong directory (it must be in the project root or `~/.claude/`)
+- the `matcher` field doesn't match the tool being called
+- Node.js is not on `PATH` for the shell Claude Code launches hooks from
+
+What to do:
+
+1. Confirm `.claude/settings.json` parses as valid JSON.
+2. Run the hook command directly (`npx openbox-claude-code hook pre-tool-use`) to confirm it executes without Claude Code in the loop.
+3. Set `OPENBOX_DEBUG=1` and re-run a session.
+
+## OpenBox Returns `401 invalid token or agent identity`
+
+This usually means the API key reached OpenBox, but the agent identity material didn't match the registered agent.
+
+What to verify:
+
+1. The API key belongs to the same OpenBox agent as `OPENBOX_AGENT_DID`.
+2. `OPENBOX_AGENT_DID` uses the `did:aip:<uuid>` format.
+3. `OPENBOX_AGENT_PRIVATE_KEY` is the base64 raw 32-byte Ed25519 seed, not a PEM or public key.
+4. The private key hasn't been rotated since the environment was configured.
+
+## No Sessions Appear In OpenBox
+
+Check these first:
+
+1. The shell running Claude Code can reach `OPENBOX_URL`.
+2. The API key is valid for the intended agent.
+3. At least one hook fired; check `OPENBOX_DEBUG=1` output for a successful send.
+4. You're looking at the dev-session agent, not a runtime agent registered for the same project.
+
+## Tool Calls Aren't Blocked In Enforce Mode
+
+This usually means the mode variable isn't set where the hook process can read it.
+
+What to verify:
+
+- `OPENBOX_CLAUDE_CODE_MODE=enforce` is set in the same environment the hook command runs in, not just your interactive shell
+- the policy or guardrail you expect to trigger actually returns `BLOCK` or `HALT` for that input
+- you're testing a tool type that isn't excluded via an empty `hooks` array for its matcher
+
+## File Contents Or Shell Output Missing From The Dashboard
+
+This is usually intentional. Check whether `OPENBOX_CLAUDE_CODE_REDACT_FILE_CONTENTS` or `OPENBOX_CLAUDE_CODE_REDACT_SHELL_OUTPUT` is set in the developer's own environment; these are per-developer privacy controls, not a bug.
+
+## Commits Aren't Linked To The Session
+
+Check these first:
+
+1. The commit was made from within the same Claude Code session (not a manual commit after the session ended).
+2. The commit trailer wasn't stripped by a commit-message hook or squash-merge before it reached the connected repository.
+3. The repository is connected as a [Project](/dashboard/projects) and the runtime is linked to a repository agent whose paths match the changed files.
+
+## Debug Logging
+
+```bash
+OPENBOX_DEBUG=1 claude
+```
+
+This helps diagnose missing events, unexpected verdicts, and configuration problems.
