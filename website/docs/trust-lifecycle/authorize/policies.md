@@ -20,7 +20,7 @@ Policies give you fine-grained, field-level control over individual operations. 
 
 ## Fail-Closed by Design
 
-If the policy engine is ever unreachable, OpenBox fails closed: an unknown policy state never silently permits an action. During an engine outage, the affected operation resolves to `BLOCK`, and the response is flagged so the fallback path is distinguishable from a normal policy decision. This is the deliberate opposite of how [Behavioral Rules](./behaviors) fail open on outage; see [Authorize → Fail-Safe By Design](./index#fail-safe-by-design) for how the layers compare.
+If the policy engine is ever unreachable, OpenBox fails closed: an unknown policy state never silently permits an action. During an engine outage, the affected operation resolves to `BLOCK`, and the response is flagged so the fallback path is distinguishable from a normal policy decision. This is the deliberate opposite of how [Behavioral Rules](./behaviors) fail open on outage; see [Authorize → Fail-Safe By Design](./#fail-safe-by-design) for how the layers compare.
 
 ## Create Policy
 

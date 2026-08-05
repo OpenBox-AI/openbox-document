@@ -26,7 +26,7 @@ OpenBox does not change any of that. It observes and governs through Claude Code
 | User prompt | The stated goal for the session, governed and used for downstream [alignment](/trust-lifecycle/verify) the same way a runtime agent's goal signal is |
 | Tool call (file read/write, shell command, MCP tool) | A governed activity, evaluated before it runs (`PreToolUse`) and after it completes (`PostToolUse`) |
 | Hook | The extension point OpenBox uses to intercept events; you configure hooks once in `.claude/settings.json`, not per session |
-| Commit | If the session's changes are committed, OpenBox tags the commit with an `OpenBox-Session` trailer for [lineage](/core-concepts/agent-lineage#shift-left-one-hop-earlier) |
+| Commit | If the session's changes are committed, OpenBox tags the commit with an `OpenBox-Session` trailer for [lineage](/core-concepts/agent-lineage#shift-left-governance) |
 
 ## What OpenBox Adds
 
