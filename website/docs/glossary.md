@@ -16,7 +16,7 @@ This page provides definitions of key terms and concepts used throughout the Ope
 
 ## Activity
 
-A single unit of work inside a [Workflow](#workflow) — calling an LLM, querying a database, invoking a tool, or making an HTTP request. Activities are where side effects happen in Temporal.
+A single unit of work inside a [Workflow](#workflow): calling an LLM, querying a database, invoking a tool, or making an HTTP request. Activities are where side effects happen in Temporal.
 
 **OpenBox connection:** OpenBox captures the inputs and outputs of every Activity execution, evaluates governance policies against them, and records a [Governance Decision](#governance-decision) for each one.
 
@@ -26,7 +26,7 @@ A single unit of work inside a [Workflow](#workflow) — calling an LLM, queryin
 
 ## Agent DID
 
-The Decentralized Identifier assigned to every OpenBox agent, of the form `did:aip:<uuidv5>`. Derived deterministically from the agent's internal ID using UUIDv5 with the AIP namespace — the same agent always resolves to the same DID, and rotating the signing key does not change it. The DID appears in every signed governance request and on the agent's Settings page.
+The Decentralized Identifier assigned to every OpenBox agent, of the form `did:aip:<uuidv5>`. Derived deterministically from the agent's internal ID using UUIDv5 with the AIP namespace. The same agent always resolves to the same DID, and rotating the signing key does not change it. The DID appears in every signed governance request and on the agent's Settings page.
 
 **Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
 
@@ -52,7 +52,7 @@ Included and ignored repository path rules that define which files belong to a [
 
 ## AIP (Agent Identity Protocol)
 
-OpenBox's cryptographic agent identity layer. Each agent has an Ed25519 keypair; the SDK signs governance requests with the private key, and OpenBox verifies every signature against the non-extractable public key it holds for the agent. Runs alongside the existing API key — the bearer token authenticates the HTTP call, the AIP signature authenticates the agent that produced the payload.
+OpenBox's cryptographic agent identity layer. Each agent has an Ed25519 keypair; the SDK signs governance requests with the private key, and OpenBox verifies every signature against the non-extractable public key it holds for the agent. Runs alongside the existing API key: the bearer token authenticates the HTTP call, the AIP signature authenticates the agent that produced the payload.
 
 **Learn more:** [Agent Identity (AIP)](/core-concepts/agent-identity)
 
@@ -94,8 +94,8 @@ A 0% – 100% metric measuring how well an agent's actions match its stated goal
 Cryptographic, tamper-proof evidence for every governance session. Each session's events are hashed into a [Merkle Tree](#merkle-tree) and digitally signed, creating a verifiable [Proof Certificate](#proof-certificate) that confirms no governance data was altered after the fact.
 
 Signing providers:
-- **AWS KMS** — ECDSA NIST P-256 (default)
-- **External Attestation** — Your own signing service (e.g., TEE, HSM)
+- **AWS KMS**: ECDSA NIST P-256 (default)
+- **External Attestation**: Your own signing service (e.g., TEE, HSM)
 
 **Learn more:** [Attestation & Cryptographic Proof](/administration/attestation-and-cryptographic-proof)
 
@@ -132,16 +132,17 @@ A 0–100 runtime compliance metric that starts at 100 for new agents and decrea
 
 ## Governance Decision
 
-The outcome produced when OpenBox evaluates an agent operation. There are four possible decisions, listed in precedence order:
+The outcome produced when OpenBox evaluates an agent operation. There are <mark className="diff-mark">five</mark> possible decisions, listed in precedence order:
 
 | Decision | Effect | Impact |
 |----------|--------|--------|
 | **HALT** | Terminates the entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for [HITL](#hitl-human-in-the-loop) review | Neutral (pending) |
+| <mark className="diff-mark">**CONSTRAIN**</mark> | <mark className="diff-mark">Operation proceeds under recorded constraints</mark> | <mark className="diff-mark">Neutral (constrained)</mark> |
 | **ALLOW** | Operation proceeds normally | Positive |
 
-**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > ALLOW
+**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL <mark className="diff-mark">> CONSTRAIN</mark> > ALLOW
 
 **Learn more:** [Governance Decisions](/core-concepts/governance-decisions)
 
@@ -165,11 +166,11 @@ Snapshots are created when lineage-relevant context changes:
 
 ## Guardrail
 
-Pre- or post-processing validation and transformation rules applied to agent inputs and outputs. Multiple guardrails execute as a chained pipeline — the output of one feeds into the next.
+Pre- or post-processing validation and transformation rules applied to agent inputs and outputs. Multiple guardrails execute as a chained pipeline: the output of one feeds into the next.
 
 **Types:**
-- **Input Guardrails** — Validate/transform incoming data (PII detection, rate limiting)
-- **Output Guardrails** — Validate/transform responses (PII redaction, format enforcement)
+- **Input Guardrails**: Validate/transform incoming data (PII detection, rate limiting)
+- **Output Guardrails**: Validate/transform responses (PII redaction, format enforcement)
 
 **Learn more:** [Authorize Phase: Guardrails](/trust-lifecycle/authorize/guardrails)
 
@@ -211,7 +212,7 @@ A cryptographic data structure used to combine individual event hashes into a si
 
 Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (Open Policy Agent) Rego language. Policies evaluate an input document at runtime and return a governance decision (`CONTINUE` or `REQUIRE_APPROVAL`) with an optional reason.
 
-Unlike [Behavioral Rules](#behavioral-rules), policies are stateless — they evaluate each operation independently without tracking prior actions.
+Unlike [Behavioral Rules](#behavioral-rules), policies are stateless: they evaluate each operation independently without tracking prior actions.
 
 **Learn more:** [Authorize Phase: Policies](/trust-lifecycle/authorize/policies)
 
@@ -245,7 +246,7 @@ A per-session attestation record produced after an agent session completes. Cont
 
 A synchronous, read-only request to inspect a running [Workflow's](#workflow) state without affecting its execution. Queries return a value but never change the Workflow.
 
-**OpenBox connection:** OpenBox uses Queries to inspect governance state during execution — for example, checking whether an approval is still pending. Queries do not trigger governance evaluation since they are read-only.
+**OpenBox connection:** OpenBox uses Queries to inspect governance state during execution (for example, checking whether an approval is still pending). Queries do not trigger governance evaluation since they are read-only.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
 
@@ -289,7 +290,7 @@ The toggle becomes available once an agent has a provisioned identity. Agents th
 
 ## Signal
 
-An asynchronous message sent to a running [Workflow](#workflow) from the outside. Signals let external systems inject data or trigger decisions mid-execution — for example, delivering a human approval result back to a paused agent.
+An asynchronous message sent to a running [Workflow](#workflow) from the outside. Signals let external systems inject data or trigger decisions mid-execution (for example, delivering a human approval result back to a paused agent).
 
 **OpenBox connection:** OpenBox captures Signal data and evaluates governance policies on every Signal received. This is how [HITL](#hitl-human-in-the-loop) approvals flow back into the Workflow when a REQUIRE_APPROVAL decision pauses execution.
 
@@ -301,7 +302,7 @@ An asynchronous message sent to a running [Workflow](#workflow) from the outside
 
 A named channel that connects [Workflow](#workflow)/[Activity](#activity) starters to [Workers](#worker). When you start a Workflow on a Task Queue, only Workers listening on that same queue will pick it up.
 
-**OpenBox connection:** OpenBox preserves your existing Task Queue configuration. The wrapped Worker polls the same queue your original Worker used — governance is transparent to task routing.
+**OpenBox connection:** OpenBox preserves your existing Task Queue configuration. The wrapped Worker polls the same queue your original Worker used: governance is transparent to task routing.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101)
 
@@ -309,7 +310,7 @@ A named channel that connects [Workflow](#workflow)/[Activity](#activity) starte
 
 ## Trust Layer
 
-The governance layer OpenBox adds alongside your workflow engine. It provides trust scoring, policy enforcement, monitoring, and compliance evidence — without modifying your existing workflow code. Your workflow engine remains the system of record for execution.
+The governance layer OpenBox adds alongside your workflow engine. It provides trust scoring, policy enforcement, monitoring, and compliance evidence, without modifying your existing workflow code. Your workflow engine remains the system of record for execution.
 
 **Learn more:** [What is OpenBox?](/overview)
 
@@ -319,11 +320,11 @@ The governance layer OpenBox adds alongside your workflow engine. It provides tr
 
 OpenBox's 5-phase governance model for establishing, maintaining, and evolving trust in AI agents:
 
-1. **[Assess](/trust-lifecycle/assess)** — Establish baseline risk profile
-2. **[Authorize](/trust-lifecycle/authorize)** — Define guardrails, policies, and behavioral rules
-3. **[Monitor](/trust-lifecycle/monitor)** — Observe runtime behavior and telemetry
-4. **[Verify](/trust-lifecycle/verify)** — Check goal alignment and session integrity
-5. **[Adapt](/trust-lifecycle/adapt)** — Evolve trust based on observed patterns
+1. **[Assess](/trust-lifecycle/assess)**: Establish baseline risk profile
+2. **[Authorize](/trust-lifecycle/authorize)**: Define guardrails, policies, and behavioral rules
+3. **[Monitor](/trust-lifecycle/monitor)**: Observe runtime behavior and telemetry
+4. **[Verify](/trust-lifecycle/verify)**: Check goal alignment and session integrity
+5. **[Adapt](/trust-lifecycle/adapt)**: Evolve trust based on observed patterns
 
 **Learn more:** [Trust Lifecycle Overview](/trust-lifecycle)
 
@@ -347,7 +348,7 @@ A 0–100 metric representing an agent's overall trustworthiness, calculated fro
 
 ## Trust Tier
 
-One of four trust levels derived from the [Trust Score](#trust-score) that determines how strictly an agent is governed:
+One of five trust levels derived from the [Trust Score](#trust-score) that determines how strictly an agent is governed:
 
 | Tier | Trust Score | Label | Description |
 |------|-------------|-------|-------------|
@@ -365,7 +366,7 @@ One of four trust levels derived from the [Trust Score](#trust-score) that deter
 
 A process that hosts your [Workflow](#workflow) and [Activity](#activity) code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list — one code change that adds the [Trust Layer](#trust-layer). No changes to your Workflows or Activities.
+**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list (one code change that adds the [Trust Layer](#trust-layer)). No changes to your Workflows or Activities.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#worker)
 

@@ -2,7 +2,7 @@
 title: Policies
 description: "Build AI governance policies that actually enforce: Define rules once, apply to all agents, block violations before execution."
 llms_description: OPA/Rego stateless permission checks
-sidebar_position: 2
+sidebar_position: 3
 tags:
   - policy-authoring
   - governance
@@ -10,17 +10,23 @@ tags:
 
 # Policies
 
-Policies are stateless permission checks written in [OPA](https://www.openpolicyagent.org/) Rego. Each policy evaluates a single input document at runtime and returns a governance decision. Policies evaluate each operation independently — they don't track prior actions or session history.
+Policies are stateless permission checks written in [OPA](https://www.openpolicyagent.org/) Rego. Each policy evaluates a single input document at runtime and returns a governance decision. Policies evaluate each operation independently: they don't track prior actions or session history.
 
 Create and manage policies under **Agent → Authorize → Policies**.
 
 ### When to use policies
 
-Policies give you fine-grained, field-level control over individual operations. Use them when the decision depends on properties of a single request — what tool is being called, what value a field contains, or what risk tier the agent belongs to. Where guardrails validate and transform content, policies answer a different question: "is this specific operation allowed right now?"
+Policies give you fine-grained, field-level control over individual operations. Use them when the decision depends on properties of a single request: what tool is being called, what value a field contains, or what risk tier the agent belongs to. Where guardrails validate and transform content, policies answer a different question: "is this specific operation allowed right now?"
+
+## Fail-Closed by Design
+
+If the policy engine is ever unreachable, OpenBox fails closed: an unknown policy state never silently permits an action. During an engine outage, the affected operation resolves to `BLOCK`, and the response is flagged so the fallback path is distinguishable from a normal policy decision. This is the deliberate opposite of how [Behavioral Rules](./behaviors) fail open on outage; see [Authorize → Fail-Safe By Design](./index#fail-safe-by-design) for how the layers compare.
 
 ## Create Policy
 
 If an agent has no policy yet, the Policies sub-tab shows an empty state message and a **Create Policy** button. Use the **Create Policy** action to get started.
+
+Policies can be authored either through a visual builder or by writing raw Rego directly. The rest of this page documents the Rego authoring path.
 
 ### Policy Editor
 
@@ -86,7 +92,7 @@ Before diving into examples, here are the key fields available in the policy inp
 
 ### Require approval for invoice creation
 
-When every invoice must go through a human reviewer regardless of amount — a common requirement for newly deployed agents or regulated workflows.
+When every invoice must go through a human reviewer regardless of amount, a common requirement for newly deployed agents or regulated workflows.
 
 Although behavioral rules can also enforce approvals, policies let you define more customized, field-level approval logic.
 
@@ -146,7 +152,7 @@ Approval visibility in OpenBox platform:
 
 ### Require approval for high-value invoices only
 
-When low-value operations can proceed automatically but high-value ones need human sign-off — balancing speed with risk control.
+When low-value operations can proceed automatically but high-value ones need human sign-off, balancing speed with risk control.
 
 This variant keeps normal invoice creation automatic while routing high-value invoices to human approval. As with the previous example, replace `agent_toolPlanner` and `CreateInvoice` with your own activity type and tool names.
 
@@ -200,7 +206,7 @@ Runtime result:
 
 When different agents carry different risk profiles and you want to tighten or relax controls based on the agent's assessed risk tier.
 
-This example uses `spans` — operation-level classifications the platform attaches to activity execution. Each span carries a `semantic_type` (e.g., `database_select`, `file_read`, `llm_completion`) that describes the kind of operation that occurred. The policy restricts different semantic types at each risk tier.
+This example uses `spans`: operation-level classifications the platform attaches to activity execution. Each span carries a `semantic_type` (e.g., `database_select`, `file_read`, `llm_completion`) that describes the kind of operation that occurred. The policy restricts different semantic types at each risk tier.
 
 ```rego
 package org.openboxai.policy_564f9d9cc31b408c9947e04d64dbb7aa

@@ -10,6 +10,10 @@ tags:
 
 # Agent Lineage
 
+:::info Rollout
+The lineage mechanism described on this page (commit-trailer attribution, path-based commit matching, and governance snapshots) is generally available. The **[Projects](/dashboard/projects)** UI that surfaces this data rolls out per organization; contact OpenBox if you don't see **Projects** in your dashboard sidebar yet.
+:::
+
 Agent Lineage connects the code that defines an agent to the OpenBox runtime that governs it. It lets teams answer which repository changes affected an agent, which registered runtime was running that code path, and which governance configuration was active when sessions occurred.
 
 Lineage is a platform concept. It does not replace SDK telemetry, policy enforcement, GitHub, or your deployment system. It adds a provenance layer that correlates those systems into one governed view.
@@ -18,12 +22,14 @@ Lineage is a platform concept. It does not replace SDK telemetry, policy enforce
 
 Use lineage when you need to answer:
 
+- <mark className="diff-mark">Which dev session or coding-agent commit introduced this change?</mark>
 - Which repository and paths define this agent?
 - Which commits touched the files owned by this agent?
 - Which OpenBox runtime and DID are linked to that code path?
 - Which branch is the runtime associated with?
 - Which policies, guardrails, and behavioral rules were active at a point in time?
 - Which sessions ran after a code or governance change?
+- <mark className="diff-mark">Which deploy shipped that commit to the runtime that's now serving traffic?</mark>
 
 ## Concept Model
 
@@ -74,6 +80,23 @@ A runtime is a registered OpenBox agent instance. It becomes part of lineage whe
 | **DID** | Identifies the exact OpenBox runtime instance producing governed sessions. |
 
 If the linked branch is deleted in the repository, OpenBox keeps the runtime linked but raises a warning so operators can choose a valid branch and continue receiving lifecycle updates.
+
+## <mark className="diff-mark">Shift-Left Governance</mark>
+
+<mark className="diff-mark">When [Claude Code](/getting-started/claude-code) or another governed coding agent is wrapped, lineage extends one hop before a runtime ever starts:</mark>
+
+```
+Dev Session (Claude Code) → Commit (with trailer) → Deploy → Runtime Agent
+```
+
+| Stage | What OpenBox Records |
+|-------|-----------------------|
+| <mark className="diff-mark">**Dev Session**</mark> | <mark className="diff-mark">The governed coding-agent session that produced a change: its own session ID and governance events, tracked the same way a runtime agent session is, including the same [Merkle-sealed](/administration/attestation-and-cryptographic-proof) session evidence</mark> |
+| <mark className="diff-mark">**Commit Trailer**</mark> | <mark className="diff-mark">OpenBox appends a trailer to commits produced by a governed dev session (for example `OpenBox-Session: ses_...`), linking the commit back to the session that authored it</mark> |
+| <mark className="diff-mark">**Deploy**</mark> | <mark className="diff-mark">A CI action records the deploy event with references to the commit and the dev session that produced it; OpenBox correlates this with the commit's trailer to resolve deploy lineage. Deploy claims can optionally require ownership verification before they're accepted.</mark> |
+| <mark className="diff-mark">**Runtime Agent**</mark> | <mark className="diff-mark">The registered runtime now executing that code, linked via [Runtime Linking](#runtime-linking) as usual</mark> |
+
+<mark className="diff-mark">This is an additional source of Lifecycle Events, not a replacement for path-based commit attribution: a commit carrying an OpenBox session trailer is attributed to the dev session that produced it, in addition to whatever repository agent its changed paths match.</mark>
 
 ## Governance Snapshots
 

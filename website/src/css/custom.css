@@ -4,7 +4,7 @@
  * work well for content-centric websites.
  */
 
-/* Self-hosted fonts — eliminates render-blocking cross-origin Google Fonts chain */
+/* Self-hosted fonts: eliminates render-blocking cross-origin Google Fonts chain */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -50,7 +50,7 @@
   --search-local-modal-width-sm: 220px;
   --ifm-navbar-height: 3.25rem;
 
-  /* Search dropdown — corporate overrides */
+  /* Search dropdown: corporate overrides */
   --search-local-modal-background: #fff;
   --search-local-modal-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   --search-local-hit-background: transparent;
@@ -81,7 +81,7 @@
   --ifm-color-primary-lightest: #82c2ff;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 
-  /* Search dropdown — dark mode */
+  /* Search dropdown: dark mode */
   --search-local-modal-background: var(--ifm-background-color);
   --search-local-modal-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   --search-local-hit-background: transparent;
@@ -90,7 +90,7 @@
   --search-local-muted-color: var(--ifm-color-emphasis-500);
 }
 
-/* Integration grid — Getting Started page */
+/* Integration grid: Getting Started page */
 .integration-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -780,7 +780,7 @@
 }
 
 /* ───────────────────────────────────────────────
-   Design polish — heading spacing, components,
+   Design polish: heading spacing, components,
    typography, and vertical rhythm
    ─────────────────────────────────────────────── */
 
@@ -815,7 +815,7 @@
   background: var(--ifm-color-emphasis-200);
 }
 
-/* 4. Table — mobile horizontal scroll */
+/* 4. Table: mobile horizontal scroll */
 .markdown table {
   display: block;
   overflow-x: auto;
@@ -1080,9 +1080,70 @@ svg[class*='iconExternalLink'] {
   }
 }
 
-/* Docs navbar link — visible only in mobile hamburger menu */
+/* Docs navbar link: visible only in mobile hamburger menu */
 @media (min-width: 997px) {
   .navbar-docs-link-mobile-only {
     display: none;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REVIEW DIFF HIGHLIGHTING: temporary, for this review pass.
+   Safe to delete this block (and the sidebar className props
+   in sidebars.js) once the review is done.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Inline text additions inside modified pages */
+mark.diff-mark {
+  background: rgba(22, 163, 74, 0.35);
+  color: inherit;
+  padding: 0.05em 0.25em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+[data-theme='dark'] mark.diff-mark {
+  background: rgba(74, 222, 128, 0.4);
+}
+
+/* Whole-card additions (integration grid) */
+.diff-card {
+  border-radius: 12px;
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
+}
+
+[data-theme='dark'] .diff-card {
+  outline-color: #4ade80;
+}
+
+/* Sidebar entries that are new or changed in this review */
+.sidebar-item--diff > .menu__link,
+.sidebar-item--diff > a,
+.sidebar-item--diff > .menu__list-item-collapsible > .menu__link {
+  color: #16a34a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme='dark'] .sidebar-item--diff > .menu__link,
+[data-theme='dark'] .sidebar-item--diff > a,
+[data-theme='dark'] .sidebar-item--diff > .menu__list-item-collapsible > .menu__link {
+  color: #4ade80 !important;
+}
+
+.sidebar-item--diff > .menu__link::after,
+.sidebar-item--diff > a::after,
+.sidebar-item--diff > .menu__list-item-collapsible > .menu__link::after {
+  content: '●';
+  margin-left: 6px;
+  font-size: 0.55em;
+  vertical-align: middle;
+  color: #16a34a;
+}
+
+[data-theme='dark'] .sidebar-item--diff > .menu__link::after,
+[data-theme='dark'] .sidebar-item--diff > a::after,
+[data-theme='dark'] .sidebar-item--diff > .menu__list-item-collapsible > .menu__link::after {
+  color: #4ade80;
 }

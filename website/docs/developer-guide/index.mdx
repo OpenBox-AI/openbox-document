@@ -14,7 +14,23 @@ Everything you need to integrate OpenBox into your agent workflows.
 
 ## Integrations
 
+<mark className="diff-mark">Most integrations below wrap a **runtime agent framework**, a deployed workflow, graph, or crew. Claude Code is different: it's governed via its hooks system as a **shift-left** dev-tooling integration, not a runtime framework adapter. See [Getting Started](/getting-started) for the full distinction.</mark>
+
 <div className="integration-grid">
+
+<a href="/developer-guide/claude-code">
+<div className="integration-card diff-card">
+  <img className="integration-card__icon" src="/img/integrations/claude-code.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Claude Code</div>
+    <div className="integration-card__description">Hook configuration, event model, and observe/enforce modes for governing Claude Code dev sessions.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Hooks</span>
+      <span className="integration-tag">Dev sessions</span>
+    </div>
+  </div>
+</div>
+</a>
 
 <a href="/developer-guide/crewai">
 <div className="integration-card">
@@ -133,7 +149,7 @@ Everything you need to integrate OpenBox into your agent workflows.
 <div className="integration-card">
   <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/openclaw.svg" alt="" />
   <div className="integration-card__body">
-    <div className="integration-card__title">OpenClaw</div>
+    <div className="integration-card__title">OpenClaw <small>coming soon</small></div>
     <div className="integration-card__description">Tool governance and LLM guardrails for OpenClaw agents. Every tool call is evaluated against your policies.</div>
     <div className="integration-card__tags">
       <span className="integration-tag">TypeScript</span>
@@ -163,5 +179,4 @@ Everything you need to integrate OpenBox into your agent workflows.
 
 | Guide | Description |
 |-------|-------------|
-| **[Event Types](/developer-guide/event-types)** | Semantic event types captured by the SDK |
 | **[Working with llms.txt](/developer-guide/llms-txt)** | Machine-readable documentation for LLMs and AI tools |

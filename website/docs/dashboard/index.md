@@ -20,9 +20,10 @@ The sidebar navigation includes:
 
 - **Dashboard** - Organization overview (this page)
 - **Agents** - Manage and monitor agents
+- <mark className="diff-mark">**Inventory** - Org-wide registry of agents, models, tools, and integrations, including unregistered callers (Gated)</mark>
 - **Projects** - Repository-to-runtime lineage for governed agents
 - **Approvals** - Human-in-the-loop queue (shows pending count badge)
-- **Organization** - Teams, members, API keys, settings
+- **Organization** - Teams, members, <mark className="diff-mark">resource catalog,</mark> API keys, settings
 
 ## Hero Stats
 
@@ -56,7 +57,7 @@ A timeline of recent governance events from Tier 3 and Tier 4 agents:
 Each activity shows:
 - **Agent name and icon**
 - **Trust Tier badge** (TIER 3, TIER 4)
-- **Verdict badge** (ALLOWED, HALTED, APPROVED)
+- **Verdict badge** (ALLOWED, <mark className="diff-mark">CONSTRAINED,</mark> BLOCKED, HALTED, APPROVED)
 - **Description** of what triggered the governance event
 - **Timestamp**
 - **Link to approvals** (if pending)
