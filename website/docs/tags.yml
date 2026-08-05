@@ -139,6 +139,16 @@ copilotkit:
   permalink: /copilotkit
   description: CopilotKit application UI and runtime integration
 
+claude-code:
+  label: Claude Code
+  permalink: /claude-code
+  description: Claude Code dev-session governance integration
+
+hooks:
+  label: Hooks
+  permalink: /hooks
+  description: Hook-based extension points for governing external tools
+
 cursor:
   label: Cursor
   permalink: /cursor

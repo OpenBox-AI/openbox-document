@@ -14,6 +14,8 @@ tags:
 
 OpenBox receives both governed boundary events and operational telemetry from the Mastra SDK. Understanding that model is necessary for writing policy, configuring guardrails, and interpreting the dashboard correctly.
 
+<mark className="diff-mark">Governance payloads on activity-boundary events also include a `fallback_used` field indicating whether a fail-safe path was used.</mark>
+
 ## Top-Level Event Types
 
 | Event type | Emitted by | Primary use |

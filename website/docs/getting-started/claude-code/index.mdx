@@ -1,0 +1,96 @@
+---
+title: Getting Started with Claude Code
+description: "Add OpenBox governance to Claude Code dev sessions: every prompt, tool call, file edit, and shell command governed through Claude Code's hooks system."
+llms_description: "Claude Code coding-agent governance via hooks: quickstart and setup"
+sidebar_position: 4
+tags:
+  - getting-started
+  - claude-code
+  - hooks
+---
+
+# Getting Started with Claude Code
+
+:::tip 🆕 New page in this review
+Everything on this page is new.
+:::
+
+OpenBox integrates with [Claude Code](https://claude.com/claude-code) through its built-in [hooks system](https://docs.claude.com/en/docs/claude-code/hooks), with no changes to how you use Claude Code, while every prompt, tool call, file edit, and shell command is governed, scored, and auditable.
+
+This is a different door than the rest of Getting Started: the other integrations add governance to a **runtime agent** (a deployed workflow or graph). Claude Code isn't a runtime; it's the coding tool a developer uses. Here, OpenBox governs the **dev session itself**, the one writing and shipping the code that runtime agent will eventually run.
+
+## One Config Change
+
+Add OpenBox's hooks to your project's `.claude/settings.json`:
+
+```json title=".claude/settings.json"
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook user-prompt-submit" }]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook pre-tool-use" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook post-tool-use" }]
+      }
+    ]
+  }
+}
+```
+
+No changes to how you invoke Claude Code: start a session normally and the hooks run automatically.
+
+## Choose Your Path
+
+<div className="row">
+<div className="col col--4">
+
+### [Claude Code 101](/getting-started/claude-code/claude-code-101)
+
+Get the Claude Code concepts that matter for OpenBox (how a dev session maps to a governed agent) before wiring in governance.
+
+</div>
+<div className="col col--4">
+
+### [I already use Claude Code](/getting-started/claude-code/wrap-an-existing-session)
+
+Add governance to your existing project in a few minutes: install the hooks, start in observe mode, then turn on enforcement.
+
+</div>
+<div className="col col--4">
+
+### [Show me the SDK reference](/developer-guide/claude-code)
+
+Explore hook configuration, the event model, and troubleshooting.
+
+</div>
+</div>
+
+## What OpenBox Captures
+
+- Every user prompt submitted to the session
+- Every tool call Claude Code makes (file reads/writes, shell commands, MCP tool calls) before and after execution
+- Governance decisions per tool call: ALLOW, CONSTRAIN, BLOCK, REQUIRE_APPROVAL, or HALT
+- Commits produced during the session, tagged with an `OpenBox-Session` trailer for [lineage](/core-concepts/agent-lineage#shift-left-one-hop-earlier)
+
+## What To Expect In The UI
+
+- The dev session appears as a governed agent session, the same way a runtime agent session does
+- Tool calls show up as activities, same as any other integration
+- File writes and shell commands can be blocked, require approval, or proceed under a guardrail constraint, same as any governed operation
+- [Session Replay](/trust-lifecycle/session-replay) works the same way for a dev session as for a runtime session
+
+## Next Steps
+
+1. Read [Claude Code 101](/getting-started/claude-code/claude-code-101) if you want the conceptual model first.
+2. Use [Wrap an Existing Session](/getting-started/claude-code/wrap-an-existing-session) if you already use Claude Code day-to-day.
+3. Continue to the [Claude Code Developer Guide](/developer-guide/claude-code) for hook configuration, event semantics, and troubleshooting.

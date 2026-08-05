@@ -18,6 +18,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'Getting Started',
+      className: 'sidebar-item--diff',
       link: {
         type: 'doc',
         id: 'getting-started/index',
@@ -45,6 +46,27 @@ const sidebars = {
           items: [
             'getting-started/copilotkit/run-the-demo',
             'getting-started/copilotkit/add-openbox-to-copilotkit',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Claude Code',
+          className: 'sidebar-item--diff',
+          link: {
+            type: 'doc',
+            id: 'getting-started/claude-code/index',
+          },
+          items: [
+            {
+              type: 'doc',
+              id: 'getting-started/claude-code/claude-code-101',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'getting-started/claude-code/wrap-an-existing-session',
+              className: 'sidebar-item--diff',
+            },
           ],
         },
         {
@@ -137,6 +159,7 @@ const sidebars = {
       type: 'category',
       label: 'Core Concepts',
       collapsed: true,
+      className: 'sidebar-item--diff',
       link: {
         type: 'doc',
         id: 'core-concepts/index',
@@ -144,9 +167,22 @@ const sidebars = {
       items: [
         'core-concepts/trust-scores',
         'core-concepts/trust-tiers',
-        'core-concepts/governance-decisions',
+        {
+          type: 'doc',
+          id: 'core-concepts/governance-decisions',
+          className: 'sidebar-item--diff',
+        },
         'core-concepts/agent-identity',
-        'core-concepts/agent-lineage',
+        {
+          type: 'doc',
+          id: 'core-concepts/agent-lineage',
+          className: 'sidebar-item--diff',
+        },
+        {
+          type: 'doc',
+          id: 'core-concepts/trust-incident',
+          className: 'sidebar-item--diff',
+        },
       ],
     },
     {
@@ -162,26 +198,57 @@ const sidebars = {
         {
           type: 'category',
           label: 'Authorize',
+          className: 'sidebar-item--diff',
           link: {
             type: 'doc',
             id: 'trust-lifecycle/authorize/index',
           },
           items: [
-            'trust-lifecycle/authorize/guardrails',
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/authorize/agent-iam-gate',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/authorize/guardrails',
+              className: 'sidebar-item--diff',
+            },
             'trust-lifecycle/authorize/policies',
             'trust-lifecycle/authorize/behaviors',
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/authorize/patch-and-retry',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/authorize/sandbox-execution',
+              className: 'sidebar-item--diff',
+            },
           ],
         },
         'trust-lifecycle/monitor',
         {
           type: 'category',
           label: 'Verify',
+          className: 'sidebar-item--diff',
           link: {
             type: 'doc',
             id: 'trust-lifecycle/verify',
           },
           items: [
             'trust-lifecycle/session-replay',
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/proof-engine',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'trust-lifecycle/cognitive-debugger',
+              className: 'sidebar-item--diff',
+            },
           ],
         },
         'trust-lifecycle/adapt',
@@ -190,11 +257,38 @@ const sidebars = {
     {
       type: 'category',
       label: 'Developer Guide',
+      className: 'sidebar-item--diff',
       link: {
         type: 'doc',
         id: 'developer-guide/index',
       },
       items: [
+        {
+          type: 'category',
+          label: 'Claude Code',
+          className: 'sidebar-item--diff',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/claude-code/index',
+          },
+          items: [
+            {
+              type: 'doc',
+              id: 'developer-guide/claude-code/configuration',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'developer-guide/claude-code/integration-walkthrough',
+              className: 'sidebar-item--diff',
+            },
+            {
+              type: 'doc',
+              id: 'developer-guide/claude-code/troubleshooting',
+              className: 'sidebar-item--diff',
+            },
+          ],
+        },
         {
           type: 'category',
           label: 'CrewAI SDK (Python)',
@@ -238,7 +332,11 @@ const sidebars = {
             'developer-guide/deep-agents/integration-walkthrough',
             'developer-guide/deep-agents/configuration',
             'developer-guide/deep-agents/error-handling',
-            'developer-guide/deep-agents/event-model',
+            {
+              type: 'doc',
+              id: 'developer-guide/deep-agents/event-model',
+              className: 'sidebar-item--diff',
+            },
             'developer-guide/deep-agents/approvals-and-guardrails',
             'developer-guide/deep-agents/telemetry',
             'developer-guide/deep-agents/extending-the-demo-agent',
@@ -257,7 +355,11 @@ const sidebars = {
             'developer-guide/langchain/integration-walkthrough',
             'developer-guide/langchain/configuration',
             'developer-guide/langchain/error-handling',
-            'developer-guide/langchain/event-model',
+            {
+              type: 'doc',
+              id: 'developer-guide/langchain/event-model',
+              className: 'sidebar-item--diff',
+            },
             'developer-guide/langchain/approvals-and-guardrails',
             'developer-guide/langchain/telemetry',
             'developer-guide/langchain/troubleshooting',
@@ -274,7 +376,11 @@ const sidebars = {
             'developer-guide/langgraph/configuration',
             'developer-guide/langgraph/error-handling',
             'developer-guide/langgraph/integration-walkthrough',
-            'developer-guide/langgraph/event-model',
+            {
+              type: 'doc',
+              id: 'developer-guide/langgraph/event-model',
+              className: 'sidebar-item--diff',
+            },
             'developer-guide/langgraph/approvals-and-guardrails',
             'developer-guide/langgraph/telemetry',
             'developer-guide/langgraph/troubleshooting',
@@ -291,7 +397,11 @@ const sidebars = {
             'developer-guide/mastra/configuration',
             'developer-guide/mastra/error-handling',
             'developer-guide/mastra/integration-walkthrough',
-            'developer-guide/mastra/event-model',
+            {
+              type: 'doc',
+              id: 'developer-guide/mastra/event-model',
+              className: 'sidebar-item--diff',
+            },
             'developer-guide/mastra/approvals-and-guardrails',
             'developer-guide/mastra/telemetry',
             'developer-guide/mastra/troubleshooting',
@@ -308,7 +418,11 @@ const sidebars = {
             'developer-guide/n8n/integration-walkthrough',
             'developer-guide/n8n/configuration',
             'developer-guide/n8n/error-handling',
-            'developer-guide/n8n/event-model',
+            {
+              type: 'doc',
+              id: 'developer-guide/n8n/event-model',
+              className: 'sidebar-item--diff',
+            },
             'developer-guide/n8n/approvals-and-guardrails',
             'developer-guide/n8n/telemetry',
             'developer-guide/n8n/troubleshooting',
@@ -335,13 +449,13 @@ const sidebars = {
             'developer-guide/temporal-python/troubleshooting',
           ],
         },
-        'developer-guide/event-types',
         'developer-guide/llms-txt',
       ],
     },
     {
       type: 'category',
       label: 'Dashboard',
+      className: 'sidebar-item--diff',
       link: {
         type: 'doc',
         id: 'dashboard/index',
@@ -359,7 +473,21 @@ const sidebars = {
             'dashboard/agents/agent-settings',
           ],
         },
-        'dashboard/projects',
+        {
+          type: 'doc',
+          id: 'dashboard/inventory',
+          className: 'sidebar-item--diff',
+        },
+        {
+          type: 'doc',
+          id: 'dashboard/resource-catalog',
+          className: 'sidebar-item--diff',
+        },
+        {
+          type: 'doc',
+          id: 'dashboard/projects',
+          className: 'sidebar-item--diff',
+        },
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],
@@ -368,6 +496,7 @@ const sidebars = {
     {
       type: 'category',
       label: 'Administration',
+      className: 'sidebar-item--diff',
       link: {
         type: 'doc',
         id: 'administration/index',
@@ -376,6 +505,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Organization',
+          className: 'sidebar-item--diff',
           link: {
             type: 'doc',
             id: 'administration/organization/index',
@@ -398,12 +528,30 @@ const sidebars = {
             },
           ],
         },
-        'administration/compliance-and-audit',
+        {
+          type: 'doc',
+          id: 'administration/platform-operations',
+          className: 'sidebar-item--diff',
+        },
+        {
+          type: 'doc',
+          id: 'administration/identity-bridge',
+          className: 'sidebar-item--diff',
+        },
+        {
+          type: 'doc',
+          id: 'administration/compliance-and-audit',
+          className: 'sidebar-item--diff',
+        },
         'administration/attestation-and-cryptographic-proof',
         'administration/organization-audit-log',
       ],
     },
-    'glossary',
+    {
+      type: 'doc',
+      id: 'glossary',
+      className: 'sidebar-item--diff',
+    },
   ],
 };
 
