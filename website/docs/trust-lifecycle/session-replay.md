@@ -15,7 +15,7 @@ Session Replay provides a step-by-step walkthrough of an agent's session executi
 
 ## Accessing Session Replay
 
-- **Agent Detail → Verify → Watch Replay** — opens replay for the selected session
+- **Agent Detail → Verify → Watch Replay**: opens replay for the selected session
 
 ![Session Replay](/img/SessionReplay.webp)
 
@@ -28,7 +28,7 @@ The header bar at the top of the replay summarizes the session:
 | **Session ID** | Unique session identifier |
 | **Duration** | Total wall-clock time for the session |
 | **Events** | Total number of events recorded |
-| **Status** | Badge showing current state — Completed, Failed, Halted, or In Progress |
+| **Status** | Badge showing current state: Completed, Failed, Halted, or In Progress |
 
 ## Playback Controls
 
@@ -43,7 +43,7 @@ Controls beneath the header let you navigate through the session timeline:
 
 ## Event Stream
 
-The event stream on the left lists all events that occurred during the session in chronological order, including user prompts and tool calls. Each event shows its name and a timestamp offset from the start of the session. Some events include a summary line (e.g. "Transfer exceeds $5,000 threshold — requires approval").
+The event stream on the left lists all events that occurred during the session in chronological order, including user prompts and tool calls. Each event shows its name and a timestamp offset from the start of the session. Some events include a summary line (e.g. "Transfer exceeds $5,000 threshold: requires approval").
 
 Click any event to view its full details.
 
@@ -51,14 +51,13 @@ Click any event to view its full details.
 
 The event details panel on the right shows the full information for the selected event:
 
-- **Activity type and timestamp** — the event name and when it occurred
-- **Event ID** — unique identifier for the event
-- **Context** — the full JSON payload, including fields such as prompt, agent goal, tools, and arguments
+- **Activity type and timestamp**: the event name and when it occurred
+- **Event ID**: unique identifier for the event
+- **Context**: the full JSON payload, including fields such as prompt, agent goal, tools, and arguments
 
 ## Related
 
-- **[Verify](/trust-lifecycle/verify)** — Goal alignment scoring and execution evidence
-- **[Monitor](/trust-lifecycle/monitor)** — Operational metrics and session overview
-- **[Governance Decisions](/core-concepts/governance-decisions)** — The four decision types shown in replay
-- **[Event Types](/developer-guide/event-types)** — Semantic event types that appear in the stream
-- **[Approvals](/approvals)** — Human-in-the-loop approval queue
+- **[Verify](/trust-lifecycle/verify)**: Goal alignment scoring and execution evidence
+- **[Monitor](/trust-lifecycle/monitor)**: Operational metrics and session overview
+- **[Governance Decisions](/core-concepts/governance-decisions)**: The five decision types shown in replay
+- **[Approvals](/approvals)**: Human-in-the-loop approval queue

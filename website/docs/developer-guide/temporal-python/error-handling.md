@@ -40,7 +40,7 @@ from temporalio.exceptions import ApplicationError
 
 ## Handling Each Type
 
-These patterns apply inside your existing Temporal activity functions. The plugin intercepts activity execution automatically — you only need to add error handling if you want custom behavior beyond the default (which is to let the exception propagate and fail the activity).
+These patterns apply inside your existing Temporal activity functions. The plugin intercepts activity execution automatically; you only need to add error handling if you want custom behavior beyond the default (which is to let the exception propagate and fail the activity).
 
 ### GovernanceStop
 
@@ -66,7 +66,7 @@ async def sensitive_operation(data: dict) -> str:
 
 ### ApprovalPending
 
-Raised when the operation requires human approval. Because `non_retryable=False`, Temporal automatically retries the activity — the plugin polls for an approval decision on each retry.
+Raised when the operation requires human approval. Because `non_retryable=False`, Temporal automatically retries the activity; the plugin polls for an approval decision on each retry.
 
 ```python
 @activity.defn
@@ -175,7 +175,7 @@ class MyAgentWorkflow:
 
 ## Configuration Exceptions
 
-The plugin raises configuration exceptions from `openbox.config` during `OpenBoxPlugin()` initialization — not during activity execution. Handle these where you initialize your worker.
+The plugin raises configuration exceptions from `openbox.config` during `OpenBoxPlugin()` initialization, not during activity execution. Handle these where you initialize your worker.
 
 | Exception                 | Cause                                   |
 | ------------------------- | --------------------------------------- |
@@ -188,6 +188,5 @@ The plugin raises configuration exceptions from `openbox.config` during `OpenBox
 
 Now that you understand how to handle trust decisions in code:
 
-1. **[Event Types](/developer-guide/event-types)** - Understand the semantic event types that trigger these decisions
-2. **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** - Common issues and solutions
-3. **[Handle Approvals](/approvals)** - Review and process HITL requests in the dashboard
+1. **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** - Common issues and solutions
+2. **[Handle Approvals](/approvals)** - Review and process HITL requests in the dashboard

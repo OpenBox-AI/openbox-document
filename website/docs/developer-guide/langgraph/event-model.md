@@ -14,6 +14,8 @@ tags:
 
 OpenBox receives governed LangGraph event-stream boundaries plus operational telemetry from HTTP, database, custom traced-function hooks, and optional lower-level file hooks. Understanding that model is necessary for writing policy, configuring guardrails, and interpreting the dashboard correctly.
 
+<mark className="diff-mark">Governance payloads on activity-boundary events also include a `fallback_used` field indicating whether a fail-safe path was used.</mark>
+
 ## Top-Level Event Types
 
 | Event type | Emitted by | Primary use |

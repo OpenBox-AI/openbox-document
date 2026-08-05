@@ -17,6 +17,8 @@ from the **OpenBox: Agent** node. Understanding that model is necessary for
 writing policy, configuring guardrails, and interpreting the dashboard
 correctly.
 
+<mark className="diff-mark">Governance payloads on activity-boundary events also include a `fallback_used` field indicating whether a fail-safe path was used.</mark>
+
 ## Top-Level Event Types
 
 | Event type | Emitted by | Primary use |
@@ -30,7 +32,7 @@ correctly.
 | `ToolCompleted` | `wrapToolCall`, after the Tool sub-node executes | Output-time tool governance and tool result telemetry |
 
 On the wire, `LLMStarted`/`LLMCompleted` and `ToolStarted`/`ToolCompleted`
-are sent to OpenBox Core as `ActivityStarted`/`ActivityCompleted` — the
+are sent to OpenBox Core as `ActivityStarted`/`ActivityCompleted`; the
 original LangChain-style name is preserved as `metadata.sdk_event_type` so
 the dashboard can still distinguish LLM spans from tool spans.
 
@@ -55,7 +57,7 @@ tool call, or agent run.
 Each **OpenBox: Agent** node execution creates a fresh run identity in
 `beforeAgent`. The workflow type sent to OpenBox is
 `n8n.Agent.<node display name>` unless you configure the node's display name
-differently — see
+differently. See
 [Configuration](/developer-guide/n8n/configuration#current-defaults-not-yet-configurable).
 
 Important implications:
@@ -71,7 +73,7 @@ Important implications:
 
 Common fields:
 
-- `prompt` — the last human message, not the full concatenated chat history
+- `prompt`: the last human message, not the full concatenated chat history
 - `activity_input[0].prompt`
 - `activity_type = "llm_call"`
 
@@ -91,7 +93,7 @@ Common fields:
 Common fields:
 
 - `tool_name`
-- `tool_type` — always absent in the current n8n node; there is no
+- `tool_type`: always absent in the current n8n node; there is no
   `tool_type_map` equivalent in the UI yet
 - `activity_type`
 - `activity_input`
@@ -136,7 +138,7 @@ SignalReceived(user_prompt)
 If `WorkflowCompleted`'s guardrail result redacts the activity output, the
 node overwrites the node's returned `output` field with the redacted text.
 The unredacted response was already written to Memory, if a Memory sub-node
-is connected — redaction is applied to the OpenBox-facing node output only.
+is connected; redaction is applied to the OpenBox-facing node output only.
 
 ## Model Usage And Tool Health In The UI
 

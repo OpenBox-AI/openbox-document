@@ -19,6 +19,10 @@ Manage your organization's teams, members, and settings. Access from the sidebar
 
 Organize agents and members into teams for access control. See [Teams](./teams) for the full reference.
 
+## <mark className="diff-mark">Resource Catalog</mark>
+
+<mark className="diff-mark">Declare the business resources (APIs, databases, queues) that the [Agent IAM Gate](/trust-lifecycle/authorize/agent-iam-gate) checks operations against, and grant agent roles on each one. See [Resource Catalog](/dashboard/resource-catalog) for the full reference.</mark>
+
 ## Members
 
 ### Adding Members
@@ -38,9 +42,17 @@ Configure what each role can access and modify within the organization. Go to **
 
 | Role | Permissions |
 |------|-------------|
-| **Admin** | Can manage all teams, agents, policies, and organization settings |
-| **Developer** | Can create and manage agents within assigned teams. Cannot modify organization settings |
-| **Viewer** | Can view agents, logs, and reports. Cannot make any modifications |
+| **Admin** | Can manage all teams, agents, policies, organization settings, <mark className="diff-mark">and resource catalog grants across every team</mark> |
+| **Developer** | Can create and manage agents within assigned teams, <mark className="diff-mark">and grant agent roles on resources their team owns.</mark> Cannot modify organization settings |
+| **Viewer** | Can view agents, logs, reports, <mark className="diff-mark">and the resource catalog.</mark> Cannot make any modifications |
+
+## <mark className="diff-mark">Platform Operations</mark>
+
+<mark className="diff-mark">Manage the developer-facing webhooks subscription API, platform management API keys, and feature flags. See [Platform Operations](/administration/platform-operations) for the full reference, including how these differ from an agent's own API key and from the notification integrations below.</mark>
+
+## <mark className="diff-mark">Identity Bridge</mark>
+
+<mark className="diff-mark">Optionally connect an identity provider so trust incidents are emitted as CAEP signals over the Shared Signals Framework. Off by default for every organization; new connections start in **Monitor Mode** and send nothing live until you opt in. See [Identity Bridge](/administration/identity-bridge) for the full reference.</mark>
 
 ## Settings
 
@@ -50,9 +62,13 @@ Configure what each role can access and modify within the organization. Go to **
 - Default timezone
 - Notification preferences
 
-<!-- ### Integrations
+### <mark className="diff-mark">Integrations</mark>
 
-Configure external integrations:
+:::info 🆕 Coming soon
+Organization-level notification integrations are in development. This section will be updated with setup steps once available.
+:::
+
+<mark className="diff-mark">Planned outbound notification integrations:</mark>
 
 | Integration | Purpose |
 |-------------|---------|
@@ -60,15 +76,25 @@ Configure external integrations:
 | **PagerDuty** | Critical alerts |
 | **Datadog** | Metrics export |
 | **Splunk** | Log forwarding |
-| **Webhooks** | Custom integrations |
+| <mark className="diff-mark">**Webhooks**</mark> | <mark className="diff-mark">Custom notification destinations</mark> |
 
-### Billing
+:::note 🆕
+This "Webhooks" integration sends notifications to a URL you provide; it isn't the same as the developer-facing event-subscription API. See [Platform Operations → Webhooks](/administration/platform-operations#webhooks-event-subscription-api) for that.
+:::
+
+### <mark className="diff-mark">Billing</mark>
+
+:::info 🆕 Coming soon
+Billing & entitlements is staged for release. This section will be updated with real plan and invoice data once it ships.
+:::
+
+Planned:
 
 - Current plan details
 - Usage metrics
 - Invoice history
 - Payment methods
-- Upgrade/downgrade -->
+- Upgrade/downgrade
 
 ## Audit Log
 

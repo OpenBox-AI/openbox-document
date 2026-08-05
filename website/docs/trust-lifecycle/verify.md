@@ -93,7 +93,7 @@ Confirms all events in the selected session have valid cryptographic proofs. Typ
 Each session generates:
 
 - **Session hash** - Merkle root of all events
-- **Signature** - Cryptographically signed by OpenBox
+- **Signature** - Cryptographically signed by OpenBox, via a managed KMS (ECDSA P-256) or your organization's own TEE/HSM signing endpoint
 - **Timestamp** - Timestamped via RFC 3161
 
 #### Proof Certificate
@@ -113,7 +113,7 @@ TSA: timestamp.openbox.ai
 The session signature is OpenBox's attestation over the session, not the agent's per-request identity signature.
 :::
 
-Use for compliance audits and legal evidence.
+Use for compliance audits and legal evidence. <mark className="diff-mark">For designated operations, the [Proof Engine](/trust-lifecycle/proof-engine) links a second, independently signed record of the actual Executor request/response alongside the governance decision, before this certificate is sealed.</mark>
 
 #### Workflow Metadata
 
@@ -150,11 +150,19 @@ Use Tree View when you need execution-path reasoning:
 
 Opens [Session Replay](/trust-lifecycle/session-replay) so you can walk through session execution step by step.
 
+### <mark className="diff-mark">Forensics On A Misbehaving Session</mark>
+
+<mark className="diff-mark">When a session halted or shows repeated drift, the [Cognitive Debugger](/trust-lifecycle/cognitive-debugger) reconstructs the cause from this same sealed evidence and proposes a targeted intervention, rather than requiring a manual walk through the event log.</mark>
+
 ## Integration with Other Phases
 
 - **Authorize**: Drift patterns can trigger behavioral rules
 - **Adapt**: Repeated drift generates policy suggestions
 - **Monitor**: Alignment annotations appear in [Session Replay](/trust-lifecycle/session-replay)
+
+:::note 🆕 Goal alignment is observational today
+Alignment scoring here is post-hoc: it scores actions against the stated goal after they happen. Whether continuous alignment scoring becomes a real-time Authorize trigger (capable of a live BLOCK/HALT on drift, rather than a score reviewed afterward) is being decided. If that lands, it will be documented as a behavioral-rule trigger type on the [Authorize](/trust-lifecycle/authorize/behaviors) page, with this page linking to it rather than duplicating the mechanism.
+:::
 
 ## Next Phase
 

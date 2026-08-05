@@ -16,6 +16,20 @@ OpenBox adds governance, compliance, and audit-grade evidence to your AI agents.
 
 <div className="integration-grid">
 
+<a href="/getting-started/claude-code">
+<div className="integration-card diff-card">
+  <img className="integration-card__icon" src="/img/integrations/claude-code.svg" alt="" />
+  <div className="integration-card__body">
+    <div className="integration-card__title">Claude Code</div>
+    <div className="integration-card__description">Governance for the coding agent itself, via Claude Code's hooks system. Every prompt, file edit, and shell command is governed.</div>
+    <div className="integration-card__tags">
+      <span className="integration-tag">Hooks</span>
+      <span className="integration-tag">Dev sessions</span>
+    </div>
+  </div>
+</div>
+</a>
+
 <a href="/getting-started/crewai">
 <div className="integration-card">
   <img className="integration-card__icon integration-card__icon--padded" src="/img/integrations/crewai.svg" alt="" />
@@ -163,8 +177,8 @@ OpenBox adds governance, compliance, and audit-grade evidence to your AI agents.
 
 From a single integration point, every execution is automatically governed:
 
-- **Event timeline** — workflow starts, completions, failures, and signals captured in sequence
-- **Activity tracking** — every activity execution with full inputs and outputs
-- **HTTP call recording** — all outbound requests (LLM calls, external APIs) with request and response bodies
-- **Governance decisions** — each event evaluated against your policies in real-time: approved, blocked, or flagged
-- **Session replay** — step-by-step playback of the entire agent session for debugging and audit
+- **Event timeline**: workflow starts, completions, failures, and signals captured in sequence
+- **Activity tracking**: every activity execution with full inputs and outputs
+- **HTTP call recording**: all outbound requests (LLM calls, external APIs) with request and response bodies
+- **Governance decisions**: each event evaluated against your policies in real-time: allowed, constrained, approved, blocked, or halted
+- **Session replay**: step-by-step playback of the entire agent session for debugging and audit
