@@ -14,6 +14,8 @@ tags:
 
 OpenBox receives governed DeepAgents middleware boundaries plus operational telemetry from HTTP, file, and configured database instrumentation. Understanding that model is necessary for writing policy, configuring guardrails, and interpreting the dashboard correctly.
 
+<mark className="diff-mark">Governance payloads on activity-boundary events also include a `fallback_used` field indicating whether a fail-safe path was used.</mark>
+
 ## Top-Level Event Types
 
 | Event type | Emitted by | Primary use |

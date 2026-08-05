@@ -1,0 +1,108 @@
+---
+title: Wrap an Existing Session
+description: "Add OpenBox governance to a project you're already using Claude Code on, without changing how you work."
+llms_description: Wrap an existing Claude Code project with OpenBox hooks
+sidebar_position: 2
+tags:
+  - getting-started
+  - claude-code
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Wrap an Existing Session
+
+:::tip 🆕 New page in this review
+Everything on this page is new.
+:::
+
+Use this guide when you already use Claude Code on a project and want to add OpenBox governance, monitoring, and compliance evidence without changing your workflow.
+
+## Prerequisites
+
+- An existing project you use Claude Code on
+- Node.js `18+` (to run the hook via `npx`)
+- An OpenBox API key, agent DID, and private key unless **Require signing** is disabled for the agent
+
+## Step 1: Register a Dev-Session Agent
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Go to **Agents** → **Add Agent**
+3. Choose **Claude Code** as the integration
+4. Copy the API key, DID, and private key from the **Save Your Agent Credentials** dialog
+
+## Step 2: Configure Environment
+
+```bash title=".env"
+OPENBOX_URL=https://core.openbox.ai
+OPENBOX_API_KEY=obx_live_your_api_key_here
+
+# Required by default for newly created agents unless Require signing is disabled.
+OPENBOX_AGENT_DID=did:aip:550e8400-e29b-41d4-a716-446655440000
+OPENBOX_AGENT_PRIVATE_KEY=base64_raw_ed25519_seed
+```
+
+Claude Code hook commands read these from your shell environment; keep them wherever you already keep project secrets, not committed to the repo.
+
+## Step 3: Add the Hooks
+
+<Tabs>
+<TabItem value="before" label="Claude Code">
+
+```json title=".claude/settings.json"
+{}
+```
+
+</TabItem>
+<TabItem value="after" label="OpenBox" default>
+
+```json title=".claude/settings.json"
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook user-prompt-submit" }] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook pre-tool-use" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "npx openbox-claude-code hook post-tool-use" }] }
+    ]
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Step 4: Observe, Then Enforce
+
+New hooks default to **observe** mode: every prompt and tool call is recorded and scored, but nothing is ever blocked. Confirm the session appears in OpenBox before turning on enforcement.
+
+```bash title=".env"
+OPENBOX_CLAUDE_CODE_MODE=observe   # Default: record only
+OPENBOX_CLAUDE_CODE_MODE=enforce   # Blocks, constrains, and requires approval per your policies
+```
+
+Switch to `enforce` once you've confirmed governance decisions look right in observe mode. See [Configuration](/developer-guide/claude-code/configuration#observe-vs-enforce) for per-developer overrides.
+
+## Step 5: Run A Session
+
+Start Claude Code normally on the project:
+
+```bash
+claude
+```
+
+Work as usual. After the session ends:
+
+1. Open the [OpenBox Dashboard](https://platform.openbox.ai)
+2. Navigate to **Agents**
+3. Open the registered dev-session agent
+4. Confirm the session appears with prompt, tool-call, and telemetry events
+
+## Next Steps
+
+- [Integration Walkthrough](/developer-guide/claude-code/integration-walkthrough)
+- [Troubleshooting](/developer-guide/claude-code/troubleshooting)

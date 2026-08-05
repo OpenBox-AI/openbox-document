@@ -1,7 +1,7 @@
 ---
 title: Governance Decisions
 description: "See how governance decisions happen in real-time: Policy checks, risk assessment, and automated enforcement before agent execution."
-llms_description: The four governance decision types and how they work
+llms_description: The five governance decision types and how they work
 sidebar_position: 4
 tags:
   - governance
@@ -11,7 +11,7 @@ tags:
 
 # Governance Decisions
 
-When an agent operation is evaluated, OpenBox returns one of four governance decisions.
+When an agent operation is evaluated, OpenBox returns one of <mark className="diff-mark">five</mark> governance decisions.
 
 ## Decision Types
 
@@ -20,6 +20,7 @@ When an agent operation is evaluated, OpenBox returns one of four governance dec
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
+| <mark className="diff-mark">**CONSTRAIN**</mark> | <mark className="diff-mark">Operation proceeds under recorded constraints</mark> | <mark className="diff-mark">Neutral (constrained)</mark> |
 | **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
@@ -36,6 +37,21 @@ The operation is permitted to proceed.
 - Event logged for audit
 - Behavioral score slightly improves
 
+## <mark className="diff-mark">CONSTRAIN</mark>
+
+<mark className="diff-mark">The operation proceeds, but under constraints recorded at evaluation time.</mark>
+
+**When returned:**
+- <mark className="diff-mark">A guardrail transformed rather than blocked the input</mark>
+- <mark className="diff-mark">Trust tier default requires isolation for this operation type</mark>
+- <mark className="diff-mark">A behavioral rule permits continuation only under constraint</mark>
+
+**Effect:**
+- <mark className="diff-mark">Operation executes with the recorded constraints applied</mark>
+- <mark className="diff-mark">Event logged with the specific constraint applied</mark>
+- <mark className="diff-mark">Optionally handed to the Sandbox for isolated execution (Alpha); see [Authorize](/trust-lifecycle/authorize)</mark>
+- <mark className="diff-mark">Behavioral score unaffected</mark>
+
 ## REQUIRE_APPROVAL
 
 OpenBox pauses the operation pending human approval.
@@ -46,7 +62,8 @@ OpenBox pauses the operation pending human approval.
 - Agent trust tier mandates review
 
 **Effect:**
-- Request appears in the Approvals queue
+- Request appears in the Approvals queue with full context
+- SLA tracking shows whether the request is within SLA, at-risk, or breached
 - [Session Replay](/trust-lifecycle/session-replay) shows the operation context and decision timeline
 - Once a reviewer approves or rejects, the operation proceeds or stops
 
@@ -87,16 +104,20 @@ The entire agent session is terminated.
 - Current activity fails
 - Workflow is canceled
 - All pending operations abandoned
+- Discards any pending patch: HALT always dominates, even over a pending BLOCK-with-Patch retry
 - Agent may be blocked from further execution
 - Significant trust score decrease
 - Alert generated
+- Feeds trust incidents and identity signals
 
 ## Decision Precedence
 
 When multiple policies apply, decisions follow precedence:
 
+<mark className="diff-mark">Updated to insert CONSTRAIN into the precedence order below.</mark>
+
 ```
-HALT > BLOCK > REQUIRE_APPROVAL > ALLOW
+HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
 ```
 
 If any policy returns HALT, the agent session is terminated regardless of other policies.
@@ -105,9 +126,12 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 
 [Session Replay](/trust-lifecycle/session-replay) shows decisions at each operation:
 
+<mark className="diff-mark">Added a CONSTRAIN row to the example below.</mark>
+
 ```
 09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW
 09:14:32.045  LLM_CALL          gpt-4             ✓ ALLOW
+09:14:32.560  OUTPUT_GUARDRAIL  mask-pii          ◐ CONSTRAIN (PII masked)
 09:14:32.892  EXTERNAL_API_CALL stripe.com        ⏸ REQUIRE_APPROVAL
 09:14:45.002  APPROVAL_GRANTED  user: john@co     ✓ APPROVED
 09:14:45.123  EXTERNAL_API_CALL stripe.com        ✓ ALLOW (resumed)
@@ -119,7 +143,7 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 You can tune how the **Authorize** phase produces decisions:
 
 1. **Policies (OPA/Rego)** - Return `allow`, `deny`, or `require_approval` for specific operations and conditions.
-2. **Behavioral Rules** - Detect multi-step patterns and escalate to `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
+2. **Behavioral Rules** - Detect multi-step patterns and escalate to <mark className="diff-mark">`CONSTRAIN`,</mark> `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
 3. **Trust-tier conditions** - Apply stricter decisions for lower-tier agents and relax controls for higher-tier agents.
 4. **Approval timeout settings** - Configure how long `REQUIRE_APPROVAL` requests can remain pending before expiring.
 
