@@ -67,7 +67,7 @@ load_dotenv()
 
 ## Step 3: Add the OpenBox Plugin
 
-Add `OpenBoxPlugin` to your existing Worker's `plugins` list:
+The native Worker's `plugins` list is the sole OpenBox integration point. Add `OpenBoxPlugin` there:
 
 <Tabs>
 <TabItem value="before" label="Temporal">
@@ -102,7 +102,7 @@ import os
 import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
-from openbox.plugin import OpenBoxPlugin  # Add OpenBox
+from openbox import OpenBoxPlugin  # Add OpenBox
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 
@@ -215,7 +215,7 @@ Under the hood, the OpenBox plugin:
 
 - **Intercepted workflow events** (started, completed, failed, signals) and **activity events** (started, completed) with their inputs and outputs, sending each to OpenBox for governance evaluation
 - **Captured HTTP calls automatically** — any requests your agent made (LLM APIs, external services) were recorded via OpenTelemetry instrumentation, including full request and response details
-- **Evaluated your governance policies** against each event, determining whether the action should be allowed, blocked, or flagged for approval
+- **Evaluated your governance policies** against each event, returning `ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT`
 - **Recorded a governance decision** for every event — that's what you see in the Event Log Timeline and Session Replay
 
 This runs on every workflow execution automatically.

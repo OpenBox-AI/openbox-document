@@ -28,7 +28,7 @@ A **Workflow** is a durable function that orchestrates a sequence of steps. If t
 
 An **Activity** is a single unit of work inside a Workflow — calling an LLM, querying a database, invoking a tool, or making an HTTP request. Activities are where side effects happen.
 
-**OpenBox connection:** OpenBox captures the inputs and outputs of every Activity execution, evaluates governance policies against them, and records a decision (ALLOW, BLOCK, REQUIRE_APPROVAL, etc.) for each one.
+**OpenBox connection:** OpenBox captures the inputs and outputs of every Activity execution, evaluates governance policies against them, and records one of five decisions (`ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT`) for each one.
 
 [Temporal docs: Activities](https://docs.temporal.io/activities)
 
@@ -38,7 +38,7 @@ An **Activity** is a single unit of work inside a Workflow — calling an LLM, q
 
 A **Worker** is a process that hosts your Workflow and Activity code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list — one code change that adds the trust layer. No changes to your Workflows or Activities.
+**OpenBox connection:** The native Worker is the sole integration point. Add `OpenBoxPlugin` to its `plugins` list; the plugin owns OpenBox setup for the Worker, Workflows, and Activities.
 
 [Temporal docs: Workers](https://docs.temporal.io/workers)
 
@@ -73,7 +73,7 @@ flowchart LR
 
 - Your **App** starts a Workflow on the **Temporal Server**.
 - Temporal dispatches tasks to the **Worker with OpenBox Plugin** (`OpenBoxPlugin`).
-- The Worker sends every Workflow and Activity **event** to the **OpenBox Platform**, which evaluates policies and returns a governance **decision** (allow, block, require approval, etc.).
+- The Worker sends every Workflow and Activity **event** to the **OpenBox Platform**, which evaluates policies and returns one of five governance decisions.
 - The Worker continues execution based on the decision and reports results back to Temporal.
 
 ## Next Steps

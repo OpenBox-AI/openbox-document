@@ -132,17 +132,19 @@ A 0–100 runtime compliance metric that starts at 100 for new agents and decrea
 
 ## Governance Decision
 
-The outcome produced when OpenBox evaluates an agent operation. There are <mark className="diff-mark">five</mark> possible decisions, listed in precedence order:
+The outcome produced when OpenBox evaluates an agent operation. There are five possible decisions, listed in precedence order:
 
 | Decision | Effect | Impact |
 |----------|--------|--------|
 | **HALT** | Terminates the entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for [HITL](#hitl-human-in-the-loop) review | Neutral (pending) |
-| <mark className="diff-mark">**CONSTRAIN**</mark> | <mark className="diff-mark">Operation proceeds under recorded constraints</mark> | <mark className="diff-mark">Neutral (constrained)</mark> |
+| **CONSTRAIN** | Operation proceeds only through an integration that can enforce the returned constraints | Neutral (constrained) |
 | **ALLOW** | Operation proceeds normally | Positive |
 
-**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL <mark className="diff-mark">> CONSTRAIN</mark> > ALLOW
+**Precedence:** HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
+
+`CONSTRAIN` is not a logging-only form of `ALLOW`. Enforcement is integration-specific, and an integration that cannot apply the constraint must fail closed. Registered Temporal governed commands use sandbox execution; this does not mean every constrained action is sandboxed.
 
 **Learn more:** [Governance Decisions](/core-concepts/governance-decisions)
 
@@ -366,7 +368,7 @@ One of five trust levels derived from the [Trust Score](#trust-score) that deter
 
 A process that hosts your [Workflow](#workflow) and [Activity](#activity) code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The Worker is the single integration point. Add `OpenBoxPlugin` to your Worker's `plugins` list (one code change that adds the [Trust Layer](#trust-layer)). No changes to your Workflows or Activities.
+**OpenBox connection:** The native Worker is the sole integration point. Add `OpenBoxPlugin` to its `plugins` list; the plugin owns OpenBox setup for the Worker, Workflows, and Activities. Governed sandbox commands enter through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` on that same Worker.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#worker)
 

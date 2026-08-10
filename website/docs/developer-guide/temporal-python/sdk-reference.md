@@ -10,13 +10,14 @@ tags:
 
 # Temporal Plugin (Python)
 
-`OpenBoxPlugin` is a drop-in Temporal plugin that adds governance and observability to your workers.
+`OpenBoxPlugin` is the sole public OpenBox integration entry point for Temporal Python. Add it to the native Worker's `plugins` list for governance, observability, and optional governed sandbox commands.
 
 | Guide | Description |
 |-------|-------------|
 | **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for adding OpenBox to Temporal workers |
 | **[Configuration](/developer-guide/temporal-python/configuration)** | Plugin options and environment variables |
 | **[Error Handling](/developer-guide/temporal-python/error-handling)** | Handle governance decisions and failures in your code |
+| **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** | Register one-attempt commands for enforced sandbox execution |
 | **[Customizing the Demo](/developer-guide/temporal-python/customizing-the-demo)** | Tailor governance behavior to your agent's needs |
 | **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
 | **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal plugin setup |
@@ -29,8 +30,10 @@ The plugin's primary job is to **connect your Temporal worker to OpenBox** and s
 
 The plugin is intentionally minimal:
 
-- **One plugin** added to your existing Worker — no import swaps or wrapper functions
-- **Zero code changes** to workflow/activity logic
+- **One plugin** added to your existing native Worker
+- **Plugin-owned setup** for Worker interception, Workflows, and Activities
+- **Zero OpenBox setup** in Workflow and Activity code
+- **One sandbox option** on the same plugin for governed commands
 - **Automatic telemetry** — captures HTTP, database, and file I/O operations
 - **Composable** — works alongside other Temporal plugins (e.g., `OpenTelemetryPlugin`)
 
@@ -52,12 +55,13 @@ See:
 ## Plugin Usage
 
 ```python
-from openbox.plugin import OpenBoxPlugin
+from openbox import OpenBoxPlugin, SandboxConfig
 
 OpenBoxPlugin(
     openbox_url: str,
     openbox_api_key: str,
-    # + governance, instrumentation options
+    sandbox: SandboxConfig | None = None,
+    # + governance and instrumentation options
 )
 ```
 
@@ -76,7 +80,7 @@ worker = Worker(
 )
 ```
 
-The plugin automatically configures governance interceptors, OTel instrumentation, sandbox passthrough, and the `send_governance_event` activity.
+The plugin internally owns governance interceptors, OTel instrumentation, Workflow sandbox passthrough, and OpenBox Activities. Supplying `sandbox=SandboxConfig(...)` on that same initializer registers governed-command support; see [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands).
 
 See **[Configuration](/developer-guide/temporal-python/configuration)** for the full parameter list.
 
@@ -171,8 +175,23 @@ flowchart TD
 
     sdk --> engine
 
-    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
+    engine["<b>OpenBox Trust Engine</b><br/><br/>Verdicts:<br/>ALLOW · CONSTRAIN · REQUIRE_APPROVAL<br/>BLOCK · HALT"]
 ```
+
+## Governed-command API
+
+| Symbol | Import | Purpose |
+|---|---|---|
+| `OpenBoxPlugin` | `openbox.plugin` | Sole Temporal integration entry point |
+| `SandboxConfig` | `openbox.sandbox.config` | Configure registered governed commands through `OpenBoxPlugin(..., sandbox=...)` |
+| `SandboxCommandRegistry` and typed definitions | `openbox_sandbox` | Define bounded command profiles and typed results |
+| `GovernedCommandDeployment` | `openbox.sandbox` | Thin operational wrapper for validated deployment and cleanup reconciliation |
+
+`GovernedCommandDeployment` internally constructs `OpenBoxPlugin(...)` and returns a native `Worker(..., plugins=[openbox_plugin])`; it is not a second integration API.
+
+Only registered governed commands can enforce `CONSTRAIN` through sandbox execution. An ordinary Temporal action that receives `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns the single Activity attempt, bounded history conversion, output mapping, and cancellation cleanup.
+
+See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for the complete plugin composition, durable result fields, E2E evidence, and zero-host caveat.
 
 ## Configuration
 
@@ -186,4 +205,5 @@ See **[Configuration](/developer-guide/temporal-python/configuration)** for all 
 
 1. **[Temporal Integration](/developer-guide/temporal-python/integration-walkthrough)** - Add OpenBox to an existing Temporal agent
 2. **[Configuration](/developer-guide/temporal-python/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
+3. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Enforce constrained registered commands in isolation
+4. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code

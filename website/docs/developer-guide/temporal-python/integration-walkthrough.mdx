@@ -144,12 +144,12 @@ When you ran the demo, the OpenBox trust layer:
 1. **Intercepted workflow and activity events** — every workflow start, activity execution, and signal was captured and sent to OpenBox for governance evaluation
 2. **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded all outbound HTTP requests (LLM calls, external APIs) with full request/response bodies
 3. **Evaluated governance policies** — each captured event was evaluated against your agent's configured governance policies in real-time
-4. **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+4. **Recorded one of five governance decisions for every event** — `ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT` — giving you a complete audit trail
 5. **Captured database operations and file I/O** — the demo configures `instrument_databases=True` and `instrument_file_io=True`, so SQL queries, NoSQL operations, and file read/write operations were also recorded
 
 ## How the Integration Works
 
-The OpenBox integration point is the worker bootstrap script: `scripts/run_worker.py`. The only change is adding `OpenBoxPlugin` to the Worker's `plugins` list:
+The sole OpenBox integration point is the native Temporal Worker in `scripts/run_worker.py`. Add `OpenBoxPlugin` to its `plugins` list; the plugin owns OpenBox interception and registration:
 
 <Tabs>
 <TabItem value="before" label="Temporal">
@@ -184,7 +184,7 @@ import os
 import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
-from openbox.plugin import OpenBoxPlugin  # Add OpenBox
+from openbox import OpenBoxPlugin  # Add OpenBox
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 
@@ -219,6 +219,12 @@ The agent's Temporal code is organized in:
 - **`goals/`** — Goals define the scenarios the agent can handle (e.g., travel booking, banking assistant). Each goal configures the system prompt, available tools, and expected behavior for a specific use case.
 
 See **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** for a step-by-step guide to adding your own goals and tools to this structure, or the **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** for a full breakdown of signals, activities, endpoints, and message flow.
+
+## Enforcing CONSTRAIN
+
+`CONSTRAIN` is not a logging-only form of `ALLOW`. A Temporal operation may continue only when its integration can apply the returned constraint. Ordinary Activities have no generic constraint executor, so the plugin fails them closed with `GovernanceConstrainUnsupported`.
+
+The governed-command integration provides an enforcement path for explicitly registered commands: `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` owns one-attempt scheduling, and exact `CONSTRAIN` selects sandbox execution. It does not sandbox every constrained Temporal action. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the native Worker composition.
 
 ## Explore Different Scenarios
 
@@ -340,14 +346,15 @@ See **[Plugin Configuration](/developer-guide/temporal-python/configuration)** f
 
 In this demo, the plugin's role is to connect your Temporal worker to OpenBox and emit the events OpenBox needs to evaluate policies and record sessions. The recommended way to understand and respond to blocks, approvals, and validation failures is through the OpenBox dashboard UI.
 
-To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and look for governance decisions that were blocked or flagged, failed activity outputs, and approval requests that were rejected.
+To investigate failures, open a session in the dashboard using the same steps from [See It in Action](#see-it-in-action) and inspect the recorded decision, failed activity outputs, and rejected approval requests.
 
 ## Next Steps
 
 1. **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** - Add your own goals, native tools, and MCP integrations
 2. **[Plugin Configuration](/developer-guide/temporal-python/configuration)** - Fine-tune timeouts, fail policies, and filtering
-3. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
-4. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
-5. **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** - Signals, activities, endpoints, and message flow
+3. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Enforce constrained registered commands
+4. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
+5. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
+6. **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** - Signals, activities, endpoints, and message flow
 
 Having issues? See the **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** guide for common problems and solutions.

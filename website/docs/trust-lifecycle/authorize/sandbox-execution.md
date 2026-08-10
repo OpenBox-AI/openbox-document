@@ -1,7 +1,7 @@
 ---
 title: Sandbox Execution
 description: "How a CONSTRAIN verdict can hand an operation to a rootless, client-owned container for execution over an mTLS create-exec-delete lifecycle instead of running it in-process."
-llms_description: Rootless container execution for CONSTRAIN verdicts, client-owned, mTLS create-exec-delete lifecycle (Alpha)
+llms_description: Rootless container execution for CONSTRAIN verdicts, client-owned, mTLS create-exec-delete lifecycle
 sidebar_position: 6
 tags:
   - governance
@@ -10,19 +10,11 @@ tags:
 
 # Sandbox Execution
 
-:::tip 🆕 New page in this review
-Everything on this page is new.
-:::
-
-:::info Alpha
-Sandbox Execution is in Alpha. Configuration is SDK/environment-based today; there is no dashboard toggle for it yet.
-:::
-
-A [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can hand the constrained operation to the **Sandbox** (a rootless container that you own and run, reached over mTLS) instead of executing it in-process. The Sandbox runs the operation under rootless container isolation and returns a bounded, typed result to the SDK.
+For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can route the operation to the **Sandbox** instead of executing it in-process. The client-owned, rootless container is reached over mTLS and returns a bounded, typed result. Integrations without an enforcement path must fail closed; they must not treat `CONSTRAIN` as `ALLOW`.
 
 ## Why Isolation Instead Of A Bare Constraint
 
-Most CONSTRAIN verdicts apply a transformation and let the operation continue where it already was (see [Governance Decisions → CONSTRAIN](/core-concepts/governance-decisions#constrain)). Sandbox Execution is for the subset of constrained operations where the safer response isn't "modify the input" but "run this somewhere isolated," for example, code execution, or an operation touching resources you don't want a lower-trust-tier operation reaching directly.
+`CONSTRAIN` describes a required enforcement outcome, not one universal execution mechanism. Some integrations enforce a transformed input or another bounded control. Sandbox Execution is for registered operation types whose constraint is isolation—for example, code execution or access to resources that a lower-trust-tier operation must not reach directly.
 
 ## How It Works
 
@@ -39,11 +31,11 @@ flowchart TD
     op --> verdict --> create --> exec --> delete --> result --> sdk
 ```
 
-1. The authorization pipeline returns `CONSTRAIN` with a directive to sandbox the operation.
-2. Over mTLS, the SDK has a fresh, rootless container **created** on your Sandbox infrastructure for this execution.
-3. The SDK sends the operation into that container, which **exec**s it under rootless isolation and produces a bounded, typed result, not an arbitrary payload.
-4. The container is **deleted** once the result is returned; nothing persists between executions, so every operation gets a fresh, one-shot container.
-5. The SDK receives the bounded, typed result and the operation continues with it.
+1. The authorization pipeline returns exact `CONSTRAIN` for a registered, sandbox-capable operation.
+2. Over mTLS, the integration creates a fresh, rootless container on your Sandbox infrastructure.
+3. The integration executes the admitted operation in that container and accepts only a bounded, typed result.
+4. The container is deleted after execution; cleanup remains explicit if deletion fails.
+5. The integration returns only its bounded result contract to the caller.
 
 Each execution goes through this same three-step lifecycle (mTLS create → exec → delete) over a mutually authenticated connection; no container is reused across operations.
 
@@ -53,13 +45,10 @@ The Sandbox container runs in infrastructure you own and operate. OpenBox does n
 
 ## Configuring It
 
-Sandbox Execution is configured through SDK/environment settings on the agent's runtime, not through a dashboard form. Check your framework's Configuration guide (for example, [LangGraph Configuration](/developer-guide/langgraph/configuration)) for connection and mTLS settings as they become available for your integration.
-
-:::note Open question
-Whether Sandbox Execution gains a dashboard configuration surface (matching the "Create under Agent → Authorize" pattern used by Guardrails, Policies, and Behavioral Rules) hasn't been decided. This page will be updated if that changes.
-:::
+Sandbox Execution is configured through SDK and deployment settings, not through a dashboard form. Check the framework-specific guide for availability. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands); ordinary Temporal actions do not become sandbox-capable.
 
 ## Related
 
 - **[Governance Decisions](/core-concepts/governance-decisions)**: The CONSTRAIN verdict this feature hangs off of
 - **[Authorize Phase](/trust-lifecycle/authorize)**: Where CONSTRAIN fits in the full pipeline
+- **[Temporal governed commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal-specific registration, history, and zero-host requirements

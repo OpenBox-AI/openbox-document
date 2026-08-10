@@ -10,6 +10,8 @@ tags:
 
 # Configuration
 
+The sole OpenBox integration surface is the native Temporal `Worker(..., plugins=[OpenBoxPlugin(...)])` shape. The plugin initializer owns all OpenBox Worker, Workflow, and Activity setup.
+
 The plugin can be configured via environment variables or constructor parameters.
 
 ## Environment Variables
@@ -167,6 +169,41 @@ instrument_file_io=False  # Default
 instrument_file_io=True   # Capture file operations
 ```
 
+### sandbox
+
+`SandboxConfig` enters only through `OpenBoxPlugin`. The plugin owns governed-command Activity registration, interception, dispatch composition, heartbeats, and cleanup:
+
+```python
+from openbox import OpenBoxPlugin, SandboxConfig
+
+plugin = OpenBoxPlugin(
+    openbox_url=os.environ["OPENBOX_URL"],
+    openbox_api_key=os.environ["OPENBOX_API_KEY"],
+    agent_did=os.environ["OPENBOX_AGENT_DID"],
+    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
+    governance_policy="fail_closed",
+    sandbox=SandboxConfig(
+        registry=command_registry,
+        timeout_seconds=300,
+        heartbeat_interval_seconds=10.0,
+    ),
+)
+```
+
+| `SandboxConfig` field | Constraint |
+|---|---|
+| `registry` | Required immutable registry of admitted command profiles |
+| `deployment_manifest` | Optional path to the approved deployment manifest |
+| `release_path` | Optional path to approved release material |
+| `transport` | `auto`, `uds_agent`, or `direct_tls`; default `auto` |
+| `socket_path` | Optional Unix-domain socket override |
+| `timeout_seconds` | Integer from 1 through 300 |
+| `heartbeat_interval_seconds` | Number from 0.1 through 60 |
+
+Registered governed commands use exact `CONSTRAIN` for sandbox execution. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer.
+
+See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for profile registration, native Worker composition, result bounds, and the zero-host deployment requirement.
+
 ## Configuration Precedence
 
 1. Function parameters (highest priority)
@@ -206,7 +243,7 @@ import asyncio
 import os
 from temporalio.client import Client
 from temporalio.worker import Worker
-from openbox.plugin import OpenBoxPlugin
+from openbox import OpenBoxPlugin
 
 async def main():
     client = await Client.connect("localhost:7233")
@@ -254,5 +291,6 @@ if __name__ == "__main__":
 
 ## Next Steps
 
-1. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
-2. **[Approvals](/approvals)** - Review and act on HITL approval requests
+1. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Configure constrained command execution
+2. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
+3. **[Approvals](/approvals)** - Review and act on HITL approval requests

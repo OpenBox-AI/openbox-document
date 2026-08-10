@@ -49,7 +49,7 @@ This step defines the **Prior State** prerequisite described below.
 Finish by clicking **Create Rule**.
 
 :::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes. See [Error Handling](/developer-guide/temporal-python/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in SDK integrations. In Temporal Workflows, inspect the Activity error cause. See [Error Handling](/developer-guide/temporal-python/error-handling) for types such as `GovernanceBlock`, `GovernanceHalt`, and `ApprovalPending`.
 :::
 
 ## Verdicts
@@ -59,7 +59,7 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | Verdict | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Permit, but under recorded constraints (for example, a tier-3 default requiring isolation on an external send) |
+| `CONSTRAIN` | Permit only through an integration that can enforce the constraint; otherwise fail closed |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
@@ -124,7 +124,7 @@ Why this matters: a reporting agent skips the database query and goes straight t
 
 Result in terminal:
 
-`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
+`temporalio.exceptions.ApplicationError: GovernanceHalt: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
 The chat/session ends immediately after the halt.
 

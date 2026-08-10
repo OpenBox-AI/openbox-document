@@ -44,9 +44,21 @@ If sessions don't appear after running a workflow:
 
 ---
 
+## Governed Command Support Is Not Configured
+
+If a registered command reports `GovernedCommandConfigurationRequired`:
+
+1. Confirm the native Worker has `plugins=[OpenBoxPlugin(...)]`
+2. Confirm that same plugin initializer receives `sandbox=SandboxConfig(registry=command_registry)`
+3. Confirm the requested profile exists in that registry
+
+Keep Worker registration and interception inside that `OpenBoxPlugin` initializer. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the supported composition.
+
+---
+
 ## Governance Blocks or Stops Your Agent
 
-When a behavioral rule or policy triggers, the plugin raises a `GovernanceStop` exception. This is expected — it means governance is working.
+When a behavioral rule or policy blocks an operation, the plugin raises a non-retryable `GovernanceBlock` or `GovernanceHalt` error. This is expected — it means governance is working.
 
 To investigate:
 
@@ -54,7 +66,7 @@ To investigate:
 2. Go to your agent → **Overview** tab
 3. Open the session to see which rule triggered the block
 
-See **[Error Handling](/developer-guide/temporal-python/error-handling)** for how to handle `GovernanceStop` and other trust exceptions in your code.
+See **[Error Handling](/developer-guide/temporal-python/error-handling)** for how to handle governance and approval errors in your code.
 
 ---
 

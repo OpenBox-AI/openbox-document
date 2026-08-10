@@ -216,7 +216,7 @@ The frontend polls `/get-conversation-history` to pick up new messages.
 
 ## OpenBox Governance
 
-`OpenBoxPlugin` in `scripts/run_worker.py` adds governance interceptors to the Temporal worker.
+`OpenBoxPlugin` in `scripts/run_worker.py` is the sole OpenBox integration entry point. The native Temporal Worker loads it through `plugins=[OpenBoxPlugin(...)]`; the plugin internally owns governance interception and any configured governed-command Activity.
 
 | Capability | Detail |
 |------------|--------|
@@ -224,7 +224,7 @@ The frontend polls `/get-conversation-history` to pick up new messages.
 | Activity execution | Captures inputs and outputs of every activity |
 | HTTP capture | OpenTelemetry instrumentation records outbound requests with full bodies |
 | Policy evaluation | Each event evaluated against configured policies on the platform |
-| Decisions | Every event gets a governance decision — approved, blocked, or flagged |
+| Decisions | Every event gets one of five decisions: `ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT` |
 
 :::tip Zero agent-side code
 All governance evaluation happens on the platform side, not in the agent code. The agent is unaware of what policies are configured — it just runs, and OpenBox observes and enforces.
@@ -234,7 +234,7 @@ All governance evaluation happens on the platform side, not in the agent code. T
 
 | Path | Purpose |
 |------|---------|
-| `scripts/run_worker.py` | Worker bootstrap — `OpenBoxPlugin` integration point |
+| `scripts/run_worker.py` | Native Worker bootstrap — sole `OpenBoxPlugin` integration point |
 | `api/main.py` | FastAPI endpoints — HTTP bridge to Temporal |
 | `workflows/agent_goal_workflow.py` | `AgentGoalWorkflow` — main state machine |
 | `workflows/workflow_helpers.py` | `is_mcp_tool()`, continue-as-new logic, tool dispatch helpers |

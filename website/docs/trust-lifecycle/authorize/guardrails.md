@@ -158,7 +158,7 @@ Validated logs (when the guardrail is configured to transform/fix):
 
 Expected outcomes:
 
-- **Block on Violation = On:** the guardrail result indicates the operation must stop. In a Temporal workflow you may see an error surfaced like `temporalio.exceptions.ApplicationError: GovernanceStop: ...`.
+- **Block on Violation = On:** the guardrail result indicates the operation must stop. In a Temporal workflow you may see an error surfaced like `temporalio.exceptions.ApplicationError: GovernanceBlock: ...`.
 - **Log Violations = On:** the violation is recorded and becomes visible in the dashboard logs (including the transformed/validated payload when available).
 
 </details>
@@ -227,7 +227,7 @@ Validated logs (when the guardrail is configured to transform/fix):
 Expected outcomes:
 
 - **Block on Violation = On:** the workflow is blocked with an error like:
-  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: The following sentences in your response were found to be NSFW:`
+  `temporalio.exceptions.ApplicationError: GovernanceBlock: Governance blocked: Validation failed for field with errors: The following sentences in your response were found to be NSFW:`
 - **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
@@ -296,7 +296,7 @@ Validated logs (when the guardrail is configured to transform/fix):
 Expected outcomes:
 
 - **Block on Violation = On:** the workflow is blocked with an error like:
-  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: The following text in your response was found to be toxic:`
+  `temporalio.exceptions.ApplicationError: GovernanceBlock: Governance blocked: Validation failed for field with errors: The following text in your response was found to be toxic:`
 - **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
@@ -365,7 +365,7 @@ Validated logs (when the guardrail is configured to transform/fix):
 Expected outcomes:
 
 - **Block on Violation = On:** the workflow is blocked with an error like:
-  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: Output contains banned words`
+  `temporalio.exceptions.ApplicationError: GovernanceBlock: Governance blocked: Validation failed for field with errors: Output contains banned words`
 - **Log Violations = On:** violation is visible in the dashboard.
 
 </details>
@@ -415,7 +415,7 @@ Raw logs:
 Expected outcomes:
 
 - **Block on Violation = On:** the workflow is blocked with an error like:
-  `temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Validation failed for field with errors: Prompt injection detected`
+  `temporalio.exceptions.ApplicationError: GovernanceBlock: Governance blocked: Validation failed for field with errors: Prompt injection detected`
 - **Log Violations = On:** violation is visible in the dashboard.
 
 </details>

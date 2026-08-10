@@ -444,6 +444,7 @@ const sidebars = {
             'developer-guide/temporal-python/configuration',
             'developer-guide/temporal-python/error-handling',
             'developer-guide/temporal-python/integration-walkthrough',
+            'developer-guide/temporal-python/governed-sandbox-commands',
             'developer-guide/temporal-python/customizing-the-demo',
             'developer-guide/temporal-python/demo-architecture',
             'developer-guide/temporal-python/troubleshooting',
