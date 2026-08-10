@@ -173,6 +173,32 @@ instrument_file_io=True   # Capture file operations
 2. Environment variables
 3. Default values (lowest priority)
 
+## sandbox
+
+Optional governed-command sandbox configuration. When set, the plugin
+registers the governed-command activity and dispatches CONSTRAIN verdicts
+into an authorized local sandbox execution. The registry is the only
+required field — it defines which commands the application may execute.
+
+```python
+from openbox.sandbox import SandboxConfig
+
+worker = Worker(
+    client,
+    task_queue="my-queue",
+    workflows=[MyWorkflow],
+    plugins=[OpenBoxPlugin(
+        openbox_url=os.environ.get("OPENBOX_URL"),
+        openbox_api_key=os.environ.get("OPENBOX_API_KEY"),
+        sandbox=SandboxConfig(registry=my_registry),
+    )],
+)
+```
+
+Everything else is auto-discovered from the approved release and
+deployment manifest. The sandbox is part of the plugin composition —
+there is no separate worker path for sandboxed commands.
+
 ## Example: Full Configuration
 
 ```python
