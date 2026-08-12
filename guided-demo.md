@@ -89,7 +89,6 @@ from openbox.sandbox.registry import (
     GovernedCommandDefinition,
     GovernedCommandRegistry,
     IdentifierResultField,
-    IntegerResultField,
     LiteralArgument,
     TypedJsonResultSchema,
 )
@@ -122,23 +121,16 @@ def posting_registry() -> GovernedCommandRegistry:
         commands=(
             GovernedCommandDefinition(
                 command_id="post-batch",
-                executable="/usr/bin/curl",
+                executable="/bin/sh",
                 arguments=(
-                    LiteralArgument("-s"),
-                    LiteralArgument("-o"),
-                    LiteralArgument("/dev/null"),
-                    LiteralArgument("-w"),
+                    LiteralArgument("-c"),
                     LiteralArgument(
-                        '{"http_status":%{http_code},"local_ip":"%{local_ip}"}'
+                        "curl -s https://httpbin.org/ip | tr -d ' \\n'"
                     ),
-                    LiteralArgument("https://httpbin.org/ip"),
                 ),
                 result_schema=TypedJsonResultSchema(
                     name="sandbox-http",
-                    fields=(
-                        IntegerResultField("http_status", minimum=0, maximum=999),
-                        IdentifierResultField("local_ip"),
-                    ),
+                    fields=(IdentifierResultField("origin"),),
                 ),
             ),
         )
@@ -199,13 +191,12 @@ Expected:
  'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
  'timeout_status': 'not_observed',
  'typed_result': {'schema_name': 'sandbox-http',
-                  'values': [{'name': 'http_status', 'value': 200},
-                             {'name': 'local_ip', 'value': '10.200.0.2'}]}}
+                  'values': [{'name': 'origin', 'value': '171.101.162.112'}]}}
 ```
 
-`exit_code: 0` and `http_status: 200` — curl ran inside the sandbox and
-the typed result carries the VM's `local_ip` (10.x — the sandbox network,
-not your Mac).
+`exit_code: 0` — curl ran inside the sandbox and the typed result IS
+httpbin's actual response: `origin` is the sandbox's public egress IP
+(your Mac's IP will differ — the request left the isolated VM).
 
 Base release (`v0.1.0`) instead: the deny-network policy blocks the
 request — same sandbox execution, curl exits `56` (connection reset)
@@ -228,7 +219,7 @@ Login: org `master` — `admin@master` / `OpenBox123!`
   - `disposition: executed_in_sandbox`, `exit_code: 0`
   - `cleanup_status: deleted`, sandbox ID `sbx-<uuid>`
   - `stdout`: the sandbox's complete printed output
-  - typed result values: `http_status=200`, `local_ip=10.200.0.2`
+  - typed result: `origin` — httpbin's response, the sandbox's public IP
   - stdout/stderr byte counts and timeout status
 
 The span view renders ALL attributes dynamically — whatever the governed
