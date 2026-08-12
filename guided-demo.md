@@ -83,7 +83,10 @@ from openbox.sandbox import SandboxConfig
 from openbox.sandbox.registry import (
     GovernedCommandDefinition,
     GovernedCommandRegistry,
+    IdentifierResultField,
+    IntegerResultField,
     LiteralArgument,
+    TypedJsonResultSchema,
 )
 
 SANDBOX_CA = Path(os.environ["OPENBOX_SANDBOX_CA"])
@@ -117,12 +120,20 @@ def posting_registry() -> GovernedCommandRegistry:
                 executable="/usr/bin/curl",
                 arguments=(
                     LiteralArgument("-s"),
+                    LiteralArgument("-o"),
+                    LiteralArgument("/dev/null"),
                     LiteralArgument("-w"),
                     LiteralArgument(
-                        '\n{"http_code":%{http_code},"local_ip":"%{local_ip}",'
-                        '"time_total":%{time_total}}\n'
+                        '{"http_status":%{http_code},"local_ip":"%{local_ip}"}'
                     ),
                     LiteralArgument("https://httpbin.org/ip"),
+                ),
+                result_schema=TypedJsonResultSchema(
+                    name="sandbox-http",
+                    fields=(
+                        IntegerResultField("http_status", minimum=0, maximum=999),
+                        IdentifierResultField("local_ip"),
+                    ),
                 ),
             ),
         )
@@ -181,11 +192,15 @@ Expected:
 ```
 {'cleanup_status': 'deleted', 'disposition': 'executed_in_sandbox',
  'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
- 'stdout_bytes': ~100, 'timeout_status': 'not_observed', ...}
+ 'timeout_status': 'not_observed',
+ 'typed_result': {'schema_name': 'sandbox-http',
+                  'values': [{'name': 'http_status', 'value': 200},
+                             {'name': 'local_ip', 'value': '10.200.0.2'}]}}
 ```
 
-`exit_code: 0` — curl ran inside the sandbox and returned the httpbin
-response (the sandbox VM's public IP, not your Mac's).
+`exit_code: 0` and `http_status: 200` — curl ran inside the sandbox and
+the typed result carries the VM's `local_ip` (10.x — the sandbox network,
+not your Mac).
 
 ## 6. Console
 
