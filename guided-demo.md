@@ -11,6 +11,36 @@ shows the whole session.
 
 ---
 
+## What this demo points to
+
+Every piece is pinned to a branch or release — nothing floats on main.
+
+**Downloads (GitHub releases):**
+| Component | Ref |
+|---|---|
+| `obs` + sandbox service + OpenShell | `OpenBox-AI/openbox-sandbox` release `v0.1.0` (base) |
+| Dev sandbox image + allow-network policy | `OpenBox-AI/openbox-sandbox` release `v0.1.0-dev` |
+
+**SDKs (cloned in Step 2):**
+| Repo | Branch | PR |
+|---|---|---|
+| `OpenBox-AI/openbox-sdk-python` | `feat/PROD-250-sandbox-core-contract` | #10 |
+| `OpenBox-AI/openbox-temporal-sdk-python` | `feat/PROD-250-sandbox-sdk-integration` | #22 |
+
+**Host stack (Core/backend/FE — already running for the demo):**
+| Repo | Branch | PR |
+|---|---|---|
+| `OpenBox-AI/openbox-core` | `feat/sandbox-constrain-governance` | #113 |
+| `OpenBox-AI/openbox-backend` | `feat/PROD-250-opa-sandbox-constraints` | #410 |
+| `OpenBox-AI/openbox-fe` | `feat/PROD-250-sandbox-constrain-ui` | #172 |
+
+**Docs:**
+| Repo | Branch |
+|---|---|
+| `OpenBox-AI/openbox-document` | `docs/constrain-temporal-python-integration` |
+
+---
+
 ## Progress
 
 - [ ] 1 — The tools
