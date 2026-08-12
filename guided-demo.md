@@ -50,7 +50,12 @@ gh release download v0.1.0 --repo OpenBox-AI/openbox-sandbox
 gh release download v0.1.0-dev --repo OpenBox-AI/openbox-sandbox
 ```
 
-Provision (same for both — the dev release auto-detects its image and policy):
+Each download lands the full asset set in the current directory:
+`obs`, the service binary, the OpenShell bundle tarballs, and the policy.
+The dev release also carries the dev image tar — the provisioner
+auto-detects and loads it.
+
+Provision (same for both):
 
 ```bash
 chmod +x obs
@@ -201,6 +206,11 @@ Expected:
 `exit_code: 0` and `http_status: 200` — curl ran inside the sandbox and
 the typed result carries the VM's `local_ip` (10.x — the sandbox network,
 not your Mac).
+
+Base release (`v0.1.0`) instead: the deny-network policy blocks the
+request — same sandbox execution, curl exits `56` (connection reset)
+with `stderr_bytes: 0`, `stdout_bytes: 0`, no typed result. The blocked
+attempt IS the expected proof for the isolated environment.
 
 ## 6. Console
 
