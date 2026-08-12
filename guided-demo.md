@@ -214,5 +214,12 @@ Login: org `master` — `admin@master` / `OpenBox123!`
   fail-closed disclaimer.
 - **Verify → Sessions → payment-demo → Tree** — the ActivityCompleted node
   shows the CONSTRAIN verdict and the orange sandbox badge.
-- The span detail shows: disposition `executed_in_sandbox`, exit `0`,
-  cleanup `deleted`, stdout ~100 bytes, sandbox ID `sbx-<uuid>`.
+- Expand the sandbox span — the full evidence renders:
+  - `disposition: executed_in_sandbox`, `exit_code: 0`
+  - `cleanup_status: deleted`, sandbox ID `sbx-<uuid>`
+  - `stdout`: the sandbox's complete printed output
+  - typed result values: `http_status=200`, `local_ip=10.200.0.2`
+  - stdout/stderr byte counts and timeout status
+
+The span view renders ALL attributes dynamically — whatever the governed
+command prints appears here, bounded to 64 KiB.
