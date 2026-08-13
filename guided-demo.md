@@ -107,6 +107,18 @@ contains the dev image; the provisioner detects and loads the matching asset.
 Verify the downloaded binaries with an SBOM before running them (syft
 scans the Go/Rust binaries and emits the software bill of materials):
 
+```bash
+brew install syft
+# macOS (Linux: obs-linux-x86_64 / openbox-sandbox-linux-x86_64)
+syft obs-darwin-arm64 -o spdx-json > sbom-obs.spdx.json
+syft openbox-sandbox-darwin-arm64 -o spdx-json > sbom-sandbox.spdx.json
+# inspect both SBOMs (syft accepts an SBOM file directly)
+syft sbom-obs.spdx.json
+syft sbom-sandbox.spdx.json
+jq '.spdxVersion, (.packages[] | {name, versionInfo})' sbom-obs.spdx.json sbom-sandbox.spdx.json
+# full detail: complete document or full table
+jq '.' sbom-obs.spdx.json
+syft sbom-obs.spdx.json -o table
 ```
 
 Pick the launcher for your platform, then provision:
