@@ -55,7 +55,8 @@ See:
 ## Plugin Usage
 
 ```python
-from openbox import OpenBoxPlugin, SandboxConfig
+from openbox import OpenBoxPlugin
+from openbox.sandbox import SandboxConfig
 
 OpenBoxPlugin(
     openbox_url: str,
@@ -184,12 +185,12 @@ flowchart TD
 |---|---|---|
 | `OpenBoxPlugin` | `openbox.plugin` | Sole Temporal integration entry point |
 | `SandboxConfig` | `openbox.sandbox.config` | Configure registered governed commands through `OpenBoxPlugin(..., sandbox=...)` |
-| `SandboxCommandRegistry` and typed definitions | `openbox_sandbox` | Define bounded command profiles and typed results |
+| `GovernedCommandRegistry` and typed definitions | `openbox.sandbox` | Define bounded command profiles and typed results |
 | `GovernedCommandDeployment` | `openbox.sandbox` | Thin operational wrapper for validated deployment and cleanup reconciliation |
 
 `GovernedCommandDeployment` internally constructs `OpenBoxPlugin(...)` and returns a native `Worker(..., plugins=[openbox_plugin])`; it is not a second integration API.
 
-Only registered governed commands can enforce `CONSTRAIN` through sandbox execution. An ordinary Temporal action that receives `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns the single Activity attempt, bounded history conversion, output mapping, and cancellation cleanup.
+Only registered governed commands can enforce `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` through sandbox execution. An ordinary Temporal action that receives `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns the single Activity attempt, bounded history conversion, output mapping, and cancellation cleanup.
 
 See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for the complete plugin composition, durable result fields, E2E evidence, and zero-host caveat.
 

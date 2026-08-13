@@ -171,19 +171,23 @@ instrument_file_io=True   # Capture file operations
 
 ### sandbox
 
-`SandboxConfig` enters only through `OpenBoxPlugin`. The plugin owns governed-command Activity registration, interception, dispatch composition, heartbeats, and cleanup:
+`SandboxConfig` enters only through `OpenBoxPlugin`. Its required `registry` is an immutable `GovernedCommandRegistry` that defines the admitted executables, bounded arguments, and typed result schemas. The plugin owns governed-command Activity registration, interception, dispatch, heartbeats, result mapping, and cleanup:
 
 ```python
-from openbox import OpenBoxPlugin, SandboxConfig
+from openbox import OpenBoxPlugin
+from openbox.sandbox import SandboxConfig
 
 plugin = OpenBoxPlugin(
     openbox_url=os.environ["OPENBOX_URL"],
     openbox_api_key=os.environ["OPENBOX_API_KEY"],
-    agent_did=os.environ["OPENBOX_AGENT_DID"],
-    agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
     governance_policy="fail_closed",
     sandbox=SandboxConfig(
         registry=command_registry,
+        service_config=service_config_path,
+        policy=policy_path,
+        ca=ca_path,
+        certificate=certificate_path,
+        private_key=private_key_path,
         timeout_seconds=300,
         heartbeat_interval_seconds=10.0,
     ),
@@ -193,48 +197,22 @@ plugin = OpenBoxPlugin(
 | `SandboxConfig` field | Constraint |
 |---|---|
 | `registry` | Required immutable registry of admitted command profiles |
-| `deployment_manifest` | Optional path to the approved deployment manifest |
-| `release_path` | Optional path to approved release material |
-| `transport` | `auto`, `uds_agent`, or `direct_tls`; default `auto` |
-| `socket_path` | Optional Unix-domain socket override |
+| `service_config`, `policy` | Optional trusted service and policy documents |
+| `socket_path` | Optional Unix-domain agent socket |
+| `ca`, `certificate`, `private_key` | Optional direct-mTLS material |
 | `timeout_seconds` | Integer from 1 through 300 |
 | `heartbeat_interval_seconds` | Number from 0.1 through 60 |
+| `stdout_bytes`, `stderr_bytes` | Optional positive output bounds |
 
-Registered governed commands use exact `CONSTRAIN` for sandbox execution. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer.
+For a registered command, `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
 
-See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for profile registration, native Worker composition, result bounds, and the zero-host deployment requirement.
+See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
 
 ## Configuration Precedence
 
 1. Function parameters (highest priority)
 2. Environment variables
 3. Default values (lowest priority)
-
-## sandbox
-
-Optional governed-command sandbox configuration. When set, the plugin
-registers the governed-command activity and dispatches CONSTRAIN verdicts
-into an authorized local sandbox execution. The registry is the only
-required field — it defines which commands the application may execute.
-
-```python
-from openbox.sandbox import SandboxConfig
-
-worker = Worker(
-    client,
-    task_queue="my-queue",
-    workflows=[MyWorkflow],
-    plugins=[OpenBoxPlugin(
-        openbox_url=os.environ.get("OPENBOX_URL"),
-        openbox_api_key=os.environ.get("OPENBOX_API_KEY"),
-        sandbox=SandboxConfig(registry=my_registry),
-    )],
-)
-```
-
-Everything else is auto-discovered from the approved release and
-deployment manifest. The sandbox is part of the plugin composition —
-there is no separate worker path for sandboxed commands.
 
 ## Example: Full Configuration
 

@@ -95,7 +95,7 @@ A registered governed command is deliberately non-retryable. `OpenBoxPlugin` sch
 
 At Workflow level, Temporal wraps the plugin-owned Activity's `ApplicationError` in `ActivityError`. Inspect its cause using the same Workflow-level pattern above, alert or reconcile external state, and do not schedule a replacement command.
 
-The `OpenBoxPlugin` path can accept `executed_on_host` after dispatch; it neither rejects that disposition nor prevents the host attempt. A zero-host deployment must enforce exact Core `CONSTRAIN` and remove the dispatcher host path. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#host-result-caveat).
+The `OpenBoxPlugin` path can accept `executed_on_host` after dispatch; it neither rejects that disposition nor prevents the host attempt. A zero-host deployment must enforce Core `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` and remove the dispatcher host path. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#host-result-caveat).
 
 Cancellation waits for dispatcher cleanup before the Activity finishes cancelling. Preserve that cancellation path; do not add a second Activity scheduling retry. Raw output and credentials remain outside Workflow history even on failure.
 

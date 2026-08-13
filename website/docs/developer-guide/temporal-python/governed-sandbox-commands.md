@@ -21,25 +21,25 @@ pip install "openbox-temporal-sdk-python[sandbox]"
 
 `OpenBoxPlugin` is the only OpenBox integration entry point for Temporal. Configure sandbox support on that same plugin with `sandbox=SandboxConfig(...)`; the plugin owns Worker integration, Activity registration, and interception.
 
-A governed command is a registered, profile-bound operation handled by the plugin-owned `openbox_governed_command` Activity. For that registered Activity, an exact `CONSTRAIN` decision selects sandbox execution. Ordinary Temporal Activities do not become sandbox-capable: if they receive `CONSTRAIN` without an enforcement path, the plugin fails closed with `GovernanceConstrainUnsupported`.
+A governed command is a registered, profile-bound operation handled by the plugin-owned `openbox_governed_command` Activity. For that registered Activity, `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. Ordinary Temporal Activities do not become sandbox-capable: if they receive `CONSTRAIN` without an enforcement path, the plugin fails closed with `GovernanceConstrainUnsupported`.
 
 ## Register command profiles
 
 Define the executable, bounded arguments, and optional typed result schema in an immutable registry:
 
 ```python title="command_registry.py"
-from openbox_sandbox import (
+from openbox.sandbox import (
+    GovernedCommandDefinition,
+    GovernedCommandRegistry,
     IdentifierArgument,
     IdentifierResultField,
     IntegerResultField,
     LiteralArgument,
-    SandboxCommandDefinition,
-    SandboxCommandRegistry,
     TypedJsonResultSchema,
 )
 
-command_registry = SandboxCommandRegistry((
-    SandboxCommandDefinition(
+command_registry = GovernedCommandRegistry(commands=(
+    GovernedCommandDefinition(
         command_id="reconcile",
         executable="/app/bin/reconcile",
         arguments=(
@@ -67,7 +67,8 @@ The copy-ready integration shape is a native Temporal `Worker` with one `OpenBox
 import asyncio
 import os
 
-from openbox import OpenBoxPlugin, SandboxConfig
+from openbox import OpenBoxPlugin
+from openbox.sandbox import SandboxConfig
 from temporalio.client import Client
 from temporalio.worker import Worker
 
@@ -87,8 +88,6 @@ async def main() -> None:
         plugins=[OpenBoxPlugin(
             openbox_url=os.environ["OPENBOX_URL"],
             openbox_api_key=os.environ["OPENBOX_API_KEY"],
-            agent_did=os.environ["OPENBOX_AGENT_DID"],
-            agent_private_key=os.environ["OPENBOX_AGENT_PRIVATE_KEY"],
             governance_policy="fail_closed",
             sandbox=SandboxConfig(
                 registry=command_registry,
@@ -121,12 +120,16 @@ The bounded governed-command result reports:
 | Field | Meaning |
 |---|---|
 | `profile_id` | Registered profile that derived and admitted the command |
-| `disposition` | Successful exact `CONSTRAIN` produces `executed_in_sandbox`; an `ALLOW` path can produce `executed_on_host` |
+| `disposition` | Successful `CONSTRAIN` + `run_in_sandbox` produces `executed_in_sandbox`; an `ALLOW` path can produce `executed_on_host` |
 | `exit_code` | Validated process exit code |
 | `timeout_status` | Terminal timeout status reported by execution |
 | `cleanup_status` | `deleted` after sandbox deletion, `failed` when cleanup failed, or `not_needed` when no sandbox cleanup applied |
 | `stdout_bytes`, `stderr_bytes` | Output sizes only, not output bodies |
 | `typed_result` | Optional values admitted by the registered `TypedJsonResultSchema` |
+
+The Workflow result stays bounded and excludes stdout/stderr bodies. The plugin's wrapper-owned `ActivityCompleted` governance event separately sends bounded stdout/stderr content and the admitted typed-result values so the console can render execution evidence without putting raw output into Workflow history.
+
+In **Verify → Sessions → Tree**, the resulting `sandbox_execution` span shows `disposition`, `exit_code`, stdout/stderr content and byte counts, and typed values. A typed `http_status` is mapped to `http.response.status_code` and displayed as the activity's HTTP-style status badge; when no HTTP status exists, the badge shows the process exit code.
 
 An authorization decision is not independent proof that execution occurred. The result is bounded, lifecycle-correlated reporting; it is not a portable signed execution receipt.
 
@@ -155,7 +158,7 @@ On cancellation, the plugin cancels in-flight dispatch and waits for the dispatc
 
 ## Plugin-only E2E evidence
 
-The archived [plugin-only live evidence](https://github.com/OpenBox-AI/openbox-sandbox-poc/blob/48cb20c/docs/proofs/2026-08-10/plugin-only-e2e/live-evidence.json) records a native plugin Worker completing one governed Activity attempt with exact `CONSTRAIN`, sandbox create-exec-delete ordering, `cleanup_status="deleted"`, no host execution, and successful Workflow replay.
+The archived [plugin-only live evidence](https://github.com/OpenBox-AI/openbox-sandbox-poc/blob/48cb20c/docs/proofs/2026-08-10/plugin-only-e2e/live-evidence.json) records a native plugin Worker completing one governed Activity attempt with `CONSTRAIN` + `run_in_sandbox`, sandbox create-exec-delete ordering, `cleanup_status="deleted"`, no host execution, and successful Workflow replay.
 
 This artifact is scoped runtime evidence from the exercised stack. It does not claim a portable signed execution receipt, kernel teardown proof, source provenance, or formal gate approval.
 

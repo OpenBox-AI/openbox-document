@@ -144,7 +144,7 @@ The outcome produced when OpenBox evaluates an agent operation. There are <mark 
 
 **Precedence:** HALT > BLOCK > REQUIRE_APPROVAL <mark className="diff-mark">> CONSTRAIN</mark> > ALLOW
 
-`CONSTRAIN` is not a logging-only form of `ALLOW`. Enforcement is integration-specific, and an integration that cannot apply the constraint must fail closed. Registered Temporal governed commands use sandbox execution; this does not mean every constrained action is sandboxed.
+`CONSTRAIN` is not a logging-only form of `ALLOW`. Enforcement is integration-specific, and an integration that cannot apply the constraint must fail closed. Registered Temporal governed commands use sandbox execution when the policy returns exactly `constraints: ["run_in_sandbox"]`; this does not mean every constrained action is sandboxed.
 
 **Learn more:** [Governance Decisions](/core-concepts/governance-decisions)
 

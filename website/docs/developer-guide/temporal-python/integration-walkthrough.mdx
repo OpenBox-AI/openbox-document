@@ -224,7 +224,7 @@ See **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-th
 
 `CONSTRAIN` is not a logging-only form of `ALLOW`. A Temporal operation may continue only when its integration can apply the returned constraint. Ordinary Activities have no generic constraint executor, so the plugin fails them closed with `GovernanceConstrainUnsupported`.
 
-The governed-command integration provides an enforcement path for explicitly registered commands: `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` owns one-attempt scheduling, and exact `CONSTRAIN` selects sandbox execution. It does not sandbox every constrained Temporal action. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the native Worker composition.
+The governed-command integration provides an enforcement path for explicitly registered commands: `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` owns one-attempt scheduling, and `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. It does not sandbox every constrained Temporal action. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the native Worker composition.
 
 ## Explore Different Scenarios
 

@@ -1,10 +1,11 @@
 # OpenBox Sandbox Guided Demo
 
-AI-governed payment batch: the agent proposes, OpenBox returns CONSTRAIN,
-the command runs inside an isolated sandbox microVM on your Mac, and the
-console shows the evidence.
+AI-governed payment batch: create an agent, define a policy that returns
+`CONSTRAIN` with `run_in_sandbox`, run one governed command in an isolated
+sandbox microVM, and inspect the execution evidence in the console.
 
-Everything below is copy-paste. First run warms up for 15-20 minutes.
+Everything below is copy-paste except values shown in angle brackets. The
+first sandbox provision can take 15–20 minutes.
 
 ## Pointers
 
@@ -18,71 +19,161 @@ Everything below is copy-paste. First run warms up for 15-20 minutes.
 | openbox-backend | `feat/PROD-250-opa-sandbox-constraints` (#410) |
 | openbox-fe | `feat/PROD-250-sandbox-constrain-ui` (#172) |
 
-## 1. Tools
+## 1. Tools and project
 
 ```bash
 uv --version
 python3 --version
 temporal --version
-```
-
-## 2. Project
-
-```bash
-uv init
 gh auth login
+
+uv init
 git clone -b feat/PROD-250-sandbox-core-contract https://github.com/OpenBox-AI/openbox-sdk-python.git
 git clone -b feat/PROD-250-sandbox-sdk-integration https://github.com/OpenBox-AI/openbox-temporal-sdk-python.git
 uv add --editable ./openbox-sdk-python
 uv add --editable ./openbox-temporal-sdk-python
 ```
 
-## 3. Sandbox
+## 2. Create the agent through the API
 
-Download ONE release — base (isolated, no network) or dev (dev image with
-curl allowlisted to httpbin.org:443):
+Use an organization API key with the `CreateAgent` permission. The response
+contains the new agent ID and its runtime API key; save the runtime key now
+because it is returned only once.
 
 ```bash
-# base
-gh release download v0.1.0 --repo OpenBox-AI/openbox-sandbox
+export OPENBOX_BACKEND_URL=http://localhost:5002
+export OPENBOX_ORG_API_KEY=<organization-api-key>
 
-# OR dev
-gh release download v0.1.0-dev --repo OpenBox-AI/openbox-sandbox
+AGENT_RESPONSE=$(curl -fsS -X POST "$OPENBOX_BACKEND_URL/agent/create" \
+  -H "X-API-Key: $OPENBOX_ORG_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_name": "sandbox-payment-demo",
+    "agent_type": "temporal",
+    "model_name": "governed-command",
+    "description": "Sandbox payment batch guided demo",
+    "team_ids": [],
+    "tags": ["sandbox", "demo"],
+    "icon": "bot",
+    "aivss_config": {
+      "base_security": {
+        "attack_vector": 1,
+        "attack_complexity": 1,
+        "privileges_required": 1,
+        "user_interaction": 1,
+        "scope": 1
+      },
+      "ai_specific": {
+        "model_robustness": 2,
+        "data_sensitivity": 3,
+        "ethical_impact": 2,
+        "decision_criticality": 3,
+        "adaptability": 3
+      },
+      "impact": {
+        "confidentiality_impact": 2,
+        "integrity_impact": 3,
+        "availability_impact": 2,
+        "safety_impact": 2
+      }
+    }
+  }')
+
+export OPENBOX_AGENT_ID=$(printf '%s' "$AGENT_RESPONSE" | python3 -c \
+  'import json,sys; d=json.load(sys.stdin); d=d.get("data",d); print(d["agent"]["id"])')
+export OPENBOX_API_KEY=$(printf '%s' "$AGENT_RESPONSE" | python3 -c \
+  'import json,sys; d=json.load(sys.stdin); d=d.get("data",d); print(d["token"])')
+
+printf 'Agent ID: %s\n' "$OPENBOX_AGENT_ID"
 ```
 
-Each download lands the full asset set in the current directory:
-platform-suffixed binaries (`obs-darwin-arm64` / `obs-linux-x86_64`,
-`openbox-sandbox-darwin-arm64` / `openbox-sandbox-linux-x86_64`),
-the OpenShell bundle tarballs, and the policy. The dev release also
-carries the dev image tar — the provisioner auto-detects the
-platform-specific one and loads it.
+## 3. Sandbox
 
-Pick your platform's launcher, then provision:
+Download one release: base (isolated with no network) or dev (curl allowlisted
+to `httpbin.org:443`).
+
+```bash
+# Base
+# gh release download v0.1.0 --repo OpenBox-AI/openbox-sandbox
+
+# Or dev
+# gh release download v0.1.0-dev --repo OpenBox-AI/openbox-sandbox
+```
+
+Uncomment one download command. Each release contains platform-suffixed
+launchers, the OpenShell bundles, and the sandbox policy. The dev release also
+contains the dev image; the provisioner detects and loads the matching asset.
+
+Pick the launcher for your platform, then provision:
 
 ```bash
 # macOS
 cp obs-darwin-arm64 obs
-# Linux
-cp obs-linux-x86_64 obs
+
+# Linux (use this instead on Linux)
+# cp obs-linux-x86_64 obs
 
 chmod +x obs
 ./obs provision --clean-rerun
 lsof -i :17443 -i :17670 | grep LISTEN
 ```
 
-## 4. App
-
-**In the terminal** (NOT inside the Python file) — load the agent env and
-export the two user-provided values:
+The provision output prints the generated agent environment file. Save that
+reported path without assuming a user-specific directory:
 
 ```bash
-set -a; source ~/.config/openbox-sandbox/agent.env; set +a
+export OPENBOX_SANDBOX_AGENT_ENV=<agent-env-path-printed-by-provision>
+set -a; source "$OPENBOX_SANDBOX_AGENT_ENV"; set +a
 export OPENBOX_URL=<your-core-endpoint>
-export OPENBOX_API_KEY=<your-agent-token>
 ```
 
-**Then create `__main__.py`** — this file contains ONLY Python, nothing
-else (no `export`, no `set -a`):
+## 4. Create the governance rules in the console
+
+Open the console before running the app:
+
+```bash
+open http://localhost:3233
+```
+
+Login to organization `master` with the local demo credentials, then open the
+`sandbox-payment-demo` agent created by the API.
+
+### Policy: route the activity into the sandbox
+
+Create the policy through **Agent → Authorize → Policies**:
+
+1. Click **Create Rule**.
+2. Select **CONSTRAIN**. The builder shows the fail-closed notice and emits the
+   supported constraint `run_in_sandbox`.
+3. Set the reason to `payment batch postings must run in the sandbox`.
+4. Add the condition: **activity_type** **equals** `post_payment_batch`.
+5. Click **Deploy**.
+
+The builder-backed policy decides where the governed activity runs. Its result
+contains `decision: "CONSTRAIN"` and exactly
+`constraints: ["run_in_sandbox"]`. The backend publishes the policy through
+its existing policy deployment path.
+
+### Behavioral rule: react to sandbox evidence
+
+Create the rule through **Agent → Authorize → Behavior**:
+
+1. Click **Create Rule**.
+2. Name it `sandbox-execution-human-gate`, add a description, and set priority
+   `80`.
+3. Select trigger type **sandbox_execution**.
+4. Select required prior state **sandbox_execution**.
+5. Select verdict **REQUIRE_APPROVAL**, set the timeout and reject message, and
+   click **Create Rule**.
+
+The policy and behavioral rule have different timing. The policy's
+`CONSTRAIN` result routes the registered command before host execution. Core
+records a `sandbox_execution` span after the sandbox runs; the behavioral rule
+reacts to that span and does not cause the routing.
+
+## 5. Create the one-file app
+
+Create `__main__.py` with only the following Python:
 
 ```python
 import asyncio
@@ -200,15 +291,19 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## 5. Run
+This is the supported SDK composition: one native Temporal Worker, one
+`OpenBoxPlugin`, a `SandboxConfig` on that plugin, and an immutable governed
+command registry.
+
+## 6. Run and inspect the result
 
 ```bash
 uv run python .
 ```
 
-Expected:
+Expected with the dev release:
 
-```
+```text
 {'cleanup_status': 'deleted', 'disposition': 'executed_in_sandbox',
  'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
  'timeout_status': 'not_observed',
@@ -218,81 +313,27 @@ Expected:
                              {'name': 'local_ip', 'value': '10.200.0.2'}]}}
 ```
 
-`exit_code: 0` — curl ran inside the sandbox and the typed result is
-the HTTP trace: status `200`, the remote server IP, and the VM's local
-IP (10.x — the sandbox network, not your Mac).
+`exit_code: 0` confirms curl ran in the sandbox. The typed result contains the
+HTTP status, remote address, and the VM's local address. Exact IP values can
+vary.
 
-Base release (`v0.1.0`) instead: the deny-network policy blocks the
-request — same sandbox execution, curl exits `56` (connection reset)
-with `stderr_bytes: 0`, `stdout_bytes: 0`, no typed result. The blocked
-attempt IS the expected proof for the isolated environment.
+With the base release, the deny-network policy blocks the request. Sandbox
+execution still occurs, but curl exits nonzero and no typed result is
+returned. That blocked attempt is the expected isolation proof.
 
-## 6. Console
+### Console evidence
 
-```bash
-open http://localhost:3233
-```
+Open **Agent → Verify → Sessions → payment-demo → Tree** and expand the
+`sandbox_execution` span. The activity shows:
 
-Login: org `master` — `admin@master` / `OpenBox123!`
+- disposition `executed_in_sandbox`
+- exit code `0`
+- bounded stdout and stderr content, plus their byte counts
+- typed result values such as `http_status=200`, `remote_ip`, and `local_ip`
+- an HTTP-style `200` badge sourced from `http.response.status_code`; when no
+  HTTP status exists, the badge falls back to the process exit code
+- cleanup, timeout, profile, and sandbox ID metadata when present
 
-- **Authorize → Policies** — `payment-batch-sandbox` (pre-built, custom
-  Rego, read-only) and `constrain-post-batch` (builder-backed, editable
-  rules). Both enforce CONSTRAIN with the fail-closed disclaimer.
-
-### Pre-define the policy AND behavioral rule (BEFORE running the agent)
-
-Both must exist before the agent runs — they are what make the sandbox
-routing happen.
-
-Backend `.env` for the demo:
-
-```
-AGENT_SIGNING_REQUIRED=false
-```
-
-(Signing is config-driven — production keeps the default `true` and
-signs every request. The demo turns it off so no DID setup is needed.)
-
-**Policy — decides WHERE the activity runs.** Its condition matches the
-Temporal activity name in the app code. In the app, the activity is
-`post_payment_batch`; the policy rule says: when `activity_type ==
-post_payment_batch`, verdict CONSTRAIN — the SDK interceptor sees that
-verdict BEFORE the activity body runs and routes the governed command
-into the sandbox instead of the host.
-
-Create it through the console (MinIO must be up — see the backend .env
-S3 block):
-
-1. Agent page → **Authorize** → **Policies** tab
-2. Click **Create Rule**
-3. **Decision:** CONSTRAIN — the fail-closed disclaimer appears
-4. **Reason:** `payment batch postings must run in the sandbox`
-5. Add a condition: field **activity_type**, operator **equals**,
-   value **post_payment_batch**
-6. Click **Deploy** — the rule appears in the list with editable
-   builder rules
-
-**Behavioral rule — reacts to the sandbox execution span.** Its trigger
-is `sandbox_execution`, the span type the Core records after the
-sandbox runs. It fires AFTER the policy routed the activity into the
-sandbox — a second layer (e.g. REQUIRE_APPROVAL on the sandbox span).
-
-Create it through the console:
-
-1. **Authorize** → **Behavior** tab
-2. Click **Create Rule**
-3. Step 1 — name `sandbox-execution-human-gate`, description, priority 80
-4. Step 2 — trigger type **sandbox_execution**
-5. Step 3 — required state **sandbox_execution**
-6. Step 4 — verdict **REQUIRE_APPROVAL** (the human-gated disclaimer
-   appears), approval timeout, reject message
-7. Click **Create Rule**
-
-
-
-Relationship: **policy = pre-execution routing** (before the activity
-body, decides sandbox vs host). **Behavioral rule = post-execution
-span evaluation** (after the sandbox span exists). The policy causes
-the sandbox; the behavioral rule reacts to the sandbox.
-
-
+The displayed evidence comes from the recorded sandbox span. It is separate
+from the policy decision: authorization permits constrained execution, while
+the span reports what ran and how it completed.

@@ -18,7 +18,7 @@ Everything on this page is new.
 Sandbox Execution is in Alpha. Configuration is SDK/environment-based today; there is no dashboard toggle for it yet.
 :::
 
-For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can route the operation to the **Sandbox** instead of executing it in-process. The client-owned, rootless container is reached over mTLS and returns a bounded, typed result. Integrations without an enforcement path must fail closed; they must not treat `CONSTRAIN` as `ALLOW`.
+For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict with exactly `constraints: ["run_in_sandbox"]` can route the operation to the **Sandbox** instead of executing it in-process. The client-owned, rootless container is reached over mTLS and returns a bounded, typed result. Integrations without an enforcement path must fail closed; they must not treat `CONSTRAIN` as `ALLOW`.
 
 ## Why Isolation Instead Of A Bare Constraint
 
@@ -39,7 +39,7 @@ flowchart TD
     op --> verdict --> create --> exec --> delete --> result --> sdk
 ```
 
-1. The authorization pipeline returns exact `CONSTRAIN` for a registered, sandbox-capable operation.
+1. A policy builder rule returns `CONSTRAIN` with exactly the `run_in_sandbox` constraint for a registered, sandbox-capable operation.
 2. Over mTLS, the integration has a fresh, rootless container **created** on your Sandbox infrastructure.
 3. The integration sends the admitted operation into that container, which **exec**s it under rootless isolation and produces a bounded, typed result, not an arbitrary payload.
 4. The container is **deleted** after execution; nothing persists between executions, and cleanup remains explicit if deletion fails.
@@ -53,11 +53,25 @@ The Sandbox container runs in infrastructure you own and operate. OpenBox does n
 
 ## Configuring It
 
-Sandbox Execution is configured through SDK and deployment settings on the agent's runtime, not through a dashboard form. Check the framework-specific guide for availability. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands); ordinary Temporal actions do not become sandbox-capable.
+The execution integration is configured through SDK and deployment settings on the agent's runtime, not through a dashboard sandbox toggle. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands): add `OpenBoxPlugin` to the native Worker, pass it a `SandboxConfig`, and provide an immutable `GovernedCommandRegistry`. Ordinary Temporal actions do not become sandbox-capable.
 
-:::note Open question
-Whether Sandbox Execution gains a dashboard configuration surface (matching the "Create under Agent → Authorize" pattern used by Guardrails, Policies, and Behavioral Rules) hasn't been decided. This page will be updated if that changes.
-:::
+Create the routing rule in **Agent → Authorize → Policies** with the visual policy builder. Selecting **CONSTRAIN** produces `constraints: ["run_in_sandbox"]`; add conditions such as an `activity_type` match to limit which registered operation is routed.
+
+## Behavioral Rules
+
+`sandbox_execution` is available as a behavioral-rule trigger and required-prior-state type. The span is recorded after sandbox execution, so a behavioral rule reacts to that evidence; it does not cause the original command to enter the sandbox. Use the policy's `CONSTRAIN` decision for pre-execution routing.
+
+## Console Evidence
+
+In **Agent → Verify → Sessions → Tree**, a sandbox execution appears as a `sandbox_execution` span on the activity. The tree and span detail surface:
+
+- `openbox.sandbox.disposition`, such as `executed_in_sandbox`
+- `openbox.sandbox.exit_code`
+- bounded `openbox.sandbox.stdout` and `openbox.sandbox.stderr` content, plus byte counts
+- typed result attributes under `openbox.sandbox.result.<field>`
+- `http.response.status_code` as the status badge when the typed result contains `http_status`; otherwise the badge shows the exit code
+
+The detail panel also retains lifecycle metadata such as cleanup status, timeout status, profile, and sandbox ID when present.
 
 ## Related
 

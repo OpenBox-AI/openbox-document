@@ -26,7 +26,18 @@ If the policy engine is ever unreachable, OpenBox fails closed: an unknown polic
 
 If an agent has no policy yet, the Policies sub-tab shows an empty state message and a **Create Policy** button. Use the **Create Policy** action to get started.
 
-Policies can be authored either through a visual builder or by writing raw Rego directly. The rest of this page documents the Rego authoring path.
+Policies can be authored either through a visual builder or by writing raw Rego directly.
+
+### Visual Policy Builder
+
+The builder supports all five governance decisions, including `CONSTRAIN`. To require sandbox execution:
+
+1. Add a rule and select **CONSTRAIN** as its decision.
+2. Add the operation conditions, such as `activity_type` **equals** `post_payment_batch`.
+3. Enter the reason operators will see in the event log.
+4. Deploy the policy.
+
+For a `CONSTRAIN` builder rule, OpenBox generates the only supported sandbox constraint shape: `"constraints": ["run_in_sandbox"]`. The builder displays a fail-closed notice because an integration that cannot enforce that constraint must reject the operation rather than treating it as `ALLOW`.
 
 ### Policy Editor
 
@@ -39,10 +50,11 @@ When you create or edit a policy you provide:
 
 Policies should return a single object (commonly named `result`) with:
 
-- `decision`: the policy outcome (example: `CONTINUE`, `REQUIRE_APPROVAL`)
+- `decision`: the policy outcome (example: `CONTINUE`, `CONSTRAIN`, `REQUIRE_APPROVAL`)
 - `reason`: optional explanation for why the decision was produced
+- `constraints`: required for `CONSTRAIN`; sandbox execution requires exactly `["run_in_sandbox"]`
 
-The platform uses this result to produce an authorization decision and to explain the outcome in audit trails.
+The platform uses this result to produce an authorization decision and to explain the outcome in audit trails. Unsupported, missing, or additional constraints on a `CONSTRAIN` result are rejected.
 
 ### Testing Policies
 
