@@ -256,38 +256,35 @@ post_payment_batch`, verdict CONSTRAIN — the SDK interceptor sees that
 verdict BEFORE the activity body runs and routes the governed command
 into the sandbox instead of the host.
 
-Create it (MinIO must be up — see the backend .env S3 block):
+Create it through the console (MinIO must be up — see the backend .env
+S3 block):
 
-```bash
-curl -X POST "http://localhost:5002/agent/<agent-id>/policies" \
-  -H "Authorization: Bearer $TOKEN" -H "x-openbox-client: openbox" \
-  -H "x-csrf-token: $CSRF" -H "Content-Type: application/json" \
-  -d '{"name":"constrain-post-batch",
-       "config":{"policy_builder":{"version":1,"rules":[
-         {"id":"rule-sbx-1","decision":"CONSTRAIN",
-          "reason":"payment batch postings must run in the sandbox",
-          "matchMode":"all",
-          "conditions":[{"id":"cond-1","field":"activity_type",
-            "operator":"equals","transform":"value",
-            "value":"post_payment_batch","valueType":"string"}]}]}}}'
-```
+1. Agent page → **Authorize** → **Policies** tab
+2. Click **Create Rule**
+3. **Decision:** CONSTRAIN — the fail-closed disclaimer appears
+4. **Reason:** `payment batch postings must run in the sandbox`
+5. Add a condition: field **activity_type**, operator **equals**,
+   value **post_payment_batch**
+6. Click **Deploy** — the rule appears in the list with editable
+   builder rules
 
 **Behavioral rule — reacts to the sandbox execution span.** Its trigger
 is `sandbox_execution`, the span type the Core records after the
 sandbox runs. It fires AFTER the policy routed the activity into the
 sandbox — a second layer (e.g. REQUIRE_APPROVAL on the sandbox span).
 
-```bash
-curl -X POST "http://localhost:5002/agent/<agent-id>/behavior-rule" \
-  -H "Authorization: Bearer $TOKEN" -H "x-openbox-client: openbox" \
-  -H "x-csrf-token: $CSRF" -H "Content-Type: application/json" \
-  -d '{"rule_name":"sandbox-execution-human-gate",
-       "description":"Sandbox executions require human approval",
-       "priority":80,"trigger":"sandbox_execution",
-       "states":["sandbox_execution"],"time_window":60,
-       "verdict":2,"approval_timeout":3600,
-       "reject_message":"Sandbox execution requires approval"}'
-```
+Create it through the console:
+
+1. **Authorize** → **Behavior** tab
+2. Click **Create Rule**
+3. Step 1 — name `sandbox-execution-human-gate`, description, priority 80
+4. Step 2 — trigger type **sandbox_execution**
+5. Step 3 — required state **sandbox_execution**
+6. Step 4 — verdict **REQUIRE_APPROVAL** (the human-gated disclaimer
+   appears), approval timeout, reject message
+7. Click **Create Rule**
+
+
 
 Relationship: **policy = pre-execution routing** (before the activity
 body, decides sandbox vs host). **Behavioral rule = post-execution
