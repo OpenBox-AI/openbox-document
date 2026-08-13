@@ -1,7 +1,7 @@
 ---
 title: Sandbox Execution
 description: "How a CONSTRAIN verdict can hand an operation to a rootless, client-owned container for execution over an mTLS create-exec-delete lifecycle instead of running it in-process."
-llms_description: Rootless container execution for CONSTRAIN verdicts, client-owned, mTLS create-exec-delete lifecycle
+llms_description: Rootless container execution for CONSTRAIN verdicts, client-owned, mTLS create-exec-delete lifecycle (Alpha)
 sidebar_position: 6
 tags:
   - governance
@@ -9,6 +9,14 @@ tags:
 ---
 
 # Sandbox Execution
+
+:::tip 🆕 New page in this review
+Everything on this page is new.
+:::
+
+:::info Alpha
+Sandbox Execution is in Alpha. Configuration is SDK/environment-based today; there is no dashboard toggle for it yet.
+:::
 
 For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can route the operation to the **Sandbox** instead of executing it in-process. The client-owned, rootless container is reached over mTLS and returns a bounded, typed result. Integrations without an enforcement path must fail closed; they must not treat `CONSTRAIN` as `ALLOW`.
 
@@ -32,9 +40,9 @@ flowchart TD
 ```
 
 1. The authorization pipeline returns exact `CONSTRAIN` for a registered, sandbox-capable operation.
-2. Over mTLS, the integration creates a fresh, rootless container on your Sandbox infrastructure.
-3. The integration executes the admitted operation in that container and accepts only a bounded, typed result.
-4. The container is deleted after execution; cleanup remains explicit if deletion fails.
+2. Over mTLS, the integration has a fresh, rootless container **created** on your Sandbox infrastructure.
+3. The integration sends the admitted operation into that container, which **exec**s it under rootless isolation and produces a bounded, typed result, not an arbitrary payload.
+4. The container is **deleted** after execution; nothing persists between executions, and cleanup remains explicit if deletion fails.
 5. The integration returns only its bounded result contract to the caller.
 
 Each execution goes through this same three-step lifecycle (mTLS create → exec → delete) over a mutually authenticated connection; no container is reused across operations.
@@ -45,7 +53,11 @@ The Sandbox container runs in infrastructure you own and operate. OpenBox does n
 
 ## Configuring It
 
-Sandbox Execution is configured through SDK and deployment settings, not through a dashboard form. Check the framework-specific guide for availability. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands); ordinary Temporal actions do not become sandbox-capable.
+Sandbox Execution is configured through SDK and deployment settings on the agent's runtime, not through a dashboard form. Check the framework-specific guide for availability. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands); ordinary Temporal actions do not become sandbox-capable.
+
+:::note Open question
+Whether Sandbox Execution gains a dashboard configuration surface (matching the "Create under Agent → Authorize" pattern used by Guardrails, Policies, and Behavioral Rules) hasn't been decided. This page will be updated if that changes.
+:::
 
 ## Related
 

@@ -20,7 +20,7 @@ When an agent operation is evaluated, OpenBox returns one of <mark className="di
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
-| **CONSTRAIN** | Operation proceeds only through an integration that can enforce the returned constraints | Neutral (constrained) |
+| <mark className="diff-mark">**CONSTRAIN**</mark> | Operation proceeds only through an integration that can enforce the returned constraints | <mark className="diff-mark">Neutral (constrained)</mark> |
 | **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
@@ -37,7 +37,7 @@ The operation is permitted to proceed.
 - Event logged for audit
 - Behavioral score slightly improves
 
-## CONSTRAIN
+## <mark className="diff-mark">CONSTRAIN</mark>
 
 The operation may proceed only if the active integration can enforce the returned constraints before execution. Recording a constraint without enforcing it is not sufficient, and `CONSTRAIN` must never be treated as `ALLOW`.
 
@@ -48,6 +48,7 @@ The operation may proceed only if the active integration can enforce the returne
 
 **Effect:**
 - The integration applies the constraint and records the enforced action
+- The event records the specific constraint applied
 - If the integration cannot enforce the constraint, the operation fails closed
 - The enforcement mechanism is integration-specific; not every `CONSTRAIN` action uses a sandbox
 - For a registered [Temporal governed command](/developer-guide/temporal-python/governed-sandbox-commands), exact `CONSTRAIN` selects sandbox execution. An ordinary unsupported Temporal action fails closed
@@ -115,6 +116,8 @@ The entire agent session is terminated.
 
 When multiple policies apply, decisions follow precedence:
 
+<mark className="diff-mark">Updated to insert CONSTRAIN into the precedence order below.</mark>
+
 ```
 HALT > BLOCK > REQUIRE_APPROVAL > CONSTRAIN > ALLOW
 ```
@@ -124,6 +127,8 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 ## Decision in Session Replay
 
 [Session Replay](/trust-lifecycle/session-replay) shows decisions at each operation:
+
+<mark className="diff-mark">Added a CONSTRAIN row to the example below.</mark>
 
 ```
 09:14:32.001  DATABASE_READ     customers.find    ✓ ALLOW
@@ -140,7 +145,7 @@ If any policy returns HALT, the agent session is terminated regardless of other 
 You can tune how the **Authorize** phase produces decisions:
 
 1. **Policies (OPA/Rego)** - Return `allow`, `deny`, or `require_approval` for specific operations and conditions.
-2. **Behavioral Rules** - Detect multi-step patterns and escalate to `CONSTRAIN`, `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
+2. **Behavioral Rules** - Detect multi-step patterns and escalate to <mark className="diff-mark">`CONSTRAIN`,</mark> `BLOCK`, `REQUIRE_APPROVAL`, or `HALT`.
 3. **Trust-tier conditions** - Apply stricter decisions for lower-tier agents and relax controls for higher-tier agents.
 4. **Approval timeout settings** - Configure how long `REQUIRE_APPROVAL` requests can remain pending before expiring.
 

@@ -59,7 +59,7 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | Verdict | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Permit only through an integration that can enforce the constraint; otherwise fail closed |
+| `CONSTRAIN` | Permit only through an integration that can enforce the recorded constraint; otherwise fail closed |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |

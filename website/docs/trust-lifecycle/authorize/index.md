@@ -72,10 +72,10 @@ The authorization pipeline produces one of <mark className="diff-mark">five</mar
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Pauses for HITL | Neutral (pending) |
-| **CONSTRAIN** | Proceeds only through an integration that enforces the returned constraints | Neutral (constrained) |
+| <mark className="diff-mark">**CONSTRAIN**</mark> | Proceeds only through an integration that enforces the returned constraints | <mark className="diff-mark">Neutral (constrained)</mark> |
 | **ALLOW** | Operation proceeds | Positive (compliance) |
 
-`CONSTRAIN` requires an enforcement-capable integration. It is not equivalent to `ALLOW`: unsupported operations fail closed, and the enforcement mechanism is not always sandbox execution. See **[Governance Decisions](/core-concepts/governance-decisions)** for the full definition and precedence order.
+`CONSTRAIN` requires an enforcement-capable integration. It is not equivalent to `ALLOW`: unsupported operations fail closed, and the enforcement mechanism is not always sandbox execution. See **[Governance Decisions](/core-concepts/governance-decisions)** for the full definition of each, including precedence order.
 
 ## <mark className="diff-mark">Fail-Safe By Design</mark>
 
