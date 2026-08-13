@@ -240,6 +240,15 @@ Login: org `master` — `admin@master` / `OpenBox123!`
 Both must exist before the agent runs — they are what make the sandbox
 routing happen.
 
+Backend `.env` for the demo:
+
+```
+AGENT_SIGNING_REQUIRED=false
+```
+
+(Signing is config-driven — production keeps the default `true` and
+signs every request. The demo turns it off so no DID setup is needed.)
+
 **Policy — decides WHERE the activity runs.** Its condition matches the
 Temporal activity name in the app code. In the app, the activity is
 `post_payment_batch`; the policy rule says: when `activity_type ==
