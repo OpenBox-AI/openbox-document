@@ -87,6 +87,75 @@ export OPENBOX_API_KEY=$(printf '%s' "$AGENT_RESPONSE" | python3 -c \
 printf 'Agent ID: %s\n' "$OPENBOX_AGENT_ID"
 ```
 
+## 2.5 Local stack (one-time bring-up)
+
+Everything below runs on your machine; each command is copy-paste.
+
+### Containers (postgres, redis, keycloak)
+
+```bash
+docker start openbox-local-postgres-1 openbox-local-redis-1 openbox-local-keycloak openbox-minio
+# first time only: create the policy-bundles bucket with public read
+docker exec openbox-minio mc mb local/openbox-policy-bundles
+docker exec openbox-minio mc anonymous set download local/openbox-policy-bundles
+```
+
+### Temporal
+
+```bash
+temporal server start-dev   # leave running (7233)
+```
+
+### Backend (5002)
+
+```bash
+cd <backend-checkout>       # openbox-backend repo, develop
+yarn install
+yarn start:dev              # leave running
+```
+
+### Core (8086) — server + two workers
+
+```bash
+cd <core-checkout>          # openbox-core repo
+go build -o ./bin/core ./cmd/core
+./bin/core server                        # leave running
+./bin/core governance-worker             # leave running
+./bin/core observability-worker          # leave running
+```
+
+### OPA (8181)
+
+```bash
+cd <opa-config-dir>         # holds opa.local.yaml (bundle points at the S3 bucket)
+opa run --server --addr 127.0.0.1:8181 --config-file opa.local.yaml
+```
+
+### FE (3233)
+
+```bash
+cd <fe-checkout>            # openbox-fe repo
+pnpm install
+pnpm dev                    # leave running
+```
+
+Login at http://localhost:3233 — org `master`, `admin@master` / `OpenBox123!`.
+
+### Create the agent through the UI
+
+1. Open **Agents → Create Agent** (`/agents/create`)
+2. Fill the form: name `sandbox-payment-demo`, agent type, icon; accept the AIVSS defaults or adjust
+3. Submit — the success screen shows the agent and its **API key**
+4. Export it:
+
+```bash
+export OPENBOX_API_KEY=<the-key-from-the-success-screen>
+export OPENBOX_URL=http://127.0.0.1:8086
+```
+
+Then continue to the policy + behavioral rule steps (Authorize tabs) before
+running the demo.
+
 ## 3. Sandbox
 
 Download one release: base (isolated with no network) or dev (curl allowlisted
