@@ -72,13 +72,17 @@ lsof -i :17443 -i :17670 | grep LISTEN
 
 ## 4. App
 
+**In the terminal** (NOT inside the Python file) — load the agent env and
+export the two user-provided values:
+
 ```bash
 set -a; source ~/.config/openbox-sandbox/agent.env; set +a
 export OPENBOX_URL=<your-core-endpoint>
 export OPENBOX_API_KEY=<your-agent-token>
 ```
 
-Save this as `__main__.py`:
+**Then create `__main__.py`** — this file contains ONLY Python, nothing
+else (no `export`, no `set -a`):
 
 ```python
 import asyncio
