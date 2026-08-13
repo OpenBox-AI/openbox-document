@@ -231,8 +231,42 @@ open http://localhost:3233
 
 Login: org `master` — `admin@master` / `OpenBox123!`
 
-- **Authorize → Policies** — `payment-batch-sandbox`, decision CONSTRAIN,
-  fail-closed disclaimer.
+- **Authorize → Policies** — `payment-batch-sandbox` (pre-built, custom
+  Rego, read-only) and `constrain-post-batch` (builder-backed, editable
+  rules). Both enforce CONSTRAIN with the fail-closed disclaimer.
+
+### Create a policy properly
+
+The backend publishes policy bundles to S3. Local dev uses MinIO:
+
+```bash
+docker run -d --name openbox-minio -p 9000:9000 \
+  -e MINIO_ROOT_USER=openbox -e MINIO_ROOT_PASSWORD=openbox123 \
+  minio/minio server /data
+docker exec openbox-minio mc alias set local http://localhost:9000 openbox openbox123
+docker exec openbox-minio mc mb local/openbox-policy-bundles
+```
+
+Backend `.env`:
+
+```
+S3_BUCKET_NAME=openbox-policy-bundles
+S3_ENDPOINT=http://localhost:9000
+S3_ACCESS_KEY_ID=openbox
+S3_SECRET_ACCESS_KEY=openbox123
+POLICY_BUNDLE_TARGET=s3
+ALLOW_REMOTE_POLICY_BUNDLE_DEPLOY=true
+```
+
+Restart the backend, then **Authorize → Policies → Add Rule**:
+decision CONSTRAIN, activity-type filter `post_payment_batch`, reason
+"payment batch postings must run in the sandbox", deploy.
+
+### Create a behavioral rule
+
+**Authorize → Behavior → Create Rule** — trigger `sandbox_execution`,
+verdict REQUIRE_APPROVAL, approval timeout, priority. The rule appears
+with the human-gated disclaimer.
 - **Verify → Sessions → payment-demo → Tree** — the ActivityCompleted node
   shows the CONSTRAIN verdict and the orange sandbox badge.
 - Expand the sandbox span — the full evidence renders:
