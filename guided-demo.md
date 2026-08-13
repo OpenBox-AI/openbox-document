@@ -235,47 +235,54 @@ Login: org `master` — `admin@master` / `OpenBox123!`
   Rego, read-only) and `constrain-post-batch` (builder-backed, editable
   rules). Both enforce CONSTRAIN with the fail-closed disclaimer.
 
-### Create a policy properly
+### Pre-define the policy AND behavioral rule (BEFORE running the agent)
 
-The backend publishes policy bundles to S3. Local dev uses MinIO:
+Both must exist before the agent runs — they are what make the sandbox
+routing happen.
+
+**Policy — decides WHERE the activity runs.** Its condition matches the
+Temporal activity name in the app code. In the app, the activity is
+`post_payment_batch`; the policy rule says: when `activity_type ==
+post_payment_batch`, verdict CONSTRAIN — the SDK interceptor sees that
+verdict BEFORE the activity body runs and routes the governed command
+into the sandbox instead of the host.
+
+Create it (MinIO must be up — see the backend .env S3 block):
 
 ```bash
-docker run -d --name openbox-minio -p 9000:9000 \
-  -e MINIO_ROOT_USER=openbox -e MINIO_ROOT_PASSWORD=openbox123 \
-  minio/minio server /data
-docker exec openbox-minio mc alias set local http://localhost:9000 openbox openbox123
-docker exec openbox-minio mc mb local/openbox-policy-bundles
+curl -X POST "http://localhost:5002/agent/<agent-id>/policies" \
+  -H "Authorization: Bearer $TOKEN" -H "x-openbox-client: openbox" \
+  -H "x-csrf-token: $CSRF" -H "Content-Type: application/json" \
+  -d '{"name":"constrain-post-batch",
+       "config":{"policy_builder":{"version":1,"rules":[
+         {"id":"rule-sbx-1","decision":"CONSTRAIN",
+          "reason":"payment batch postings must run in the sandbox",
+          "matchMode":"all",
+          "conditions":[{"id":"cond-1","field":"activity_type",
+            "operator":"equals","transform":"value",
+            "value":"post_payment_batch","valueType":"string"}]}]}}}'
 ```
 
-Backend `.env`:
+**Behavioral rule — reacts to the sandbox execution span.** Its trigger
+is `sandbox_execution`, the span type the Core records after the
+sandbox runs. It fires AFTER the policy routed the activity into the
+sandbox — a second layer (e.g. REQUIRE_APPROVAL on the sandbox span).
 
+```bash
+curl -X POST "http://localhost:5002/agent/<agent-id>/behavior-rule" \
+  -H "Authorization: Bearer $TOKEN" -H "x-openbox-client: openbox" \
+  -H "x-csrf-token: $CSRF" -H "Content-Type: application/json" \
+  -d '{"rule_name":"sandbox-execution-human-gate",
+       "description":"Sandbox executions require human approval",
+       "priority":80,"trigger":"sandbox_execution",
+       "states":["sandbox_execution"],"time_window":60,
+       "verdict":2,"approval_timeout":3600,
+       "reject_message":"Sandbox execution requires approval"}'
 ```
-S3_BUCKET_NAME=openbox-policy-bundles
-S3_ENDPOINT=http://localhost:9000
-S3_ACCESS_KEY_ID=openbox
-S3_SECRET_ACCESS_KEY=openbox123
-POLICY_BUNDLE_TARGET=s3
-ALLOW_REMOTE_POLICY_BUNDLE_DEPLOY=true
-```
 
-Restart the backend, then **Authorize → Policies → Add Rule**:
-decision CONSTRAIN, activity-type filter `post_payment_batch`, reason
-"payment batch postings must run in the sandbox", deploy.
+Relationship: **policy = pre-execution routing** (before the activity
+body, decides sandbox vs host). **Behavioral rule = post-execution
+span evaluation** (after the sandbox span exists). The policy causes
+the sandbox; the behavioral rule reacts to the sandbox.
 
-### Create a behavioral rule
 
-**Authorize → Behavior → Create Rule** — trigger `sandbox_execution`,
-verdict REQUIRE_APPROVAL, approval timeout, priority. The rule appears
-with the human-gated disclaimer.
-- **Verify → Sessions → payment-demo → Tree** — the ActivityCompleted node
-  shows the CONSTRAIN verdict and the orange sandbox badge.
-- Expand the sandbox span — the full evidence renders:
-  - `disposition: executed_in_sandbox`, `exit_code: 0`
-  - `cleanup_status: deleted`, sandbox ID `sbx-<uuid>`
-  - `stdout`: the sandbox's complete printed output
-  - HTTP status badge `200` (same surface as HTTP spans)
-  - typed result: `http_status`, `remote_ip`, `local_ip`
-  - stdout/stderr byte counts and timeout status
-
-The span view renders ALL attributes dynamically — whatever the governed
-command prints appears here, bounded to 64 KiB.
