@@ -51,13 +51,20 @@ gh release download v0.1.0-dev --repo OpenBox-AI/openbox-sandbox
 ```
 
 Each download lands the full asset set in the current directory:
-`obs`, the service binary, the OpenShell bundle tarballs, and the policy.
-The dev release also carries the dev image tar — the provisioner
-auto-detects and loads it.
+platform-suffixed binaries (`obs-darwin-arm64` / `obs-linux-x86_64`,
+`openbox-sandbox-darwin-arm64` / `openbox-sandbox-linux-x86_64`),
+the OpenShell bundle tarballs, and the policy. The dev release also
+carries the dev image tar — the provisioner auto-detects the
+platform-specific one and loads it.
 
-Provision (same for both):
+Pick your platform's launcher, then provision:
 
 ```bash
+# macOS
+cp obs-darwin-arm64 obs
+# Linux
+cp obs-linux-x86_64 obs
+
 chmod +x obs
 ./obs provision --clean-rerun
 lsof -i :17443 -i :17670 | grep LISTEN
