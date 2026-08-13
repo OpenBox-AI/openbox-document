@@ -104,6 +104,11 @@ Uncomment one download command. Each release contains platform-suffixed
 launchers, the OpenShell bundles, and the sandbox policy. The dev release also
 contains the dev image; the provisioner detects and loads the matching asset.
 
+Verify the downloaded binaries with an SBOM before running them (syft
+scans the Go/Rust binaries and emits the software bill of materials):
+
+```
+
 Pick the launcher for your platform, then provision:
 
 ```bash
