@@ -18,7 +18,7 @@ tags:
 - **macOS:** Seatbelt through `/usr/bin/sandbox-exec`
 - **Linux:** bubblewrap (`bwrap`)
 
-The name describes the native SRT-style boundary; it is not a Node/npm CLI. Additional providers are documented separately.
+The name describes the native SRT-style boundary; it is not a Node/npm CLI. For a guest-kernel boundary, see the optional [OpenShell Provider (VM)](./openshell-provider).
 
 ## Prerequisites
 
@@ -120,7 +120,7 @@ On macOS, the service queries the unified log after observing the process for re
 
 Bubblewrap cannot filter destinations in a shared network namespace by address. The native Linux allowlist routes proxy-aware HTTP(S) clients through the policy proxy, but it cannot provide the same direct-socket guarantee as macOS without an additional kernel network control.
 
-Use the deny-network template for bypass-resistant native Linux isolation. If you require both a network allowlist and a stronger Linux network boundary, choose an additional provider documented separately.
+Use the deny-network template for bypass-resistant native Linux isolation. If you require both a network allowlist and a stronger Linux network boundary, consider the [OpenShell Provider (VM)](./openshell-provider).
 
 ### Linux violation telemetry
 
@@ -144,5 +144,6 @@ A clean rerun removes launcher-owned state and recompiles the pinned profile. Th
 ## Related
 
 - **[Governed Sandbox Commands](./governed-sandbox-commands)** — Temporal profile registration and behavioral interception demo
+- **[OpenShell Provider (VM)](./openshell-provider)** — optional microVM provider
 - **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — conceptual lifecycle and evidence model
 - **[Error Handling](./error-handling)** — fail-closed command outcomes

@@ -454,6 +454,7 @@ const sidebars = {
               },
               items: [
                 'developer-guide/temporal-python/native-srt-provider',
+                'developer-guide/temporal-python/openshell-provider',
               ],
             },
             'developer-guide/temporal-python/customizing-the-demo',

@@ -65,7 +65,7 @@ Linux bubblewrap does not expose an equivalent unprivileged per-process denial s
 
 The sandbox service and its mTLS credentials run in infrastructure you control. OpenBox governs the operation and records the result; it does not host or execute your command. The local service owns create, execution, cleanup, and restart reconciliation for each request.
 
-Additional providers are documented separately. Provider selection is explicit, and provider startup or execution failure does not trigger fallback.
+The optional [OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider) supplies a guest-kernel boundary through Hypervisor.framework or KVM. Provider selection is explicit, and provider startup or execution failure does not trigger fallback.
 
 ## Configuration and Evidence
 
@@ -86,4 +86,5 @@ A governance decision proves authorization, not execution. The correlated lifecy
 - **[Governance Decisions](/core-concepts/governance-decisions)**: Canonical `CONSTRAIN` semantics
 - **[Authorize Phase](/trust-lifecycle/authorize)**: Where `CONSTRAIN` fits in the authorization pipeline
 - **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal interception, profiles, and result handling
-- **[Native srt Provider](/developer-guide/temporal-python/native-srt-provider)**: Install, provision, verify, and understand platform limitations
+- **[Native srt Provider](/developer-guide/temporal-python/native-srt-provider)**: Install, provision, verify, and understand native platform limitations
+- **[OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider)**: Add the optional microVM provider

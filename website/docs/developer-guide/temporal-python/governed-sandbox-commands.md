@@ -18,7 +18,7 @@ The optional sandbox integration makes a `CONSTRAIN` verdict replace an admitted
 - An unsupported or malformed constraint fails closed.
 - A sandbox failure never retries on the host and never switches provider.
 
-The default provider is the native [`srt` provider](./native-srt-provider): Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux. Additional providers are documented separately.
+The default provider is the native [`srt` provider](./native-srt-provider): Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux. The optional [OpenShell provider](./openshell-provider) adds a microVM boundary.
 
 ## Installation
 
@@ -54,7 +54,7 @@ You can also select it with the environment:
 OPENBOX_PROVIDER=srt obs provision --yes
 ```
 
-`--provider` accepts `srt` or an additional provider documented separately. `srt` is always the default for a fresh configuration. The launcher does not fall back to another provider if the selected provider is unavailable.
+`--provider` accepts `srt` or `openshell`. `srt` is always the default for a fresh configuration. The launcher does not fall back to another provider if the selected provider is unavailable.
 
 Provisioning compiles and SHA-256-pins the selected policy, creates owner-only local mTLS material, starts the loopback service, runs a native smoke test, and writes:
 
@@ -199,6 +199,7 @@ Authorization and execution evidence are different. The span is correlated, boun
 ## Related
 
 - **[Native srt Provider](./native-srt-provider)** — install, provision, policies, egress, monitoring, and limitations
+- **[OpenShell Provider (VM)](./openshell-provider)** — optional microVM prerequisites, caches, registry mode, and CA trust
 - **[Configuration](./configuration)** — `OpenBoxPlugin` and `SandboxConfig` options
 - **[Error Handling](./error-handling)** — terminal and indeterminate command failures
 - **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — integration-neutral governance model
