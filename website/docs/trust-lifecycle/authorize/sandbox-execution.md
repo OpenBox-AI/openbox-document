@@ -1,7 +1,7 @@
 ---
 title: Sandbox Execution
-description: "How a CONSTRAIN verdict can hand an operation to a rootless, client-owned container for execution over an mTLS create-exec-delete lifecycle instead of running it in-process."
-llms_description: Rootless container execution for CONSTRAIN verdicts, client-owned, mTLS create-exec-delete lifecycle (Alpha)
+description: "How a CONSTRAIN verdict routes an admitted operation through OpenBox's native OS sandbox instead of running it on the host."
+llms_description: Native OS isolation for CONSTRAIN verdicts with bounded execution evidence (Alpha)
 sidebar_position: 6
 tags:
   - governance
@@ -15,66 +15,75 @@ Everything on this page is new.
 :::
 
 :::info Alpha
-Sandbox Execution is in Alpha. Configuration is SDK/environment-based today; there is no dashboard toggle for it yet.
+Sandbox Execution is in Alpha. Configuration is SDK- and environment-based today; there is no dashboard toggle for it yet.
 :::
 
-For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict with exactly `constraints: ["run_in_sandbox"]` can route the operation to the **Sandbox** instead of executing it in-process. The client-owned, rootless container is reached over mTLS and returns a bounded, typed result. Integrations without an enforcement path must fail closed; they must not treat `CONSTRAIN` as `ALLOW`.
+For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can replace the host action with an admitted command in the **Sandbox**. The default `srt` provider runs that command under the host operating system's native isolation boundary: Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux.
 
-## Why Isolation Instead Of A Bare Constraint
-
-`CONSTRAIN` describes a required enforcement outcome, not one universal execution mechanism. Some integrations enforce a transformed input or another bounded control. Sandbox Execution is for registered operation types whose constraint is isolation—for example, code execution or access to resources that a lower-trust-tier operation must not reach directly.
+The integration must fail closed if it cannot enforce the constraint. `CONSTRAIN` is never a logging-only form of `ALLOW`, and a failed sandbox dispatch never falls back to host execution.
 
 ## How It Works
 
 ```mermaid
 flowchart TD
-    op["<b>Operation</b>"]
-    verdict["<b>CONSTRAIN</b>"]
-    create["mTLS create<br/>fresh rootless container"]
-    exec["exec<br/>operation runs in isolation"]
-    delete["delete<br/>container torn down"]
-    result["Bounded, typed result"]
-    sdk["Returned to the SDK"]
+    op["<b>Governed operation</b>"]
+    verdict["<b>CONSTRAIN</b><br/>registered profile"]
+    abort["Abort the host action"]
+    create["Create native sandbox scope"]
+    exec["Execute exact argv<br/>under Seatbelt or bubblewrap"]
+    cleanup["Clean workspace and lifecycle state"]
+    evidence["Bounded result and<br/>sandbox_execution evidence"]
 
-    op --> verdict --> create --> exec --> delete --> result --> sdk
+    op --> verdict --> abort --> create --> exec --> cleanup --> evidence
 ```
 
-1. A policy builder rule returns `CONSTRAIN` with exactly the `run_in_sandbox` constraint for a registered, sandbox-capable operation.
-2. Over mTLS, the integration has a fresh, rootless container **created** on your Sandbox infrastructure.
-3. The integration sends the admitted operation into that container, which **exec**s it under rootless isolation and produces a bounded, typed result, not an arbitrary payload.
-4. The container is **deleted** after execution; nothing persists between executions, and cleanup remains explicit if deletion fails.
-5. The integration returns only its bounded result contract to the caller.
+1. A policy or behavioral rule returns `CONSTRAIN` for an operation that maps to a registered command profile.
+2. The integration derives an immutable `argv` from that profile. Workflow input cannot supply arbitrary executable text or a shell command string.
+3. The attempted host action is aborted before its side effect. The dispatcher makes at most one sandbox dispatch and never switches providers after a possible dispatch.
+4. The native provider verifies the provisioned policy/profile hash, invokes the exact `argv` under `sandbox-exec` or bubblewrap, and bounds stdout, stderr, and execution time.
+5. Cleanup remains explicit after success, failure, timeout, or cancellation. The integration returns a bounded result and emits a `sandbox_execution` span.
 
-Each execution goes through this same three-step lifecycle (mTLS create → exec → delete) over a mutually authenticated connection; no container is reused across operations.
+## Native Security Boundary
 
-## Client-Owned, Not OpenBox-Hosted
+The native provider:
 
-The Sandbox container runs in infrastructure you own and operate. OpenBox does not execute your code; it directs eligible operations to your container over mTLS and governs the result the same way it governs any other operation output.
+- compiles policy templates during provisioning, stores them owner-only, pins their SHA-256 digest in service configuration, and verifies that digest before execution;
+- clears the command environment and supplies no caller-selected mounts, credentials, working directory, or environment variables;
+- admits writes only in the sandbox workspace and invokes `argv` directly without shell reconstruction;
+- uses a private network namespace for deny-network policies on Linux; and
+- uses an execution-scoped HTTP(S) proxy for per-domain allowlists.
 
-## Configuring It
+For a network-enabled policy, the proxy resolves DNS outside the sandbox and compares each normalized `host:port` with the provisioned endpoints. Denied hosts and IP-literal bypass attempts receive HTTP 403. On macOS, Seatbelt permits only the execution's ephemeral loopback proxy port, so direct sockets and a stopped proxy have no fallback egress path.
 
-The execution integration is configured through SDK and deployment settings on the agent's runtime, not through a dashboard sandbox toggle. Temporal Python supports the model for [registered governed commands](/developer-guide/temporal-python/governed-sandbox-commands): add `OpenBoxPlugin` to the native Worker, pass it a `SandboxConfig`, and provide an immutable `GovernedCommandRegistry`. Ordinary Temporal actions do not become sandbox-capable.
+## Violation Monitoring
 
-Create the routing rule in **Agent → Authorize → Policies** with the visual policy builder. Selecting **CONSTRAIN** produces `constraints: ["run_in_sandbox"]`; add conditions such as an `activity_type` match to limit which registered operation is routed.
+Terminal evidence records each observed proxy decision, including its allowed/denied disposition, host, and port. On macOS, the service also queries the unified log for Seatbelt violations associated with the exact sandbox process and records the violation count and stable denial categories.
 
-## Behavioral Rules
+Linux bubblewrap does not expose an equivalent unprivileged per-process denial stream, so Linux results omit OS violation records. Proxy decisions are still recorded for proxy-aware HTTP(S) clients.
 
-`sandbox_execution` is available as a behavioral-rule trigger and required-prior-state type. The span is recorded after sandbox execution, so a behavioral rule reacts to that evidence; it does not cause the original command to enter the sandbox. Use the policy's `CONSTRAIN` decision for pre-execution routing.
+## Client-Owned Boundary
 
-## Console Evidence
+The sandbox service and its mTLS credentials run in infrastructure you control. OpenBox governs the operation and records the result; it does not host or execute your command. The local service owns create, execution, cleanup, and restart reconciliation for each request.
 
-In **Agent → Verify → Sessions → Tree**, a sandbox execution appears as a `sandbox_execution` span on the activity. The tree and span detail surface:
+Additional providers are documented separately. Provider selection is explicit, and provider startup or execution failure does not trigger fallback.
 
-- `openbox.sandbox.disposition`, such as `executed_in_sandbox`
-- `openbox.sandbox.exit_code`
-- bounded `openbox.sandbox.stdout` and `openbox.sandbox.stderr` content, plus byte counts
-- typed result attributes under `openbox.sandbox.result.<field>`
-- `http.response.status_code` as the status badge when the typed result contains `http_status`; otherwise the badge shows the exit code
+## Configuration and Evidence
 
-The detail panel also retains lifecycle metadata such as cleanup status, timeout status, profile, and sandbox ID when present.
+Configure the runtime through the agent's SDK and deployment settings, not a dashboard sandbox toggle. Temporal Python supports [governed sandbox commands](/developer-guide/temporal-python/governed-sandbox-commands) through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` and an immutable `GovernedCommandRegistry`.
+
+In **Agent → Verify → Sessions → Tree**, inspect the `sandbox_execution` span for:
+
+- provider, command profile, and dispatch identity;
+- `openbox.sandbox.disposition`, exit code, timeout status, and cleanup status;
+- bounded stdout/stderr byte counts and hashes;
+- per-request egress decisions under `openbox.sandbox.egress.*`; and
+- macOS violation counts and categories under `openbox.sandbox.violations.*` when present.
+
+A governance decision proves authorization, not execution. The correlated lifecycle span is bounded operational evidence; it is not a portable signed execution receipt or kernel teardown attestation.
 
 ## Related
 
-- **[Governance Decisions](/core-concepts/governance-decisions)**: The CONSTRAIN verdict this feature hangs off of
-- **[Authorize Phase](/trust-lifecycle/authorize)**: Where CONSTRAIN fits in the full pipeline
-- **[Temporal governed commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal-specific registration, history, and zero-host requirements
+- **[Governance Decisions](/core-concepts/governance-decisions)**: Canonical `CONSTRAIN` semantics
+- **[Authorize Phase](/trust-lifecycle/authorize)**: Where `CONSTRAIN` fits in the authorization pipeline
+- **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal interception, profiles, and result handling
+- **[Native srt Provider](/developer-guide/temporal-python/native-srt-provider)**: Install, provision, verify, and understand platform limitations

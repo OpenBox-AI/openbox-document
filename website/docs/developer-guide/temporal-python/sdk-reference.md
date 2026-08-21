@@ -33,7 +33,7 @@ The plugin is intentionally minimal:
 - **One plugin** added to your existing native Worker
 - **Plugin-owned setup** for Worker interception, Workflows, and Activities
 - **Zero OpenBox setup** in Workflow and Activity code
-- **One sandbox option** on the same plugin for governed commands
+- **One sandbox option** on the same plugin for governed command interception
 - **Automatic telemetry** — captures HTTP, database, and file I/O operations
 - **Composable** — works alongside other Temporal plugins (e.g., `OpenTelemetryPlugin`)
 
@@ -81,7 +81,7 @@ worker = Worker(
 )
 ```
 
-The plugin internally owns governance interceptors, OTel instrumentation, Workflow sandbox passthrough, and OpenBox Activities. Supplying `sandbox=SandboxConfig(...)` on that same initializer registers governed-command support; see [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands).
+The plugin internally owns governance interceptors, OTel instrumentation, Workflow sandbox passthrough, and OpenBox lifecycle reporting. Supplying `sandbox=SandboxConfig(...)` on that same initializer enables governed-command interception for registered user Activities; see [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands).
 
 See **[Configuration](/developer-guide/temporal-python/configuration)** for the full parameter list.
 
@@ -186,13 +186,10 @@ flowchart TD
 | `OpenBoxPlugin` | `openbox.plugin` | Sole Temporal integration entry point |
 | `SandboxConfig` | `openbox.sandbox.config` | Configure registered governed commands through `OpenBoxPlugin(..., sandbox=...)` |
 | `GovernedCommandRegistry` and typed definitions | `openbox.sandbox` | Define bounded command profiles and typed results |
-| `GovernedCommandDeployment` | `openbox.sandbox` | Thin operational wrapper for validated deployment and cleanup reconciliation |
 
-`GovernedCommandDeployment` internally constructs `OpenBoxPlugin(...)` and returns a native `Worker(..., plugins=[openbox_plugin])`; it is not a second integration API.
+Only registered governed commands can enforce `CONSTRAIN` through sandbox execution. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile and abort the triggering host action. An ordinary Temporal action that receives an unsupported `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns bounded history conversion, output mapping, and cancellation cleanup, while the dispatcher enforces at-most-once dispatch per dispatch ID.
 
-Only registered governed commands can enforce `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` through sandbox execution. An ordinary Temporal action that receives `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns the single Activity attempt, bounded history conversion, output mapping, and cancellation cleanup.
-
-See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for the complete plugin composition, durable result fields, E2E evidence, and zero-host caveat.
+The sandbox runtime defaults to the native `srt` provider (`sandbox-exec` on macOS, bubblewrap on Linux). See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for plugin composition, provisioning, runtime evidence, and zero-host requirements.
 
 ## Configuration
 

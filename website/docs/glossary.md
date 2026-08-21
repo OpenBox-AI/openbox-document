@@ -144,7 +144,7 @@ The outcome produced when OpenBox evaluates an agent operation. There are <mark 
 
 **Precedence:** HALT > BLOCK > REQUIRE_APPROVAL <mark className="diff-mark">> CONSTRAIN</mark> > ALLOW
 
-`CONSTRAIN` is not a logging-only form of `ALLOW`. Enforcement is integration-specific, and an integration that cannot apply the constraint must fail closed. Registered Temporal governed commands use sandbox execution when the policy returns exactly `constraints: ["run_in_sandbox"]`; this does not mean every constrained action is sandboxed.
+`CONSTRAIN` is not a logging-only form of `ALLOW`. Enforcement is integration-specific, and an integration that cannot apply the constraint must fail closed. Registered Temporal governed commands use sandbox execution when a policy returns `constraints: ["run_in_sandbox"]` or a behavioral rule selects a registered replacement profile; this does not mean every constrained action is sandboxed.
 
 **Learn more:** [Governance Decisions](/core-concepts/governance-decisions)
 
@@ -368,7 +368,7 @@ One of five trust levels derived from the [Trust Score](#trust-score) that deter
 
 A process that hosts your [Workflow](#workflow) and [Activity](#activity) code and polls Temporal for tasks to execute. You start a Worker, register your Workflows and Activities on it, and it handles execution.
 
-**OpenBox connection:** The native Worker is the single integration point. Add `OpenBoxPlugin` to its `plugins` list (one code change that adds the [Trust Layer](#trust-layer)); the plugin owns OpenBox setup for the Worker, Workflows, and Activities, with no changes to their definitions. Governed sandbox commands enter through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` on that same Worker.
+**OpenBox connection:** The native Worker is the single integration point. Add `OpenBoxPlugin` to its `plugins` list (one code change that adds the [Trust Layer](#trust-layer)); the plugin owns OpenBox setup for the Worker, Workflows, and Activities. Governed sandbox commands enter through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` on that same Worker, where the plugin intercepts registered user Activities rather than exposing a second Worker or public plugin Activity.
 
 **Learn more:** [Temporal 101](/getting-started/temporal/temporal-101#worker)
 

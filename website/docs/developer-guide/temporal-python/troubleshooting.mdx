@@ -48,11 +48,13 @@ If sessions don't appear after running a workflow:
 
 If a registered command reports `GovernedCommandConfigurationRequired`:
 
-1. Confirm the native Worker has `plugins=[OpenBoxPlugin(...)]`
-2. Confirm that same plugin initializer receives `sandbox=SandboxConfig(registry=command_registry)`
-3. Confirm the requested profile exists in that registry
+1. Confirm the native Worker has `plugins=[OpenBoxPlugin(...)]`.
+2. Confirm that same plugin initializer receives `sandbox=SandboxConfig(registry=command_registry)`.
+3. Confirm the requested profile exists in that registry.
+4. Run `obs status` and confirm the selected provider is `srt` (the default).
+5. Load `~/.config/openbox-sandbox/agent.env` into the Worker environment and confirm its service, policy, and mTLS paths exist.
 
-Keep Worker registration and interception inside that `OpenBoxPlugin` initializer. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the supported composition.
+Keep Worker registration and interception inside that `OpenBoxPlugin` initializer. The launcher never falls back to another provider if `srt` provisioning fails. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the supported composition.
 
 ---
 

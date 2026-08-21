@@ -34,7 +34,7 @@ Behavioral rules are created through a 4-step wizard under **Agent → Authorize
 
 ### Step 2: Trigger
 
-Select the **Trigger semantic type**. This is the action that will be checked (for example: `file_write`, `database_select`, `llm_completion`, `http_get`, or `sandbox_execution`). The `sandbox_execution` type is emitted after a constrained sandbox command runs, so rules using it react to recorded execution evidence rather than causing sandbox routing.
+Select the **Trigger semantic type**. This is the action that will be checked (for example: `file_write`, `database_select`, `llm_completion`, `http_get`, or `sandbox_execution`). The `sandbox_execution` type is emitted after a constrained sandbox command runs, so a rule triggered by that type reacts to recorded execution evidence rather than routing the already-completed command again.
 
 ### Step 3: States (Required Prior States)
 
@@ -60,10 +60,12 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | Verdict | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Permit only through an integration that can enforce the recorded constraint; otherwise fail closed |
+| `CONSTRAIN` | Permit only through an integration that can enforce the recorded constraint; a sandbox-capable integration can replace the host action with a registered command profile, otherwise it fails closed |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
+
+For a sandbox-capable started hook, a behavioral `CONSTRAIN` can select a registered zero-input command profile. The integration aborts the triggering host action before its side effect, dispatches the replacement profile once in the sandbox, and attaches the bounded `sandbox_execution` outcome to the Activity result. A missing profile, unavailable sandbox integration, host disposition, or failed sandbox dispatch fails closed. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#demo-behavioral-constrain-interception).
 
 When a rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the approval request appears in:
 

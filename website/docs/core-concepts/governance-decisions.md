@@ -51,7 +51,7 @@ The operation may proceed only if the active integration can enforce the returne
 - The event records the specific constraint applied
 - If the integration cannot enforce the constraint, the operation fails closed
 - The enforcement mechanism is integration-specific; not every `CONSTRAIN` action uses a sandbox
-- For a registered [Temporal governed command](/developer-guide/temporal-python/governed-sandbox-commands), `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. An ordinary unsupported Temporal action fails closed
+- For a registered [Temporal governed command](/developer-guide/temporal-python/governed-sandbox-commands), a policy `CONSTRAIN` with `constraints: ["run_in_sandbox"]` or a behavioral `CONSTRAIN` selecting a replacement profile aborts the host action and selects sandbox execution. An ordinary unsupported Temporal action fails closed
 - Behavioral score is unaffected
 
 ## REQUIRE_APPROVAL

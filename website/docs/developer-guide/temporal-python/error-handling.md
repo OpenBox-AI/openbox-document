@@ -80,24 +80,23 @@ class MyAgentWorkflow:
 
 ## Governed-command failures
 
-A registered governed command is deliberately non-retryable. `OpenBoxPlugin` schedules at most one governed-command Activity attempt, and the Activity rejects an attempt other than `1`, so a failure cannot cause a second Activity attempt and repeat a side effect.
+A governed command must not be retried after an indeterminate dispatch, because a second attempt could repeat a side effect. `OpenBoxPlugin` intercepts the application's Activity and the dispatcher makes at most one possible execution dispatch for each stable dispatch ID.
 
 | `ApplicationError.type` | Meaning |
 |---|---|
-| `GovernedCommandConfigurationRequired` | Worker did not register governed-command support |
-| `GovernedCommandAttemptRejected` | Temporal delivered an attempt other than the first |
+| `GovernedCommandConfigurationRequired` | Worker did not configure sandbox support |
 | `GovernedCommandInvalid` | Profile, arguments, identity, or derived command was rejected |
-| `GovernedCommandUnauthorized` | Compatibility authorization receipt was missing or invalid |
-| `GovernedDispatcherFailure` | Dispatcher failed or returned an invalid terminal result |
+| `GovernedDispatcherFailure` | Dispatcher failed before returning a valid terminal result |
 | `GovernedCommandResultInvalid` | Output did not match the registered typed-result schema |
-| `GovernedCommandNotExecuted` | Governance or execution ended without an accepted sandbox execution |
-| `GovernedCommandExecutionIndeterminate` | The plugin cannot establish a safe terminal outcome |
+| `GovernedCommandNotExecuted` | Governance or execution ended without accepted sandbox execution |
+| `GovernedCommandExecutionIndeterminate` | The plugin cannot establish whether execution reached a safe terminal outcome |
+| `BehavioralSandboxExecutionFailed` | A behavioral `CONSTRAIN` replacement profile failed; retained sandbox evidence is attached to the error |
 
-At Workflow level, Temporal wraps the plugin-owned Activity's `ApplicationError` in `ActivityError`. Inspect its cause using the same Workflow-level pattern above, alert or reconcile external state, and do not schedule a replacement command.
+At Workflow level, Temporal wraps the intercepted user Activity's `ApplicationError` in `ActivityError`. Inspect its cause using the same Workflow-level pattern above, alert or reconcile external state, and do not schedule a replacement command after a possible dispatch.
 
-The `OpenBoxPlugin` path can accept `executed_on_host` after dispatch; it neither rejects that disposition nor prevents the host attempt. A zero-host deployment must enforce Core `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` and remove the dispatcher host path. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#host-result-caveat).
+For a started-hook `CONSTRAIN`, the plugin aborts the attempted host action and uses the sandbox outcome. An `ALLOW` decision follows the application's normal host path, so a zero-host workflow must ensure the applicable Core decision is `CONSTRAIN`. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#fail-closed-and-history-boundaries).
 
-Cancellation waits for dispatcher cleanup before the Activity finishes cancelling. Preserve that cancellation path; do not add a second Activity scheduling retry. Raw output and credentials remain outside Workflow history even on failure.
+Cancellation waits for dispatcher cleanup before the Activity finishes cancelling. Preserve that cancellation path; do not add a second scheduling retry. Raw output and credentials remain outside Workflow history even on failure.
 
 ## Best Practices
 

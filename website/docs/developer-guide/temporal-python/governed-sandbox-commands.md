@@ -1,7 +1,7 @@
 ---
 title: Governed Sandbox Commands
-description: "Configure registered Temporal commands for enforced CONSTRAIN execution through OpenBoxPlugin and bounded Workflow history."
-llms_description: Plugin-only Temporal governed command registration, sandbox execution, history safety, results, and cleanup
+description: "Route registered Temporal operations through enforced CONSTRAIN execution with OpenBoxPlugin and bounded Workflow history."
+llms_description: Temporal command registration, CONSTRAIN interception, bounded results, and cleanup
 sidebar_position: 6
 tags:
   - sdk
@@ -11,70 +11,113 @@ tags:
 
 # Governed Sandbox Commands
 
+The optional sandbox integration makes a `CONSTRAIN` verdict replace an admitted host operation with sandbox execution. Workflow code remains application code: `OpenBoxPlugin` intercepts the user Activity at the Worker boundary, derives an exact command from a registered profile, and returns a bounded result.
+
+- `ALLOW` follows the application's normal host path.
+- `CONSTRAIN` for a registered profile aborts the host action and dispatches the derived command to the sandbox.
+- An unsupported or malformed constraint fails closed.
+- A sandbox failure never retries on the host and never switches provider.
+
+The default provider is the native [`srt` provider](./native-srt-provider): Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux. Additional providers are documented separately.
+
 ## Installation
 
-Install the Temporal SDK with governed-command sandbox support:
+Install the Temporal SDK with sandbox support:
 
 ```bash
 pip install "openbox-temporal-sdk-python[sandbox]"
 ```
 
-`OpenBoxPlugin` is the only OpenBox integration entry point for Temporal. Configure sandbox support on that same plugin with `sandbox=SandboxConfig(...)`; the plugin owns Worker integration, Activity registration, and interception.
+Install the verified `obs-<platform>` launcher and matching `openbox-sandbox-<platform>` service binary from an [OpenBox Sandbox release](https://github.com/OpenBox-AI/openbox-sandbox/releases). Keep the launcher, service binary, policy templates, `SHA256SUMS`, and SBOM files together so `obs` can verify and provision them. Rename or invoke the launcher as `obs`; do not substitute the service binary for it.
 
-A governed command is a registered, profile-bound operation handled by the plugin-owned `openbox_governed_command` Activity. For that registered Activity, `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. Ordinary Temporal Activities do not become sandbox-capable: if they receive `CONSTRAIN` without an enforcement path, the plugin fails closed with `GovernanceConstrainUnsupported`.
+The native provider does **not** require Docker, a VM runtime, administrator access, or host CA trust. On Linux, install bubblewrap first; macOS includes `/usr/bin/sandbox-exec`.
 
-## Register command profiles
+## Provision the Runtime
 
-Define the executable, bounded arguments, and optional typed result schema in an immutable registry:
+Provisioning defaults to `srt`:
+
+```bash
+obs provision --yes
+obs status
+obs verify
+```
+
+The explicit equivalent is:
+
+```bash
+obs provision --provider srt --yes
+```
+
+You can also select it with the environment:
+
+```bash
+OPENBOX_PROVIDER=srt obs provision --yes
+```
+
+`--provider` accepts `srt` or an additional provider documented separately. `srt` is always the default for a fresh configuration. The launcher does not fall back to another provider if the selected provider is unavailable.
+
+Provisioning compiles and SHA-256-pins the selected policy, creates owner-only local mTLS material, starts the loopback service, runs a native smoke test, and writes:
+
+```text
+~/.config/openbox-sandbox/agent.env
+```
+
+Load those provider-neutral values into the Worker environment:
+
+```bash
+set -a
+. "$HOME/.config/openbox-sandbox/agent.env"
+set +a
+```
+
+See [Native srt Provider](./native-srt-provider) for policy selection, verification, network behavior, and platform limitations.
+
+## Register Command Profiles
+
+The immutable registry is the application-owned admission boundary. It fixes the executable and argument grammar; Workflow input cannot select an arbitrary executable or pass free-form `argv`.
+
+This zero-input profile is suitable for the `example.com` egress demo and for a behavioral `CONSTRAIN` replacement action:
 
 ```python title="command_registry.py"
 from openbox.sandbox import (
     GovernedCommandDefinition,
     GovernedCommandRegistry,
-    IdentifierArgument,
-    IdentifierResultField,
-    IntegerResultField,
     LiteralArgument,
-    TypedJsonResultSchema,
 )
 
 command_registry = GovernedCommandRegistry(commands=(
     GovernedCommandDefinition(
-        command_id="reconcile",
-        executable="/app/bin/reconcile",
+        command_id="example-egress",
+        executable="/usr/bin/curl",
         arguments=(
-            LiteralArgument("--batch-id"),
-            IdentifierArgument("batch_id", max_bytes=64),
-        ),
-        result_schema=TypedJsonResultSchema(
-            name="reconciliation-v1",
-            fields=(
-                IdentifierResultField("status", max_bytes=16),
-                IntegerResultField("records", minimum=0, maximum=1_000_000),
-            ),
+            LiteralArgument("--fail"),
+            LiteralArgument("--silent"),
+            LiteralArgument("--show-error"),
+            LiteralArgument("https://example.com/"),
         ),
     ),
 ))
 ```
 
-Workflow input cannot choose an arbitrary executable or free-form `argv`. The registry is the application-owned command boundary that the plugin uses for derivation and admission.
+For data-bearing commands, use bounded identifier, enum, or decimal arguments and an optional `TypedJsonResultSchema`. The registry builds equivalent Temporal derivation and dispatcher admission profiles from one definition, so profile drift fails closed.
 
-## Configure the native Worker
+## Configure the Native Worker
 
-The copy-ready integration shape is a native Temporal `Worker` with one `OpenBoxPlugin` instance:
+Pass `SandboxConfig` to the same `OpenBoxPlugin` that owns governance and telemetry:
 
 ```python title="worker.py"
 import asyncio
 import os
+from pathlib import Path
 
 from openbox import OpenBoxPlugin
 from openbox.sandbox import SandboxConfig
 from temporalio.client import Client
 from temporalio.worker import Worker
 
+from activities import governed_request
 from command_registry import command_registry
-from workflows import ReconciliationWorkflow
-from activities import fetch_batch, persist_report
+from workflows import GovernedWorkflow
 
 
 async def main() -> None:
@@ -83,14 +126,19 @@ async def main() -> None:
     worker = Worker(
         client,
         task_queue="agent-task-queue",
-        workflows=[ReconciliationWorkflow],
-        activities=[fetch_batch, persist_report],
+        workflows=[GovernedWorkflow],
+        activities=[governed_request],
         plugins=[OpenBoxPlugin(
             openbox_url=os.environ["OPENBOX_URL"],
             openbox_api_key=os.environ["OPENBOX_API_KEY"],
             governance_policy="fail_closed",
             sandbox=SandboxConfig(
                 registry=command_registry,
+                service_config=Path(os.environ["OPENBOX_SANDBOX_CONFIG_PATH"]),
+                policy=Path(os.environ["OPENBOX_SANDBOX_POLICY_FILE"]),
+                ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
+                certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
+                private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
                 timeout_seconds=300,
                 heartbeat_interval_seconds=10.0,
             ),
@@ -103,68 +151,54 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-Keep Workflows and Activities focused on application-domain orchestration. The plugin owns OpenBox registration, interception, the governed-command Activity, one-attempt scheduling, enforcement, heartbeats, result mapping, and cancellation cleanup. All OpenBox setup stays in the plugin initializer.
+The plugin intercepts the application's Activity. It does not require a second Worker or a plugin-owned public Activity in Workflow code.
 
-## Security and history boundaries
+## Demo: Behavioral CONSTRAIN Interception
 
-- Workflow history contains only bounded structured command data and results, never raw `argv`, stdout, stderr, credentials, policy documents, or authority material.
-- The plugin schedules at most one governed-command Activity attempt and rejects any attempt number other than `1`.
-- Raw output is bounded and parsed on the Activity Worker. Only metadata and values admitted by the registered result schema become durable results.
-- Authorization and execution evidence are different. A governance decision or authorization receipt proves permission, not execution.
-- Cancellation waits for the dispatch cleanup boundary before the Activity finishes cancelling.
+The demo target is `https://example.com/`.
 
-## Result contract
+1. Provision the dev allowlist template, which allows `/usr/bin/curl` to reach only `example.com:443`.
+2. Register the zero-input `example-egress` profile shown above.
+3. Configure a behavioral rule whose started hook returns `CONSTRAIN` and the `example-egress` profile for the governed host operation.
+4. Run the Workflow and attempt the governed operation normally.
+5. The started-hook verdict aborts the host action. The integration dispatches `example-egress` once through the native sandbox and attaches its outcome to the Activity result.
+6. Open **Agent → Verify → Sessions → Tree** and inspect the child `sandbox_execution` span.
 
-The bounded governed-command result reports:
+The expected application log includes the semantic evidence:
 
-| Field | Meaning |
+```text
+Host action intercepted by behavioral CONSTRAIN; using sandbox execution outcome
+```
+
+The expected sandbox disposition is `executed_in_sandbox`; no host side effect occurs. A completed-hook `sandbox_execution` event is evidence of the replacement execution, not a second routing trigger.
+
+## Result and Console Evidence
+
+The bounded result reports the admitted profile, disposition, exit code, timeout and cleanup states, stdout/stderr byte counts, and values accepted by an optional typed-result schema. Raw command output and credentials remain outside Workflow history.
+
+The `sandbox_execution` span provides the operational evidence:
+
+| Evidence | What to check |
 |---|---|
-| `profile_id` | Registered profile that derived and admitted the command |
-| `disposition` | Successful `CONSTRAIN` + `run_in_sandbox` produces `executed_in_sandbox`; an `ALLOW` path can produce `executed_on_host` |
-| `exit_code` | Validated process exit code |
-| `timeout_status` | Terminal timeout status reported by execution |
-| `cleanup_status` | `deleted` after sandbox deletion, `failed` when cleanup failed, or `not_needed` when no sandbox cleanup applied |
-| `stdout_bytes`, `stderr_bytes` | Output sizes only, not output bodies |
-| `typed_result` | Optional values admitted by the registered `TypedJsonResultSchema` |
+| Dispatch | provider `srt`, profile ID, stable dispatch ID, `executed_in_sandbox` disposition |
+| Process | exit code, timeout status, cleanup status, output byte counts and hashes |
+| Network | `openbox.sandbox.egress.<n>.decision`, `.host`, and `.port` |
+| Violations | macOS `openbox.sandbox.violations.count` and `.categories` when Seatbelt recorded denials |
 
-The Workflow result stays bounded and excludes stdout/stderr bodies. The plugin's wrapper-owned `ActivityCompleted` governance event separately sends bounded stdout/stderr content and the admitted typed-result values so the console can render execution evidence without putting raw output into Workflow history.
+Authorization and execution evidence are different. The span is correlated, bounded runtime evidence; it is not a portable signed execution receipt.
 
-In **Verify → Sessions → Tree**, the resulting `sandbox_execution` span shows `disposition`, `exit_code`, stdout/stderr content and byte counts, and typed values. A typed `http_status` is mapped to `http.response.status_code` and displayed as the activity's HTTP-style status badge; when no HTTP status exists, the badge shows the process exit code.
+## Fail-Closed and History Boundaries
 
-An authorization decision is not independent proof that execution occurred. The result is bounded, lifecycle-correlated reporting; it is not a portable signed execution receipt.
-
-## Fail-closed behavior
-
-The plugin rejects unknown profiles, invalid structured arguments, malformed or oversized results, nonterminal execution, missing execution metadata, unexpected Activity attempts, and unsupported `CONSTRAIN` decisions. Governed-command failures are non-retryable because a second Activity attempt could repeat a side effect.
-
-### Host-result caveat
-
-The plugin can accept `executed_on_host` after dispatch and return its bounded result. It does not reject that disposition, prevent a host attempt, or make result validation a host-path control. If Core returns `ALLOW`, the dispatcher host path may run the subprocess.
-
-A zero-host deployment therefore needs both controls:
-
-1. Core policy must return exactly `CONSTRAIN` for the governed command.
-2. The dispatcher deployment must have no available host execution path.
-
-Do not rely on Temporal result handling for host-path enforcement.
-
-## Cancellation and cleanup
-
-On cancellation, the plugin cancels in-flight dispatch and waits for the dispatcher to cross its cleanup boundary. The dispatcher must own deletion after any create that may have succeeded. `cleanup_status="deleted"` confirms sandbox deletion, `"not_needed"` means no sandbox cleanup applied, and `"failed"` requires reconciliation through the sandbox runtime's cleanup mechanism.
-
-## Deployment wrapper
-
-`GovernedCommandDeployment` is a thin operational wrapper for validated manifests, cleanup reconciliation, and Worker deployment settings. Internally it builds `OpenBoxPlugin(...)` and returns a native `Worker(..., plugins=[openbox_plugin])`. It does not define a second OpenBox integration surface; use the direct plugin shape above for normal application setup.
-
-## Plugin-only E2E evidence
-
-The archived [plugin-only live evidence](https://github.com/OpenBox-AI/openbox-sandbox-poc/blob/48cb20c/docs/proofs/2026-08-10/plugin-only-e2e/live-evidence.json) records a native plugin Worker completing one governed Activity attempt with `CONSTRAIN` + `run_in_sandbox`, sandbox create-exec-delete ordering, `cleanup_status="deleted"`, no host execution, and successful Workflow replay.
-
-This artifact is scoped runtime evidence from the exercised stack. It does not claim a portable signed execution receipt, kernel teardown proof, source provenance, or formal gate approval.
+- Command profiles admit exact executables and bounded structured arguments; they never reconstruct a shell string.
+- The dispatcher makes at most one possible execution dispatch for a dispatch ID.
+- Unknown profiles, malformed arguments, unsupported constraints, nonterminal execution, invalid results, and provider failures execute nowhere else.
+- Cancellation waits for provider-owned cleanup. If terminal absence cannot be confirmed, cleanup remains pending for reconciliation without another command dispatch.
+- A zero-host deployment must ensure the applicable Core result is `CONSTRAIN`. An `ALLOW` result follows the application's normal host path by design.
+- Temporal retries must not be used to repeat an indeterminate side effect; reconcile external state instead.
 
 ## Related
 
-- **[Governance Decisions](/core-concepts/governance-decisions)** — canonical `CONSTRAIN` semantics
-- **[Configuration](/developer-guide/temporal-python/configuration)** — `OpenBoxPlugin` and `SandboxConfig` options
-- **[Error Handling](/developer-guide/temporal-python/error-handling)** — Temporal error types and recovery
-- **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — integration-neutral isolation model
+- **[Native srt Provider](./native-srt-provider)** — install, provision, policies, egress, monitoring, and limitations
+- **[Configuration](./configuration)** — `OpenBoxPlugin` and `SandboxConfig` options
+- **[Error Handling](./error-handling)** — terminal and indeterminate command failures
+- **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — integration-neutral governance model

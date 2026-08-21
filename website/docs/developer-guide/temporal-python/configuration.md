@@ -171,7 +171,7 @@ instrument_file_io=True   # Capture file operations
 
 ### sandbox
 
-`SandboxConfig` enters only through `OpenBoxPlugin`. Its required `registry` is an immutable `GovernedCommandRegistry` that defines the admitted executables, bounded arguments, and typed result schemas. The plugin owns governed-command Activity registration, interception, dispatch, heartbeats, result mapping, and cleanup:
+`SandboxConfig` enters only through `OpenBoxPlugin`. Its required `registry` is an immutable `GovernedCommandRegistry` that defines the admitted executables, bounded arguments, and typed result schemas. The plugin intercepts the application's Activity at the Worker boundary and owns command derivation, dispatch, heartbeats, result mapping, and cleanup:
 
 ```python
 from openbox import OpenBoxPlugin
@@ -204,7 +204,9 @@ plugin = OpenBoxPlugin(
 | `heartbeat_interval_seconds` | Number from 0.1 through 60 |
 | `stdout_bytes`, `stderr_bytes` | Optional positive output bounds |
 
-For a registered command, `CONSTRAIN` with exactly `constraints: ["run_in_sandbox"]` selects sandbox execution. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
+For a registered command, `CONSTRAIN` selects sandbox execution and aborts the corresponding host action before its side effect. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
+
+The sandbox runtime defaults to the native `srt` provider. Provision it with `obs provision --provider srt --yes` (or omit `--provider` because `srt` is the default), then load `~/.config/openbox-sandbox/agent.env`. Additional providers are documented separately.
 
 See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
 
