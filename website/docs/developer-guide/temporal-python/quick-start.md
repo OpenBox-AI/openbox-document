@@ -36,8 +36,12 @@ Run the commands from the demo directory.
    the checksums, verifies each SHA-256, and starts the sandbox stack.
 
    ```bash
-   ./obs provision --provider native --clean-rerun --yes
+   ./obs provision --clean-rerun --yes
    ```
+
+   The defaults apply: the `native` provider and the development allowlist.
+   Use `--provider openshell` or an explicit policy file only when you need
+   to override them.
 
 3. Provision the native provider with the development allowlist.
 
