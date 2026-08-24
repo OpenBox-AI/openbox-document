@@ -1,7 +1,7 @@
 ---
 title: Quick Start
-description: "Provision the native sandbox and run the example.com demo in five commands."
-llms_description: Five-command native sandbox quick start
+description: "Provision the native sandbox and run the example.com demo."
+llms_description: Native sandbox quick start for the example.com demo
 tags:
   - sdk
   - temporal
@@ -10,27 +10,63 @@ tags:
 
 # Quick Start
 
-This macOS Apple Silicon example provisions the `native` provider with the development allowlist, loads its Worker environment, and runs the demo against `https://example.com/`. Install `gh`, OpenSSL, `uv`, and the Temporal SDK's sandbox extra first.
+This procedure provisions the default `native` provider and runs the demo against `https://example.com/`.
 
-Run these five commands from the demo directory:
+## Requirements
 
-```bash
-# 1. Download one complete release. Keep its launcher, service, policy templates, and SHA256SUMS together.
-gh release download --repo OpenBox-AI/openbox-sandbox
+This example requires macOS on Apple Silicon. Install these tools first:
 
-# 2. Make the matching binaries executable and expose the launcher as ./obs.
-chmod +x obs-darwin-arm64 openbox-sandbox-darwin-arm64 && cp obs-darwin-arm64 obs
+- GitHub CLI (`gh`)
+- OpenSSL
+- `uv`
+- The Temporal SDK sandbox extra
 
-# 3. Re-provision native with the example.com allowlist.
-./obs provision --provider native --clean-rerun --yes --policy-file "$PWD/policy-allow-network-dev.yaml"
+Run the commands from the demo directory.
 
-# 4. Load the provider-neutral SDK environment.
-set -a; source "$HOME/.config/openbox-sandbox/agent.env"; set +a
+## Provision and Run
 
-# 5. Run the payment-batch demo.
-uv run python .
-```
+1. Download all assets from one release.
 
-On Linux x86_64, use the matching Linux launcher and service names and install bubblewrap before provisioning. Provisioning has no provider fallback: if the selected runtime or policy cannot be verified, it stops.
+   ```bash
+   gh release download --repo OpenBox-AI/openbox-sandbox
+   ```
 
-For release verification, platform prerequisites, and other flags, continue to [Provisioning](./provisioning). For the application and governance setup behind the final command, see the [Demo Walkthrough](./demo-walkthrough).
+2. Verify the release SHA-256 manifest. Then prepare the launcher and service.
+
+   ```bash
+   shasum -a 256 -c SHA256SUMS
+   chmod +x obs-darwin-arm64 openbox-sandbox-darwin-arm64
+   cp obs-darwin-arm64 obs
+   ```
+
+3. Provision the native provider with the development allowlist.
+
+   ```bash
+   ./obs provision --provider native --clean-rerun --yes \
+     --policy-file "$PWD/policy-allow-network-dev.yaml"
+   ```
+
+4. Load the generated Worker environment.
+
+   ```bash
+   set -a
+   . "$HOME/.config/openbox-sandbox/agent.env"
+   set +a
+   ```
+
+5. Run the payment-batch demo.
+
+   ```bash
+   uv run python .
+   ```
+
+## Linux
+
+On Linux x86_64, use the matching Linux launcher and service. Install bubblewrap before provisioning.
+
+Provisioning has no provider fallback. It stops if it cannot verify the selected runtime or policy.
+
+## Next Steps
+
+- [Provisioning](./provisioning) covers release verification, platform requirements, and launcher flags.
+- [Demo Walkthrough](./demo-walkthrough) explains the application and governance configuration.

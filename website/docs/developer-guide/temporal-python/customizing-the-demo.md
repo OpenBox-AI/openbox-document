@@ -12,7 +12,7 @@ tags:
 
 # Extending the Demo Agent
 
-The demo agent ships with built-in scenarios like travel booking and banking, but you can add your own goals, tools, and integrations. This guide covers the extension points in the demo repo — how to define what your agent can do, wire up the tools it needs, and register everything so the system picks it up.
+The demo agent ships with built-in scenarios like travel booking and banking, but you can add your own goals, tools, and integrations. This guide covers the extension points in the demo repo: how to define what your agent can do, wire up the tools it needs, and register everything so the system picks it up.
 
 OpenBox automatically governs all tool calls regardless of type. You don't need any extra configuration to get governance coverage for new goals or tools.
 
@@ -26,10 +26,10 @@ A **goal** is a scenario configuration that tells the agent what it's trying to 
 
 Tools come in two types:
 
-- **Native tools** — Custom Python functions implemented directly in the codebase. Use these for business logic specific to your application.
-- **MCP tools** — External tools accessed via [Model Context Protocol](https://modelcontextprotocol.io/) servers. Use these for third-party integrations (Stripe, databases, APIs) without writing custom code.
+- **Native tools**: Custom Python functions implemented directly in the codebase. Use these for business logic specific to your application.
+- **MCP tools**: External tools accessed via [Model Context Protocol](https://modelcontextprotocol.io/) servers. Use these for third-party integrations (Stripe, databases, APIs) without writing custom code.
 
-A goal declares which tools it needs — both native and MCP. The agent follows the goal's description to orchestrate tool calls in the right order. The workflow engine automatically detects whether a tool is native or MCP and routes it accordingly.
+A goal declares which tools it needs: both native and MCP. The agent follows the goal's description to orchestrate tool calls in the right order. The workflow engine automatically detects whether a tool is native or MCP and routes it accordingly.
 
 ## Project Structure
 
@@ -64,7 +64,7 @@ Create a new file in `goals/` (e.g., `goals/support.py`). Each goal is an `Agent
 | `example_conversation_history` | `str` | Sample interaction showing the expected flow |
 | `mcp_server_definition` | `MCPServerDefinition` | _(Optional)_ MCP server configuration for external tools |
 
-Here's the simplest real goal in the demo — checking PTO balance, which uses a single native tool:
+Here's the simplest real goal in the demo: checking PTO balance, which uses a single native tool:
 
 ```python title="goals/hr.py"
 from typing import List
@@ -196,7 +196,7 @@ The return dict should match the output format shown in the goal's `example_conv
 
 Two registration steps are required:
 
-**1. Add to `tools/__init__.py`** — import the function and add a case to `get_handler()`:
+**1. Add to `tools/__init__.py`**: import the function and add a case to `get_handler()`:
 
 ```python title="tools/__init__.py"
 from .hr.current_pto import current_pto
@@ -208,7 +208,7 @@ def get_handler(tool_name: str):
     raise ValueError(f"Unknown tool: {tool_name}")
 ```
 
-**2. Add to `workflows/workflow_helpers.py`** — the `is_mcp_tool()` function in this file determines whether a tool is native or MCP. Native tools are identified by successfully looking them up in `get_handler()`. As long as your tool is registered in `tools/__init__.py`, routing works automatically.
+**2. Add to `workflows/workflow_helpers.py`**: the `is_mcp_tool()` function in this file determines whether a tool is native or MCP. Native tools are identified by successfully looking them up in `get_handler()`. As long as your tool is registered in `tools/__init__.py`, routing works automatically.
 
 ## Adding MCP Tools
 
@@ -293,7 +293,7 @@ goal_my_mcp = AgentGoal(
 
 ### How MCP Tools Are Routed
 
-MCP tools are loaded automatically when the workflow starts and converted to `ToolDefinition` objects. The `is_mcp_tool()` function in `workflows/workflow_helpers.py` distinguishes native tools from MCP tools by attempting a `get_handler()` lookup — if the lookup fails, the tool is routed to the MCP server. No additional wiring is needed.
+MCP tools are loaded automatically when the workflow starts and converted to `ToolDefinition` objects. The `is_mcp_tool()` function in `workflows/workflow_helpers.py` distinguishes native tools from MCP tools by attempting a `get_handler()` lookup: if the lookup fails, the tool is routed to the MCP server. No additional wiring is needed.
 
 ## Tool Confirmation Patterns
 
@@ -363,7 +363,7 @@ book_pto_tool = ToolDefinition(
 
 ## Next Steps
 
-- **[Plugin Configuration](/developer-guide/temporal-python/configuration)** — Fine-tune timeouts, fail policies, and event filtering
-- **[Error Handling](/developer-guide/temporal-python/error-handling)** — Handle governance decisions in your code
-- **[Configure Trust Controls](/trust-lifecycle/authorize)** — Set up guardrails, policies, and behavioral rules
-- **[Available Goals](/developer-guide/temporal-python/integration-walkthrough#available-goals)** — See the full list of built-in scenarios
+- **[Plugin Configuration](/developer-guide/temporal-python/configuration)**: Fine-tune timeouts, fail policies, and event filtering
+- **[Error Handling](/developer-guide/temporal-python/error-handling)**: Handle governance decisions in your code
+- **[Configure Trust Controls](/trust-lifecycle/authorize)**: Set up guardrails, policies, and behavioral rules
+- **[Available Goals](/developer-guide/temporal-python/integration-walkthrough#available-goals)**: See the full list of built-in scenarios

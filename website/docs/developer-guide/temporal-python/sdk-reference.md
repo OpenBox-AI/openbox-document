@@ -23,7 +23,7 @@ tags:
 | **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal plugin setup |
 
 :::info What the Plugin Does
-The plugin's primary job is to **connect your Temporal worker to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform — not in the plugin.
+The plugin's primary job is to **connect your Temporal worker to OpenBox** and send workflow/activity events to the platform. All trust logic, policies, and UI management happens on the platform. It does not happen in the plugin.
 :::
 
 ## Philosophy
@@ -34,8 +34,8 @@ The plugin is intentionally minimal:
 - **Plugin-owned setup** for Worker interception, Workflows, and Activities
 - **Zero OpenBox setup** in Workflow and Activity code
 - **One sandbox option** on the same plugin for governed command interception
-- **Automatic telemetry** — captures HTTP, database, and file I/O operations
-- **Composable** — works alongside other Temporal plugins (e.g., `OpenTelemetryPlugin`)
+- **Automatic telemetry**: captures HTTP, database, and file I/O operations
+- **Composable**: works alongside other Temporal plugins (e.g., `OpenTelemetryPlugin`)
 
 ## Supported Engines
 
@@ -48,9 +48,9 @@ The plugin is intentionally minimal:
 
 See:
 
-1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)** — Add OpenBox to an existing Temporal worker
-2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)** — End-to-end setup from scratch
-3. **[Configuration](/developer-guide/temporal-python/configuration)** — All plugin options
+1. **[Wrap an Existing Agent](/getting-started/temporal/wrap-an-existing-agent)**: Add OpenBox to an existing Temporal worker
+2. **[Temporal (Python)](/developer-guide/temporal-python/integration-walkthrough)**: End-to-end setup from scratch
+3. **[Configuration](/developer-guide/temporal-python/configuration)**: All plugin options
 
 ## Plugin Usage
 

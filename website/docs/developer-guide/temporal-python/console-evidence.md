@@ -1,7 +1,7 @@
 ---
 title: Console Evidence
-description: "Read bounded sandbox execution evidence in the OpenBox session tree."
-llms_description: sandbox_execution span keys, result bounds, and evidence limits
+description: "Inspect bounded sandbox execution evidence in the OpenBox session tree."
+llms_description: Sandbox execution span keys, result bounds, and evidence limits
 tags:
   - sdk
   - temporal
@@ -10,26 +10,51 @@ tags:
 
 # Console Evidence
 
-Open **Agent → Verify → Sessions → Tree** and expand the `sandbox_execution` child span beneath the governed Activity. For the [payment-batch demo](./demo-walkthrough), first confirm that the Activity did not complete on its host path and that the sandbox disposition is `executed_in_sandbox`.
+The `sandbox_execution` span records the bounded result of one admitted sandbox dispatch.
 
-## Read the Span
+## Open the Span
 
-| Evidence | What to check |
+1. Open **Agent > Verify > Sessions > Tree**.
+2. Select the governed session.
+3. Expand the `sandbox_execution` child span under the governed Activity.
+
+For the [payment-batch demo](./demo-walkthrough), confirm two facts first:
+
+- The Activity did not complete through its host path.
+- `openbox.sandbox.disposition` is `executed_in_sandbox`.
+
+## Check the Evidence
+
+| Evidence group | Fields to check |
 |---|---|
-| Dispatch | Provider `native`, admitted profile `example-egress`, stable dispatch identity, and `openbox.sandbox.disposition=executed_in_sandbox` |
-| Process | `openbox.sandbox.exit_code`, timeout status, cleanup status, and bounded stdout/stderr byte counts and hashes |
-| Network | `openbox.sandbox.egress.<n>.decision`, `openbox.sandbox.egress.<n>.host`, and `openbox.sandbox.egress.<n>.port`; the demo destination is `example.com:443` |
-| Violations | `openbox.sandbox.violations.count` and `openbox.sandbox.violations.categories` when macOS Seatbelt recorded denials |
-| Typed result | Accepted values under `openbox.sandbox.result.<field>` when the command profile defines a `TypedJsonResultSchema` |
+| Dispatch | Provider `native`, profile `example-egress`, stable dispatch identity, and `openbox.sandbox.disposition=executed_in_sandbox` |
+| Process | `openbox.sandbox.exit_code`, timeout status, cleanup status, and bounded stdout and stderr byte counts and hashes |
+| Network | `openbox.sandbox.egress.<n>.decision`, `openbox.sandbox.egress.<n>.host`, and `openbox.sandbox.egress.<n>.port` |
+| Violations | `openbox.sandbox.violations.count` and `openbox.sandbox.violations.categories` when macOS Seatbelt records denials |
+| Typed result | Accepted values under `openbox.sandbox.result.<field>` when the profile defines a `TypedJsonResultSchema` |
 
-The bounded Activity result reports the admitted profile, disposition, exit code, timeout and cleanup states, stdout/stderr byte counts, and values accepted by an optional typed-result schema. Raw command output and credentials remain outside Workflow history.
+The demo network destination is `example.com:443`.
+
+The bounded Activity result contains these values:
+
+- Admitted profile
+- Disposition
+- Exit code
+- Timeout status
+- Cleanup status
+- Standard output and standard error byte counts
+- Values accepted by an optional typed-result schema
+
+Raw command output and credentials do not enter Workflow history.
 
 ## Interpret the Evidence
 
-Authorization and execution answer different questions:
+Authorization and execution provide separate evidence:
 
-- The started-hook `CONSTRAIN` verdict records why the host action was replaced.
+- The started-hook `CONSTRAIN` verdict explains why the integration replaced the host action.
 - The child `sandbox_execution` span records the bounded runtime outcome.
-- A completed-hook event records that execution after it happened; it must not dispatch the command again.
+- A completed-hook event records the execution after completion. It must not dispatch the command again.
 
-The span is correlated operational evidence. It is not a portable signed execution receipt or kernel teardown attestation. If cleanup or terminal absence is uncertain, treat the command as indeterminate and reconcile external state without another dispatch.
+The span is correlated operational evidence. It is not a portable signed execution receipt. It is also not a kernel teardown attestation.
+
+Treat the command as indeterminate when cleanup or terminal absence is uncertain. Reconcile external state without another dispatch.

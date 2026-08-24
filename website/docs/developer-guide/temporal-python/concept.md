@@ -1,7 +1,7 @@
 ---
 title: Concept
-description: "How governed Temporal commands replace host actions with fail-closed sandbox execution."
-llms_description: Governed command isolation, provider selection, fail-closed behavior, and at-most-once dispatch
+description: "Learn how OpenBox routes governed commands through sandbox providers."
+llms_description: Sandbox routing, providers, evidence, and fail-closed behavior
 tags:
   - sdk
   - temporal
@@ -10,27 +10,55 @@ tags:
 
 # Governed Sandbox Commands
 
-The optional sandbox integration lets a `CONSTRAIN` verdict replace an admitted host operation with sandbox execution. `OpenBoxPlugin` intercepts the application's Activity at the Worker boundary, derives an exact command from a registered profile, and returns a bounded result to Workflow code.
-
-- `ALLOW` follows the application's normal host path.
-- `CONSTRAIN` for a registered profile aborts the host action and dispatches the derived command to the sandbox.
-- Unsupported or malformed constraints fail closed.
-- A failed sandbox dispatch never retries on the host or switches provider.
-
-The [`native` provider](./native-provider) is the default: Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux.
+OpenBox can replace a governed host action with an admitted command in an isolated sandbox.
 
 ## One Dispatch, No Fallback
 
-The dispatcher makes at most one possible execution dispatch for each stable dispatch ID. Unknown profiles, malformed arguments, unsupported constraints, nonterminal execution, invalid results, and provider failures execute nowhere else.
+Each governed operation receives one verdict:
 
-Cancellation waits for provider-owned cleanup. If terminal absence cannot be confirmed, cleanup remains pending for reconciliation; the integration does not issue another command dispatch. Do not use Temporal retries to repeat an indeterminate side effect. Reconcile the external state instead.
+- **ALLOW:** The operation runs on the host.
+- **CONSTRAIN:** The host action is aborted. OpenBox dispatches the admitted command to the sandbox.
+- **BLOCK or HALT:** The operation stops without execution.
+- **REQUIRE_APPROVAL:** The operation waits for an approval decision.
 
-A zero-host deployment must ensure the applicable Core result is `CONSTRAIN`. An `ALLOW` result uses the normal host path by design.
+A behavioral started hook returns `CONSTRAIN` before the host side effect. The integration then aborts the host action and dispatches the registered command. A completed hook records the result. It does not dispatch the command again.
 
-## Continue the Journey
+A constrained command never runs on the host. A sandbox failure also never releases the host action.
 
-1. [Run the five-command quick start](./quick-start).
-2. [Provision and verify a provider](./provisioning).
-3. [Register admitted command profiles](./command-profiles).
-4. [Walk through behavioral `CONSTRAIN` interception](./demo-walkthrough).
-5. [Read the console evidence](./console-evidence).
+## Sandbox Isolation
+
+A sandbox limits access to host resources. Its policy defines the permitted files and network destinations. The provider denies access that the policy does not permit.
+
+The default `native` provider uses operating system isolation:
+
+- **macOS:** Seatbelt through `sandbox-exec`.
+- **Linux:** bubblewrap.
+
+The optional `openshell` provider uses a microVM. Provider selection does not change the governance routing rules.
+
+## Command Admission
+
+The application registers each permitted command before the Worker starts. A command profile fixes the executable and its argument grammar. Workflow input cannot provide an arbitrary executable or a shell command string.
+
+OpenBox invokes the admitted argument vector directly. It does not reconstruct a shell command.
+
+## Safety Properties
+
+1. **Fail-closed execution:** A constrained command runs only in the selected sandbox. If policy validation, dispatch, execution, or cleanup fails, the operation fails closed.
+2. **At-most-once dispatch:** Each command has a stable dispatch identity. Retries and duplicate requests cannot cause a second dispatch.
+3. **Bounded evidence:** OpenBox records bounded output data, process status, cleanup status, network decisions, and available isolation violations.
+
+## Providers
+
+- **`native` (default):** Uses Seatbelt on macOS and bubblewrap on Linux.
+- **`openshell` (optional):** Uses a microVM for a guest-kernel boundary.
+
+Select a provider with `--provider native|openshell` or `OPENBOX_PROVIDER`. OpenBox does not switch providers after a provisioning or execution failure.
+
+## Next Steps
+
+- [Quick Start](./quick-start)
+- [Provisioning](./provisioning)
+- [Command Profiles](./command-profiles)
+- [Demo Walkthrough](./demo-walkthrough)
+- [Console Evidence](./console-evidence)
