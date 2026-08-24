@@ -447,7 +447,6 @@ const sidebars = {
             {
               type: 'category',
               label: 'Governed Sandbox Commands',
-              className: 'sidebar-item--diff',
               items: [
                 'developer-guide/temporal-python/concept',
                 'developer-guide/temporal-python/quick-start',
