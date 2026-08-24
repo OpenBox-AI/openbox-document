@@ -24,21 +24,19 @@ Run the commands from the demo directory.
 
 ## Provision and Run
 
-1. Download all assets from one release. No GitHub account or CLI is required.
+1. Download the launcher. Nothing else is needed: the wizard fetches and
+   verifies every other asset itself.
 
    ```bash
-   curl -fL -o obs-darwin-arm64 https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
-   curl -fL -o openbox-sandbox-darwin-arm64 https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/openbox-sandbox-darwin-arm64
-   curl -fL -o policy-allow-network-dev.yaml https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/policy-allow-network-dev.yaml
-   curl -fL -o SHA256SUMS https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
+   curl -fL -o obs https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
+   chmod +x obs
    ```
 
-2. Verify the release SHA-256 manifest. Then prepare the launcher and service.
+2. Provision. The wizard downloads the service, the policy templates, and
+   the checksums, verifies each SHA-256, and starts the sandbox stack.
 
    ```bash
-   shasum -a 256 -c SHA256SUMS
-   chmod +x obs-darwin-arm64 openbox-sandbox-darwin-arm64
-   cp obs-darwin-arm64 obs
+   ./obs provision --provider native --clean-rerun --yes
    ```
 
 3. Provision the native provider with the development allowlist.
