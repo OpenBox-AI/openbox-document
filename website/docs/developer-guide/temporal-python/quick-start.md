@@ -206,9 +206,23 @@ The second line loads the sandbox boundary values that provisioning generated. `
 
 ## 5. Prove the policy
 
-Change the last `LiteralArgument` to `https://api.github.com/` and run it again. The command still executes in the sandbox, but the proxy refuses the destination and `curl` exits `56`.
+Change the last `LiteralArgument` to `https://api.github.com/` and run it again. The workflow now fails, which is the correct outcome.
 
-Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span to see the refusal. [Console Evidence](./console-evidence) lists every recorded field.
+The command still runs in the sandbox. The proxy compares the destination with the pinned policy, refuses it, and `curl` exits `56`:
+
+```text
+exit_code: 56
+stdout:    {"http_status":000,"local_ip":"127.0.0.1","remote_ip":"127.0.0.1"}
+evidence:  [{'decision': 'denied', 'host': 'api.github.com', 'port': 443}]
+```
+
+`curl` writes `000` for a request it never completed. That is not a valid JSON number, so the typed result schema rejects the output and the activity fails closed:
+
+```text
+ApplicationError: GovernedCommandResultInvalid: Governed command typed result rejected
+```
+
+A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
 
 ## Troubleshooting
 
