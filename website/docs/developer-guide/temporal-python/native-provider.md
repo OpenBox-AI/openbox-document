@@ -1,24 +1,24 @@
 ---
-title: Native srt Provider
-sidebar_label: Native srt Provider
+title: Native Provider
+sidebar_label: Native Provider
 sidebar_position: 1
 description: "Install and provision the default OpenBox native sandbox provider on macOS or Linux."
 llms_description: Native sandbox-exec and bubblewrap provisioning, policy, egress, evidence, and limitations
-slug: native-srt-provider
+slug: native-provider
 tags:
   - sdk
   - temporal
   - governance
 ---
 
-# Native `srt` Provider
+# Native Provider
 
-`srt` is the default OpenBox Sandbox provider. It invokes exact `argv` under native operating-system isolation:
+`native` is the default OpenBox Sandbox provider. It invokes exact `argv` under native operating-system isolation:
 
 - **macOS:** Seatbelt through `/usr/bin/sandbox-exec`
 - **Linux:** bubblewrap (`bwrap`)
 
-The name describes the native SRT-style boundary; it is not a Node/npm CLI. For a guest-kernel boundary, see the optional [OpenShell Provider (VM)](./openshell-provider).
+It is conceptually similar to Anthropic's sandbox-runtime; implemented natively without adopting the Node/npm CLI. For a guest-kernel boundary, see the optional [OpenShell Provider (VM)](./openshell-provider).
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ Verify the downloaded release before provisioning. Use the release's `SHA256SUMS
 
 ## Provision
 
-The shortest supported command selects `srt` automatically:
+The shortest supported command selects `native` automatically:
 
 ```bash
 obs provision --yes
@@ -46,13 +46,13 @@ obs provision --yes
 For an explicit, auditable selection:
 
 ```bash
-obs provision --provider srt --yes
+obs provision --provider native --yes
 ```
 
 The environment form is equivalent:
 
 ```bash
-OPENBOX_PROVIDER=srt obs provision --yes
+OPENBOX_PROVIDER=native obs provision --yes
 ```
 
 There is no provider fallback. If the native service binary, platform primitive, or selected policy is unavailable, provisioning stops.
@@ -91,7 +91,7 @@ The templates marked `dev` are non-production. Provisioned files are immutable i
 Select a specific template explicitly:
 
 ```bash
-obs provision --provider srt --yes \
+obs provision --provider native --yes \
   --policy-file "$PWD/policy-allow-network-dev.yaml"
 ```
 
@@ -135,7 +135,7 @@ The provider supports non-interactive, registered commands only. It accepts no c
 ```bash
 obs status
 obs verify
-obs provision --provider srt --clean-rerun --yes
+obs provision --provider native --clean-rerun --yes
 obs uninstall
 ```
 

@@ -18,7 +18,7 @@ The optional sandbox integration makes a `CONSTRAIN` verdict replace an admitted
 - An unsupported or malformed constraint fails closed.
 - A sandbox failure never retries on the host and never switches provider.
 
-The default provider is the native [`srt` provider](./native-srt-provider): Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux. The optional [OpenShell provider](./openshell-provider) adds a microVM boundary.
+The default provider is the [`native` provider](./native-provider): Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux. The optional [OpenShell provider](./openshell-provider) adds a microVM boundary.
 
 ## Installation
 
@@ -34,7 +34,7 @@ The native provider does **not** require Docker, a VM runtime, administrator acc
 
 ## Provision the Runtime
 
-Provisioning defaults to `srt`:
+Provisioning defaults to `native`:
 
 ```bash
 obs provision --yes
@@ -45,16 +45,16 @@ obs verify
 The explicit equivalent is:
 
 ```bash
-obs provision --provider srt --yes
+obs provision --provider native --yes
 ```
 
 You can also select it with the environment:
 
 ```bash
-OPENBOX_PROVIDER=srt obs provision --yes
+OPENBOX_PROVIDER=native obs provision --yes
 ```
 
-`--provider` accepts `srt` or `openshell`. `srt` is always the default for a fresh configuration. The launcher does not fall back to another provider if the selected provider is unavailable.
+`--provider` accepts `native` or `openshell`. `native` is always the default for a fresh configuration. The launcher does not fall back to another provider if the selected provider is unavailable.
 
 Provisioning compiles and SHA-256-pins the selected policy, creates owner-only local mTLS material, starts the loopback service, runs a native smoke test, and writes:
 
@@ -70,7 +70,7 @@ set -a
 set +a
 ```
 
-See [Native srt Provider](./native-srt-provider) for policy selection, verification, network behavior, and platform limitations.
+See [Native Provider](./native-provider) for policy selection, verification, network behavior, and platform limitations.
 
 ## Register Command Profiles
 
@@ -180,7 +180,7 @@ The `sandbox_execution` span provides the operational evidence:
 
 | Evidence | What to check |
 |---|---|
-| Dispatch | provider `srt`, profile ID, stable dispatch ID, `executed_in_sandbox` disposition |
+| Dispatch | provider `native`, profile ID, stable dispatch ID, `executed_in_sandbox` disposition |
 | Process | exit code, timeout status, cleanup status, output byte counts and hashes |
 | Network | `openbox.sandbox.egress.<n>.decision`, `.host`, and `.port` |
 | Violations | macOS `openbox.sandbox.violations.count` and `.categories` when Seatbelt recorded denials |
@@ -198,7 +198,7 @@ Authorization and execution evidence are different. The span is correlated, boun
 
 ## Related
 
-- **[Native srt Provider](./native-srt-provider)** — install, provision, policies, egress, monitoring, and limitations
+- **[Native Provider](./native-provider)** — install, provision, policies, egress, monitoring, and limitations
 - **[OpenShell Provider (VM)](./openshell-provider)** — optional microVM prerequisites, caches, registry mode, and CA trust
 - **[Configuration](./configuration)** — `OpenBoxPlugin` and `SandboxConfig` options
 - **[Error Handling](./error-handling)** — terminal and indeterminate command failures

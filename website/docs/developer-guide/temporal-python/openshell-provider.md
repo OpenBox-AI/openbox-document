@@ -18,7 +18,7 @@ OpenShell is an optional OpenBox Sandbox provider for commands that need a guest
 - **Hypervisor.framework** on macOS; or
 - **KVM** on Linux.
 
-Choose it explicitly with `--provider openshell`. The launcher never selects it as a fallback from the default native [`srt` provider](./native-srt-provider), and an OpenShell failure never retries the command under `srt` or on the host.
+Choose it explicitly with `--provider openshell`. The launcher never selects it as a fallback from the default [`native` provider](./native-provider), and an OpenShell failure never retries the command under `native` or on the host.
 
 ## When to Choose OpenShell
 
@@ -29,7 +29,7 @@ Use OpenShell when:
 - the command needs a prepared Linux guest image; or
 - VM-backed isolation is part of your deployment requirement.
 
-Prefer `srt` for the shortest local setup, lower startup overhead, no image cache, and native macOS per-domain filtering. OpenShell adds a gateway, VM driver, guest image, cache lifecycle, and platform prerequisites.
+Prefer `native` for the shortest local setup, lower startup overhead, no image cache, and native macOS per-domain filtering. OpenShell adds a gateway, VM driver, guest image, cache lifecycle, and platform prerequisites.
 
 ## Platform Matrix
 
@@ -93,7 +93,7 @@ Provisioning starts the OpenShell gateway, VM driver, and loopback OpenBox mTLS 
 ~/.config/openbox-sandbox/agent.env
 ```
 
-Load that file into the Worker environment exactly as for `srt`. No Python application changes are required when switching an already-registered command profile between providers.
+Load that file into the Worker environment exactly as for `native`. No Python application changes are required when switching an already-registered command profile between providers.
 
 ## Prepared VM Caches
 
@@ -194,7 +194,7 @@ The VM supplies a guest-kernel/hardware isolation boundary. Policy enforcement i
 
 ## Limitations and Operations
 
-- OpenShell has more moving parts and higher startup/resource cost than `srt`.
+- OpenShell has more moving parts and higher startup/resource cost than `native`.
 - Cache warming needs `e2fsprogs` even when no container engine is used.
 - Registry mode needs host CA trust; `--yes` does not silently bypass it.
 - Linux needs readable KVM and glibc release compatibility.
@@ -215,5 +215,5 @@ obs uninstall
 ## Related
 
 - **[Governed Sandbox Commands](./governed-sandbox-commands)** — shared Temporal profiles, interception, results, and evidence
-- **[Native srt Provider](./native-srt-provider)** — default provider and native platform limits
+- **[Native Provider](./native-provider)** — default provider and native platform limits
 - **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — provider-neutral governance model
