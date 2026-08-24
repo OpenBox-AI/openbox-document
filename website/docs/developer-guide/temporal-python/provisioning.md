@@ -1,7 +1,7 @@
 ---
 title: Provisioning
 description: "Select, verify, and provision an OpenBox Sandbox provider and policy."
-llms_description: Provider flags, policy templates, release verification, and generated Worker environment
+llms_description: Provider selection, policy templates, release verification, and Worker environment
 tags:
   - sdk
   - temporal
@@ -10,19 +10,47 @@ tags:
 
 # Provisioning
 
+Provisioning verifies a sandbox release, selects a provider and policy, and creates the local runtime configuration.
+
+## Install the SDK
+
 Install the Temporal SDK with sandbox support:
 
 ```bash
 pip install "openbox-temporal-sdk-python[sandbox]"
 ```
 
-Download the matching `obs-<platform>` launcher and `openbox-sandbox-<platform>` service from one [OpenBox Sandbox release](https://github.com/OpenBox-AI/openbox-sandbox/releases). Keep the launcher, service, policy templates, `SHA256SUMS`, verification bundle, and SBOM files together. Rename or invoke the launcher as `obs`; the launcher and service are not interchangeable.
+## Download and Verify a Release
 
-Before running either binary, verify the release with its shipped `verify-release.sh` and `SHA256SUMS`. Do not mix assets from different releases. Provisioning verifies the selected service and policy again, compiles the policy, and pins its SHA-256 in `service.json`. The service checks that policy identity and compiled-profile digest before every execution.
+Download these matching assets from one [OpenBox Sandbox release](https://github.com/OpenBox-AI/openbox-sandbox/releases):
+
+- The `obs-<platform>` launcher
+- The `openbox-sandbox-<platform>` service
+- The policy templates
+- `SHA256SUMS`
+- The SBOM files
+
+Keep all assets together. Do not mix assets from different releases. The launcher and service are not interchangeable. Rename the launcher to `obs`, or invoke it by its downloaded name.
+
+Before you run either binary, verify all downloaded assets against `SHA256SUMS`.
+
+On macOS, run:
+
+```bash
+shasum -a 256 -c SHA256SUMS
+```
+
+On Linux, run:
+
+```bash
+sha256sum -c SHA256SUMS
+```
+
+Provisioning verifies the selected service and policy again. It compiles the policy and pins its SHA-256 digest in `service.json`. The service verifies the policy identity and compiled-profile digest before every execution.
 
 ## Select a Provider
 
-Fresh configurations default to `native`. These forms are equivalent:
+A new configuration uses `native` by default. The following commands are equivalent:
 
 ```bash
 obs provision --yes
@@ -30,9 +58,13 @@ obs provision --provider native --yes
 OPENBOX_PROVIDER=native obs provision --yes
 ```
 
-`--provider` accepts `native` or `openshell`; the command-line flag overrides `OPENBOX_PROVIDER`. Selection is explicit and fail-closed. If the selected provider is unavailable or fails verification, the launcher does not switch providers.
+The `--provider` option accepts `native` or `openshell`. The command-line option overrides `OPENBOX_PROVIDER`.
 
-Use `--yes` to accept non-privileged defaults without prompts. It does not bypass platform checks, artifact verification, or required trust setup. Use `--clean-rerun` to remove launcher-owned runtime state and provision it again:
+Provider selection fails closed. The launcher does not switch providers when the selected provider is unavailable or fails verification.
+
+Use `--yes` to accept non-privileged defaults without prompts. This option does not bypass platform checks, artifact verification, or required trust setup.
+
+Use `--clean-rerun` to remove launcher-owned runtime state and provision it again:
 
 ```bash
 obs provision --provider native --clean-rerun --yes
@@ -44,39 +76,52 @@ The native release includes these templates:
 
 | Template | Behavior |
 |---|---|
-| `policy-deny-network-dev.yaml` | Development deny-network policy; Linux uses a private network namespace |
-| `policy-allow-network-dev.yaml` | Development demo policy; allows only `/usr/bin/curl` to reach `example.com:443` |
-| `policy-deny-network.yaml` | Hardened deny-network candidate that requires Landlock; production qualification is still required |
+| `policy-deny-network-dev.yaml` | Denies network access for development. Linux uses a private network namespace. |
+| `policy-allow-network-dev.yaml` | Allows only `/usr/bin/curl` to reach `example.com:443` for the development demo. |
+| `policy-deny-network.yaml` | Provides a hardened deny-network candidate that requires Landlock. Production qualification remains required. |
 
-The templates marked `dev` are not production policies. The release line chooses its default template. Override it explicitly with `--policy-file` or `OPENBOX_POLICY_FILE`:
+Templates with `dev` in the name are not production policies. Each release line selects a default template.
+
+Use `--policy-file` or `OPENBOX_POLICY_FILE` to select another template:
 
 ```bash
 obs provision --provider native --yes \
   --policy-file "$PWD/policy-allow-network-dev.yaml"
 ```
 
-## Verify and Load the Runtime
+## Verify the Runtime
 
-Provisioning creates owner-only local mTLS material, starts the loopback service, runs a provider smoke test, and writes:
+Provisioning performs these actions:
+
+1. Creates owner-only local mTLS material.
+2. Starts the loopback service.
+3. Runs a provider smoke test.
+4. Writes the Worker environment file.
+
+The environment file is:
 
 ```text
 ~/.config/openbox-sandbox/agent.env
 ```
 
-Check the deployment, then load the generated provider-neutral values into the Worker process:
+Check the deployment:
 
 ```bash
 obs status
 obs verify
+```
 
+`obs verify` exercises the live mTLS create, ready, execute, and delete lifecycle. Checksum verification alone does not prove that a command executed.
+
+Load the generated provider-neutral values into the Worker process:
+
+```bash
 set -a
 . "$HOME/.config/openbox-sandbox/agent.env"
 set +a
 ```
 
-`obs verify` exercises the live mTLS create → ready → exec → delete lifecycle. Checksum or artifact-only verification is not proof that a command executed.
+## Provider Guides
 
-Continue with provider-specific setup:
-
-- [Native Provider](./native-provider) — Seatbelt and bubblewrap prerequisites, network behavior, and limitations
-- [OpenShell Provider (VM)](./openshell-provider) — microVM prerequisites, prepared caches, registry mode, and CA trust
+- [Native Provider](./native-provider): Seatbelt and bubblewrap requirements, network behavior, and limitations.
+- [OpenShell Provider (VM)](./openshell-provider): MicroVM requirements, prepared caches, registry mode, and CA trust.

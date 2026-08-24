@@ -113,7 +113,7 @@ sequenceDiagram
 
 ## Workflow
 
-`AgentGoalWorkflow` in `workflows/agent_goal_workflow.py` — the main state machine that drives the agent.
+`AgentGoalWorkflow` in `workflows/agent_goal_workflow.py`: the main state machine that drives the agent.
 
 ### Signals
 
@@ -137,7 +137,7 @@ After 250 turns (`MAX_TURNS_BEFORE_CONTINUE`), the workflow starts a fresh execu
 
 ## Activities
 
-Temporal requires workflow code to be deterministic — no network calls, randomness, or clock reads. All I/O runs as activities.
+Temporal requires workflow code to be deterministic: no network calls, randomness, or clock reads. All I/O runs as activities.
 
 | Activity | File | Purpose |
 |----------|------|---------|
@@ -161,7 +161,7 @@ Temporal requires workflow code to be deterministic — no network calls, random
 | Field | Type | Description |
 |-------|------|-------------|
 | `response` | `string` | Agent's message to the user |
-| `next` | `string` | Next step — see values below |
+| `next` | `string` | Next step: see values below |
 | `tool` | `string \| null` | Tool to execute (if applicable) |
 | `args` | `object \| null` | Tool arguments (if applicable) |
 
@@ -169,9 +169,9 @@ Temporal requires workflow code to be deterministic — no network calls, random
 
 | Value | Meaning |
 |-------|---------|
-| `question` | Agent needs more information — waits for next user message |
-| `confirm` | Agent wants to run a tool — waits for user confirmation |
-| `done` | Task complete — agent gives a final response |
+| `question` | Agent needs more information: waits for next user message |
+| `confirm` | Agent wants to run a tool: waits for user confirmation |
+| `done` | Task complete: agent gives a final response |
 | `pick-new-goal` | User wants to switch to a different agent/scenario |
 
 ## Prompt Generation
@@ -182,8 +182,8 @@ Temporal requires workflow code to be deterministic — no network calls, random
 |-----------|--------|
 | Agent role and persona | Hardcoded in prompt template |
 | Goal description | `agent_goal.description` |
-| Tool definitions | `agent_goal.tools` — name, description, arguments per tool |
-| Conversation history | `conversation_history` — full message list |
+| Tool definitions | `agent_goal.tools`: name, description, arguments per tool |
+| Conversation history | `conversation_history`: full message list |
 | Response format schema | JSON schema enforcing `{response, next, tool, args}` |
 | Example interactions | `agent_goal.example_conversation_history` |
 
@@ -193,10 +193,10 @@ Temporal requires workflow code to be deterministic — no network calls, random
 
 | Step | Logic |
 |------|-------|
-| 1. Native check | `get_handler(tool_name)` in `tools/__init__.py` — if found, call handler directly |
+| 1. Native check | `get_handler(tool_name)` in `tools/__init__.py`: if found, call handler directly |
 | 2. MCP fallback | If `get_handler()` raises `ValueError`, start MCP server as stdio subprocess → `ClientSession` → `session.call_tool()` |
 
-Both paths execute as Temporal activities — OpenBox automatically intercepts and governs them.
+Both paths execute as Temporal activities: OpenBox automatically intercepts and governs them.
 
 ## API Endpoints
 
@@ -204,7 +204,7 @@ FastAPI layer in `api/main.py`:
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| `POST` | `/send-prompt` | Send a user message — starts the workflow if needed, then signals it |
+| `POST` | `/send-prompt` | Send a user message: starts the workflow if needed, then signals it |
 | `POST` | `/confirm` | Signal tool confirmation |
 | `POST` | `/end-chat` | Signal chat end |
 | `POST` | `/start-workflow` | Start the workflow with the goal's starter prompt |
@@ -227,22 +227,22 @@ The frontend polls `/get-conversation-history` to pick up new messages.
 | Decisions | Every event gets one of five decisions: `ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT` |
 
 :::tip Zero agent-side code
-All governance evaluation happens on the platform side, not in the agent code. The agent is unaware of what policies are configured — it just runs, and OpenBox observes and enforces.
+All governance evaluation happens on the platform side, not in the agent code. The agent is unaware of what policies are configured: it just runs, and OpenBox observes and enforces.
 :::
 
 ## Key Files
 
 | Path | Purpose |
 |------|---------|
-| `scripts/run_worker.py` | Native Worker bootstrap — sole `OpenBoxPlugin` integration point |
-| `api/main.py` | FastAPI endpoints — HTTP bridge to Temporal |
-| `workflows/agent_goal_workflow.py` | `AgentGoalWorkflow` — main state machine |
+| `scripts/run_worker.py` | Native Worker bootstrap: sole `OpenBoxPlugin` integration point |
+| `api/main.py` | FastAPI endpoints: HTTP bridge to Temporal |
+| `workflows/agent_goal_workflow.py` | `AgentGoalWorkflow`: main state machine |
 | `workflows/workflow_helpers.py` | `is_mcp_tool()`, continue-as-new logic, tool dispatch helpers |
 | `activities/tool_activities.py` | LLM activities, tool execution, MCP dispatch |
-| `prompts/agent_prompt_generators.py` | `generate_genai_prompt()` — system prompt builder |
-| `tools/__init__.py` | `get_handler()` — native tool registry |
+| `prompts/agent_prompt_generators.py` | `generate_genai_prompt()`: system prompt builder |
+| `tools/__init__.py` | `get_handler()`: native tool registry |
 | `tools/tool_registry.py` | `ToolDefinition` instances for each native tool |
-| `goals/` | Goal definitions — one file per category |
+| `goals/` | Goal definitions: one file per category |
 | `goals/__init__.py` | Aggregates all goals into a single registry |
 | `models/tool_definitions.py` | Dataclasses: `AgentGoal`, `ToolDefinition`, `ToolArgument`, `MCPServerDefinition` |
 | `shared/mcp_config.py` | Predefined MCP server configurations |

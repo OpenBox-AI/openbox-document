@@ -1,58 +1,61 @@
 ---
 title: Concept
-description: "What a sandbox is, how OpenBox routes governed commands, and the safety rules."
-llms_description: Sandbox concepts, OpenBox routing, providers, and fail-closed behavior
+description: "Learn how OpenBox routes governed commands through sandbox providers."
+llms_description: Sandbox routing, providers, evidence, and fail-closed behavior
 tags:
   - sdk
   - temporal
   - governance
 ---
 
-# What Is a Sandbox?
+# Governed Sandbox Commands
 
-A sandbox is an isolated execution area.
+OpenBox can replace a governed host action with an admitted command in an isolated sandbox.
 
-Code that runs in the sandbox cannot access the host system. The sandbox permits only the operations that its policy allows.
+## One Dispatch, No Fallback
 
-Organizations use sandboxes to run code that they do not fully trust. Examples include web pages in a browser, applications on a phone, and containers on a server.
+Each governed operation receives one verdict:
 
-## What This Integration Does
+- **ALLOW:** The operation runs on the host.
+- **CONSTRAIN:** The host action is aborted. OpenBox dispatches the admitted command to the sandbox.
+- **BLOCK or HALT:** The operation stops without execution.
+- **REQUIRE_APPROVAL:** The operation waits for an approval decision.
 
-AI agents run commands without human review. Each command must pass a governance checkpoint before it runs.
+A behavioral started hook returns `CONSTRAIN` before the host side effect. The integration then aborts the host action and dispatches the registered command. A completed hook records the result. It does not dispatch the command again.
 
-The checkpoint returns one verdict:
+A constrained command never runs on the host. A sandbox failure also never releases the host action.
 
-- **ALLOW** — the command runs on the host.
-- **CONSTRAIN** — the command does not run on the host. The sandbox runs the governed version.
-- **BLOCK / HALT / REQUIRE_APPROVAL** — the command does not run. It waits for approval, or it stops.
+## Sandbox Isolation
 
-A `CONSTRAIN` command runs in the sandbox only. It never runs on the host.
+A sandbox limits access to host resources. Its policy defines the permitted files and network destinations. The provider denies access that the policy does not permit.
 
-## How the Sandbox Works
+The default `native` provider uses operating system isolation:
 
-The sandbox uses the operating system isolation:
+- **macOS:** Seatbelt through `sandbox-exec`.
+- **Linux:** bubblewrap.
 
-- **macOS** — Seatbelt (`sandbox-exec`).
-- **Linux** — bubblewrap.
+The optional `openshell` provider uses a microVM. Provider selection does not change the governance routing rules.
 
-A policy defines the permissions. The policy states which files the command can access and which network destinations it can reach. All other access is denied.
+## Command Admission
 
-## Safety Rules
+The application registers each permitted command before the Worker starts. A command profile fixes the executable and its argument grammar. Workflow input cannot provide an arbitrary executable or a shell command string.
 
-1. **No host execution.** A `CONSTRAIN` command runs in the sandbox. If the sandbox fails, the command fails. It does not run on the host.
-2. **One execution at most.** Each command has a stable identifier. Retries and duplicate requests cannot run the same command twice.
-3. **Verifiable evidence.** The sandbox records the command, its output, and its denials. The console shows this evidence.
+OpenBox invokes the admitted argument vector directly. It does not reconstruct a shell command.
+
+## Safety Properties
+
+1. **Fail-closed execution:** A constrained command runs only in the selected sandbox. If policy validation, dispatch, execution, or cleanup fails, the operation fails closed.
+2. **At-most-once dispatch:** Each command has a stable dispatch identity. Retries and duplicate requests cannot cause a second dispatch.
+3. **Bounded evidence:** OpenBox records bounded output data, process status, cleanup status, network decisions, and available isolation violations.
 
 ## Providers
 
-A provider supplies the sandbox boundary:
+- **`native` (default):** Uses Seatbelt on macOS and bubblewrap on Linux.
+- **`openshell` (optional):** Uses a microVM for a guest-kernel boundary.
 
-- **native** (default) — the operating system sandbox: Seatbelt on macOS, bubblewrap on Linux.
-- **OpenShell** (optional) — a microVM. Use it for workloads that need a stronger boundary.
+Select a provider with `--provider native|openshell` or `OPENBOX_PROVIDER`. OpenBox does not switch providers after a provisioning or execution failure.
 
-The routing rules do not change between providers.
-
-## Continue
+## Next Steps
 
 - [Quick Start](./quick-start)
 - [Provisioning](./provisioning)

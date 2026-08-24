@@ -1,7 +1,7 @@
 ---
 title: Command Profiles
-description: "Register exact commands and connect their immutable registry to OpenBoxPlugin."
-llms_description: Governed command registry and SandboxConfig Worker wiring
+description: "Register exact commands and connect the registry to OpenBoxPlugin."
+llms_description: Governed command registry and SandboxConfig Worker configuration
 tags:
   - sdk
   - temporal
@@ -10,11 +10,19 @@ tags:
 
 # Command Profiles
 
-The immutable registry is the application-owned admission boundary. It fixes each executable and argument grammar. Workflow input cannot select an arbitrary executable or pass free-form `argv`, and the integration never reconstructs a shell command string.
+A command profile defines the exact executable and permitted argument grammar for sandbox dispatch.
 
-## Register the Demo Profile
+## Admission Rules
 
-This zero-input profile admits one request to `https://example.com/`. It can replace the payment-batch host action when a behavioral started hook returns `CONSTRAIN`:
+The application owns an immutable command registry. Workflow input cannot select an arbitrary executable. It also cannot provide a free-form argument vector.
+
+The integration invokes the admitted argument vector directly. It never reconstructs a shell command string.
+
+For command input, use bounded identifier, enum, or decimal arguments. You can also define a `TypedJsonResultSchema` for output. One command definition creates matching Temporal derivation and dispatcher admission profiles. Any profile difference fails closed.
+
+## Register the Demo Command
+
+The demo profile accepts no input. It permits one request to `https://example.com/`.
 
 ```python title="command_registry.py"
 from openbox.sandbox import (
@@ -37,11 +45,11 @@ command_registry = GovernedCommandRegistry(commands=(
 ))
 ```
 
-For data-bearing commands, use bounded identifier, enum, or decimal arguments and an optional `TypedJsonResultSchema`. One definition produces equivalent Temporal derivation and dispatcher admission profiles, so profile drift fails closed.
+A behavioral started hook can return `CONSTRAIN` with the `example-egress` profile. The integration then aborts the payment-batch host action and dispatches this command to the sandbox.
 
-## Connect the Registry to the Worker
+## Configure the Worker
 
-Pass `SandboxConfig` to the same `OpenBoxPlugin` that owns governance and telemetry:
+Pass `SandboxConfig` to the `OpenBoxPlugin` that owns governance and telemetry.
 
 ```python title="worker.py"
 import asyncio
@@ -89,6 +97,8 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-The plugin intercepts the application's Activity. It does not require a second Worker or a plugin-owned public Activity in Workflow code.
+The plugin intercepts the application Activity. You do not need a second Worker. Workflow code also does not need a public Activity owned by the plugin.
 
-Next, configure the replacement decision in the [Demo Walkthrough](./demo-walkthrough).
+## Next Step
+
+Configure the replacement decision in the [Demo Walkthrough](./demo-walkthrough).
