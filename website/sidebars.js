@@ -453,7 +453,7 @@ const sidebars = {
                 id: 'developer-guide/temporal-python/governed-sandbox-commands',
               },
               items: [
-                'developer-guide/temporal-python/native-srt-provider',
+                'developer-guide/temporal-python/native-provider',
               ],
             },
             'developer-guide/temporal-python/customizing-the-demo',

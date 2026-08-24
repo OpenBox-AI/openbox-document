@@ -189,7 +189,7 @@ flowchart TD
 
 Only registered governed commands can enforce `CONSTRAIN` through sandbox execution. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile and abort the triggering host action. An ordinary Temporal action that receives an unsupported `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns bounded history conversion, output mapping, and cancellation cleanup, while the dispatcher enforces at-most-once dispatch per dispatch ID.
 
-The sandbox runtime defaults to the native `srt` provider (`sandbox-exec` on macOS, bubblewrap on Linux). See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for plugin composition, provisioning, runtime evidence, and zero-host requirements.
+The sandbox runtime defaults to the `native` provider (`sandbox-exec` on macOS, bubblewrap on Linux). See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for plugin composition, provisioning, runtime evidence, and zero-host requirements.
 
 ## Configuration
 

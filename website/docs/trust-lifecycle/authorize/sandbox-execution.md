@@ -18,7 +18,7 @@ Everything on this page is new.
 Sandbox Execution is in Alpha. Configuration is SDK- and environment-based today; there is no dashboard toggle for it yet.
 :::
 
-For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can replace the host action with an admitted command in the **Sandbox**. The default `srt` provider runs that command under the host operating system's native isolation boundary: Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux.
+For an operation type with a sandbox-capable integration, a [CONSTRAIN](/core-concepts/governance-decisions#constrain) verdict can replace the host action with an admitted command in the **Sandbox**. The default `native` provider runs that command under the host operating system's native isolation boundary: Seatbelt (`sandbox-exec`) on macOS and bubblewrap on Linux.
 
 The integration must fail closed if it cannot enforce the constraint. `CONSTRAIN` is never a logging-only form of `ALLOW`, and a failed sandbox dispatch never falls back to host execution.
 
@@ -86,4 +86,4 @@ A governance decision proves authorization, not execution. The correlated lifecy
 - **[Governance Decisions](/core-concepts/governance-decisions)**: Canonical `CONSTRAIN` semantics
 - **[Authorize Phase](/trust-lifecycle/authorize)**: Where `CONSTRAIN` fits in the authorization pipeline
 - **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal interception, profiles, and result handling
-- **[Native srt Provider](/developer-guide/temporal-python/native-srt-provider)**: Install, provision, verify, and understand platform limitations
+- **[Native Provider](/developer-guide/temporal-python/native-provider)**: Install, provision, verify, and understand platform limitations
