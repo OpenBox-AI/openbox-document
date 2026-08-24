@@ -1,7 +1,7 @@
 ---
 title: Concept
-description: "What a sandbox is, why governed commands need one, and how OpenBox routes them."
-llms_description: Sandbox concepts in plain language, OpenBox routing, providers, and fail-closed behavior
+description: "What a sandbox is, how OpenBox routes governed commands, and the safety rules."
+llms_description: Sandbox concepts, OpenBox routing, providers, and fail-closed behavior
 tags:
   - sdk
   - temporal
@@ -10,54 +10,52 @@ tags:
 
 # What Is a Sandbox?
 
-A **sandbox** is a sealed-off place where code runs without touching the rest of your machine. It can read only what you let it read, write only where you let it write, and talk to the network only where you allow it. If the code inside misbehaves, the blast radius stops at the sandbox wall.
+A sandbox is an isolated execution area.
 
-This idea is older than AI: browsers run web pages in sandboxes, phones isolate every app, servers run containers. People use sandboxes whenever they must run something they don't fully trust.
+Code that runs in the sandbox cannot access the host system. The sandbox permits only the operations that its policy allows.
 
-## What People Do
+Organizations use sandboxes to run code that they do not fully trust. Examples include web pages in a browser, applications on a phone, and containers on a server.
 
-Traditionally, you sandbox things you run on purpose: a build script, a downloaded binary, a plugin. You decide what's risky, wrap it, and run it. The human is the one making the safety decision, each time, by hand.
+## What This Integration Does
 
-## What We Do
+AI agents run commands without human review. Each command must pass a governance checkpoint before it runs.
 
-AI agents flip that problem. An agent **decides for itself** what code to run — sometimes dozens of times a minute — and no human is watching each decision. The safety decision must happen automatically, at the exact moment each action is about to run.
+The checkpoint returns one verdict:
 
-OpenBox does that with a governance verdict. Before a governed command executes:
+- **ALLOW** — the command runs on the host.
+- **CONSTRAIN** — the command does not run on the host. The sandbox runs the governed version.
+- **BLOCK / HALT / REQUIRE_APPROVAL** — the command does not run. It waits for approval, or it stops.
 
-- **ALLOW** — run it normally on the host. Governance saw nothing wrong.
-- **CONSTRAIN** — the host action is **aborted before it ever runs**, and the sandbox executes the governed version instead.
-- **BLOCK / HALT / REQUIRE_APPROVAL** — it does not run (or waits for a human).
-
-So "governed sandbox commands" means: *every sensitive action stops at a checkpoint; the policy decides; if it must run, it runs inside the sandbox, never on the host.*
+A `CONSTRAIN` command runs in the sandbox only. It never runs on the host.
 
 ## How the Sandbox Works
 
-OpenBox's sandbox uses the operating system's own isolation:
+The sandbox uses the operating system isolation:
 
-- **macOS** — Seatbelt (`sandbox-exec`): Apple's sandboxing, built into the OS.
-- **Linux** — bubblewrap: the same primitive containers and Flatpak use.
+- **macOS** — Seatbelt (`sandbox-exec`).
+- **Linux** — bubblewrap.
 
-The command gets an exact set of permissions — the **policy**: what files it may touch, and which network destinations are allowed (or none at all). Everything else is denied.
+A policy defines the permissions. The policy states which files the command can access and which network destinations it can reach. All other access is denied.
 
-## The Rules That Keep It Safe
+## Safety Rules
 
-1. **Never on the host.** A `CONSTRAIN` command runs in the sandbox or nowhere. If the sandbox fails, the action fails — it is never quietly re-run on the host.
-2. **Run once, at most.** Each command has a stable identity. Retries, duplicates, and crashes cannot cause a second execution of the same thing.
-3. **Verifiable.** The sandbox records what ran, what it produced, and what it was denied — readable evidence in the console.
+1. **No host execution.** A `CONSTRAIN` command runs in the sandbox. If the sandbox fails, the command fails. It does not run on the host.
+2. **One execution at most.** Each command has a stable identifier. Retries and duplicate requests cannot run the same command twice.
+3. **Verifiable evidence.** The sandbox records the command, its output, and its denials. The console shows this evidence.
 
 ## Providers
 
-The sandbox boundary comes from a **provider**:
+A provider supplies the sandbox boundary:
 
-- **native** (the default) — the OS sandbox: Seatbelt on macOS, bubblewrap on Linux. Lightweight, always available.
-- **OpenShell** (optional) — a full microVM: a stronger boundary for the highest-risk workloads.
+- **native** (default) — the operating system sandbox: Seatbelt on macOS, bubblewrap on Linux.
+- **OpenShell** (optional) — a microVM. Use it for workloads that need a stronger boundary.
 
-One command, one provider. The routing rules are identical either way.
+The routing rules do not change between providers.
 
-## Continue the Journey
+## Continue
 
-1. [Run the five-command quick start](./quick-start).
-2. [Provision and verify a provider](./provisioning).
-3. [Register admitted command profiles](./command-profiles).
-4. [Walk through behavioral `CONSTRAIN` interception](./demo-walkthrough).
-5. [Read the console evidence](./console-evidence).
+- [Quick Start](./quick-start)
+- [Provisioning](./provisioning)
+- [Command Profiles](./command-profiles)
+- [Demo Walkthrough](./demo-walkthrough)
+- [Console Evidence](./console-evidence)
