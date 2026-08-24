@@ -94,7 +94,7 @@ A governed command must not be retried after an indeterminate dispatch, because 
 
 At Workflow level, Temporal wraps the intercepted user Activity's `ApplicationError` in `ActivityError`. Inspect its cause using the same Workflow-level pattern above, alert or reconcile external state, and do not schedule a replacement command after a possible dispatch.
 
-For a started-hook `CONSTRAIN`, the plugin aborts the attempted host action and uses the sandbox outcome. An `ALLOW` decision follows the application's normal host path, so a zero-host workflow must ensure the applicable Core decision is `CONSTRAIN`. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#fail-closed-and-history-boundaries).
+For a started-hook `CONSTRAIN`, the plugin aborts the attempted host action and uses the sandbox outcome. An `ALLOW` decision follows the application's normal host path, so a zero-host workflow must ensure the applicable Core decision is `CONSTRAIN`. See [Governed Sandbox Commands](/developer-guide/temporal-python/concept#one-dispatch-no-fallback).
 
 Cancellation waits for dispatcher cleanup before the Activity finishes cancelling. Preserve that cancellation path; do not add a second scheduling retry. Raw output and credentials remain outside Workflow history even on failure.
 
@@ -122,6 +122,6 @@ The plugin raises configuration exceptions from `openbox.config` during `OpenBox
 
 Now that you understand how to handle trust decisions in code:
 
-1. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Understand one-attempt command failures and cleanup
+1. **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** - Understand one-attempt command failures and cleanup
 2. **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** - Common issues and solutions
 3. **[Handle Approvals](/approvals)** - Review and process HITL requests in the dashboard

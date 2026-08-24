@@ -208,7 +208,7 @@ For a registered command, `CONSTRAIN` selects sandbox execution and aborts the c
 
 The sandbox runtime defaults to the `native` provider. Provision it with `obs provision --provider native --yes` (or omit `--provider` because `native` is the default), then load `~/.config/openbox-sandbox/agent.env`. For a guest-kernel boundary, provision the optional [OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider) explicitly.
 
-See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
+See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
 
 ## Configuration Precedence
 
@@ -271,6 +271,6 @@ if __name__ == "__main__":
 
 ## Next Steps
 
-1. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Configure constrained command execution
+1. **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** - Configure constrained command execution
 2. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 3. **[Approvals](/approvals)** - Review and act on HITL approval requests

@@ -214,6 +214,6 @@ obs uninstall
 
 ## Related
 
-- **[Governed Sandbox Commands](./governed-sandbox-commands)** — shared Temporal profiles, interception, results, and evidence
+- **[Governed Sandbox Commands](./concept)** — shared Temporal profiles, interception, results, and evidence
 - **[Native Provider](./native-provider)** — default provider and native platform limits
 - **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — provider-neutral governance model

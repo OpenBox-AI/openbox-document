@@ -224,7 +224,7 @@ See **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-th
 
 `CONSTRAIN` is not a logging-only form of `ALLOW`. A Temporal operation may continue only when its integration can apply the returned constraint. Ordinary Activities have no generic constraint executor, so the plugin fails them closed with `GovernanceConstrainUnsupported`.
 
-The governed-command integration provides an enforcement path for explicitly registered profiles: `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` intercepts the user Activity at the Worker boundary. A policy `CONSTRAIN` with `constraints: ["run_in_sandbox"]`, or a behavioral `CONSTRAIN` that selects a registered replacement profile, aborts the corresponding host action and dispatches the derived command to the sandbox. It does not sandbox every constrained Temporal action. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for native-provider provisioning and Worker composition.
+The governed-command integration provides an enforcement path for explicitly registered profiles: `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` intercepts the user Activity at the Worker boundary. A policy `CONSTRAIN` with `constraints: ["run_in_sandbox"]`, or a behavioral `CONSTRAIN` that selects a registered replacement profile, aborts the corresponding host action and dispatches the derived command to the sandbox. It does not sandbox every constrained Temporal action. See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for native-provider provisioning and Worker composition.
 
 ## Explore Different Scenarios
 
@@ -352,7 +352,7 @@ To investigate failures, open a session in the dashboard using the same steps fr
 
 1. **[Extending the Demo Agent](/developer-guide/temporal-python/customizing-the-demo)** - Add your own goals, native tools, and MCP integrations
 2. **[Plugin Configuration](/developer-guide/temporal-python/configuration)** - Fine-tune timeouts, fail policies, and filtering
-3. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Enforce constrained registered commands
+3. **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** - Enforce constrained registered commands
 4. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
 5. **[Set Up Approvals](/approvals)** - Add human-in-the-loop for sensitive operations
 6. **[Demo Architecture Reference](/developer-guide/temporal-python/demo-architecture)** - Signals, activities, endpoints, and message flow
