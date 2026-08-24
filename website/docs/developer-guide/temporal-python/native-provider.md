@@ -143,6 +143,6 @@ A clean rerun removes launcher-owned state and recompiles the pinned profile. Th
 
 ## Related
 
-- **[Governed Sandbox Commands](./governed-sandbox-commands)** — Temporal profile registration and behavioral interception demo
+- **[Governed Sandbox Commands](./concept)** — Temporal profile registration and behavioral interception demo
 - **[Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution)** — conceptual lifecycle and evidence model
 - **[Error Handling](./error-handling)** — fail-closed command outcomes

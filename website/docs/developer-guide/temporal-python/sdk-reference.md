@@ -17,7 +17,7 @@ tags:
 | **[Integration Walkthrough](/developer-guide/temporal-python/integration-walkthrough)** | Step-by-step guide for adding OpenBox to Temporal workers |
 | **[Configuration](/developer-guide/temporal-python/configuration)** | Plugin options and environment variables |
 | **[Error Handling](/developer-guide/temporal-python/error-handling)** | Handle governance decisions and failures in your code |
-| **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** | Register one-attempt commands for enforced sandbox execution |
+| **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** | Register one-attempt commands for enforced sandbox execution |
 | **[Customizing the Demo](/developer-guide/temporal-python/customizing-the-demo)** | Tailor governance behavior to your agent's needs |
 | **[Demo Architecture](/developer-guide/temporal-python/demo-architecture)** | Architecture of the reference demo application |
 | **[Troubleshooting](/developer-guide/temporal-python/troubleshooting)** | Common issues and fixes for Temporal plugin setup |
@@ -81,7 +81,7 @@ worker = Worker(
 )
 ```
 
-The plugin internally owns governance interceptors, OTel instrumentation, Workflow sandbox passthrough, and OpenBox lifecycle reporting. Supplying `sandbox=SandboxConfig(...)` on that same initializer enables governed-command interception for registered user Activities; see [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands).
+The plugin internally owns governance interceptors, OTel instrumentation, Workflow sandbox passthrough, and OpenBox lifecycle reporting. Supplying `sandbox=SandboxConfig(...)` on that same initializer enables governed-command interception for registered user Activities; see [Governed Sandbox Commands](/developer-guide/temporal-python/concept).
 
 See **[Configuration](/developer-guide/temporal-python/configuration)** for the full parameter list.
 
@@ -189,7 +189,7 @@ flowchart TD
 
 Only registered governed commands can enforce `CONSTRAIN` through sandbox execution. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile and abort the triggering host action. An ordinary Temporal action that receives an unsupported `CONSTRAIN` fails closed rather than continuing as if it received `ALLOW`. The plugin owns bounded history conversion, output mapping, and cancellation cleanup, while the dispatcher enforces at-most-once dispatch per dispatch ID.
 
-The sandbox runtime defaults to the `native` provider (`sandbox-exec` on macOS, bubblewrap on Linux). See **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** for plugin composition, provisioning, runtime evidence, and zero-host requirements.
+The sandbox runtime defaults to the `native` provider (`sandbox-exec` on macOS, bubblewrap on Linux). See **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** for plugin composition, provisioning, runtime evidence, and zero-host requirements.
 
 ## Configuration
 
@@ -203,5 +203,5 @@ See **[Configuration](/developer-guide/temporal-python/configuration)** for all 
 
 1. **[Temporal Integration](/developer-guide/temporal-python/integration-walkthrough)** - Add OpenBox to an existing Temporal agent
 2. **[Configuration](/developer-guide/temporal-python/configuration)** - Configure timeouts, fail policies, and exclusions
-3. **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)** - Enforce constrained registered commands in isolation
+3. **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** - Enforce constrained registered commands in isolation
 4. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code

@@ -54,7 +54,7 @@ If a registered command reports `GovernedCommandConfigurationRequired`:
 4. Run `obs status` and confirm the selected provider is `native` (the default).
 5. Load `~/.config/openbox-sandbox/agent.env` into the Worker environment and confirm its service, policy, and mTLS paths exist.
 
-Keep Worker registration and interception inside that `OpenBoxPlugin` initializer. The launcher never falls back to another provider if `native` provisioning fails. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands) for the supported composition.
+Keep Worker registration and interception inside that `OpenBoxPlugin` initializer. The launcher never falls back to another provider if `native` provisioning fails. See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for the supported composition.
 
 ---
 

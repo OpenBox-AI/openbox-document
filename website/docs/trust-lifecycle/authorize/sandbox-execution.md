@@ -69,7 +69,7 @@ Additional providers are documented separately. Provider selection is explicit, 
 
 ## Configuration and Evidence
 
-Configure the runtime through the agent's SDK and deployment settings, not a dashboard sandbox toggle. Temporal Python supports [governed sandbox commands](/developer-guide/temporal-python/governed-sandbox-commands) through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` and an immutable `GovernedCommandRegistry`.
+Configure the runtime through the agent's SDK and deployment settings, not a dashboard sandbox toggle. Temporal Python supports [governed sandbox commands](/developer-guide/temporal-python/concept) through `OpenBoxPlugin(..., sandbox=SandboxConfig(...))` and an immutable `GovernedCommandRegistry`.
 
 In **Agent → Verify → Sessions → Tree**, inspect the `sandbox_execution` span for:
 
@@ -85,5 +85,5 @@ A governance decision proves authorization, not execution. The correlated lifecy
 
 - **[Governance Decisions](/core-concepts/governance-decisions)**: Canonical `CONSTRAIN` semantics
 - **[Authorize Phase](/trust-lifecycle/authorize)**: Where `CONSTRAIN` fits in the authorization pipeline
-- **[Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands)**: Temporal interception, profiles, and result handling
+- **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)**: Temporal interception, profiles, and result handling
 - **[Native Provider](/developer-guide/temporal-python/native-provider)**: Install, provision, verify, and understand platform limitations

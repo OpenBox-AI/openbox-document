@@ -65,7 +65,7 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
 
-For a sandbox-capable started hook, a behavioral `CONSTRAIN` can select a registered zero-input command profile. The integration aborts the triggering host action before its side effect, dispatches the replacement profile once in the sandbox, and attaches the bounded `sandbox_execution` outcome to the Activity result. A missing profile, unavailable sandbox integration, host disposition, or failed sandbox dispatch fails closed. See [Governed Sandbox Commands](/developer-guide/temporal-python/governed-sandbox-commands#demo-behavioral-constrain-interception).
+For a sandbox-capable started hook, a behavioral `CONSTRAIN` can select a registered zero-input command profile. The integration aborts the triggering host action before its side effect, dispatches the replacement profile once in the sandbox, and attaches the bounded `sandbox_execution` outcome to the Activity result. A missing profile, unavailable sandbox integration, host disposition, or failed sandbox dispatch fails closed. See [Governed Sandbox Commands](/developer-guide/temporal-python/demo-walkthrough#3-configure-behavioral-interception).
 
 When a rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the approval request appears in:
 
