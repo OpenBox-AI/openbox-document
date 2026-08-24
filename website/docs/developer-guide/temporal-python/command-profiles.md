@@ -1,7 +1,7 @@
 ---
 title: Command Profiles
-description: "Register exact commands and connect the registry to OpenBoxPlugin."
-llms_description: Governed command registry and SandboxConfig Worker configuration
+description: "Define the exact commands an application may run in the sandbox."
+llms_description: Registry reference. Argument types, result schemas, and admission rules for governed commands.
 tags:
   - sdk
   - temporal
@@ -10,95 +10,96 @@ tags:
 
 # Command Profiles
 
-A command profile defines the exact executable and permitted argument grammar for sandbox dispatch.
+A command profile defines one executable and the exact argument grammar the sandbox accepts for it. The registry of profiles is the only sandbox definition an application writes.
 
-## Admission Rules
+[Quick Start](./quick-start) shows a complete registry in a running Worker. This page is the reference for what you can put in one.
 
-The application owns an immutable command registry. Workflow input cannot select an arbitrary executable. It also cannot provide a free-form argument vector.
+## Admission rules
+
+The application owns an immutable registry. Workflow input selects a profile by `profile_id` and fills the named arguments. It cannot supply an executable, and it cannot supply a free-form argument vector.
 
 The integration invokes the admitted argument vector directly. It never reconstructs a shell command string.
 
-For command input, use bounded identifier, enum, or decimal arguments. You can also define a `TypedJsonResultSchema` for output. One command definition creates matching Temporal derivation and dispatcher admission profiles. Any profile difference fails closed.
+One command definition produces matching profiles for Temporal derivation and for dispatcher admission. Any difference between the two fails closed.
 
-## Register the Demo Command
+## Arguments
 
-The demo profile accepts no input. It permits one request to `https://example.com/`.
+Import every type from `openbox.sandbox`.
 
-```python title="command_registry.py"
-from openbox.sandbox import (
-    GovernedCommandDefinition,
-    GovernedCommandRegistry,
-    LiteralArgument,
-)
+| Type | Purpose |
+|---|---|
+| `LiteralArgument(value)` | A fixed token that never varies with workflow input |
+| `IdentifierArgument(field, max_bytes=256)` | A bounded identifier supplied by the caller |
+| `EnumArgument(field, values)` | A caller-supplied token restricted to a fixed choice set |
+| `DecimalArgument(field, minimum, maximum)` | A caller-supplied base-10 integer inside a fixed range |
 
-command_registry = GovernedCommandRegistry(commands=(
-    GovernedCommandDefinition(
-        command_id="example-egress",
-        executable="/usr/bin/curl",
-        arguments=(
-            LiteralArgument("--fail"),
-            LiteralArgument("--silent"),
-            LiteralArgument("--show-error"),
-            LiteralArgument("https://example.com/"),
-        ),
+Each non-literal argument names a field. The activity input fills it:
+
+```python
+GovernedCommandDefinition(
+    command_id="fetch-report",
+    executable="/usr/bin/curl",
+    arguments=(
+        LiteralArgument("--silent"),
+        EnumArgument("region", ("eu", "us")),
+        IdentifierArgument("report_id", max_bytes=64),
     ),
-))
+)
 ```
 
-A behavioral started hook can return `CONSTRAIN` with the `example-egress` profile. The integration then aborts the payment-batch host action and dispatches this command to the sandbox.
+```python
+{"profile_id": "fetch-report", "arguments": [
+    {"name": "region", "value": "eu"},
+    {"name": "report_id", "value": "R-2026-004"},
+]}
+```
+
+A value outside the declared bounds or choice set fails closed. Field names must be unique within one definition.
+
+## Typed results
+
+A profile can admit bounded JSON from the command's standard output. Without a schema, the activity result carries only the process outcome.
+
+| Field type | Purpose |
+|---|---|
+| `IdentifierResultField(name, max_bytes=256)` | A bounded identifier |
+| `IntegerResultField(name, minimum, maximum)` | An integer inside a fixed range |
+
+```python
+result_schema=TypedJsonResultSchema(
+    name="sandbox-http",
+    fields=(
+        IntegerResultField("http_status", minimum=0, maximum=999),
+        IdentifierResultField("remote_ip"),
+    ),
+)
+```
+
+The service admits only the declared fields, within the declared limits. Everything else in the output is discarded, so raw command output never reaches workflow history.
 
 ## Configure the Worker
 
-Pass `SandboxConfig` to the `OpenBoxPlugin` that owns governance and telemetry.
+Pass the registry to `SandboxConfig`, and that config to the one `OpenBoxPlugin` the Worker uses:
 
-```python title="worker.py"
-import asyncio
-import os
-from pathlib import Path
-
-from openbox import OpenBoxPlugin
-from openbox.sandbox import SandboxConfig
-from temporalio.client import Client
-from temporalio.worker import Worker
-
-from activities import post_payment_batch
-from command_registry import command_registry
-from workflows import PaymentBatchWorkflow
-
-
-async def main() -> None:
-    client = await Client.connect(os.environ["TEMPORAL_ADDRESS"])
-
-    worker = Worker(
-        client,
-        task_queue="payment-demo",
-        workflows=[PaymentBatchWorkflow],
-        activities=[post_payment_batch],
-        plugins=[OpenBoxPlugin(
-            openbox_url=os.environ["OPENBOX_URL"],
-            openbox_api_key=os.environ["OPENBOX_API_KEY"],
-            governance_policy="fail_closed",
-            sandbox=SandboxConfig(
-                registry=command_registry,
-                service_config=Path(os.environ["OPENBOX_SANDBOX_CONFIG_PATH"]),
-                policy=Path(os.environ["OPENBOX_SANDBOX_POLICY_FILE"]),
-                ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
-                certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
-                private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
-                timeout_seconds=300,
-                heartbeat_interval_seconds=10.0,
-            ),
-        )],
-    )
-    await worker.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+```python
+OpenBoxPlugin(
+    openbox_url=os.environ["OPENBOX_URL"],
+    openbox_api_key=os.environ["OPENBOX_API_KEY"],
+    sandbox=SandboxConfig(
+        registry=posting_registry(),
+        service_config=Path(os.environ["OPENBOX_SANDBOX_CONFIG_PATH"]),
+        policy=Path(os.environ["OPENBOX_SANDBOX_POLICY_FILE"]),
+        ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
+        certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
+        private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+    ),
+)
 ```
 
-The plugin intercepts the application Activity. You do not need a second Worker. Workflow code also does not need a public Activity owned by the plugin.
+The plugin intercepts the application activity, so the Worker needs no second Worker and no public activity of its own. The five sandbox paths come from `agent.env`.
 
-## Next Step
+Set `timeout_seconds` to bound one execution, and `governance_policy="fail_closed"` so a governance failure cannot release the host action.
 
-Configure the replacement decision in the [Demo Walkthrough](./demo-walkthrough).
+## Next step
+
+Run one in [Quick Start](./quick-start), then read [Console Evidence](./console-evidence) for what the execution records.

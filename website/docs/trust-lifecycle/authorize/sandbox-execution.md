@@ -81,7 +81,7 @@ The sandbox service and its mTLS credentials run in infrastructure that you cont
 
 The local service owns scope creation, execution, cleanup, and restart reconciliation for each request.
 
-The optional OpenShell provider uses Hypervisor.framework or KVM to provide a guest-kernel boundary. Provider selection is explicit. A provider startup or execution failure does not cause fallback.
+Provider selection is explicit. A provider startup or execution failure does not cause fallback.
 
 ## Configuration
 

@@ -13,119 +13,55 @@ tags:
 
 # Native Provider
 
-The default `native` provider runs an exact argument vector under operating system isolation.
+The native provider (`native`) is the default. It runs an exact argument vector under the isolation controls of the operating system.
 
-## Isolation Boundary
+## Isolation boundary
 
-The provider uses these platform controls:
+The native provider uses these platform controls:
 
 - **macOS:** Seatbelt through `/usr/bin/sandbox-exec`.
 - **Linux:** bubblewrap (`bwrap`).
-
-The provider does not use the Node or npm CLI from Anthropic sandbox-runtime. The optional OpenShell provider supplies a guest-kernel boundary.
 
 ## Requirements
 
 | Host | Requirements |
 |---|---|
-| macOS | Apple Silicon release asset, `/usr/bin/sandbox-exec`, and OpenSSL |
+| macOS 26 | Apple Silicon release asset, `/usr/bin/sandbox-exec`, and OpenSSL |
 | Linux | x86_64 release asset, bubblewrap, OpenSSL, and a kernel that permits unprivileged bubblewrap namespaces |
 
-macOS includes `/usr/bin/sandbox-exec`. The native provider does not require Docker, a VM runtime, `sudo`, or system CA installation.
+`sandbox-exec` is the program that applies a compiled Seatbelt profile to a process, and macOS ships it. Install `bubblewrap` yourself on Linux. Provisioning checks for the required program and stops if it is missing.
+
+The native provider does not require Docker, a VM runtime, `sudo`, or installation of a system CA.
 
 `obs provision --yes` accepts all non-privileged defaults without interaction.
 
-## Install Release Assets
+## Provision
 
-Download these assets from the same [OpenBox Sandbox release](https://github.com/OpenBox-AI/openbox-sandbox/releases):
-
-- The matching `obs-<platform>` launcher
-- The matching `openbox-sandbox-<platform>` service
-- The policy templates
-- `SHA256SUMS`
-- The SPDX and CycloneDX SBOMs
-
-Keep the assets together. Do not mix assets from different release lines. The launcher and service are not interchangeable.
-
-Verify all downloaded assets against `SHA256SUMS` before provisioning.
-
-On macOS, run:
-
-```bash
-shasum -a 256 -c SHA256SUMS
-```
-
-On Linux, run:
-
-```bash
-sha256sum -c SHA256SUMS
-```
-
-Rename the launcher to `obs`, or invoke it by its downloaded name.
-
-## Provision the Provider
-
-The shortest supported command selects `native` by default:
+The native provider is the default, so the shortest command selects it:
 
 ```bash
 obs provision --yes
 ```
 
-You can select the provider explicitly:
-
-```bash
-obs provision --provider native --yes
-```
-
-You can also use the environment variable:
-
-```bash
-OPENBOX_PROVIDER=native obs provision --yes
-```
-
-The launcher does not use a provider fallback. Provisioning stops if the service, isolation primitive, or policy is unavailable.
+[Provisioning](./provisioning) covers the release assets, checksum verification, the `--provider` and `OPENBOX_PROVIDER` selectors, and every other flag. The launcher has no provider fallback: provisioning stops if the service, the isolation primitive, or the policy is unavailable.
 
 Provisioning performs these actions:
 
 1. Resolves and verifies the service and policy template.
-2. Compiles the YAML policy into an owner-only Seatbelt or bubblewrap profile.
-3. Records the compiled profile SHA-256 digest in `service.json`.
-4. Creates local mTLS service and caller identities under `~/.config/openbox-sandbox/`.
-5. Starts the loopback sandbox service.
+2. Compiles the YAML policy into an owner-only profile for Seatbelt or bubblewrap.
+3. Records the SHA-256 digest of the compiled profile in `service.json`.
+4. Creates local mTLS identities for the service and its caller under `~/.config/openbox-sandbox/`.
+5. Starts the loopback service.
 6. Runs `/usr/bin/true` or `/bin/true` under the native profile.
 7. Writes `~/.config/openbox-sandbox/agent.env` for the SDK.
 
-Check the deployment:
+## Policy templates
 
-```bash
-obs status
-obs verify
-```
+[Provisioning](./provisioning) lists the published templates and the default for each release line. Select one explicitly with `--policy-file` or `OPENBOX_POLICY_FILE`.
 
-`obs verify` exercises the live mTLS create, ready, execute, and delete lifecycle. Artifact verification alone is not execution proof.
+The service treats the provisioned policy and profile as immutable inputs. Before each execution, it verifies the policy identity and the SHA-256 digest of the compiled profile.
 
-## Policy Templates
-
-Each release includes these native policy templates:
-
-| Template | Purpose |
-|---|---|
-| `policy-deny-network-dev.yaml` | Denies network access for development. Linux uses a private network namespace. |
-| `policy-allow-network-dev.yaml` | Allows only `/usr/bin/curl` to reach `example.com:443` for the development demo. |
-| `policy-deny-network.yaml` | Provides a hardened deny-network candidate that requires Landlock. Production qualification remains required. |
-
-Templates with `dev` in the name are not production policies. Each release line selects a default template.
-
-Use `--policy-file` or `OPENBOX_POLICY_FILE` to select a template explicitly:
-
-```bash
-obs provision --provider native --yes \
-  --policy-file "$PWD/policy-allow-network-dev.yaml"
-```
-
-The service treats the provisioned policy and profile as immutable inputs. It verifies the policy identity and compiled profile SHA-256 digest before every execution.
-
-## Network Allowlist
+## Network allowlist
 
 A network-enabled policy starts an HTTP and HTTPS proxy for each execution. The proxy listens on an ephemeral loopback port.
 
@@ -141,47 +77,46 @@ The proxy performs these actions:
 
 On macOS, Seatbelt permits only the loopback proxy port for that execution. Direct sockets cannot provide another egress path. A stopped proxy also cannot provide another egress path.
 
-## Violation Evidence
+## Violation evidence
 
-Each observed proxy request adds a decision, host, and port to terminal `sandbox_evidence`. The SDK writes these values to `openbox.sandbox.egress.*` attributes on the `sandbox_execution` span.
+Each observed proxy request adds a verdict, host, and port to terminal `sandbox_evidence`. The SDK writes these values to `openbox.sandbox.egress.*` attributes on the `sandbox_execution` span.
 
 On macOS, the service queries the unified log for `com.apple.sandbox.reporting:violation` records. It reports a count and stable denial categories. It also writes each record to the service log.
 
-The service uses `log show`. Current macOS testing found that redirected `log stream` output does not reliably include kernel-originated violation records.
+The service uses `log show`. Tests on current macOS versions found that redirected `log stream` output does not reliably include records from kernel-originated violations.
 
 ## Limitations
 
-### Linux Network Allowlists
+### Linux network allowlists
 
-Bubblewrap cannot filter destination addresses in a shared network namespace. The Linux allowlist routes proxy-aware HTTP and HTTPS clients through the policy proxy. Without another kernel network control, it cannot stop clients that bypass the proxy.
+Bubblewrap cannot filter destination addresses in a shared network namespace. The Linux allowlist routes proxy-aware HTTP and HTTPS clients through the policy proxy.
 
-Use the deny-network template for bypass-resistant native Linux isolation. The optional OpenShell provider supplies a stronger Linux network boundary for network allowlists.
+Without another kernel network control, the allowlist cannot stop clients that bypass the proxy.
 
-### Linux Violation Telemetry
+Use the deny-network template for bypass-resistant native Linux isolation.
 
-Bubblewrap does not provide an equivalent unprivileged denial stream for each process. Linux results omit operating system violation counts and categories. Proxy egress decisions remain available.
+### Linux violation telemetry
 
-### Command and Policy Scope
+Bubblewrap does not provide an equivalent unprivileged denial stream for each process. Linux results omit violation counts and categories from the operating system. Proxy egress verdicts remain available.
 
-The provider accepts only registered, non-interactive commands. It does not accept caller-provided shell commands, TTYs, standard input, environment variables, host mounts, credentials, or working directories.
+### Command and policy scope
 
-Only the sandbox workspace is writable. Unknown fields fail closed. Unsupported profile and policy combinations also fail closed.
+The native provider accepts only registered, non-interactive commands. It does not accept shell commands, TTYs, standard input, environment variables, host mounts, credentials, or working directories from callers.
+
+Commands can write only to the sandbox workspace. Unknown fields fail closed. Unsupported combinations of profiles and policies also fail closed.
 
 ## Operations
 
-Use these commands to inspect, verify, reprovision, or remove the provider:
-
 ```bash
 obs status
-obs verify
-obs provision --provider native --clean-rerun --yes
+obs provision --clean-rerun --yes
 obs uninstall
 ```
 
-A clean rerun removes launcher-owned runtime state and recompiles the pinned profile. The native provider has no prepared VM cache.
+A clean rerun removes the runtime state that the launcher owns and recompiles the pinned profile. The native provider has no prepared VM cache.
 
-## Related Pages
+## Related pages
 
-- [Governed Sandbox Commands](./concept): Temporal profile registration and behavioral interception.
-- [Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution): Lifecycle and evidence model.
+- [Governed Sandbox Commands](./concept): Registration of Temporal profiles and behavioral interception.
+- [Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution): The lifecycle and evidence model.
 - [Error Handling](./error-handling): Fail-closed command outcomes.

@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 description: "Diagnose common Worker, governance, sandbox, LLM, and Temporal errors."
-llms_description: Common Temporal Python integration errors and fixes
+llms_description: Common errors and fixes for the Temporal Python integration
 sidebar_position: 4
 tags:
   - getting-started
@@ -13,9 +13,9 @@ import TabItem from '@theme/TabItem';
 
 # Troubleshooting
 
-Use these checks to diagnose common Temporal Python integration errors.
+Use these checks to diagnose common errors in the Temporal Python integration.
 
-## Worker Does Not Connect to OpenBox
+## Worker does not connect to OpenBox
 
 Check the Worker environment:
 
@@ -24,7 +24,7 @@ Check the Worker environment:
 [ -n "$OPENBOX_API_KEY" ] && echo "OPENBOX_API_KEY is set" || echo "OPENBOX_API_KEY is NOT set"
 ```
 
-Then complete these checks:
+Complete these checks:
 
 1. Confirm that `OPENBOX_URL` and `OPENBOX_API_KEY` are set in the Worker process.
 2. Start the Worker.
@@ -32,76 +32,20 @@ Then complete these checks:
 4. Start a Workflow.
 5. Confirm that a session appears in the OpenBox console.
 
-## Sessions Do Not Appear
+## Sessions do not appear
 
 Complete these checks:
 
-1. Confirm that the Worker is running and connected to OpenBox.
+1. Confirm that the Worker runs and has a connection to OpenBox.
 2. Find `OpenBox SDK initialized successfully` in the Worker logs.
 3. Confirm that the Workflow completed in the [Temporal UI](http://localhost:8233).
 4. Confirm that the API key belongs to the registered OpenBox agent.
 
-## Governed Command Support Is Not Configured
+## Governance blocks or stops the agent
 
-A registered command can report `GovernedCommandConfigurationRequired` when its Worker lacks sandbox configuration.
+A blocking rule causes a non-retryable `GovernanceBlock` or `GovernanceHalt` error. This result confirms that the plugin enforced the governance verdict.
 
-Complete these checks:
-
-1. Confirm that the Worker uses `plugins=[OpenBoxPlugin(...)]`.
-2. Confirm that the same plugin receives `sandbox=SandboxConfig(registry=command_registry)`.
-3. Confirm that the requested profile exists in the registry.
-4. Run `obs status`.
-5. Confirm that the status reports the intended provider.
-6. Load `~/.config/openbox-sandbox/agent.env` into the Worker process.
-7. Confirm that the service, policy, and mTLS paths from that file exist.
-
-Keep Worker registration and interception in the same `OpenBoxPlugin` initializer. The launcher does not select another provider when provisioning fails.
-
-See [Command Profiles](/developer-guide/temporal-python/command-profiles) for the supported configuration.
-
-## Sandbox Provisioning Fails
-
-Provisioning fails closed when it cannot verify a provider, policy, or release asset.
-
-Complete these checks:
-
-1. Confirm that the launcher, service, policy templates, `SHA256SUMS`, and SBOM files came from one release.
-2. Verify `SHA256SUMS` before provisioning. Use `shasum -a 256 -c SHA256SUMS` on macOS. Use `sha256sum -c SHA256SUMS` on Linux.
-3. Confirm the selected provider with `--provider native|openshell` or `OPENBOX_PROVIDER`.
-4. Run `obs status` to inspect current state.
-5. Run provisioning again with `--clean-rerun --yes`.
-6. Run `obs verify` to test the live mTLS lifecycle.
-
-`--yes` does not bypass verification or platform requirements. `--clean-rerun` removes launcher-owned runtime state. It does not permit provider fallback.
-
-See [Provisioning](/developer-guide/temporal-python/provisioning) for provider and policy details.
-
-## Sandbox Demo Cannot Reach example.com
-
-The demo requires `policy-allow-network-dev.yaml`. That policy permits `/usr/bin/curl` to reach only `example.com:443`.
-
-Provision the required policy:
-
-```bash
-obs provision --provider native --clean-rerun --yes \
-  --policy-file "$PWD/policy-allow-network-dev.yaml"
-```
-
-Then complete these checks:
-
-1. Load the generated `agent.env` file into the Worker process.
-2. Restart the Worker.
-3. Confirm that the registered profile is `example-egress`.
-4. Run `obs verify`.
-5. Inspect `openbox.sandbox.egress.<n>.decision`, `.host`, and `.port` in the `sandbox_execution` span.
-
-The demo must fail closed when the selected policy does not permit the destination.
-
-## Governance Blocks or Stops the Agent
-
-A blocking rule causes a non-retryable `GovernanceBlock` or `GovernanceHalt` error. This result confirms that the plugin enforced the governance decision.
-
-To inspect the decision:
+Inspect the verdict:
 
 1. Open the [OpenBox console](https://platform.openbox.ai).
 2. Open the agent **Overview** tab.
@@ -110,7 +54,7 @@ To inspect the decision:
 
 See [Error Handling](/developer-guide/temporal-python/error-handling) for governance and approval error handling.
 
-## Approval Requests Do Not Appear
+## Approval requests do not appear
 
 Complete these checks:
 
@@ -118,11 +62,11 @@ Complete these checks:
 2. Confirm that the agent trust tier matches the rule conditions.
 3. Confirm that the approval timeout has not expired.
 
-See [Approvals](/approvals) for approval queue behavior.
+See [Approvals](/approvals) for the behavior of the approval queue.
 
-## LLM API Calls Fail
+## LLM API calls fail
 
-The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) for model routing. `LLM_MODEL` uses the `provider/model-name` format.
+The demo uses [LiteLLM](https://docs.litellm.ai/docs/providers) to route models. `LLM_MODEL` uses the `provider/model-name` format.
 
 Common values are:
 
@@ -179,7 +123,7 @@ print(response.choices[0].message.content)
 
 Use the `LLM_MODEL` and `LLM_KEY` values from `.env`. See the [LiteLLM provider list](https://docs.litellm.ai/docs/providers) for supported formats.
 
-## Temporal Server Does Not Run
+## Temporal server does not run
 
 The Worker reports this error when it cannot connect to the local Temporal server:
 
