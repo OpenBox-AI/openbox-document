@@ -18,7 +18,7 @@ This example requires macOS on Apple Silicon. Install these tools first:
 
 - OpenSSL
 - `uv`
-- The Temporal SDK sandbox extra
+- `openbox-temporal-sdk-python` (pulls `openbox-sdk-python`, which provides the sandbox dispatcher)
 
 Run the commands from the demo directory.
 
