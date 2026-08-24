@@ -16,7 +16,6 @@ This procedure provisions the default `native` provider and runs the demo agains
 
 This example requires macOS on Apple Silicon. Install these tools first:
 
-- GitHub CLI (`gh`)
 - OpenSSL
 - `uv`
 - The Temporal SDK sandbox extra
@@ -25,10 +24,13 @@ Run the commands from the demo directory.
 
 ## Provision and Run
 
-1. Download all assets from one release.
+1. Download all assets from one release. No GitHub account or CLI is required.
 
    ```bash
-   gh release download --repo OpenBox-AI/openbox-sandbox
+   curl -fL -o obs-darwin-arm64 https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
+   curl -fL -o openbox-sandbox-darwin-arm64 https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/openbox-sandbox-darwin-arm64
+   curl -fL -o policy-allow-network-dev.yaml https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/policy-allow-network-dev.yaml
+   curl -fL -o SHA256SUMS https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
    ```
 
 2. Verify the release SHA-256 manifest. Then prepare the launcher and service.
