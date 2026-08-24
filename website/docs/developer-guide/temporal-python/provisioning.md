@@ -137,4 +137,3 @@ Load the generated provider-neutral values into the Worker process, as shown in 
 ## Provider guides
 
 - [Native Provider](./native-provider): Requirements, network behavior, and limitations for Seatbelt and bubblewrap.
-- [OpenShell Provider (VM)](./openshell-provider): Requirements for microVMs, prepared caches, registry mode, and CA trust.

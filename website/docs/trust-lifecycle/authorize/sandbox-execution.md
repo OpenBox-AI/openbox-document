@@ -81,7 +81,7 @@ The sandbox service and its mTLS credentials run in infrastructure that you cont
 
 The local service owns scope creation, execution, cleanup, and restart reconciliation for each request.
 
-The optional [OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider) uses Hypervisor.framework or KVM to provide a guest-kernel boundary. Provider selection is explicit. A provider startup or execution failure does not cause fallback.
+Provider selection is explicit. A provider startup or execution failure does not cause fallback.
 
 ## Configuration
 
@@ -119,4 +119,3 @@ Treat a command as indeterminate when cleanup or terminal absence is uncertain. 
 - [Authorize Phase](/trust-lifecycle/authorize): Location of `CONSTRAIN` in the authorization pipeline.
 - [Governed Sandbox Commands](/developer-guide/temporal-python/concept): Temporal interception, profiles, and results.
 - [Native Provider](/developer-guide/temporal-python/native-provider): Native installation, verification, and limitations.
-- [OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider): Optional microVM provider.

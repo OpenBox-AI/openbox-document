@@ -22,8 +22,6 @@ The native provider uses these platform controls:
 - **macOS:** Seatbelt through `/usr/bin/sandbox-exec`.
 - **Linux:** bubblewrap (`bwrap`).
 
-Use the optional [OpenShell provider (VM)](./openshell-provider) when you require a guest-kernel boundary.
-
 ## Requirements
 
 | Host | Requirements |
@@ -95,7 +93,7 @@ Bubblewrap cannot filter destination addresses in a shared network namespace. Th
 
 Without another kernel network control, the allowlist cannot stop clients that bypass the proxy.
 
-Use the deny-network template for bypass-resistant native Linux isolation. Use the [OpenShell provider (VM)](./openshell-provider) if you require a network allowlist and a stronger Linux network boundary.
+Use the deny-network template for bypass-resistant native Linux isolation.
 
 ### Linux violation telemetry
 
@@ -120,6 +118,5 @@ A clean rerun removes the runtime state that the launcher owns and recompiles th
 ## Related pages
 
 - [Governed Sandbox Commands](./concept): Registration of Temporal profiles and behavioral interception.
-- [OpenShell Provider (VM)](./openshell-provider): The optional OpenShell provider with microVM isolation.
 - [Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution): The lifecycle and evidence model.
 - [Error Handling](./error-handling): Fail-closed command outcomes.

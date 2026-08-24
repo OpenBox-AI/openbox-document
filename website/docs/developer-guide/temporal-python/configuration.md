@@ -206,7 +206,7 @@ plugin = OpenBoxPlugin(
 
 For a registered command, `CONSTRAIN` selects sandbox execution and aborts the corresponding host action before its side effect. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
 
-The sandbox runtime defaults to the `native` provider. Provision it with `obs provision --provider native --yes` (or omit `--provider` because `native` is the default), then load `~/.config/openbox-sandbox/agent.env`. For a guest-kernel boundary, provision the optional [OpenShell Provider (VM)](/developer-guide/temporal-python/openshell-provider) explicitly.
+The sandbox runtime defaults to the `native` provider. Provision it with `obs provision --provider native --yes` (or omit `--provider` because `native` is the default), then load `~/.config/openbox-sandbox/agent.env`.
 
 See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
 
