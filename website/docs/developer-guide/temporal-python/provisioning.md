@@ -109,7 +109,19 @@ obs provision --provider native --yes \
   --policy-file "$PWD/policy-allow-network-dev.yaml"
 ```
 
-## 6. Verify the runtime
+## 6. Choose how the service runs
+
+Provisioning starts the service in one of three ways.
+
+| Mode | Command | Behavior |
+|---|---|---|
+| Foreground | `obs provision --yes` | The service runs in your terminal. Ctrl-C stops it and drains work in flight. |
+| Detached | `obs provision --yes --detach` | The service runs in the background with a PID file, in its own process group, so it survives the terminal closing. |
+| Supervised | `obs provision --yes --systemd` | Linux only. Writes a systemd unit and enables it, so the service restarts on failure. Root installs a system unit; any other user installs a user unit. |
+
+A user unit stops when the last session ends unless you enable lingering.
+
+## 7. Verify the runtime
 
 Provisioning performs these actions:
 

@@ -28,8 +28,13 @@ Download the launcher into a directory you own, then provision. The `v0.1.0-dev`
 ```bash
 curl -fL -o obs https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
 chmod +x obs
-./obs provision --yes
+./obs provision --yes --detach
 ```
+
+`--detach` leaves the service running in the background so the rest of this
+page works in one terminal. Without it the service runs in the foreground and
+Ctrl-C stops it, which is the better shape for watching what it does. Use
+`--systemd` on Linux to have systemd supervise it and restart it on failure.
 
 On Linux, download `obs-linux-x86_64` instead.
 
