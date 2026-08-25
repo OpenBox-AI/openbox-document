@@ -30,7 +30,7 @@ curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1
 curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
 shasum -a 256 -c SHA256SUMS 2>/dev/null | grep obs-darwin-arm64
 chmod +x obs-darwin-arm64 && mv obs-darwin-arm64 obs
-./obs provision --yes --detach
+./obs provision --detach
 ```
 
 Verify the download before you rename it. `SHA256SUMS` lists the release
@@ -259,12 +259,12 @@ You provisioned the base release line, which denies every destination. Provision
 The loaded environment and the provisioned policy differ.
 
 ```bash
-./obs provision --clean-rerun --yes
+./obs provision --clean-rerun
 ```
 
 ### Provisioning fails
 
-Provisioning fails closed when it cannot verify a release asset, the policy, or the provider. Confirm every asset came from one release, verify `SHA256SUMS`, then provision again with `--clean-rerun --yes`. There is no provider fallback.
+Provisioning fails closed when it cannot verify a release asset, the policy, or the provider. Confirm every asset came from one release, verify `SHA256SUMS`, then provision again with `--clean-rerun`. There is no provider fallback.
 
 ## Next steps
 

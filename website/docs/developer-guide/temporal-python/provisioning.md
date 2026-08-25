@@ -65,7 +65,14 @@ On Linux, run:
 sha256sum -c SHA256SUMS
 ```
 
-Provisioning verifies the selected service and policy again. It compiles the policy. It pins the SHA-256 digest of the policy in `service.json`.
+Provisioning checks every asset it resolves against that release's
+`SHA256SUMS`, whether the file was just downloaded or already present, and
+re-fetches on a mismatch. `OPENBOX_SANDBOX_BIN` overrides that check for a
+locally built service binary.
+
+Provisioning then compiles the policy and pins its SHA-256 digest in
+`service.json`. One release line selects every asset: `--dev` and `--base`
+choose the service binary and the policy together.
 
 Before each execution, the service verifies the policy identity and the digest of the compiled profile.
 
@@ -74,21 +81,19 @@ Before each execution, the service verifies the policy identity and the digest o
 A new configuration uses the native provider (`native`) by default. The following commands are equivalent:
 
 ```bash
-obs provision --yes
-obs provision --provider native --yes
-OPENBOX_PROVIDER=native obs provision --yes
+obs provision
+obs provision --provider native
+OPENBOX_PROVIDER=native obs provision
 ```
 
 The `--provider` option accepts `native` or `openshell`. The command-line option overrides `OPENBOX_PROVIDER`.
 
 The selection of a provider fails closed. The launcher does not switch providers when the selected provider is unavailable or fails verification.
 
-Use `--yes` to accept non-privileged defaults without prompts. This option does not bypass platform checks, artifact verification, or required trust setup.
-
 Use `--clean-rerun` to remove runtime state that the launcher owns. Then provision the state again:
 
 ```bash
-obs provision --provider native --clean-rerun --yes
+obs provision --provider native --clean-rerun
 ```
 
 ## 5. Select a policy
@@ -107,7 +112,7 @@ The repository also contains `deploy/policies/policy-deny-network.yaml`. This ha
 Use `--policy-file` or `OPENBOX_POLICY_FILE` to select another template:
 
 ```bash
-obs provision --provider native --yes \
+obs provision --provider native \
   --policy-file "$PWD/policy-allow-network-dev.yaml"
 ```
 
@@ -117,9 +122,9 @@ Provisioning starts the service in one of three ways.
 
 | Mode | Command | Behavior |
 |---|---|---|
-| Foreground | `obs provision --yes` | The service runs in your terminal. Ctrl-C stops it and drains work in flight. |
-| Detached | `obs provision --yes --detach` | The service runs in the background with a PID file, in its own process group, so it survives the terminal closing. |
-| Supervised | `obs provision --yes --systemd` | Linux only. Writes a systemd unit and enables it, so the service restarts on failure. Root installs a system unit; any other user installs a user unit. |
+| Foreground | `obs provision` | The service runs in your terminal. Ctrl-C stops it and drains work in flight. |
+| Detached | `obs provision --detach` | The service runs in the background with a PID file, in its own process group, so it survives the terminal closing. |
+| Supervised | `obs provision --systemd` | Linux only. Writes a systemd unit and enables it, so the service restarts on failure. Root installs a system unit; any other user installs a user unit. |
 
 A user unit stops when the last session ends unless you enable lingering.
 
