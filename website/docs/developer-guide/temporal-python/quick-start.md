@@ -26,10 +26,17 @@ You also need `uv`, a running `temporal server start-dev`, and an `OPENBOX_API_K
 Download the launcher into a directory you own, then provision. The `v0.1.0-dev` tag selects the development release line, whose default policy permits `/usr/bin/curl` to reach `example.com:443`. [Provisioning](./provisioning) explains the release lines and every flag.
 
 ```bash
-curl -fL -o obs https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
-chmod +x obs
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
+shasum -a 256 -c SHA256SUMS 2>/dev/null | grep obs-darwin-arm64
+chmod +x obs-darwin-arm64 && mv obs-darwin-arm64 obs
 ./obs provision --yes --detach
 ```
+
+Verify the download before you rename it. `SHA256SUMS` lists the release
+filename, so the check only works while the file still carries it. Assets you
+did not download report `FAILED open or read`, which is why the check is
+filtered to the one line that matters. On Linux, use `sha256sum -c SHA256SUMS`.
 
 `--detach` leaves the service running in the background so the rest of this
 page works in one terminal. Without it the service runs in the foreground and

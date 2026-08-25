@@ -50,6 +50,8 @@ Keep all assets together. Do not mix assets from different releases. The launche
 Rename the launcher to `obs`. Alternatively, invoke it by its downloaded name.
 
 Before you run either binary, verify all downloaded assets against `SHA256SUMS`.
+Keep the release filenames while you verify: the manifest lists them, so a file
+renamed to `obs` no longer matches. Rename after the check passes.
 
 On macOS, run:
 
