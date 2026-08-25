@@ -95,10 +95,10 @@ OpenShell is a pinned external runtime. The hosted bundle locks OpenShell `0.0.8
 Provision this provider explicitly:
 
 ```bash
-obs provision --provider openshell --yes
+obs provision --provider openshell
 ```
 
-`--yes` accepts non-privileged defaults. It does not bypass these checks:
+Provisioning never prompts, and it does not bypass these checks:
 
 - KVM access
 - VM driver signing
@@ -139,14 +139,14 @@ Do not use a cache from another platform, architecture, user, gateway state layo
 A normal `--clean-rerun` preserves prepared images. Use `--purge-cache` for a full reset:
 
 ```bash
-obs provision --provider openshell --clean-rerun --purge-cache --yes
+obs provision --provider openshell --clean-rerun --purge-cache
 ```
 
 Skip cache use only during diagnosis:
 
 ```bash
-obs provision --provider openshell --no-vm-cache --yes
-obs provision --provider openshell --skip-warm-cache --yes
+obs provision --provider openshell --no-vm-cache
+obs provision --provider openshell --skip-warm-cache
 ```
 
 If the prepared cache is missing, invalid, or rejected, provisioning can build it through the documented runtime fallback. Provisioning does not switch sandbox providers.
@@ -166,7 +166,7 @@ Download the assets, then provision the development release:
 
 ```bash
 obs update --dev --all
-obs provision --provider openshell --dev --yes
+obs provision --provider openshell --dev
 ```
 
 When the OCI layout and zot are present, provisioning performs these actions:
@@ -238,7 +238,7 @@ A prepared cache reduces startup time. It does not replace identity verification
 
 - The OpenShell provider has higher startup and resource costs than the native provider (`native`).
 - Cache warming requires `e2fsprogs`, even without a container engine.
-- Registry mode requires host CA trust. `--yes` does not bypass this requirement.
+- Registry mode requires host CA trust. Provisioning does not bypass this requirement.
 - Linux requires readable KVM and compatible glibc.
 - A cache miss can slow the first request or require the container engine fallback.
 - OpenBox does not publish a complete VM path for Windows or Intel macOS.
@@ -249,7 +249,7 @@ Use these commands to inspect, verify, provision again, or remove the provider:
 
 ```bash
 obs status
-obs provision --provider openshell --clean-rerun --yes
+obs provision --provider openshell --clean-rerun
 obs uninstall
 ```
 
