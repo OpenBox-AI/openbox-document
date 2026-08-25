@@ -26,10 +26,22 @@ You also need `uv`, a running `temporal server start-dev`, and an `OPENBOX_API_K
 Download the launcher into a directory you own, then provision. The `v0.1.0-dev` tag selects the development release line, whose default policy permits `/usr/bin/curl` to reach `example.com:443`. [Provisioning](./provisioning) explains the release lines and every flag.
 
 ```bash
-curl -fL -o obs https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
-chmod +x obs
-./obs provision --yes
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
+shasum -a 256 -c SHA256SUMS 2>/dev/null | grep obs-darwin-arm64
+chmod +x obs-darwin-arm64 && mv obs-darwin-arm64 obs
+./obs provision --detach
 ```
+
+Verify the download before you rename it. `SHA256SUMS` lists the release
+filename, so the check only works while the file still carries it. Assets you
+did not download report `FAILED open or read`, which is why the check is
+filtered to the one line that matters. On Linux, use `sha256sum -c SHA256SUMS`.
+
+`--detach` leaves the service running in the background so the rest of this
+page works in one terminal. Without it the service runs in the foreground and
+Ctrl-C stops it, which is the better shape for watching what it does. Use
+`--systemd` on Linux to have systemd supervise it and restart it on failure.
 
 On Linux, download `obs-linux-x86_64` instead.
 
@@ -206,9 +218,23 @@ The second line loads the sandbox boundary values that provisioning generated. `
 
 ## 5. Prove the policy
 
-Change the last `LiteralArgument` to `https://api.github.com/` and run it again. The command still executes in the sandbox, but the proxy refuses the destination and `curl` exits `56`.
+Change the last `LiteralArgument` to `https://api.github.com/` and run it again. The workflow now fails, which is the correct outcome.
 
-Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span to see the refusal. [Console Evidence](./console-evidence) lists every recorded field.
+The command still runs in the sandbox. The proxy compares the destination with the pinned policy, refuses it, and `curl` exits `56`:
+
+```text
+exit_code: 56
+stdout:    {"http_status":000,"local_ip":"127.0.0.1","remote_ip":"127.0.0.1"}
+evidence:  [{'decision': 'denied', 'host': 'api.github.com', 'port': 443}]
+```
+
+`curl` writes `000` for a request it never completed. That is not a valid JSON number, so the typed result schema rejects the output and the activity fails closed:
+
+```text
+ApplicationError: GovernedCommandResultInvalid: Governed command typed result rejected
+```
+
+A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
 
 ## Troubleshooting
 
@@ -233,12 +259,12 @@ You provisioned the base release line, which denies every destination. Provision
 The loaded environment and the provisioned policy differ.
 
 ```bash
-./obs provision --clean-rerun --yes
+./obs provision --clean-rerun
 ```
 
 ### Provisioning fails
 
-Provisioning fails closed when it cannot verify a release asset, the policy, or the provider. Confirm every asset came from one release, verify `SHA256SUMS`, then provision again with `--clean-rerun --yes`. There is no provider fallback.
+Provisioning fails closed when it cannot verify a release asset, the policy, or the provider. Confirm every asset came from one release, verify `SHA256SUMS`, then provision again with `--clean-rerun`. There is no provider fallback.
 
 ## Next steps
 

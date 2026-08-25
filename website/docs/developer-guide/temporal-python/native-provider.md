@@ -35,14 +35,12 @@ Use the optional [OpenShell provider (VM)](./openshell-provider) when you requir
 
 The native provider does not require Docker, a VM runtime, `sudo`, or installation of a system CA.
 
-`obs provision --yes` accepts all non-privileged defaults without interaction.
-
 ## Provision
 
 The native provider is the default, so the shortest command selects it:
 
 ```bash
-obs provision --yes
+obs provision
 ```
 
 [Provisioning](./provisioning) covers the release assets, checksum verification, the `--provider` and `OPENBOX_PROVIDER` selectors, and every other flag. The launcher has no provider fallback: provisioning stops if the service, the isolation primitive, or the policy is unavailable.
@@ -111,7 +109,7 @@ Commands can write only to the sandbox workspace. Unknown fields fail closed. Un
 
 ```bash
 obs status
-obs provision --clean-rerun --yes
+obs provision --clean-rerun
 obs uninstall
 ```
 
