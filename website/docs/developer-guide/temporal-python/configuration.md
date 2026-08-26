@@ -12,25 +12,26 @@ tags:
 
 The sole OpenBox integration surface is the native Temporal `Worker(..., plugins=[OpenBoxPlugin(...)])` shape. The plugin initializer owns all OpenBox Worker, Workflow, and Activity setup.
 
-The plugin can be configured via environment variables or constructor parameters.
+The plugin is configured with constructor parameters. It does not read
+environment variables: the package reads the process environment in exactly one
+place, and that place is unrelated to plugin configuration.
 
-## Environment Variables
+## Credentials
 
-| Variable                            | Required | Default     | Description                                               |
-| ----------------------------------- | -------- | ----------- | --------------------------------------------------------- |
-| `OPENBOX_URL`                       | Yes      | -           | OpenBox Core API URL (HTTPS required for non-localhost)   |
-| `OPENBOX_API_KEY`                   | Yes      | -           | API key for authentication (`obx_live_*` or `obx_test_*`) |
-| `OPENBOX_ENABLED`                   | No       | `true`      | Enable/disable governance                                 |
-| `OPENBOX_GOVERNANCE_TIMEOUT`        | No       | `30.0`      | Seconds to wait for governance evaluation                 |
-| `OPENBOX_GOVERNANCE_POLICY`         | No       | `fail_open` | Behavior when API unreachable                             |
-| `OPENBOX_SEND_START_EVENT`          | No       | `true`      | Send WorkflowStarted events                               |
-| `OPENBOX_SEND_ACTIVITY_START_EVENT` | No       | `true`      | Send ActivityStarted events                               |
+`OPENBOX_URL` and `OPENBOX_API_KEY` are the conventional names for the two
+values every deployment needs. Your own code reads them and passes them in, so
+the key never appears in source:
 
-## Plugin Parameters
+```python
+OpenBoxPlugin(
+    openbox_url=os.environ["OPENBOX_URL"],
+    openbox_api_key=os.environ["OPENBOX_API_KEY"],
+)
+```
 
-Parameters passed to `OpenBoxPlugin()` override environment variables:
-
-See **[Example: Full Configuration](#example-full-configuration)** for a complete example.
+Everything else is a parameter with a default. Setting a variable such as
+`OPENBOX_GOVERNANCE_TIMEOUT` in the environment has no effect; pass
+`governance_timeout` instead.
 
 ## Configuration Options
 
