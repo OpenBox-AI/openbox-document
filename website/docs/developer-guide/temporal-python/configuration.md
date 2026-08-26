@@ -29,9 +29,20 @@ OpenBoxPlugin(
 )
 ```
 
-Everything else is a parameter with a default. Setting a variable such as
-`OPENBOX_GOVERNANCE_TIMEOUT` in the environment has no effect; pass
-`governance_timeout` instead.
+Everything else is a parameter with a default. To drive any of them from the
+environment, read the variable yourself and pass the value in:
+
+```python
+OpenBoxPlugin(
+    openbox_url=os.environ["OPENBOX_URL"],
+    openbox_api_key=os.environ["OPENBOX_API_KEY"],
+    governance_timeout=float(os.getenv("OPENBOX_GOVERNANCE_TIMEOUT", "30.0")),
+    governance_policy=os.getenv("OPENBOX_GOVERNANCE_POLICY", "fail_open"),
+)
+```
+
+Setting those variables without reading them changes nothing, because the
+plugin never looks at them.
 
 ## Configuration Options
 
