@@ -19,7 +19,13 @@ A `CONSTRAIN` verdict stops a Temporal activity before its body runs and execute
 | macOS 26 on Apple Silicon | `curl` and `/usr/bin/sandbox-exec` | Both ship with macOS. Install nothing. |
 | Linux x86_64 | `curl` and the `bwrap` binary | Install the `bubblewrap` package. The kernel must permit unprivileged namespaces. |
 
-You also need `uv`, a running `temporal server start-dev`, and an `OPENBOX_API_KEY` from a [registered agent](/dashboard/agents/registering-agents).
+You also need `uv` and an `OPENBOX_API_KEY` from a [registered agent](/dashboard/agents/registering-agents).
+
+A Temporal server must be running before step 4. Leave this in its own terminal:
+
+```bash
+temporal server start-dev
+```
 
 ## 1. Provision the sandbox
 
@@ -62,8 +68,24 @@ Without this rule the verdict is `ALLOW` and the activity runs on the host.
 
 ```bash
 uv init
+rm main.py
 uv add openbox-temporal-sdk-python temporalio httpx
 ```
+
+`uv init` writes a `main.py`. Remove it, because `uv run python .` runs
+`__main__.py`.
+
+:::caution The sandbox module is not in the published SDK yet
+`openbox-temporal-sdk-python` 1.4.0 installs without error, but it does not
+contain `openbox.sandbox`, which this example imports. Step 4 then stops at
+`ModuleNotFoundError: No module named 'openbox.sandbox'`. Until a release
+carries that module, install the SDK from a checkout that has it:
+
+```bash
+uv add --editable /path/to/openbox-sdk-python
+uv add --editable /path/to/openbox-temporal-sdk-python
+```
+:::
 
 The example is two files, `workflow.py` and `__main__.py`.
 
@@ -246,9 +268,16 @@ No rule matched, so the verdict was `ALLOW` and the body ran on the host. Check 
 
 The Worker has no sandbox configuration. Confirm that one `OpenBoxPlugin` receives `sandbox=SandboxConfig(...)`, that the requested profile exists in the registry, and that `agent.env` is loaded in the Worker process.
 
-### `missing required env var: OPENBOX_SANDBOX_ENDPOINT`
+### `KeyError: 'OPENBOX_SANDBOX_CONFIG_PATH'`
 
 The shell did not source `agent.env`, or it sourced the file without `set -a`.
+The example reads the boundary values straight from the environment, so the
+first missing one raises `KeyError`. Run the `set -a` line from step 4 in the
+same shell as the Worker.
+
+### `ModuleNotFoundError: No module named 'openbox.sandbox'`
+
+The installed SDK does not carry the sandbox module. See the note in step 3.
 
 ### The request to `example.com` is refused
 
@@ -260,6 +289,16 @@ The loaded environment and the provisioned policy differ.
 
 ```bash
 ./obs provision --clean-rerun
+```
+
+### `sandbox service port 17443 remains occupied`
+
+A service is still listening, and the launcher will not signal a process it
+cannot identify as its own. This happens when a PID file was removed while the
+service kept running. Stop the listener, then provision again:
+
+```bash
+lsof -nP -iTCP:17443 -sTCP:LISTEN -t | xargs kill
 ```
 
 ### Provisioning fails
