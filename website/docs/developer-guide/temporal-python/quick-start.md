@@ -75,18 +75,6 @@ uv add openbox-temporal-sdk-python temporalio httpx
 `uv init` writes a `main.py`. Remove it, because `uv run python .` runs
 `__main__.py`.
 
-:::caution The sandbox module is not in the published SDK yet
-`openbox-temporal-sdk-python` 1.4.0 installs without error, but it does not
-contain `openbox.sandbox`, which this example imports. Step 4 then stops at
-`ModuleNotFoundError: No module named 'openbox.sandbox'`. Until a release
-carries that module, install the SDK from a checkout that has it:
-
-```bash
-uv add --editable /path/to/openbox-sdk-python
-uv add --editable /path/to/openbox-temporal-sdk-python
-```
-:::
-
 The example is two files, `workflow.py` and `__main__.py`.
 
 The workflow goes in its own module. The Worker re-imports the workflow module inside the Temporal workflow sandbox, and that sandbox rejects a module that can perform I/O. Keeping the workflow away from `httpx` and the OpenBox imports satisfies it.
@@ -275,9 +263,6 @@ The example reads the boundary values straight from the environment, so the
 first missing one raises `KeyError`. Run the `set -a` line from step 4 in the
 same shell as the Worker.
 
-### `ModuleNotFoundError: No module named 'openbox.sandbox'`
-
-The installed SDK does not carry the sandbox module. See the note in step 3.
 
 ### The request to `example.com` is refused
 
