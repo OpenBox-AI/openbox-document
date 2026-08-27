@@ -115,6 +115,6 @@ A clean rerun removes the runtime state that the launcher owns and recompiles th
 
 ## Related pages
 
-- [Governed Sandbox Commands](./concept): Registration of Temporal profiles and behavioral interception.
+- [Governed Sandbox Commands](./concept): Registration of Temporal profiles.
 - [Sandbox Execution](/trust-lifecycle/authorize/sandbox-execution): The lifecycle and evidence model.
 - [Error Handling](./error-handling): Fail-closed command outcomes.

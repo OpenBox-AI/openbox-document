@@ -44,15 +44,13 @@ The operation may proceed only if the active integration can enforce the returne
 **When returned:**
 - A guardrail transformed the input and the integration can execute only the transformed value
 - A trust-tier rule requires isolation for this operation type
-- A behavioral rule permits continuation only under an enforceable constraint
 
 **Effect:**
 - The integration applies the constraint and records the enforced action
 - The event records the specific constraint applied
 - If the integration cannot enforce the constraint, the operation fails closed
 - The enforcement mechanism is integration-specific; not every `CONSTRAIN` action uses a sandbox
-- For a registered [Temporal governed command](/developer-guide/temporal-python/concept), a policy `CONSTRAIN` with `constraints: ["run_in_sandbox"]` or a behavioral `CONSTRAIN` selecting a replacement profile aborts the host action and selects sandbox execution. An ordinary unsupported Temporal action fails closed
-- Behavioral score is unaffected
+- For a registered [Temporal governed command](/developer-guide/temporal-python/concept), a policy `CONSTRAIN` wnstraints: ["run_in_sandbox"]` or a behavioral `CONSTRAIN` selecting a replacement profile aborts the host action and selects sandbox execution. An ordinary unsupported Temporal action fails closed
 
 ## REQUIRE_APPROVAL
 
