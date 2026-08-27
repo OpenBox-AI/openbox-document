@@ -12,7 +12,7 @@ tags:
 
 OpenBox can replace a governed host action with an admitted command in an isolated sandbox.
 
-## One Dispatch, No Fallback
+## One dispatch, no fallback
 
 Each governed operation receives one verdict:
 
@@ -49,7 +49,7 @@ The native provider (`native`) uses these controls of the operating system:
 - **macOS:** Seatbelt through `sandbox-exec`.
 - **Linux:** bubblewrap.
 
-The optional OpenShell provider (`openshell`) uses a microVM. The selection of a provider does not change the rules for governance routing.
+The optional OpenShell provider (`openshell`) uses a microVM, which adds a guest-kernel boundary. The selection of a provider does not change the rules for governance routing.
 
 ## Command admission
 
@@ -65,10 +65,7 @@ OpenBox invokes the admitted argument vector directly. It does not reconstruct a
 2. **At-most-once dispatch:** Each command has a stable dispatch identity. Retries and duplicate requests cannot cause a second dispatch.
 3. **Bounded evidence:** OpenBox records bounded output data, process status, cleanup status, network verdicts, and available isolation violations.
 
-## Providers
-
-- **The native provider, `native` (default):** Uses Seatbelt on macOS and bubblewrap on Linux.
-- **The OpenShell provider, `openshell` (optional):** Uses a microVM for a guest-kernel boundary.
+## Selecting a provider
 
 Select a provider with `--provider native|openshell` or `OPENBOX_PROVIDER`. OpenBox does not switch providers after a provisioning or execution failure.
 
