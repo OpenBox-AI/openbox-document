@@ -112,8 +112,10 @@ second is the one the rule constrains.
 5. Set the verdict to `CONSTRAIN` and the profile to `post-batch`.
 6. Write an on-reject message, then create the rule.
 
-Disable any policy rule that matches `post_payment_batch`. That rule would stop
-the first activity before it makes the call that fires this trigger.
+Disable any policy rule that matches `post_payment_batch` before you run this.
+That rule stops the first activity before it makes the call that fires this
+trigger, and the run fails with `GovernedCommandInputError`, because the
+behavioral example names no profile in its workflow input.
 
 </TabItem>
 </Tabs>
@@ -263,37 +265,143 @@ asyncio.run(main())
 </TabItem>
 <TabItem value="behavioral" label="Behavioral rule">
 
-Start from the same two files, then make three additions. The behavioral rule
-needs a first activity that performs an action and a second activity to
-constrain.
+Two files, complete. The behavioral rule needs a first activity that performs
+an action and a second activity to constrain, so the workflow calls two.
 
-Add the second activity to `__main__.py`:
+```python title="workflow.py"
+from datetime import timedelta
 
-```python title="__main__.py (addition)"
-@activity.defn
-async def compute_payment_total(batch: dict) -> dict:
-    # The behavioral rule constrains this one. Under CONSTRAIN it never runs.
-    return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
+from temporalio import workflow
+
+
+@workflow.defn
+class PaymentBatchWorkflow:
+    @workflow.run
+    async def run(self, batch: dict) -> dict:
+        posting = await workflow.execute_activity(
+            "post_payment_batch",
+            batch,
+            start_to_close_timeout=timedelta(minutes=2),
+        )
+        total = await workflow.execute_activity(
+            "compute_payment_total",
+            batch,
+            start_to_close_timeout=timedelta(minutes=2),
+        )
+        return {"posting": posting, "total": total}
 ```
-
-Call it from the workflow, after the first activity:
-
-```python title="workflow.py (addition)"
-total = await workflow.execute_activity(
-    "compute_payment_total",
-    batch,
-    start_to_close_timeout=timedelta(seconds=30),
-)
-```
-
-Register it beside the first one:
 
 ```python title="__main__.py"
-activities=[post_payment_batch, compute_payment_total],
+import asyncio
+import os
+import time
+from pathlib import Path
+
+from temporalio import activity
+from temporalio.client import Client
+from temporalio.worker import Worker
+
+import httpx
+
+from openbox import OpenBoxPlugin
+from openbox.sandbox import SandboxConfig
+from openbox.sandbox.registry import (
+    GovernedCommandDefinition,
+    GovernedCommandRegistry,
+    IdentifierResultField,
+    IntegerResultField,
+    LiteralArgument,
+    TypedJsonResultSchema,
+)
+
+from workflow import PaymentBatchWorkflow
+
+TASK_QUEUE = "payment-demo"
+
+
+@activity.defn
+async def post_payment_batch(batch: dict) -> dict:
+    """Runs on the host and emits the trigger event."""
+    async with httpx.AsyncClient() as client:
+        response = await client.get("https://example.com")
+    return {"status": "posted", "http_status": response.status_code}
+
+
+@activity.defn
+async def compute_payment_total(batch: dict) -> dict:
+    """The behavioral rule constrains this one. Under CONSTRAIN it never runs."""
+    return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
+
+
+def posting_registry() -> GovernedCommandRegistry:
+    return GovernedCommandRegistry(
+        commands=(
+            GovernedCommandDefinition(
+                command_id="post-batch",
+                executable="/usr/bin/curl",
+                arguments=(
+                    LiteralArgument("-s"),
+                    LiteralArgument("-o"),
+                    LiteralArgument("/dev/null"),
+                    LiteralArgument("-w"),
+                    LiteralArgument(
+                        '{"http_status":%{http_code},'
+                        '"local_ip":"%{local_ip}",'
+                        '"remote_ip":"%{remote_ip}"}'
+                    ),
+                    LiteralArgument("https://example.com/"),
+                ),
+                result_schema=TypedJsonResultSchema(
+                    name="sandbox-http",
+                    fields=(
+                        IntegerResultField("http_status", minimum=0, maximum=999),
+                        IdentifierResultField("remote_ip"),
+                        IdentifierResultField("local_ip"),
+                    ),
+                ),
+            ),
+        )
+    )
+
+
+async def main() -> None:
+    client = await Client.connect("localhost:7233")
+    worker = Worker(
+        client,
+        task_queue=TASK_QUEUE,
+        workflows=[PaymentBatchWorkflow],
+        activities=[post_payment_batch, compute_payment_total],
+        plugins=[
+            OpenBoxPlugin(
+                openbox_url=os.environ["OPENBOX_URL"],
+                openbox_api_key=os.environ["OPENBOX_API_KEY"],
+                sandbox=SandboxConfig(
+                    registry=posting_registry(),
+                    service_config=Path(os.environ["OPENBOX_SANDBOX_CONFIG_PATH"]),
+                    policy=Path(os.environ["OPENBOX_SANDBOX_POLICY_FILE"]),
+                    ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
+                    certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
+                    private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+                ),
+            )
+        ],
+    )
+    async with worker:
+        handle = await client.start_workflow(
+            PaymentBatchWorkflow,
+            {"batch_id": "B-2026-001"},
+            id=f"payment-demo-{int(time.time())}",
+            task_queue=TASK_QUEUE,
+        )
+        print(await handle.result())
+
+
+asyncio.run(main())
 ```
 
-Everything else stays the same, including the registry. Both rule types run the
-same profile, `post-batch`.
+The workflow input carries no `profile_id` here. A policy rule takes the
+profile from the activity input, while a behavioral rule names the profile
+itself, in the rule.
 
 </TabItem>
 </Tabs>
@@ -312,6 +420,9 @@ uv run python .
 
 The second line loads the sandbox boundary values that provisioning generated. `set -a` exports them, so the Worker process inherits them.
 
+<Tabs groupId="rule-type">
+<TabItem value="policy" label="Policy rule" default>
+
 ```text
 {'cleanup_status': 'deleted', 'disposition': 'executed_in_sandbox',
  'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
@@ -322,9 +433,33 @@ The second line loads the sandbox boundary values that provisioning generated. `
                              {'name': 'local_ip', 'value': '127.0.0.1'}]}}
 ```
 
-`disposition` is `executed_in_sandbox`, so the activity body never ran. Both addresses are `127.0.0.1` because the native provider reaches the destination through its loopback policy proxy. The OpenShell provider reports the guest network address instead.
+`disposition` is `executed_in_sandbox`, so the activity body never ran.
 
-## 5. Prove the policy
+</TabItem>
+<TabItem value="behavioral" label="Behavioral rule">
+
+The workflow returns both activities. The first ran on the host, which is what
+emitted the trigger event. The second went to the sandbox.
+
+```text
+{'posting': {'status': 'posted', 'http_status': 200},
+ 'total': {'cleanup_status': 'deleted', 'disposition': 'executed_in_sandbox',
+           'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
+           'stdout_bytes': 66, 'timeout_status': 'not_observed',
+           'typed_result': {'schema_name': 'sandbox-http',
+                            'values': [{'name': 'http_status', 'value': 200},
+                                       {'name': 'remote_ip', 'value': '127.0.0.1'},
+                                       {'name': 'local_ip', 'value': '127.0.0.1'}]}}}
+```
+
+`computed_by` never appears, because the second activity body never ran.
+
+</TabItem>
+</Tabs>
+
+Both addresses are `127.0.0.1` because the native provider reaches the destination through its loopback policy proxy. The OpenShell provider reports the guest network address instead.
+
+## 5. Prove the network policy
 
 Change the last `LiteralArgument` to `https://api.github.com/` and run it again. The workflow now fails, which is the correct outcome.
 
@@ -348,11 +483,21 @@ A refused destination therefore surfaces as a failed activity, not as a result c
 
 ### The workflow returns the activity result unchanged
 
-No rule matched, so the verdict was `ALLOW` and the body ran on the host. Check the rule condition against the activity name.
+No rule matched, so the verdict was `ALLOW` and the body ran on the host. For a
+policy rule, check the condition against the activity name. For a behavioral
+rule, see the next entry.
 
 ### `GovernedCommandConfigurationRequired`
 
 The Worker has no sandbox configuration. Confirm that one `OpenBoxPlugin` receives `sandbox=SandboxConfig(...)`, that the requested profile exists in the registry, and that `agent.env` is loaded in the Worker process.
+
+### `GovernedCommandInputError: governed command input rejected`
+
+A policy rule constrained an activity whose input carries no `profile_id`. This
+happens when you follow the Behavioral rule tab and leave a policy rule
+enabled: the policy rule routes the first activity into the sandbox, and the
+behavioral example names no profile in its input, because its rule supplies
+one. Disable the policy rule.
 
 ### The behavioral rule never fires
 
@@ -363,9 +508,9 @@ activity before the call happens, and no trigger event exists.
 
 ### `OpenBoxAuthError: Invalid API key`
 
-The key is often correct. A newly registered agent requires signed requests, and
-this example does not sign, so Core answers `401`. Clear **Require signed
-requests** in the agent settings, or pass `agent_did` and `agent_private_key` to
+The key is often correct. Registering an agent turns **Require signed requests**
+on, and this example does not sign, so Core answers `401`. Clear that checkbox
+in **Agent > Settings**, or pass `agent_did` and `agent_private_key` to
 `OpenBoxPlugin`. See the caution in Requirements.
 
 ### `KeyError: 'OPENBOX_SANDBOX_CONFIG_PATH'`
