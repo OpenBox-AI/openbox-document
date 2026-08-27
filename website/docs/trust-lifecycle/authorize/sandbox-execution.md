@@ -96,7 +96,7 @@ See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for th
 
 ## Evidence
 
-Open **Agent > Verify > Sessions > Tree**. Inspect the `sandbox_execution` span for these values:
+Open the agent and select the **Verify** tab. Pick the session, then switch the view to **Tree**. Inspect the `sandbox_execution` span for these values:
 
 - Provider, command profile, and stable dispatch identity.
 - `openbox.sandbox.disposition`.
