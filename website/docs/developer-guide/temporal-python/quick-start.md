@@ -19,7 +19,30 @@ A `CONSTRAIN` verdict stops a Temporal activity before its body runs and execute
 | macOS 26 on Apple Silicon | `curl` and `/usr/bin/sandbox-exec` | Both ship with macOS. Install nothing. |
 | Linux x86_64 | `curl` and the `bwrap` binary | Install the `bubblewrap` package. The kernel must permit unprivileged namespaces. |
 
-You also need `uv`, a running `temporal server start-dev`, and an `OPENBOX_API_KEY` from a [registered agent](/dashboard/agents/registering-agents).
+You also need `uv` and an `OPENBOX_API_KEY` from a [registered agent](/dashboard/agents/registering-agents).
+
+:::caution A new agent requires signed requests
+A newly registered agent has **Require signed requests** turned on, and Core
+rejects every unsigned governance request. This example does not sign: it
+passes `openbox_url` and `openbox_api_key` and nothing else.
+
+Choose one before you start:
+
+- Clear **Require signed requests** in the agent settings. The agent keeps its
+  DID and signing key, so you can turn signing on later.
+- Or pass `agent_did` and `agent_private_key` to `OpenBoxPlugin`, using the
+  values from the credentials dialog shown once at registration.
+
+Core answers an unsigned request with `401`, and the SDK reports
+`OpenBoxAuthError: Invalid API key`. The key is usually fine. The signature is
+missing.
+:::
+
+A Temporal server must be running before step 4. Leave this in its own terminal:
+
+```bash
+temporal server start-dev
+```
 
 ## 1. Provision the sandbox
 
@@ -62,8 +85,12 @@ Without this rule the verdict is `ALLOW` and the activity runs on the host.
 
 ```bash
 uv init
+rm main.py
 uv add openbox-temporal-sdk-python temporalio httpx
 ```
+
+`uv init` writes a `main.py`. Remove it, because `uv run python .` runs
+`__main__.py`.
 
 The example is two files, `workflow.py` and `__main__.py`.
 
@@ -246,9 +273,20 @@ No rule matched, so the verdict was `ALLOW` and the body ran on the host. Check 
 
 The Worker has no sandbox configuration. Confirm that one `OpenBoxPlugin` receives `sandbox=SandboxConfig(...)`, that the requested profile exists in the registry, and that `agent.env` is loaded in the Worker process.
 
-### `missing required env var: OPENBOX_SANDBOX_ENDPOINT`
+### `OpenBoxAuthError: Invalid API key`
+
+The key is often correct. A newly registered agent requires signed requests, and
+this example does not sign, so Core answers `401`. Clear **Require signed
+requests** in the agent settings, or pass `agent_did` and `agent_private_key` to
+`OpenBoxPlugin`. See the caution in Requirements.
+
+### `KeyError: 'OPENBOX_SANDBOX_CONFIG_PATH'`
 
 The shell did not source `agent.env`, or it sourced the file without `set -a`.
+The example reads the boundary values straight from the environment, so the
+first missing one raises `KeyError`. Run the `set -a` line from step 4 in the
+same shell as the Worker.
+
 
 ### The request to `example.com` is refused
 
@@ -260,6 +298,16 @@ The loaded environment and the provisioned policy differ.
 
 ```bash
 ./obs provision --clean-rerun
+```
+
+### `sandbox service port 17443 remains occupied`
+
+A service is still listening, and the launcher will not signal a process it
+cannot identify as its own. This happens when a PID file was removed while the
+service kept running. Stop the listener, then provision again:
+
+```bash
+lsof -nP -iTCP:17443 -sTCP:LISTEN -t | xargs kill
 ```
 
 ### Provisioning fails
