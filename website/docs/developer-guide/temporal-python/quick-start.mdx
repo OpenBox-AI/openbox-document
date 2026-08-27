@@ -12,6 +12,9 @@ tags:
 
 A `CONSTRAIN` verdict stops a Temporal activity before its body runs and executes a registered command in the sandbox instead. This page gets you there.
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## Requirements
 
 | Platform | Required | How you get it |
@@ -21,21 +24,25 @@ A `CONSTRAIN` verdict stops a Temporal activity before its body runs and execute
 
 You also need `uv` and an `OPENBOX_API_KEY` from a [registered agent](/dashboard/agents/registering-agents).
 
-:::caution A new agent requires signed requests
-A newly registered agent has **Require signed requests** turned on, and Core
-rejects every unsigned governance request. This example does not sign: it
-passes `openbox_url` and `openbox_api_key` and nothing else.
+:::caution Check one agent setting first
+Registering an agent gives it a DID, and **Require signed requests** is then on
+by default. That setting is a checkbox you control, in **Agent > Settings**. An
+agent with no DID does not show the checkbox and accepts unsigned requests.
 
-Choose one before you start:
+While the setting is on, Core rejects any request this example sends, because
+the example does not sign. It passes `openbox_url` and `openbox_api_key` and
+nothing else.
 
-- Clear **Require signed requests** in the agent settings. The agent keeps its
-  DID and signing key, so you can turn signing on later.
+Choose one:
+
+- Clear **Require signed requests**. The agent keeps its DID and signing key,
+  so you can switch signing back on whenever you want.
 - Or pass `agent_did` and `agent_private_key` to `OpenBoxPlugin`, using the
   values from the credentials dialog shown once at registration.
 
-Core answers an unsigned request with `401`, and the SDK reports
+The failure is easy to misread. Core answers `401`, and the SDK reports
 `OpenBoxAuthError: Invalid API key`. The key is usually fine. The signature is
-missing.
+what is missing.
 :::
 
 A Temporal server must be running before step 4. Leave this in its own terminal:
@@ -72,7 +79,14 @@ The launcher verifies each asset, compiles and pins the sandbox profile, starts 
 
 ## 2. Create the rule
 
-The verdict comes from your agent's configuration, not from the code.
+The verdict comes from your agent's configuration, not from the code. Two rule
+types produce a `CONSTRAIN` verdict. Pick one and follow the matching tab in
+step 3.
+
+<Tabs groupId="rule-type">
+<TabItem value="policy" label="Policy rule" default>
+
+A policy rule matches the activity by name. One activity is enough.
 
 1. Open **Agent > Authorize > Policies > Create Rule**.
 2. Set the verdict to `CONSTRAIN`.
@@ -80,6 +94,29 @@ The verdict comes from your agent's configuration, not from the code.
 4. Select **Deploy**.
 
 Without this rule the verdict is `ALLOW` and the activity runs on the host.
+
+</TabItem>
+<TabItem value="behavioral" label="Behavioral rule">
+
+A behavioral rule matches an action the agent performed. Every trigger names an
+action, such as `http_get` or `file_write`. None fire when an activity merely
+starts, and a `CONSTRAIN` verdict stops the activity body before it acts. The
+Worker therefore needs two activities: the first performs the action, the
+second is the one the rule constrains.
+
+1. Open **Agent > Authorize > Behaviors > Create Rule**.
+2. Name the rule and set a priority.
+3. Set the trigger to `http_get`. The first activity fetches a page, which
+   emits that event.
+4. Leave the required prior states empty. The form does not require them.
+5. Set the verdict to `CONSTRAIN` and the profile to `post-batch`.
+6. Write an on-reject message, then create the rule.
+
+Disable any policy rule that matches `post_payment_batch`. That rule would stop
+the first activity before it makes the call that fires this trigger.
+
+</TabItem>
+</Tabs>
 
 ## 3. Write the Worker
 
@@ -97,6 +134,12 @@ The example is two files, `workflow.py` and `__main__.py`.
 The workflow goes in its own module. The Worker re-imports the workflow module inside the Temporal workflow sandbox, and that sandbox rejects a module that can perform I/O. Keeping the workflow away from `httpx` and the OpenBox imports satisfies it.
 
 The workflow imports nothing from OpenBox. It calls its own activity, and the plugin decides where that activity runs.
+
+<Tabs groupId="rule-type">
+<TabItem value="policy" label="Policy rule" default>
+
+Two files, exactly as shown. One activity is enough, because the policy rule
+matches it by name.
 
 ```python title="workflow.py"
 from datetime import timedelta
@@ -217,6 +260,44 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+</TabItem>
+<TabItem value="behavioral" label="Behavioral rule">
+
+Start from the same two files, then make three additions. The behavioral rule
+needs a first activity that performs an action and a second activity to
+constrain.
+
+Add the second activity to `__main__.py`:
+
+```python title="__main__.py (addition)"
+@activity.defn
+async def compute_payment_total(batch: dict) -> dict:
+    # The behavioral rule constrains this one. Under CONSTRAIN it never runs.
+    return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
+```
+
+Call it from the workflow, after the first activity:
+
+```python title="workflow.py (addition)"
+total = await workflow.execute_activity(
+    "compute_payment_total",
+    batch,
+    start_to_close_timeout=timedelta(seconds=30),
+)
+```
+
+Register it beside the first one:
+
+```python title="__main__.py"
+activities=[post_payment_batch, compute_payment_total],
+```
+
+Everything else stays the same, including the registry. Both rule types run the
+same profile, `post-batch`.
+
+</TabItem>
+</Tabs>
+
 The registry is the only sandbox definition you write. It pins the executable and every argument, so workflow input can select a command but never construct one. [Command Profiles](./command-profiles) covers the argument and result types.
 
 The activity input selects that command: `profile_id` names it, and `arguments` fills any token that is not a literal.
@@ -262,59 +343,6 @@ ApplicationError: GovernedCommandResultInvalid: Governed command typed result re
 ```
 
 A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
-
-## 6. Route with a behavioral rule instead
-
-A policy rule matches the activity by name. A behavioral rule matches something
-the agent did. Both end in the same place: a registered command runs in the
-sandbox.
-
-A behavioral rule needs an event to fire on, and every trigger it offers names
-an action, such as `http_get`, `file_write`, or `database_query`. It has no
-trigger for an activity merely starting. So the Worker needs one activity that
-performs the action and a second activity for the rule to constrain.
-
-Add the second activity:
-
-```python title="__main__.py (addition)"
-@activity.defn
-async def compute_payment_total(batch: dict) -> dict:
-    # Constrained by the behavioral rule. This body never runs under CONSTRAIN.
-    return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
-```
-
-Call it from the workflow after the first activity:
-
-```python title="workflow.py (addition)"
-total = await workflow.execute_activity(
-    "compute_payment_total",
-    batch,
-    start_to_close_timeout=timedelta(seconds=30),
-)
-```
-
-Register it beside the first one in the `Worker(...)` call:
-
-```python title="__main__.py"
-activities=[post_payment_batch, compute_payment_total],
-```
-
-Now create the rule. Open **Agent > Authorize > Behaviors > Create Rule**.
-
-1. Name the rule, and set a priority.
-2. Set the trigger to `http_get`. The first activity fetches a page, which
-   emits that event.
-3. Leave the required prior states empty. The form does not require them.
-4. Set the verdict to `CONSTRAIN` and the profile to `post-batch`.
-5. Write an on-reject message, then create the rule.
-
-Disable the policy rule from step 2 before you run this. The first activity
-then runs on the host, emits `http_get`, and the behavioral rule constrains the
-second activity into the sandbox.
-
-The second activity returns the same shape as step 4: `disposition` is
-`executed_in_sandbox`, and `computed_by` never appears, because the body did
-not run.
 
 ## Troubleshooting
 
