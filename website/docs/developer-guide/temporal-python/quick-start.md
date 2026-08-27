@@ -263,6 +263,59 @@ ApplicationError: GovernedCommandResultInvalid: Governed command typed result re
 
 A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
 
+## 6. Route with a behavioral rule instead
+
+A policy rule matches the activity by name. A behavioral rule matches something
+the agent did. Both end in the same place: a registered command runs in the
+sandbox.
+
+A behavioral rule needs an event to fire on, and every trigger it offers names
+an action, such as `http_get`, `file_write`, or `database_query`. It has no
+trigger for an activity merely starting. So the Worker needs one activity that
+performs the action and a second activity for the rule to constrain.
+
+Add the second activity:
+
+```python title="__main__.py (addition)"
+@activity.defn
+async def compute_payment_total(batch: dict) -> dict:
+    # Constrained by the behavioral rule. This body never runs under CONSTRAIN.
+    return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
+```
+
+Call it from the workflow after the first activity:
+
+```python title="workflow.py (addition)"
+total = await workflow.execute_activity(
+    "compute_payment_total",
+    batch,
+    start_to_close_timeout=timedelta(seconds=30),
+)
+```
+
+Register it beside the first one in the `Worker(...)` call:
+
+```python title="__main__.py"
+activities=[post_payment_batch, compute_payment_total],
+```
+
+Now create the rule. Open **Agent > Authorize > Behaviors > Create Rule**.
+
+1. Name the rule, and set a priority.
+2. Set the trigger to `http_get`. The first activity fetches a page, which
+   emits that event.
+3. Leave the required prior states empty. The form does not require them.
+4. Set the verdict to `CONSTRAIN` and the profile to `post-batch`.
+5. Write an on-reject message, then create the rule.
+
+Disable the policy rule from step 2 before you run this. The first activity
+then runs on the host, emits `http_get`, and the behavioral rule constrains the
+second activity into the sandbox.
+
+The second activity returns the same shape as step 4: `disposition` is
+`executed_in_sandbox`, and `computed_by` never appears, because the body did
+not run.
+
 ## Troubleshooting
 
 ### The workflow returns the activity result unchanged
@@ -272,6 +325,13 @@ No rule matched, so the verdict was `ALLOW` and the body ran on the host. Check 
 ### `GovernedCommandConfigurationRequired`
 
 The Worker has no sandbox configuration. Confirm that one `OpenBoxPlugin` receives `sandbox=SandboxConfig(...)`, that the requested profile exists in the registry, and that `agent.env` is loaded in the Worker process.
+
+### The behavioral rule never fires
+
+Every behavioral trigger names an action the agent performs. Confirm the first
+activity really ran on the host and made its HTTP call, because that call is
+what emits `http_get`. If the policy rule is still enabled, it stops that
+activity before the call happens, and no trigger event exists.
 
 ### `OpenBoxAuthError: Invalid API key`
 
