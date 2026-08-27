@@ -54,7 +54,7 @@ See:
 
 ## Plugin Usage
 
-```python
+```text
 from openbox import OpenBoxPlugin
 from openbox.sandbox import SandboxConfig
 

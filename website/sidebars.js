@@ -475,6 +475,11 @@ const sidebars = {
                       id: 'developer-guide/temporal-python/native-provider',
                       className: 'sidebar-item--diff',
                     },
+                    {
+                      type: 'doc',
+                      id: 'developer-guide/temporal-python/openshell-provider',
+                      className: 'sidebar-item--diff',
+                    },
                   ],
                 },
                 {
