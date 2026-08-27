@@ -37,7 +37,7 @@ flowchart TD
     op --> verdict --> abort --> create --> exec --> cleanup --> evidence
 ```
 
-1. A policy rule returns `CONSTRAIN` for an operation with a registered command profile.
+1. A policy or behavioral rule returns `CONSTRAIN` for an operation with a registered command profile.
 2. The integration derives an immutable argument vector from the profile. Workflow input cannot supply an arbitrary executable or shell command string.
 3. The integration aborts the host action before its side effect.
 4. The dispatcher makes at most one sandbox dispatch. It does not switch providers after a possible dispatch.

@@ -36,7 +36,7 @@ For one constrained attempt, the integration performs these actions:
 5. Waits for cleanup and terminal absence.
 6. Returns the bounded sandbox outcome as the activity result.
 
-A policy rule matches the activity and takes the profile from the activity input. the profile itself, and its command takes no input.
+Two rule types produce that verdict. A policy rule matches the activity and takes the profile from the activity input. A behavior rule supplies the profile itself, and its command takes no input.
 
 The operation fails closed if the profile is missing, the constraint is malformed, the provider fails, or the result is invalid or indeterminate.
 

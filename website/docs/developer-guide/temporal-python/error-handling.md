@@ -90,6 +90,7 @@ A governed command must not be retried after an indeterminate dispatch, because 
 | `GovernedCommandResultInvalid` | Output did not match the registered typed-result schema |
 | `GovernedCommandNotExecuted` | Governance or execution ended without accepted sandbox execution |
 | `GovernedCommandExecutionIndeterminate` | The plugin cannot establish whether execution reached a safe terminal outcome |
+| `BehavioralSandboxExecutionFailed` | A behavioral `CONSTRAIN` replacement profile failed; retained sandbox evidence is attached to the error |
 
 At Workflow level, Temporal wraps the intercepted user Activity's `ApplicationError` in `ActivityError`. Inspect its cause using the same Workflow-level pattern above, alert or reconcile external state, and do not schedule a replacement command after a possible dispatch.
 

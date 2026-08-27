@@ -18,6 +18,7 @@ Behavioral rules are stateful authorization rules that detect multi-step pattern
 | **Sequence** | PII access → External API call (without approval) |
 | **Frequency** | More than 10 failed auth attempts in 1 minute |
 | **Combination** | Database write + File export + External send |
+| **Sandbox evidence** | A `sandbox_execution` span appears without the required prior state |
 
 Rules are evaluated in priority order and stop at the first rule that triggers a verdict. Remaining rules are not evaluated.
 
@@ -33,7 +34,7 @@ Behavioral rules are created through a 4-step wizard under **Agent → Authorize
 
 ### Step 2: Trigger
 
-Select the **Trigger semantic type**. This is the action that will be checked (for example: `file_write`, `database_select`, `llm_completion`, `http_get`).
+Select the **Trigger semantic type**. This is the action that will be checked (for example: `file_write`, `database_select`, `llm_completion`, `http_get`, or `sandbox_execution`). The `sandbox_execution` type is emitted after a constrained sandbox command runs, so a rule triggered by that type reacts to recorded execution evidence rather than routing the already-completed command again.
 
 ### Step 3: States (Required Prior States)
 
@@ -49,7 +50,7 @@ This step defines the **Prior State** prerequisite described below.
 Finish by clicking **Create Rule**.
 
 :::info Important
-Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in your code. You must handle these in your activities to avoid unexpected crashes. See [Error Handling](/developer-guide/temporal-python/error-handling) for the full list of exception types (`GovernanceStop`, `ApprovalPending`, etc.) and how to handle them.
+Governance decisions from behavioral rules (and all authorization layers) surface as **exceptions** in SDK integrations. In Temporal Workflows, inspect the Activity error cause. See [Error Handling](/developer-guide/temporal-python/error-handling) for types such as `GovernanceBlock`, `GovernanceHalt`, and `ApprovalPending`.
 :::
 
 ## Verdicts
@@ -59,10 +60,12 @@ When a behavioral rule fires, it produces one of the following verdicts:
 | Verdict | Description |
 |--------|-------------|
 | `ALLOW` | Permit and log |
-| `CONSTRAIN` | Permit, but under recorded constraints (for example, a tier-3 default requiring isolation on an external send) |
+| `CONSTRAIN` | Permit only through an integration that can enforce the recorded constraint; a sandbox-capable integration can replace the host action with a registered command profile, otherwise it fails closed |
 | `REQUIRE_APPROVAL` | Send to HITL queue |
 | `BLOCK` | Action rejected, agent continues |
 | `HALT` | Terminates entire agent session |
+
+For a sandbox-capable started hook, a behavioral `CONSTRAIN` can select a registered zero-input command profile. The integration aborts the triggering host action before its side effect, dispatches the replacement profile once in the sandbox, and attaches the bounded `sandbox_execution` outcome to the Activity result. A missing profile, unavailable sandbox integration, host disposition, or failed sandbox dispatch fails closed. See [Governed Sandbox Commands](/developer-guide/temporal-python/concept#what-happens-during-interception).
 
 When a rule is configured with `REQUIRE_APPROVAL` and triggered at runtime, the approval request appears in:
 
@@ -124,7 +127,7 @@ Why this matters: a reporting agent skips the database query and goes straight t
 
 Result in terminal:
 
-`temporalio.exceptions.ApplicationError: GovernanceStop: Governance blocked: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
+`temporalio.exceptions.ApplicationError: GovernanceHalt: Behavioral violation: File write halted: the agent must have queried the database before generating any file output. Prevent reports built on fabricated data`
 
 The chat/session ends immediately after the halt.
 
