@@ -10,6 +10,8 @@ tags:
 
 # Configuration
 
+The sole OpenBox integration surface is the native Temporal `Worker(..., plugins=[OpenBoxPlugin(...)])` shape. The plugin initializer owns all OpenBox Worker, Workflow, and Activity setup.
+
 The plugin can be configured via environment variables or constructor parameters.
 
 ## Environment Variables
@@ -167,6 +169,47 @@ instrument_file_io=False  # Default
 instrument_file_io=True   # Capture file operations
 ```
 
+### sandbox
+
+`SandboxConfig` enters only through `OpenBoxPlugin`. Its required `registry` is an immutable `GovernedCommandRegistry` that defines the admitted executables, bounded arguments, and typed result schemas. The plugin intercepts the application's Activity at the Worker boundary and owns command derivation, dispatch, heartbeats, result mapping, and cleanup:
+
+```python
+from openbox import OpenBoxPlugin
+from openbox.sandbox import SandboxConfig
+
+plugin = OpenBoxPlugin(
+    openbox_url=os.environ["OPENBOX_URL"],
+    openbox_api_key=os.environ["OPENBOX_API_KEY"],
+    governance_policy="fail_closed",
+    sandbox=SandboxConfig(
+        registry=command_registry,
+        service_config=service_config_path,
+        policy=policy_path,
+        ca=ca_path,
+        certificate=certificate_path,
+        private_key=private_key_path,
+        timeout_seconds=300,
+        heartbeat_interval_seconds=10.0,
+    ),
+)
+```
+
+| `SandboxConfig` field | Constraint |
+|---|---|
+| `registry` | Required immutable registry of admitted command profiles |
+| `service_config`, `policy` | Optional trusted service and policy documents |
+| `socket_path` | Optional Unix-domain agent socket |
+| `ca`, `certificate`, `private_key` | Optional direct-mTLS material |
+| `timeout_seconds` | Integer from 1 through 300 |
+| `heartbeat_interval_seconds` | Number from 0.1 through 60 |
+| `stdout_bytes`, `stderr_bytes` | Optional positive output bounds |
+
+For a registered command, `CONSTRAIN` selects sandbox execution and aborts the corresponding host action before its side effect. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
+
+The sandbox runtime defaults to the `native` provider. Provision it with `obs provision` (`native` is the default), then load `~/.config/openbox-sandbox/agent.env`.
+
+See [Governed Sandbox Commands](/developer-guide/temporal-python/concept) for registry construction, native Worker composition, result bounds, and the zero-host deployment requirement.
+
 ## Configuration Precedence
 
 1. Function parameters (highest priority)
@@ -180,7 +223,7 @@ import asyncio
 import os
 from temporalio.client import Client
 from temporalio.worker import Worker
-from openbox.plugin import OpenBoxPlugin
+from openbox import OpenBoxPlugin
 
 async def main():
     client = await Client.connect("localhost:7233")
@@ -228,5 +271,6 @@ if __name__ == "__main__":
 
 ## Next Steps
 
-1. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
-2. **[Approvals](/approvals)** - Review and act on HITL approval requests
+1. **[Governed Sandbox Commands](/developer-guide/temporal-python/concept)** - Configure constrained command execution
+2. **[Error Handling](/developer-guide/temporal-python/error-handling)** - Handle governance decisions in your code
+3. **[Approvals](/approvals)** - Review and act on HITL approval requests

@@ -436,6 +436,7 @@ const sidebars = {
         {
           type: 'category',
           label: 'Temporal Plugin (Python)',
+          className: 'sidebar-item--diff',
           link: {
             type: 'doc',
             id: 'developer-guide/temporal-python/sdk-reference',
@@ -444,9 +445,52 @@ const sidebars = {
             'developer-guide/temporal-python/configuration',
             'developer-guide/temporal-python/error-handling',
             'developer-guide/temporal-python/integration-walkthrough',
+            'developer-guide/temporal-python/troubleshooting',
+            {
+              type: 'category',
+              label: 'Governed Sandbox Commands',
+              className: 'sidebar-item--diff',
+              items: [
+                {
+                  type: 'doc',
+                  id: 'developer-guide/temporal-python/concept',
+                  className: 'sidebar-item--diff',
+                },
+                {
+                  type: 'doc',
+                  id: 'developer-guide/temporal-python/quick-start',
+                  className: 'sidebar-item--diff',
+                },
+                {
+                  type: 'category',
+                  label: 'Provisioning',
+                  className: 'sidebar-item--diff',
+                  link: {
+                    type: 'doc',
+                    id: 'developer-guide/temporal-python/provisioning',
+                  },
+                  items: [
+                    {
+                      type: 'doc',
+                      id: 'developer-guide/temporal-python/native-provider',
+                      className: 'sidebar-item--diff',
+                    },
+                  ],
+                },
+                {
+                  type: 'doc',
+                  id: 'developer-guide/temporal-python/command-profiles',
+                  className: 'sidebar-item--diff',
+                },
+                {
+                  type: 'doc',
+                  id: 'developer-guide/temporal-python/console-evidence',
+                  className: 'sidebar-item--diff',
+                },
+              ],
+            },
             'developer-guide/temporal-python/customizing-the-demo',
             'developer-guide/temporal-python/demo-architecture',
-            'developer-guide/temporal-python/troubleshooting',
           ],
         },
         'developer-guide/llms-txt',

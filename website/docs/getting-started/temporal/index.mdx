@@ -15,7 +15,7 @@ import TrySteps from '@site/src/components/TrySteps';
 
 # Getting Started with Temporal
 
-OpenBox integrates with [Temporal](https://temporal.io/) via a drop-in plugin — your workflows, activities, and agent logic stay exactly as they are.
+OpenBox integrates with [Temporal](https://temporal.io/) through one public surface: a native `Worker` with `OpenBoxPlugin` in its `plugins` list. Your workflows, activities, and agent logic stay exactly as they are.
 
 <TrySteps />
 
@@ -56,7 +56,7 @@ import os
 import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
-from openbox.plugin import OpenBoxPlugin  # Add OpenBox
+from openbox import OpenBoxPlugin  # Add OpenBox
 from your_workflows import YourWorkflow
 from your_activities import your_activity
 

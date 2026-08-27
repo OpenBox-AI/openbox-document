@@ -152,7 +152,7 @@ When you ran the demo, the OpenBox plugin:
 - **Intercepted workflow and activity events** — every workflow start, activity execution, and signal was captured and sent to OpenBox for governance evaluation
 - **Captured HTTP calls automatically** — OpenTelemetry instrumentation recorded all outbound HTTP requests (LLM calls, external APIs) with full request/response bodies
 - **Evaluated governance policies** — each event was checked against your agent's configured policies in real-time
-- **Recorded a governance decision for every event** — approved, blocked, or flagged — giving you a complete audit trail
+- **Recorded one of five governance decisions for every event** — `ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT` — giving you a complete audit trail
 
 ## See It in the Dashboard
 

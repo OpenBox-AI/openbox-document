@@ -836,9 +836,13 @@
   filter: brightness(0) invert(1);
 }
 
-.navbar__title {
+.navbar__logo,
+.navbar__brand {
+  margin-right: 0;
+}
+
+.navbar-docs-link {
   font-weight: 700;
-  font-size: 1.05rem;
 }
 
 /* Hide Docusaurus external link icons globally */
@@ -864,6 +868,7 @@ svg[class*='iconExternalLink'] {
   background: var(--ifm-color-primary);
   color: #fff !important;
   border-radius: 8px;
+  margin-left: 12px;
   padding: 0.4rem 1rem !important;
   font-weight: 600;
   font-size: 0.8125rem;
@@ -885,13 +890,6 @@ svg[class*='iconExternalLink'] {
 @media (max-width: 996px) {
   .navbar__items--right .navbar__link,
   .navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
-    display: none;
-  }
-}
-
-/* "Docs" link visible only in the mobile hamburger menu */
-@media (min-width: 997px) {
-  .navbar-docs-link-mobile-only {
     display: none;
   }
 }
@@ -1134,9 +1132,9 @@ mark.diff-mark {
   color: #4ade80 !important;
 }
 
-.sidebar-item--diff > .menu__link::after,
-.sidebar-item--diff > a::after,
-.sidebar-item--diff > .menu__list-item-collapsible > .menu__link::after {
+/* A plain link has a free ::after, so the dot trails the label. */
+.sidebar-item--diff > .menu__link:not(.menu__link--sublist)::after,
+.sidebar-item--diff > a:not(.menu__link--sublist)::after {
   content: '●';
   margin-left: 6px;
   font-size: 0.55em;
@@ -1144,8 +1142,19 @@ mark.diff-mark {
   color: #16a34a;
 }
 
-[data-theme='dark'] .sidebar-item--diff > .menu__link::after,
-[data-theme='dark'] .sidebar-item--diff > a::after,
-[data-theme='dark'] .sidebar-item--diff > .menu__list-item-collapsible > .menu__link::after {
+/* A collapsible link already uses ::after for its caret background image.
+   Writing content there paints the dot on top of the arrow, so the dot leads
+   the label from ::before instead. */
+.sidebar-item--diff > .menu__list-item-collapsible > .menu__link::before {
+  content: '●';
+  margin-right: 6px;
+  font-size: 0.55em;
+  vertical-align: middle;
+  color: #16a34a;
+}
+
+[data-theme='dark'] .sidebar-item--diff > .menu__link:not(.menu__link--sublist)::after,
+[data-theme='dark'] .sidebar-item--diff > a:not(.menu__link--sublist)::after,
+[data-theme='dark'] .sidebar-item--diff > .menu__list-item-collapsible > .menu__link::before {
   color: #4ade80;
 }

@@ -20,7 +20,7 @@ When an agent operation is evaluated, OpenBox returns one of <mark className="di
 | **HALT** | Terminates entire agent session | Significant negative |
 | **BLOCK** | Action rejected, agent continues | Negative |
 | **REQUIRE_APPROVAL** | Operation paused for human review | Neutral (pending) |
-| <mark className="diff-mark">**CONSTRAIN**</mark> | <mark className="diff-mark">Operation proceeds under recorded constraints</mark> | <mark className="diff-mark">Neutral (constrained)</mark> |
+| <mark className="diff-mark">**CONSTRAIN**</mark> | Operation proceeds only through an integration that can enforce the returned constraints | <mark className="diff-mark">Neutral (constrained)</mark> |
 | **ALLOW** | Operation proceeds normally | Positive (compliance recorded) |
 
 ## ALLOW
@@ -39,18 +39,18 @@ The operation is permitted to proceed.
 
 ## <mark className="diff-mark">CONSTRAIN</mark>
 
-<mark className="diff-mark">The operation proceeds, but under constraints recorded at evaluation time.</mark>
+The operation may proceed only if the active integration can enforce the returned constraints before execution. Recording a constraint without enforcing it is not sufficient, and `CONSTRAIN` must never be treated as `ALLOW`.
 
 **When returned:**
-- <mark className="diff-mark">A guardrail transformed rather than blocked the input</mark>
-- <mark className="diff-mark">Trust tier default requires isolation for this operation type</mark>
-- <mark className="diff-mark">A behavioral rule permits continuation only under constraint</mark>
+- A guardrail transformed the input and the integration can execute only the transformed value
+- A trust-tier rule requires isolation for this operation type
 
 **Effect:**
-- <mark className="diff-mark">Operation executes with the recorded constraints applied</mark>
-- <mark className="diff-mark">Event logged with the specific constraint applied</mark>
-- <mark className="diff-mark">Optionally handed to the Sandbox for isolated execution (Alpha); see [Authorize](/trust-lifecycle/authorize)</mark>
-- <mark className="diff-mark">Behavioral score unaffected</mark>
+- The integration applies the constraint and records the enforced action
+- The event records the specific constraint applied
+- If the integration cannot enforce the constraint, the operation fails closed
+- The enforcement mechanism is integration-specific; not every `CONSTRAIN` action uses a sandbox
+- For a registered [Temporal governed command](/developer-guide/temporal-python/concept), a policy `CONSTRAIN` wnstraints: ["run_in_sandbox"]` or a behavioral `CONSTRAIN` selecting a replacement profile aborts the host action and selects sandbox execution. An ordinary unsupported Temporal action fails closed
 
 ## REQUIRE_APPROVAL
 
