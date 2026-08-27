@@ -110,7 +110,9 @@ second is the one the rule constrains.
 3. Step 2, Trigger. Under **Select Trigger Semantic Type**, choose `http_get`
    from the HTTP group. The first activity fetches a page, which emits that
    event.
-4. Step 3, States. Select nothing. The wizard does not require a prior state.
+4. Step 3, States. Select at least one prior state, for example `http_get`.
+   The wizard lets you pass this step with none selected, and the server then
+   answers `422 Unprocessable Entity`.
 5. Step 4, Enforcement. Set the verdict to `CONSTRAIN` and type `post-batch`
    into **Profile ID**.
 6. Write an on-reject message, then select **Create Rule**.
@@ -501,6 +503,12 @@ happens when you follow the Behavioral rule tab and leave a policy rule
 enabled: the policy rule routes the first activity into the sandbox, and the
 behavioral example names no profile in its input, because its rule supplies
 one. Disable the policy rule.
+
+### `422 Unprocessable Entity` when creating a behavioral rule
+
+The rule has no prior state. The wizard advances past step 3 with none
+selected, but the rule contract requires an array of at least one. Go back to
+step 3 and select one.
 
 ### The behavioral rule never fires
 
