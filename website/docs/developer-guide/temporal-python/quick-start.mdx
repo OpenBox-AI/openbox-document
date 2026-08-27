@@ -114,7 +114,9 @@ second is the one the rule constrains.
    The wizard lets you pass this step with none selected, and the server then
    answers `422 Unprocessable Entity`.
 5. Step 4, Enforcement. Set the verdict to `CONSTRAIN` and type `post-batch`
-   into **Profile ID**.
+   into **Profile ID**. That box accepts any text, and the console cannot see
+   your registry, so it cannot check the name. Type the exact `command_id`
+   the Worker registers.
 6. Write an on-reject message, then select **Create Rule**.
 
 Disable any policy rule that matches `post_payment_batch` before you run this.
