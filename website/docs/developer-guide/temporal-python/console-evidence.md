@@ -14,7 +14,7 @@ The `sandbox_execution` span records the bounded result of one admitted sandbox 
 
 ## 1. Open the span
 
-1. Open **Agent > Verify > Sessions > Tree**.
+1. Open the agent and select the **Verify** tab. Pick the session in the selector, then switch the view to **Tree**.
 2. Select the governed session.
 3. Expand the `sandbox_execution` child span under the governed Activity.
 

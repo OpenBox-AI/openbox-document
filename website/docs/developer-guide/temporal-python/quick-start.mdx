@@ -88,7 +88,7 @@ step 3.
 
 A policy rule matches the activity by name. One activity is enough.
 
-1. Open **Agent > Authorize > Policies > Create Rule**.
+1. Open the agent, select **Authorize**, then the **Policies** tab, then **Create Rule**.
 2. Set the verdict to `CONSTRAIN`.
 3. Add the condition: field `activity_type`, operator `equals`, value `post_payment_batch`.
 4. Select **Deploy**.
@@ -104,13 +104,16 @@ starts, and a `CONSTRAIN` verdict stops the activity body before it acts. The
 Worker therefore needs two activities: the first performs the action, the
 second is the one the rule constrains.
 
-1. Open **Agent > Authorize > Behaviors > Create Rule**.
-2. Name the rule and set a priority.
-3. Set the trigger to `http_get`. The first activity fetches a page, which
-   emits that event.
-4. Leave the required prior states empty. The form does not require them.
-5. Set the verdict to `CONSTRAIN` and the profile to `post-batch`.
-6. Write an on-reject message, then create the rule.
+1. Open the agent, select **Authorize**, then the **Behavior** tab, then
+   **Create Rule**. A four step wizard opens.
+2. Step 1, Basic Info. Name the rule and set a priority.
+3. Step 2, Trigger. Under **Select Trigger Semantic Type**, choose `http_get`
+   from the HTTP group. The first activity fetches a page, which emits that
+   event.
+4. Step 3, States. Select nothing. The wizard does not require a prior state.
+5. Step 4, Enforcement. Set the verdict to `CONSTRAIN` and type `post-batch`
+   into **Profile ID**.
+6. Write an on-reject message, then select **Create Rule**.
 
 Disable any policy rule that matches `post_payment_batch` before you run this.
 That rule stops the first activity before it makes the call that fires this
@@ -477,7 +480,7 @@ evidence:  [{'decision': 'denied', 'host': 'api.github.com', 'port': 443}]
 ApplicationError: GovernedCommandResultInvalid: Governed command typed result rejected
 ```
 
-A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Open **Agent > Verify > Sessions > Tree** and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
+A refused destination therefore surfaces as a failed activity, not as a result carrying exit code `56`. Select the **Verify** tab, pick the session for the run, switch the view to **Tree**, and expand the `sandbox_execution` span for the recorded denial. [Console Evidence](./console-evidence) lists every field.
 
 ## Troubleshooting
 
