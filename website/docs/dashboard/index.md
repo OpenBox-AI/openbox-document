@@ -21,6 +21,7 @@ The sidebar navigation includes:
 - **Dashboard** - Organization overview (this page)
 - **Agents** - Manage and monitor agents
 - **Projects** - Repository-to-runtime lineage for governed agents
+- **Provenance** - Routing evidence for agents on a gateway, on the agent detail page
 - **Approvals** - Human-in-the-loop queue (shows pending count badge)
 - **Organization** - Teams, members, API keys, settings
 

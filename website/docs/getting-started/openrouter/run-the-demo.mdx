@@ -1,0 +1,88 @@
+---
+title: Run the Demo
+description: "Four real OpenRouter calls that produce every routing outcome — unconstrained, honored, a second provider, and a call that fails closed."
+llms_description: OpenRouter demo agent walkthrough
+sidebar_position: 2
+tags:
+  - getting-started
+  - openrouter
+  - typescript
+---
+
+# Run the Demo
+
+The demo agent ships with the SDK. Its routing showcase makes four real calls against the real gateway, chosen so that every routing outcome appears in the dashboard — including the one that only shows up when something is refused.
+
+## Setup
+
+```bash
+cd demo-agent
+cp .env.example .env   # add OPENROUTER_API_KEY and your OpenBox credentials
+npm install
+```
+
+## The Agent
+
+```bash
+npm run agent          # one prompt, CLI
+npm run agent:stream   # stream the answer
+npm run ui             # web UI on http://localhost:4545
+```
+
+The UI drives the same governed agent server-side, so keys never reach the browser, and streams each governance decision to the page as it happens with a deep link into the session in the dashboard.
+
+## The Routing Showcase
+
+```bash
+npm run demo:routing
+```
+
+Four legs, each a real API call. Total cost is a few tenths of a cent.
+
+| Leg | What it does | Outcome |
+|-----|--------------|---------|
+| **1. Unconstrained** | No allowlist | Provenance is recorded, but nothing was promised — neither a pass nor a failure |
+| **2. Honored via OpenAI** | Allowlist naming the provider that serves the model | `honored`, served by OpenAI |
+| **3. Honored via Azure** | Same model, a different real upstream provider | `honored`, served by Azure — so the per-provider latency comparison has something to compare |
+| **4. Fail closed** | An allowlist no provider of this model satisfies | The gateway refuses rather than serving from outside it. No provenance at all, and the session closes carrying its reason |
+
+Each leg prints what its provenance actually recorded:
+
+```text
+[provenance] 2 call(s) · served by Azure · region global · $0.00009 · HONORED
+[provenance] model openai/gpt-4o-mini · ran openai/gpt-4o-mini · AS REQUESTED
+[provenance] verify at source: gen-1787916416-4xBml5qXbE2Pd0rBYA8q
+```
+
+## What to Look At Afterwards
+
+| Where | What you should see |
+|-------|--------------------|
+| **Agent → Provenance** | All four legs. Two providers in the breakdown, a coverage rate below 100% because leg 1 promised nothing, and no dishonored calls |
+| **Agent → Verify** | Pick a session to see that session's calls and its banner |
+| **Verify → Run Receipt** | Build the receipt, download it, and verify it offline |
+
+The expected result is worth stating, because it is easy to misread a clean panel as a broken one:
+
+- Leg 1 is **unconstrained** — recorded, but excluded from the honored rate.
+- Legs 2 and 3 are **honored**, by two different real providers.
+- Leg 4 has **no provenance at all** and closes as a failed session carrying its reason. OpenRouter enforced the allowlist server-side, so the request was refused rather than served by someone else. That is the promise working.
+- **No dishonored call anywhere**, which is the correct result.
+
+To see the alarm work, the failure has to be staged deliberately — the gateway will not produce one for you.
+
+## Verify a Receipt Offline
+
+Download a receipt from **Verify → Run Receipt**, then:
+
+```bash
+openbox-verify --keys openbox-keys.json receipt.json
+```
+
+Turn your network off first if you want to watch it work. See [Run Receipt](/trust-lifecycle/run-receipt) for what each check establishes.
+
+## Next Steps
+
+1. **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Make leg 4 happen from a policy instead of a hand-written request
+2. **[Routing Integrity](/dashboard/routing-integrity)** - Read the panel the demo just filled
+3. **[SDK Reference](/developer-guide/openrouter/sdk-reference)** - Wrap your own agent

@@ -241,6 +241,26 @@ A per-session attestation record produced after an agent session completes. Cont
 
 ---
 
+## Proof of Routing
+
+The attested record of which upstream provider served each prompt, in which region, at what cost, and whether that matched what the request asked for. It exists because a gateway chooses the serving provider per request and does not report it in the response.
+
+**OpenBox connection:** The [OpenRouter SDK](/developer-guide/openrouter/sdk-reference) reads the gateway's own generation record for every governed model call and seals it into the session's [Merkle Tree](#merkle-tree), where a policy can decide on it and an auditor can re-check it.
+
+**Learn more:** [Proof of Routing](/core-concepts/proof-of-routing)
+
+---
+
+## Provider Allowlist
+
+The set of upstream providers a request will accept, expressed as OpenRouter's `provider.only`. The one routing constraint that can be enforced before a prompt is sent: the gateway refuses rather than falling back to a provider outside the list.
+
+**OpenBox connection:** A [routing policy](/developer-guide/openrouter/routing-policies) can attach an allowlist to a call, and the SDK writes it into the outgoing request. A directive can only ever narrow what the caller named, never widen it.
+
+**Learn more:** [Routing Policies](/developer-guide/openrouter/routing-policies)
+
+---
+
 ## Query
 
 A synchronous, read-only request to inspect a running [Workflow's](#workflow) state without affecting its execution. Queries return a value but never change the Workflow.
@@ -266,6 +286,36 @@ The logical agent definition inside an OpenBox [Project](#project). A repository
 A registered OpenBox agent instance with its own API key, [Agent DID](#agent-did), sessions, and governance history. A runtime can be linked to a [Project](#project), [Repository Agent](#repository-agent), and branch for lineage.
 
 **Learn more:** [Agent Lineage](/core-concepts/agent-lineage#runtime-linking)
+
+---
+
+## Routing Decision
+
+Where a policy will permit a prompt to go, decided **before** the request is built. An act of governance — something a rule can be written about, and something that can still change where the prompt lands.
+
+**OpenBox connection:** Recorded as a claim on the model call itself, so a [policy](/developer-guide/openrouter/routing-policies) can refuse the call or attach narrower routing to use instead.
+
+**Learn more:** [Routing Policies](/developer-guide/openrouter/routing-policies)
+
+---
+
+## Routing Record
+
+What the gateway actually did, read back **after** the answer. Evidence rather than an action, so it is stored and sealed but never shown as a step the agent took.
+
+Keeping this apart from a [Routing Decision](#routing-decision) matters: they are different acts at different times, and naming them the same made a single call read as though it had happened twice.
+
+**Learn more:** [Routing Attributes](/developer-guide/openrouter/routing-attributes)
+
+---
+
+## Run Receipt
+
+One session's evidence as a signed, self-contained document: the session root, every sealed record with the bytes its hash was taken over, each record's proof to the root, and the claims those bytes support.
+
+**OpenBox connection:** Verified with `openbox-verify` and no network access, so a developer can hand it to their own customer or auditor. It can also be shared as a redacted public page.
+
+**Learn more:** [Run Receipt](/trust-lifecycle/run-receipt)
 
 ---
 

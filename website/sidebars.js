@@ -114,6 +114,17 @@ const sidebars = {
           ],
         },
         {
+          type: 'category',
+          label: 'OpenRouter',
+          link: {
+            type: 'doc',
+            id: 'getting-started/openrouter/index',
+          },
+          items: [
+            'getting-started/openrouter/run-the-demo',
+          ],
+        },
+        {
           type: 'doc',
           id: 'getting-started/openclaw/index',
           label: 'OpenClaw',
@@ -147,6 +158,7 @@ const sidebars = {
         'core-concepts/governance-decisions',
         'core-concepts/agent-identity',
         'core-concepts/agent-lineage',
+        'core-concepts/proof-of-routing',
       ],
     },
     {
@@ -182,6 +194,7 @@ const sidebars = {
           },
           items: [
             'trust-lifecycle/session-replay',
+            'trust-lifecycle/run-receipt',
           ],
         },
         'trust-lifecycle/adapt',
@@ -315,6 +328,20 @@ const sidebars = {
           ],
         },
         {
+          type: 'category',
+          label: 'OpenRouter SDK (TypeScript)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/openrouter/sdk-reference',
+          },
+          items: [
+            'developer-guide/openrouter/configuration',
+            'developer-guide/openrouter/routing-policies',
+            'developer-guide/openrouter/routing-attributes',
+            'developer-guide/openrouter/troubleshooting',
+          ],
+        },
+        {
           type: 'doc',
           id: 'developer-guide/openclaw/index',
           label: 'OpenClaw',
@@ -360,6 +387,7 @@ const sidebars = {
           ],
         },
         'dashboard/projects',
+        'dashboard/routing-integrity',
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],

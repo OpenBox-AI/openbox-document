@@ -1,0 +1,144 @@
+---
+title: OpenRouter SDK Reference
+description: "API reference for the OpenBox OpenRouter SDK: govern callModel and tools, read routing summaries, and locate run receipts."
+llms_description: OpenRouter SDK API surface
+sidebar_position: 1
+tags:
+  - sdk
+  - openrouter
+  - typescript
+  - reference
+---
+
+# OpenRouter SDK Reference
+
+`openbox-openrouter-governance` governs agents built on the [OpenRouter Agent SDK](https://openrouter.ai/docs/agent-sdk). It wraps two things — the model call and your tools — and everything else follows from that.
+
+```bash
+npm install openbox-openrouter-governance @openrouter/agent
+```
+
+Node 18.17 or later. `@openrouter/agent` is a peer dependency.
+
+## createOpenBoxGovernance()
+
+```ts
+import { createOpenBoxGovernance } from 'openbox-openrouter-governance';
+
+const openbox = createOpenBoxGovernance({ agentName: 'research-agent' });
+```
+
+Returns an `OpenBoxGovernance` binding. Credentials are read from the environment when not passed explicitly — see [Configuration](/developer-guide/openrouter/configuration).
+
+## The Binding
+
+| Member | Purpose |
+|--------|---------|
+| `tools(tools)` | Wrap each tool so its execution is governed end to end: evaluated before it runs, held open across a human approval, recorded when it finishes. |
+| `callModel(fn, client, request, options?)` | Govern a model call. Pass the real `callModel` from `@openrouter/agent` as `fn`. |
+| `close()` | Drain in-flight telemetry and release instrumentation state. Always await it. |
+| `routingSummaries()` | What the routing provenance for the finished runs actually said. |
+| `receiptRefs()` | Where to fetch the [run receipt](/trust-lifecycle/run-receipt) for each finished run. |
+| `middleware` | The underlying middleware, if you need to drive it directly. |
+
+### tools()
+
+```ts
+const tools = openbox.tools([searchTool, writeTool]);
+```
+
+Returns the same array shape the engine expects, so it drops straight into `callModel`.
+
+Two tool shapes cannot be wrapped without changing their semantics — an async-generator `execute`, and a manual tool with no body at all. Those are returned untouched and governed through the `PreToolUse` / `PostToolUse` hooks instead. That path still blocks and still reports, but it cannot hold a call open across a human approval, and it produces no HTTP or database spans scoped to the tool.
+
+### callModel()
+
+```ts
+const result = await openbox.callModel(callModel, client, {
+  model: 'anthropic/claude-sonnet-5',
+  input: 'Summarize the latest incident report',
+  tools,
+});
+
+console.log(await result.getText());
+```
+
+Returns OpenRouter's own `ModelResult` untouched — only the pre-flight governance is awaited. Every consumption pattern keeps working, including streaming.
+
+### close()
+
+```ts
+await openbox.close();
+```
+
+Not optional. Routing provenance arrives shortly *after* the response, so `close()` is where the last records are drained and sealed into the session. A run whose final turn returns instantly may take a few extra seconds to close while the last record is fetched.
+
+### routingSummaries()
+
+```ts
+await openbox.close();
+
+for (const summary of openbox.routingSummaries()) {
+  console.log(summary);
+}
+```
+
+The same figures that ride on the session — who served each call, from which region, at what cost, and whether a stated allowlist held. Populated as each run finalizes, so read it after `close()`. Empty when no provenance was collected: attestation off, no gateway key, or records that never arrived.
+
+### receiptRefs()
+
+```ts
+await openbox.close();
+
+const refs = openbox.receiptRefs();
+// [{ workflowId: 'wf-...', runId: 'run-...', sessionId: 'user-42' }]
+```
+
+Returns the **locator**, not the document, for each finished run:
+
+```text
+GET /routing-integrity/sessions/{session_id}/receipt
+```
+
+Both halves of that boundary are deliberate. A receipt is assembled from records sealed at session close, so one the SDK built for itself would prove only that the SDK can hash. And fetching it needs your dashboard credentials, which this SDK does not hold — it talks to OpenBox Core, not to the API that serves receipts.
+
+`sessionId` appears only when one was configured on the instance. Core keys its own session row on `(workflowId, runId)`, which are always present, so an absent `sessionId` means "resolve by workflow and run", not "no session".
+
+A locator is recorded for **every** finalized run, not only those that produced routing provenance. A run blocked before it reached a provider has no provenance and still has a receipt — the refusal is exactly what its evidence says.
+
+## Verdicts
+
+What a policy decision does to a governed operation:
+
+| Verdict | Effect |
+|---------|--------|
+| **ALLOW** | The operation runs. |
+| **BLOCK** | The operation does not run, at either end. Its completion carries the same verdict as its start, plus the reason and what happened next. |
+| **HALT** | The run stops and the session closes as halted. |
+| **Approval required** | The call is held open while a human decides, then continues or stops on their answer. |
+
+A refused activity never executes. A start that says BLOCK and a completion that says ALLOW would be a record contradicting itself, so a refusal closes on the same claim it was refused on.
+
+## Routing Directives
+
+A policy can also say where a prompt may go instead of refusing outright. See [Routing Policies](/developer-guide/openrouter/routing-policies) for the rules and the Rego.
+
+A routing directive is the one directive the SDK applies on its own initiative, and it can only ever narrow: `only` and `models` intersect with what the caller named, and `allow_fallbacks` is false if either side says so. A policy can therefore never route a prompt somewhere the caller did not allow — only to fewer places.
+
+## What Gets Governed
+
+| Surface | Captured |
+|---------|----------|
+| Model calls | Evaluated pre-flight, recorded with routing provenance |
+| Tools | Evaluated, approvable, recorded with inputs and outputs |
+| HTTP | Requests made inside a governed operation, with bodies where enabled |
+| Databases | `pg`, `mysql2`, `mongodb`, `redis`, `ioredis` |
+| File I/O | Off by default |
+
+## Related Pages
+
+- **[Configuration](/developer-guide/openrouter/configuration)** - Options and environment variables
+- **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Constrain providers, approve regions
+- **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - Every field the record carries
+- **[Troubleshooting](/developer-guide/openrouter/troubleshooting)** - When provenance is missing or a call fails closed
+- **[Proof of Routing](/core-concepts/proof-of-routing)** - The concept behind the record

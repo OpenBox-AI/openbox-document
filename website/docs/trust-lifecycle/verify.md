@@ -150,11 +150,26 @@ Use Tree View when you need execution-path reasoning:
 
 Opens [Session Replay](/trust-lifecycle/session-replay) so you can walk through session execution step by step.
 
+### Routing Provenance
+
+Shown for agents on the OpenRouter framework. Where Goal Alignment asks whether the agent did what it said it would, this asks a narrower question the session log cannot answer on its own: **which upstream provider actually served each prompt?**
+
+For the selected session it reports the provider that served each model call, the region the data was processed in, whether a stated provider allowlist held, and whether the model that answered is the model that was asked for. Each row carries OpenRouter's generation ID, so any claim can be re-checked at the gateway without trusting OpenBox.
+
+The session banner has three states rather than two. A session that named no allowlist gets a neutral note, never a green tick — it has not kept a promise, because it did not make one.
+
+### Run Receipt
+
+Builds the session's [run receipt](/trust-lifecycle/run-receipt): one signed, self-contained document that proves the above, verifiable offline with no OpenBox account. Download it, or copy a share link to a redacted public page for a customer or auditor.
+
+A session with no routing provenance still has a receipt. A run refused before it reached a provider attests exactly that — nothing ran — which is often the document you want.
+
 ## Integration with Other Phases
 
 - **Authorize**: Drift patterns can trigger behavioral rules
 - **Adapt**: Repeated drift generates policy suggestions
 - **Monitor**: Alignment annotations appear in [Session Replay](/trust-lifecycle/session-replay)
+- **Proof of Routing**: For gateway-routed agents, [Routing Integrity](/dashboard/routing-integrity) adds attested evidence of where each prompt went
 
 ## Next Phase
 

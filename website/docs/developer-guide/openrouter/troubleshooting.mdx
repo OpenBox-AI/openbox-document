@@ -1,0 +1,107 @@
+---
+title: Troubleshooting
+description: "Diagnose missing routing provenance, an empty Provenance tab, calls that fail closed, and receipts that will not verify."
+llms_description: OpenRouter SDK troubleshooting
+sidebar_position: 5
+tags:
+  - openrouter
+  - sdk
+  - reference
+---
+
+# Troubleshooting
+
+## The Provenance tab is not there
+
+The tab is scoped to agents registered on the **OpenRouter** framework. Check the framework on [Agent Settings](/dashboard/agents/agent-settings).
+
+An agent that genuinely routes through OpenRouter but was registered as something else shows nothing until that is corrected. This is the intended trade — the alternative is a panel that quietly reports on agents it does not describe.
+
+## The panel is empty
+
+Work through these in order.
+
+| Check | Why |
+|-------|-----|
+| Is `OPENROUTER_API_KEY` set for the agent process? | Provenance is read back from the gateway with it. Without a key the collector is inert. |
+| Is `attestRouting` on? | `OPENBOX_ATTEST_ROUTING=false` disables collection entirely. |
+| Did the run call `await openbox.close()`? | Records arrive just after the last answer and are drained at close. A process that exits first loses them. |
+| Did the run finish very recently? | The generation record is written shortly after the response. A run that just closed may still be collecting. |
+| Did any call reach a provider? | A run refused before the request was built has no provenance by definition. Its [run receipt](/trust-lifecycle/run-receipt) still attests that nothing ran. |
+| Is the time window right? | Every view defaults to the last 7 days. |
+
+## Some calls have provenance and others do not
+
+Expected in two cases:
+
+- **A refused call.** A policy that blocks a model call means no request was built, so there is nothing for the gateway to report.
+- **A record that never arrived.** Collection retries with backoff and gives up rather than holding the session open indefinitely. The call is then counted as unattested, which the summary reports rather than hides.
+
+## A call failed closed and I did not expect it
+
+If a policy narrows routing to providers the request did not name, nothing satisfies both and the call is refused rather than resolved in either party's favour.
+
+The reason on the refusal says which constraint could not be met. Check `openbox.routing.requested_only` on the call against the allowlist your policy attached — the intersection is empty.
+
+This is also what leg 4 of the [demo](/getting-started/openrouter/run-the-demo) does deliberately.
+
+## The honored rate is null
+
+`null` is correct when nothing in the window named a provider allowlist. A rate over an empty denominator would be reported as 100%, which is a statement about nothing.
+
+Read `coverage_rate` beside it: it says how much of the traffic the rate speaks for. To raise coverage, constrain routing — see [Routing Policies](/developer-guide/openrouter/routing-policies).
+
+## Everything shows as `unchecked`
+
+| Check | Meaning |
+|-------|---------|
+| **Model** `unchecked` | The request named `openrouter/auto`. Choosing the model is the point there, so it is never reported as a pass. |
+| **Residency** `unchecked` | No policy approved a region list, or the gateway reported no region for the call. Never counted as approved. |
+
+## A region shows as `global` and my policy approved `eu`
+
+That is a real failure, reported correctly. `global` means no regional endpoint was used — a plain `openai/gpt-4o-mini` call reports `data_region: global` while being served by Azure.
+
+If any zone is acceptable, approve `["global"]` explicitly. That is the honest way to say it.
+
+## A residency breach did not stop the call
+
+It cannot. Nothing the SDK writes into a request steers where the gateway lands a call, so a residency constraint produces evidence rather than prevention. The breach lands on the record, and a policy refuses the **next** call and halts the session.
+
+If you need prevention, constrain the **provider** instead: that travels in the request and the gateway fails closed on it.
+
+## Sessions take a few seconds longer to close
+
+Expected. The generation record is written after the response, so the last records are still being fetched when the run's final turn returns. Collection never delays an answer — only the close.
+
+## A receipt will not verify
+
+| Report | Meaning |
+|--------|---------|
+| `NOT_PUBLICLY_VERIFIABLE` | Signed with a local development secret, or with an algorithm that was never recorded. Nobody outside OpenBox can check it. |
+| `LEAF_HASH_MISMATCH` | The sealed bytes in the receipt do not hash to the stated hash. The document was edited. |
+| `PROOF_BROKEN` | A record's hash does not reach the signed root. |
+| `CLAIM_NOT_BOUND` | A readable claim disagrees with the sealed record behind it. |
+| `SUMMARY_MISMATCH` | The summary disagrees with the receipt's own records. |
+| `MALFORMED` | Unreadable, or the signed root commits to more records than the document carries — which is what a removed call looks like. |
+
+A receipt whose records carry no sealed bytes is reported as **not reconstructible** rather than as a failure: it still proves membership of the signed tree, but its claims cannot be tied back to their hashes.
+
+## A proof link says it is not valid
+
+| Cause | Fix |
+|-------|-----|
+| The link expired | Mint a new one from the receipt panel. |
+| The signing secret was rotated | Rotating it revokes every outstanding link. Keep the outgoing value as the previous secret to stage a rollover. |
+| The link was altered | The token is signed over the session and expiry, so an edited link fails. |
+
+Expired, forged and unknown links all return the same message on purpose — telling a reader which one it was tells an attacker which half of the token to keep working on.
+
+A page reporting that it **could not be loaded** is a different thing: that is a fault at our end, and it says so rather than blaming your link.
+
+## Related Pages
+
+- **[Configuration](/developer-guide/openrouter/configuration)** - Every option and variable
+- **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - What each field means
+- **[Routing Integrity](/dashboard/routing-integrity)** - How the panel counts
+- **[Run Receipt](/trust-lifecycle/run-receipt)** - What each verification check establishes
