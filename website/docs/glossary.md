@@ -311,9 +311,9 @@ Keeping this apart from a [Routing Decision](#routing-decision) matters: they ar
 
 ## Run Receipt
 
-One session's evidence as a signed, self-contained document: the session root, every sealed record with the bytes its hash was taken over, each record's proof to the root, and the claims those bytes support.
+One session's routing evidence gathered into a single page: how many model calls the run made, which providers served them, in which regions, and whether the routing matched what was requested.
 
-**OpenBox connection:** Verified with `openbox-verify` and no network access, so a developer can hand it to their own customer or auditor. It can also be shared as a redacted public page.
+**OpenBox connection:** Shareable as a redacted public page, so a developer can send it to their own customer. Each model call keeps the gateway generation ID it was recorded under, so the underlying claims can be re-checked at OpenRouter rather than taken on trust.
 
 **Learn more:** [Run Receipt](/trust-lifecycle/run-receipt)
 

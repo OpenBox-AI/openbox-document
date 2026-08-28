@@ -160,7 +160,7 @@ The session banner has three states rather than two. A session that named no all
 
 ### Run Receipt
 
-Builds the session's [run receipt](/trust-lifecycle/run-receipt): one signed, self-contained document that proves the above, verifiable offline with no OpenBox account. Download it, or copy a share link to a redacted public page for a customer or auditor.
+Builds the session's [run receipt](/trust-lifecycle/run-receipt): the above gathered into one page, shareable with a customer or auditor who has no OpenBox account. Copy the share link and send it.
 
 A session with no routing provenance still has a receipt. A run refused before it reached a provider attests exactly that — nothing ran — which is often the document you want.
 

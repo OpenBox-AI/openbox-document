@@ -60,7 +60,7 @@ Each leg prints what its provenance actually recorded:
 |-------|--------------------|
 | **Agent → Provenance** | All four legs. Two providers in the breakdown, a coverage rate below 100% because leg 1 promised nothing, and no dishonored calls |
 | **Agent → Verify** | Pick a session to see that session's calls and its banner |
-| **Verify → Run Receipt** | Build the receipt, download it, and verify it offline |
+| **Verify → Run Receipt** | Build the receipt and copy a share link to its public page |
 
 The expected result is worth stating, because it is easy to misread a clean panel as a broken one:
 
@@ -71,15 +71,12 @@ The expected result is worth stating, because it is easy to misread a clean pane
 
 To see the alarm work, the failure has to be staged deliberately — the gateway will not produce one for you.
 
-## Verify a Receipt Offline
+## Share a Receipt
 
-Download a receipt from **Verify → Run Receipt**, then:
-
-```bash
-openbox-verify --keys openbox-keys.json receipt.json
-```
-
-Turn your network off first if you want to watch it work. See [Run Receipt](/trust-lifecycle/run-receipt) for what each check establishes.
+Open **Verify → Run Receipt**, build it, and copy the share link. That gives you
+a page showing where this run's prompts went, which you can send to someone with
+no OpenBox account. See [Run Receipt](/trust-lifecycle/run-receipt) for what it
+withholds from a public page.
 
 ## Next Steps
 

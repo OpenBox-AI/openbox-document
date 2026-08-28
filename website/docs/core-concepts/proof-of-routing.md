@@ -1,6 +1,6 @@
 ---
 title: Proof of Routing
-description: "Prove which provider served each prompt, in which region, at what cost — with evidence sealed under a signed session root instead of a log line."
+description: "Record which provider served each prompt, in which region, at what cost — sealed with the session and re-checkable at the gateway."
 llms_description: Attested routing evidence for gateway-routed model calls
 tags:
   - governance
@@ -12,7 +12,7 @@ tags:
 
 # Proof of Routing
 
-Proof of Routing answers a question that gateway-routed agents cannot normally answer: **where did this prompt actually go?** It records the provider that served every model call, the region it ran in, what it cost, and whether the routing matched what was asked for — and seals that record under the session's signed root, so it is evidence rather than a claim.
+Proof of Routing answers a question that gateway-routed agents cannot normally answer: **where did this prompt actually go?** It records the provider that served every model call, the region it ran in, what it cost, and whether the routing matched what was asked for — sealed into the session's attestation as it happens, and keyed to the gateway's own receipt number so any claim can be re-checked at source.
 
 It is a platform concept scoped to agents on the [OpenRouter](/getting-started/openrouter) framework. It does not replace policy enforcement, guardrails, or session telemetry. It adds a provenance layer over the one decision those cannot see: which upstream provider a gateway picked, after the request left your process.
 
@@ -48,7 +48,7 @@ The same blind spot covers the model. You ask for one model, a different one can
 | **Provider allowlist** | The providers a request will accept, expressed as OpenRouter's `provider.only`. Enforceable: the gateway refuses rather than falling back outside it. |
 | **Approved regions** | The regions a prompt may be processed in, stated by [policy](/developer-guide/openrouter/routing-policies). Observable but not enforceable — no request field steers where a call lands. |
 | **Generation ID** | OpenRouter's own receipt number for a call, kept so any claim can be re-checked at the gateway. |
-| **Run receipt** | One session's evidence as a signed, self-contained document. See [Run Receipt](/trust-lifecycle/run-receipt). |
+| **Run receipt** | One session's routing evidence gathered into a shareable page. See [Run Receipt](/trust-lifecycle/run-receipt). |
 
 Keeping *decision* and *record* apart matters in practice. They are different acts at different times, and naming them the same made one call read as though it had happened twice.
 
@@ -68,13 +68,13 @@ Collection never delays an answer. The generation record is written shortly afte
 
 ## Three Things It Adds
 
-A gateway alone can report what it did. Sealing that report under a signed root is what makes the next three possible.
+A gateway alone can report what it did. Reading that report at the time, and sealing it with the run, is what makes the next three possible.
 
 | | What it means |
 |---|---|
 | **Enforce** | A policy names the providers you trust, and the SDK writes that list into the request. If none of them can serve the call, it fails closed — which is the point — and says why in plain words rather than leaking a gateway error. |
-| **Attest** | "Every prompt in this session was served by an approved provider in an approved region" stops being a log line someone could edit and becomes a statement backed by a signature. |
-| **Check** | What was requested travels alongside what the gateway did, so anyone can put the two side by side. They do not have to believe us. |
+| **Attest** | The record goes into the session's Merkle tree and under its signed root, so it cannot be quietly edited after the fact — the figures a panel shows are the ones sealed when the call ran, not a summary recomputed later. |
+| **Check** | What was requested travels alongside what the gateway did, so anyone can put the two side by side — and every call keeps the gateway's generation ID, so the underlying facts can be confirmed at OpenRouter rather than taken from us. |
 
 ## What Can Be Enforced, and What Only Observed
 

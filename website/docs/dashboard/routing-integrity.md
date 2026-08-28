@@ -153,7 +153,6 @@ Every figure on this page is available through the API, org-scoped to the caller
 | `GET /routing-integrity/calls` | The call list, filterable and paginated |
 | `GET /routing-integrity/sessions/:sessionId` | One session's calls and its banner |
 | `GET /routing-integrity/sessions/:sessionId/receipt` | The session's [run receipt](/trust-lifecycle/run-receipt) |
-| `GET /.well-known/openbox-keys.json` | The public keys session roots are signed with — unauthenticated, for verifiers |
 
 `fromTime` and `toTime` bound the window and default to the last 7 days. `agentId` narrows to one agent; omit it for the fleet-wide view.
 
