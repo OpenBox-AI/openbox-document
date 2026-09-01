@@ -2,6 +2,7 @@
 title: Routing Integrity
 description: "See which provider served every model call, whether the allowlist held, where the data was processed, and what the broken promises cost."
 llms_description: Dashboard view over attested routing records
+sidebar_position: 6
 tags:
   - observability
   - compliance
@@ -11,7 +12,7 @@ tags:
 
 # Routing Integrity
 
-Routing Integrity is the dashboard view over [Proof of Routing](/core-concepts/proof-of-routing). It reads the attested record of every governed model call and reports who served it, whether the routing matched what was asked for, where the data was processed, and what it cost.
+Routing Integrity is the dashboard view over [Proof of Routing](/developer-guide/openrouter/proof-of-routing). It reads the attested record of every governed model call and reports who served it, whether the routing matched what was asked for, where the data was processed, and what it cost.
 
 Access via **Agent Detail → Provenance** for the whole-agent view. Per-session detail appears on the **Verify** tab and in [Session Replay](/trust-lifecycle/session-replay).
 
@@ -141,7 +142,7 @@ An empty panel is a statement, so it says which one it is:
 | Agent on another framework | The tab is not shown at all. |
 | No attested calls yet | The panel explains that provenance is written after the response, so a very recent run may still be collecting. |
 | A filter matched nothing | A message naming what it found nothing **of** — "no call in this window was served outside a stated allowlist" — rather than a bare "no results". |
-| A session that failed before reaching a provider | No provenance, because no call reached a provider. Its [Run Receipt](/trust-lifecycle/run-receipt) still attests that nothing ran. |
+| A session that failed before reaching a provider | No provenance, because no call reached a provider. Its [Run Receipt](/developer-guide/openrouter/run-receipt) still attests that nothing ran. |
 
 ## API
 
@@ -152,14 +153,14 @@ Every figure on this page is available through the API, org-scoped to the caller
 | `GET /routing-integrity/summary` | Every block above, for a time window |
 | `GET /routing-integrity/calls` | The call list, filterable and paginated |
 | `GET /routing-integrity/sessions/:sessionId` | One session's calls and its banner |
-| `GET /routing-integrity/sessions/:sessionId/receipt` | The session's [run receipt](/trust-lifecycle/run-receipt) |
+| `GET /routing-integrity/sessions/:sessionId/receipt` | The session's [run receipt](/developer-guide/openrouter/run-receipt) |
 
 `fromTime` and `toTime` bound the window and default to the last 7 days. `agentId` narrows to one agent; omit it for the fleet-wide view.
 
 ## Related Pages
 
-- **[Proof of Routing](/core-concepts/proof-of-routing)** - The concept behind the panel
-- **[Run Receipt](/trust-lifecycle/run-receipt)** - Hand one session's evidence to someone else
+- **[Proof of Routing](/developer-guide/openrouter/proof-of-routing)** - The concept behind the panel
+- **[Run Receipt](/developer-guide/openrouter/run-receipt)** - Hand one session's evidence to someone else
 - **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Constrain providers, approve regions
 - **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - The fields behind every figure here
 - **[Session Replay](/trust-lifecycle/session-replay)** - Inspect a single governed session

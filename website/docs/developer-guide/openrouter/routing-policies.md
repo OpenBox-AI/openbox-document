@@ -2,7 +2,7 @@
 title: Routing Policies
 description: "Write policies that constrain which providers may serve a prompt, approve data regions, and halt a session when the gateway routes outside them."
 llms_description: Rego policies for provider allowlists and data residency
-sidebar_position: 3
+sidebar_position: 4
 tags:
   - policy-authoring
   - openrouter
@@ -14,7 +14,7 @@ tags:
 
 A routing policy decides **where a prompt may go, before it goes**. It is an ordinary [policy](/trust-lifecycle/authorize/policies) that reads the routing claim on a model call and either allows it, refuses it, or attaches the routing to use instead.
 
-There are two constraints, and they are not equally strong. A provider allowlist is enforced before the prompt is sent. An approved-region list can only be observed afterwards. Read [Proof of Routing](/core-concepts/proof-of-routing#what-can-be-enforced-and-what-only-observed) before relying on either.
+There are two constraints, and they are not equally strong. A provider allowlist is enforced before the prompt is sent. An approved-region list can only be observed afterwards. Read [Proof of Routing](/developer-guide/openrouter/proof-of-routing#what-can-be-enforced-and-what-only-observed) before relying on either.
 
 ## The Routing Claim
 
@@ -179,5 +179,5 @@ result := {
 
 - **[Policies](/trust-lifecycle/authorize/policies)** - How policies are authored and versioned
 - **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - Every field both ends carry
-- **[Proof of Routing](/core-concepts/proof-of-routing)** - What can be enforced and what only observed
-- **[Routing Integrity](/dashboard/routing-integrity)** - Where the outcomes appear
+- **[Proof of Routing](/developer-guide/openrouter/proof-of-routing)** - What can be enforced and what only observed
+- **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - Where the outcomes appear

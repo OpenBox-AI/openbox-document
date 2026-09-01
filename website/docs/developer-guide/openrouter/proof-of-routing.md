@@ -2,6 +2,7 @@
 title: Proof of Routing
 description: "Record which provider served each prompt, in which region, at what cost — sealed with the session and re-checkable at the gateway."
 llms_description: Attested routing evidence for gateway-routed model calls
+sidebar_position: 2
 tags:
   - governance
   - cryptography
@@ -14,7 +15,7 @@ tags:
 
 Proof of Routing answers a question that gateway-routed agents cannot normally answer: **where did this prompt actually go?** It records the provider that served every model call, the region it ran in, what it cost, and whether the routing matched what was asked for — sealed into the session's attestation as it happens, and keyed to the gateway's own receipt number so any claim can be re-checked at source.
 
-It is a platform concept scoped to agents on the [OpenRouter](/getting-started/openrouter) framework. It does not replace policy enforcement, guardrails, or session telemetry. It adds a provenance layer over the one decision those cannot see: which upstream provider a gateway picked, after the request left your process.
+It applies to agents on the [OpenRouter](/getting-started/openrouter) framework. It does not replace policy enforcement, guardrails, or session telemetry. It adds a provenance layer over the one decision those cannot see: which upstream provider a gateway picked, after the request left your process.
 
 ## The Problem It Solves
 
@@ -48,7 +49,7 @@ The same blind spot covers the model. You ask for one model, a different one can
 | **Provider allowlist** | The providers a request will accept, expressed as OpenRouter's `provider.only`. Enforceable: the gateway refuses rather than falling back outside it. |
 | **Approved regions** | The regions a prompt may be processed in, stated by [policy](/developer-guide/openrouter/routing-policies). Observable but not enforceable — no request field steers where a call lands. |
 | **Generation ID** | OpenRouter's own receipt number for a call, kept so any claim can be re-checked at the gateway. |
-| **Run receipt** | One session's routing evidence gathered into a shareable page. See [Run Receipt](/trust-lifecycle/run-receipt). |
+| **Run receipt** | One session's routing evidence gathered into a shareable page. See [Run Receipt](/developer-guide/openrouter/run-receipt). |
 
 Keeping *decision* and *record* apart matters in practice. They are different acts at different times, and naming them the same made one call read as though it had happened twice.
 
@@ -115,7 +116,7 @@ Coverage is therefore read **before** any rate: it says how much of the traffic 
 ## Related Pages
 
 - **[Getting Started with OpenRouter](/getting-started/openrouter)** - Add governance to an OpenRouter agent
-- **[Routing Integrity](/dashboard/routing-integrity)** - The dashboard view over every attested call
-- **[Run Receipt](/trust-lifecycle/run-receipt)** - Hand one session's evidence to a customer or auditor
+- **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - The dashboard view over every attested call
+- **[Run Receipt](/developer-guide/openrouter/run-receipt)** - Hand one session's evidence to a customer or auditor
 - **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Constrain providers and approve regions
 - **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - Every field the record carries

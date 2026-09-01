@@ -158,7 +158,6 @@ const sidebars = {
         'core-concepts/governance-decisions',
         'core-concepts/agent-identity',
         'core-concepts/agent-lineage',
-        'core-concepts/proof-of-routing',
       ],
     },
     {
@@ -194,7 +193,6 @@ const sidebars = {
           },
           items: [
             'trust-lifecycle/session-replay',
-            'trust-lifecycle/run-receipt',
           ],
         },
         'trust-lifecycle/adapt',
@@ -329,16 +327,20 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'OpenRouter SDK (TypeScript)',
+          label: 'OpenRouter',
           link: {
             type: 'doc',
             id: 'developer-guide/openrouter/sdk-reference',
           },
           items: [
+            'developer-guide/openrouter/proof-of-routing',
             'developer-guide/openrouter/configuration',
             'developer-guide/openrouter/routing-policies',
             'developer-guide/openrouter/routing-attributes',
+            'developer-guide/openrouter/routing-integrity',
+            'developer-guide/openrouter/run-receipt',
             'developer-guide/openrouter/troubleshooting',
+            'developer-guide/openrouter/glossary',
           ],
         },
         {
@@ -387,7 +389,6 @@ const sidebars = {
           ],
         },
         'dashboard/projects',
-        'dashboard/routing-integrity',
         'dashboard/trust-overview',
         'dashboard/alerts',
       ],

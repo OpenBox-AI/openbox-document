@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started with OpenRouter
 
-OpenBox integrates with the [OpenRouter Agent SDK](https://openrouter.ai/docs/agent-sdk) by wrapping `callModel` and your tools. Your agent stays as it is; OpenBox adds policy evaluation before each call runs, approvals, telemetry, and [Proof of Routing](/core-concepts/proof-of-routing) — the record of which upstream provider actually served each prompt.
+OpenBox integrates with the [OpenRouter Agent SDK](https://openrouter.ai/docs/agent-sdk) by wrapping `callModel` and your tools. Your agent stays as it is; OpenBox adds policy evaluation before each call runs, approvals, telemetry, and [Proof of Routing](/developer-guide/openrouter/proof-of-routing) — the record of which upstream provider actually served each prompt.
 
 ## Install
 
@@ -99,13 +99,13 @@ This matters more than it looks. The **Provenance** tab and every routing figure
 | | Where to look |
 |---|---|
 | Every model call and tool evaluated before it runs | [Monitor](/trust-lifecycle/monitor) |
-| Which provider served each prompt, in which region, at what cost | [Routing Integrity](/dashboard/routing-integrity) |
+| Which provider served each prompt, in which region, at what cost | [Routing Integrity](/developer-guide/openrouter/routing-integrity) |
 | A provider allowlist the gateway fails closed on | [Routing Policies](/developer-guide/openrouter/routing-policies) |
-| Signed evidence you can hand to a customer | [Run Receipt](/trust-lifecycle/run-receipt) |
+| Signed evidence you can hand to a customer | [Run Receipt](/developer-guide/openrouter/run-receipt) |
 
 ## Next Steps
 
 1. **[Run the Demo](/getting-started/openrouter/run-the-demo)** - Four real calls that produce every routing outcome
 2. **[SDK Reference](/developer-guide/openrouter/sdk-reference)** - The full API surface
 3. **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Constrain where prompts may go
-4. **[Proof of Routing](/core-concepts/proof-of-routing)** - Why the record exists and what it can prove
+4. **[Proof of Routing](/developer-guide/openrouter/proof-of-routing)** - Why the record exists and what it can prove

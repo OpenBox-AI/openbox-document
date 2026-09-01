@@ -2,7 +2,7 @@
 title: Routing Attributes
 description: "Every attribute the OpenRouter SDK seals onto a governed model call: provider, region, cost, failover trail, and the requested-versus-actual comparisons."
 llms_description: Reference for sealed routing provenance attributes
-sidebar_position: 4
+sidebar_position: 5
 tags:
   - reference
   - openrouter
@@ -14,7 +14,7 @@ tags:
 
 Routing evidence travels as **span attributes**, which is what OpenBox Core hashes into the session's Merkle tree. That is not a display choice: attributes are the only channel this record has, and they are what puts it inside the session's attestation rather than beside it.
 
-This page is the reference for those attributes. Policies read them, the [Routing Integrity](/dashboard/routing-integrity) panel aggregates them, and a [run receipt](/trust-lifecycle/run-receipt) projects them into readable claims.
+This page is the reference for those attributes. Policies read them, the [Routing Integrity](/developer-guide/openrouter/routing-integrity) panel aggregates them, and a [run receipt](/developer-guide/openrouter/run-receipt) projects them into readable claims.
 
 ## The Two Records
 
@@ -55,7 +55,7 @@ Read back from `GET /api/v1/generation?id=<gen-id>` for every governed model cal
 | `gen_ai.routing.attempts` | Per-attempt detail: provider, status and latency for each |
 | `gen_ai.routing.allow_fallbacks` | Whether the request permitted failover |
 
-`gen_ai.routing.attempts` is what makes the [provider reliability](/dashboard/routing-integrity#provider-reliability) scorecard honest. Scoring only the attempt that won would flatter every provider whose failures were quietly absorbed by failover.
+`gen_ai.routing.attempts` is what makes the [provider reliability](/developer-guide/openrouter/routing-integrity#provider-reliability) scorecard honest. Scoring only the attempt that won would flatter every provider whose failures were quietly absorbed by failover.
 
 ## What Was Asked For
 
@@ -121,6 +121,6 @@ Routing records are identified by the presence of `gen_ai.generation.id` in the 
 ## Related Pages
 
 - **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Rules written against these attributes
-- **[Routing Integrity](/dashboard/routing-integrity)** - The panel that aggregates them
-- **[Run Receipt](/trust-lifecycle/run-receipt)** - How they become readable claims in a signed document
+- **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - The panel that aggregates them
+- **[Run Receipt](/developer-guide/openrouter/run-receipt)** - How they become readable claims in a signed document
 - **[Event Types](/developer-guide/event-types)** - The wider event vocabulary

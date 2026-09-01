@@ -2,7 +2,7 @@
 title: Run Receipt
 description: "Share one run's routing evidence as a page a customer can open — which provider served each prompt, in which region, and whether the routing held."
 llms_description: Shareable per-session routing evidence
-sidebar_position: 2
+sidebar_position: 7
 tags:
   - compliance
   - audit
@@ -12,7 +12,7 @@ tags:
 
 # Run Receipt
 
-A run receipt is one session's routing evidence gathered into a single page. The [Routing Integrity](/dashboard/routing-integrity) panel aggregates across every call an agent has made; a receipt is the opposite view — one run, in full, shareable with someone who has no OpenBox account.
+A run receipt is one session's routing evidence gathered into a single page. The [Routing Integrity](/developer-guide/openrouter/routing-integrity) panel aggregates across every call an agent has made; a receipt is the opposite view — one run, in full, shareable with someone who has no OpenBox account.
 
 Access via **Agent Detail → Verify → Run Receipt**, or the same panel in [Session Replay](/trust-lifecycle/session-replay).
 
@@ -71,7 +71,7 @@ Often the most useful one. When a policy or the gateway refuses a call, there is
 
 ## Related Pages
 
-- **[Proof of Routing](/core-concepts/proof-of-routing)** - Where the sealed record comes from
-- **[Routing Integrity](/dashboard/routing-integrity)** - The whole-agent view over every attested call
+- **[Proof of Routing](/developer-guide/openrouter/proof-of-routing)** - Where the sealed record comes from
+- **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - The whole-agent view over every attested call
 - **[Verify](/trust-lifecycle/verify)** - The lifecycle phase this panel belongs to
 - **[Session Replay](/trust-lifecycle/session-replay)** - Inspect one governed session step by step

@@ -2,7 +2,7 @@
 title: Configuration
 description: "Configure the OpenBox OpenRouter SDK with environment variables and runtime options, including routing attestation and pre-flight routing."
 llms_description: OpenRouter SDK configuration reference
-sidebar_position: 2
+sidebar_position: 3
 tags:
   - sdk
   - openrouter
@@ -89,7 +89,7 @@ Authentication failures (401 and 403) always hard-fail regardless of this settin
 |-----------|-----------|
 | Enabled with a gateway key | Provenance is collected in the background and drained before the session closes |
 | Enabled without a gateway key | Inert. The rest of governance is unaffected |
-| Disabled | No provenance. The [Routing Integrity](/dashboard/routing-integrity) panel has nothing to show for the agent |
+| Disabled | No provenance. The [Routing Integrity](/developer-guide/openrouter/routing-integrity) panel has nothing to show for the agent |
 
 Collection never sits on a turn's critical path. The generation record is written shortly after the response, so an immediate lookup returns nothing; the SDK retries with backoff and drains at session close.
 

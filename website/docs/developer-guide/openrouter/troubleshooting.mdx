@@ -2,7 +2,7 @@
 title: Troubleshooting
 description: "Diagnose missing routing provenance, an empty Provenance tab, calls that fail closed, and receipts that will not verify."
 llms_description: OpenRouter SDK troubleshooting
-sidebar_position: 5
+sidebar_position: 8
 tags:
   - openrouter
   - sdk
@@ -27,7 +27,7 @@ Work through these in order.
 | Is `attestRouting` on? | `OPENBOX_ATTEST_ROUTING=false` disables collection entirely. |
 | Did the run call `await openbox.close()`? | Records arrive just after the last answer and are drained at close. A process that exits first loses them. |
 | Did the run finish very recently? | The generation record is written shortly after the response. A run that just closed may still be collecting. |
-| Did any call reach a provider? | A run refused before the request was built has no provenance by definition. Its [run receipt](/trust-lifecycle/run-receipt) still attests that nothing ran. |
+| Did any call reach a provider? | A run refused before the request was built has no provenance by definition. Its [run receipt](/developer-guide/openrouter/run-receipt) still attests that nothing ran. |
 | Is the time window right? | Every view defaults to the last 7 days. |
 
 ## Some calls have provenance and others do not
@@ -103,5 +103,5 @@ A page reporting that it **could not be loaded** is a different thing: that is a
 
 - **[Configuration](/developer-guide/openrouter/configuration)** - Every option and variable
 - **[Routing Attributes](/developer-guide/openrouter/routing-attributes)** - What each field means
-- **[Routing Integrity](/dashboard/routing-integrity)** - How the panel counts
-- **[Run Receipt](/trust-lifecycle/run-receipt)** - What each verification check establishes
+- **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - How the panel counts
+- **[Run Receipt](/developer-guide/openrouter/run-receipt)** - What each verification check establishes
