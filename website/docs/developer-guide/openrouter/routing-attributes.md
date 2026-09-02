@@ -123,4 +123,3 @@ Routing records are identified by the presence of `gen_ai.generation.id` in the 
 - **[Routing Policies](/developer-guide/openrouter/routing-policies)** - Rules written against these attributes
 - **[Routing Integrity](/developer-guide/openrouter/routing-integrity)** - The panel that aggregates them
 - **[Run Receipt](/developer-guide/openrouter/run-receipt)** - How they become readable claims in a signed document
-- **[Event Types](/developer-guide/event-types)** - The wider event vocabulary
