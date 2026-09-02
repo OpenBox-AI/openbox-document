@@ -836,9 +836,13 @@
   filter: brightness(0) invert(1);
 }
 
-.navbar__title {
+.navbar__logo,
+.navbar__brand {
+  margin-right: 0;
+}
+
+.navbar-docs-link {
   font-weight: 700;
-  font-size: 1.05rem;
 }
 
 /* Hide Docusaurus external link icons globally */
@@ -864,6 +868,7 @@ svg[class*='iconExternalLink'] {
   background: var(--ifm-color-primary);
   color: #fff !important;
   border-radius: 8px;
+  margin-left: 12px;
   padding: 0.4rem 1rem !important;
   font-weight: 600;
   font-size: 0.8125rem;
@@ -885,13 +890,6 @@ svg[class*='iconExternalLink'] {
 @media (max-width: 996px) {
   .navbar__items--right .navbar__link,
   .navbar__items--right .navbar__link:not(.navbar-dashboard-link) {
-    display: none;
-  }
-}
-
-/* "Docs" link visible only in the mobile hamburger menu */
-@media (min-width: 997px) {
-  .navbar-docs-link-mobile-only {
     display: none;
   }
 }
