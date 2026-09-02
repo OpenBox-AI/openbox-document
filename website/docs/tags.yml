@@ -168,3 +168,8 @@ openclaw:
   label: OpenClaw
   permalink: /openclaw
   description: OpenClaw agent framework integration
+
+openrouter:
+  label: OpenRouter
+  permalink: /openrouter
+  description: OpenRouter integration, routing provenance, and run receipts

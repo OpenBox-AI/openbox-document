@@ -19,6 +19,7 @@ const IntegrationsLive = [
   {label: 'LangGraph', to: '/getting-started/langgraph'},
   {label: 'Mastra', to: '/getting-started/mastra'},
   {label: 'n8n', to: '/getting-started/n8n'},
+  {label: 'OpenRouter', to: '/getting-started/openrouter'},
   {label: 'Temporal', to: '/getting-started/temporal'},
 ];
 
@@ -161,6 +162,28 @@ governed = create_openbox_graph_handler(
 )
 
 result = await governed.ainvoke({"messages": [("user", "Hello")]})`;
+
+const OpenRouterSnippet = `import { OpenRouter, callModel } from "@openrouter/agent";
+import { createOpenBoxGovernance } from "openbox-openrouter-governance";
+
+const client = new OpenRouter({ apiKey: process.env.OPENROUTER_API_KEY });
+
+const openbox = createOpenBoxGovernance({
+  agentName: "research-agent",
+  apiKey: process.env.OPENBOX_API_KEY,
+  agentDid: process.env.OPENBOX_AGENT_DID,
+  agentPrivateKey: process.env.OPENBOX_AGENT_PRIVATE_KEY
+});
+
+const result = await openbox.callModel(callModel, client, {
+  model: "anthropic/claude-sonnet-5",
+  input: "Summarize the latest incident report",
+  tools: openbox.tools([myTool])
+});
+
+console.log(await result.getText());
+await openbox.close();
+`;
 
 const MastraSnippet = `import { Mastra } from "@mastra/core/mastra";
 import { getOpenBoxRuntime, withOpenBox } from "@openbox-ai/openbox-mastra-sdk";
@@ -432,6 +455,12 @@ export default function Home() {
                   <CodeBlock language="typescript" title="src/mastra/index.ts">{MastraSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/mastra">
                     Mastra quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="openrouter" label="OpenRouter (TypeScript)">
+                  <CodeBlock language="typescript" title="src/agent.ts">{OpenRouterSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/openrouter">
+                    OpenRouter quickstart →
                   </Link>
                 </TabItem>
                 <TabItem value="temporal" label="Temporal (Python)">

@@ -114,6 +114,17 @@ const sidebars = {
           ],
         },
         {
+          type: 'category',
+          label: 'OpenRouter',
+          link: {
+            type: 'doc',
+            id: 'getting-started/openrouter/index',
+          },
+          items: [
+            'getting-started/openrouter/run-the-demo',
+          ],
+        },
+        {
           type: 'doc',
           id: 'getting-started/openclaw/index',
           label: 'OpenClaw',
@@ -312,6 +323,24 @@ const sidebars = {
             'developer-guide/n8n/approvals-and-guardrails',
             'developer-guide/n8n/telemetry',
             'developer-guide/n8n/troubleshooting',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'OpenRouter',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/openrouter/sdk-reference',
+          },
+          items: [
+            'developer-guide/openrouter/proof-of-routing',
+            'developer-guide/openrouter/configuration',
+            'developer-guide/openrouter/routing-policies',
+            'developer-guide/openrouter/routing-attributes',
+            'developer-guide/openrouter/routing-integrity',
+            'developer-guide/openrouter/run-receipt',
+            'developer-guide/openrouter/troubleshooting',
+            'developer-guide/openrouter/glossary',
           ],
         },
         {
