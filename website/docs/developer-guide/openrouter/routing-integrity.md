@@ -144,19 +144,6 @@ An empty panel is a statement, so it says which one it is:
 | A filter matched nothing | A message naming what it found nothing **of** — "no call in this window was served outside a stated allowlist" — rather than a bare "no results". |
 | A session that failed before reaching a provider | No provenance, because no call reached a provider. Its [Run Receipt](/developer-guide/openrouter/run-receipt) still attests that nothing ran. |
 
-## API
-
-Every figure on this page is available through the API, org-scoped to the caller and filtered by the caller's teams.
-
-| Endpoint | Returns |
-|----------|---------|
-| `GET /routing-integrity/summary` | Every block above, for a time window |
-| `GET /routing-integrity/calls` | The call list, filterable and paginated |
-| `GET /routing-integrity/sessions/:sessionId` | One session's calls and its banner |
-| `GET /routing-integrity/sessions/:sessionId/receipt` | The session's [run receipt](/developer-guide/openrouter/run-receipt) |
-
-`fromTime` and `toTime` bound the window and default to the last 7 days. `agentId` narrows to one agent; omit it for the fleet-wide view.
-
 ## Related Pages
 
 - **[Proof of Routing](/developer-guide/openrouter/proof-of-routing)** - The concept behind the panel

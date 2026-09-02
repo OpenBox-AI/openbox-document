@@ -94,13 +94,9 @@ const refs = openbox.receiptRefs();
 // [{ workflowId: 'wf-...', runId: 'run-...', sessionId: 'user-42' }]
 ```
 
-Returns the **locator**, not the document, for each finished run:
+Returns the **locator**, not the document, for each finished run. The receipt itself is built in the dashboard: open **Verify → Run Receipt** for the session the locator names — see [Run Receipt](/developer-guide/openrouter/run-receipt).
 
-```text
-GET /routing-integrity/sessions/{session_id}/receipt
-```
-
-Both halves of that boundary are deliberate. A receipt is assembled from records sealed at session close, so one the SDK built for itself would prove only that the SDK can hash. And fetching it needs your dashboard credentials, which this SDK does not hold — it talks to OpenBox Core, not to the API that serves receipts.
+That boundary is deliberate. A receipt is assembled from records sealed at session close, so one the SDK built for itself would prove only that the SDK can hash. Building and sharing it belongs to the dashboard, which holds your credentials; this SDK talks only to OpenBox Core.
 
 `sessionId` appears only when one was configured on the instance. Core keys its own session row on `(workflowId, runId)`, which are always present, so an absent `sessionId` means "resolve by workflow and run", not "no session".
 
