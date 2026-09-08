@@ -190,6 +190,7 @@ plugin = OpenBoxPlugin(
         private_key=private_key_path,
         timeout_seconds=300,
         heartbeat_interval_seconds=10.0,
+        dispatcher_governance=True,
     ),
 )
 ```
@@ -203,6 +204,9 @@ plugin = OpenBoxPlugin(
 | `timeout_seconds` | Integer from 1 through 300 |
 | `heartbeat_interval_seconds` | Number from 0.1 through 60 |
 | `stdout_bytes`, `stderr_bytes` | Optional positive output bounds |
+| `dispatcher_governance` | Boolean, default `False`. Set it to `True` to report sandbox evidence. |
+
+`dispatcher_governance` gives the governed dispatcher its own Core client, using the plugin's identity. It is off by default, and while it is off the dispatcher never reports the `openbox.sandbox_execution` span it builds after every run — the plugin's own lifecycle events carry no spans, so nothing else reports it either, and the console shows the session with no sandbox evidence to expand. Turn it on whenever you want that evidence, which is to say on any Worker that runs governed commands. It also sets the dispatcher's signing DID, which `agent_did` is checked against at startup; with it off, passing `agent_did` alongside a `SandboxConfig` always fails with `Temporal and dispatcher governance signing must match`. The cost is a second Core client on the same identity, so each governed command adds its own `ActivityStarted` and `ActivityCompleted` alongside the plugin's.
 
 For a registered command, `CONSTRAIN` selects sandbox execution and aborts the corresponding host action before its side effect. Policy routing uses `constraints: ["run_in_sandbox"]`; a behavioral `CONSTRAIN` can select a registered replacement profile. Ordinary Temporal operations that cannot enforce `CONSTRAIN` fail closed. Keep all OpenBox setup in the same plugin initializer; there is no separate Worker path for sandboxed commands.
 

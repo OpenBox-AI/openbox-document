@@ -258,6 +258,12 @@ async def main() -> None:
                     ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
                     certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
                     private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+                    # Gives the governed dispatcher its own Core client.
+                    # Without it the dispatcher builds the
+                    # `openbox.sandbox_execution` evidence span and then
+                    # discards it, so the console shows the run with no
+                    # sandbox evidence to expand.
+                    dispatcher_governance=True,
                 ),
             )
         ],
@@ -408,6 +414,12 @@ async def main() -> None:
                     ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
                     certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
                     private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+                    # Gives the governed dispatcher its own Core client.
+                    # Without it the dispatcher builds the
+                    # `openbox.sandbox_execution` evidence span and then
+                    # discards it, so the console shows the run with no
+                    # sandbox evidence to expand.
+                    dispatcher_governance=True,
                 ),
             )
         ],
