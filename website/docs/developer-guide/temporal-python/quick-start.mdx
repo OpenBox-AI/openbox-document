@@ -133,6 +133,12 @@ behavioral example names no profile in its workflow input.
 uv init
 rm main.py
 uv add openbox-temporal-sdk-python temporalio httpx
+# Required for a behavioral rule with an HTTP trigger. Core classifies a span
+# as `http_get` only when it carries `http.method` and its name contains GET,
+# which is what this instrumentation emits; without it no trigger event is
+# recorded and the rule never fires. The upper bound matches the SDK's own
+# `[http]` extra — unpinned, resolution conflicts with its opentelemetry-api pin.
+uv add 'opentelemetry-instrumentation-httpx>=0.59b0,<0.61b0'
 ```
 
 `uv init` writes a `main.py`. Remove it, because `uv run python .` runs
@@ -252,6 +258,12 @@ async def main() -> None:
                     ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
                     certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
                     private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+                    # Gives the governed dispatcher its own Core client.
+                    # Without it the dispatcher builds the
+                    # `openbox.sandbox_execution` evidence span and then
+                    # discards it, so the console shows the run with no
+                    # sandbox evidence to expand.
+                    dispatcher_governance=True,
                 ),
             )
         ],
@@ -272,8 +284,10 @@ asyncio.run(main())
 </TabItem>
 <TabItem value="behavioral" label="Behavioral rule">
 
-Two files, complete. The behavioral rule needs a first activity that performs
-an action and a second activity to constrain, so the workflow calls two.
+Two files, complete. The workflow calls two activities so the run shows both
+sides: `post_payment_batch` makes the HTTP call and is therefore the activity
+the rule constrains, and `compute_payment_total` performs no I/O and always
+runs on the host.
 
 ```python title="workflow.py"
 from datetime import timedelta
@@ -328,7 +342,13 @@ TASK_QUEUE = "payment-demo"
 
 @activity.defn
 async def post_payment_batch(batch: dict) -> dict:
-    """Runs on the host and emits the trigger event."""
+    """The behavioral rule constrains THIS one.
+
+    It makes the HTTP call, so it is the activity that emits the `http_get`
+    span. Core matches a rule's trigger against the current event's spans, so
+    an `http_get` trigger can only fire on the activity that made the call.
+    Under CONSTRAIN this body never runs.
+    """
     async with httpx.AsyncClient() as client:
         response = await client.get("https://example.com")
     return {"status": "posted", "http_status": response.status_code}
@@ -336,7 +356,12 @@ async def post_payment_batch(batch: dict) -> dict:
 
 @activity.defn
 async def compute_payment_total(batch: dict) -> dict:
-    """The behavioral rule constrains this one. Under CONSTRAIN it never runs."""
+    """Always runs on the host. This is NOT the constrained activity.
+
+    It performs no I/O, so it emits no spans and can never match an `http_get`
+    trigger. `computed_by: host` appears on every run, including a successful
+    CONSTRAIN, and is not a failure signal.
+    """
     return {"batch_id": batch.get("batch_id"), "computed_by": "host"}
 
 
@@ -389,6 +414,12 @@ async def main() -> None:
                     ca=Path(os.environ["OPENBOX_SANDBOX_CA"]),
                     certificate=Path(os.environ["OPENBOX_SANDBOX_CERT"]),
                     private_key=Path(os.environ["OPENBOX_SANDBOX_KEY"]),
+                    # Gives the governed dispatcher its own Core client.
+                    # Without it the dispatcher builds the
+                    # `openbox.sandbox_execution` evidence span and then
+                    # discards it, so the console shows the run with no
+                    # sandbox evidence to expand.
+                    dispatcher_governance=True,
                 ),
             )
         ],
@@ -445,21 +476,28 @@ The second line loads the sandbox boundary values that provisioning generated. `
 </TabItem>
 <TabItem value="behavioral" label="Behavioral rule">
 
-The workflow returns both activities. The first ran on the host, which is what
-emitted the trigger event. The second went to the sandbox.
+The workflow returns both activities. `posting` is the constrained one: its
+body never ran, so `activity_result` is `None` and the registered command ran
+in the sandbox instead. `total` ran on the host untouched.
 
 ```text
-{'posting': {'status': 'posted', 'http_status': 200},
- 'total': {'cleanup_status': 'deleted', 'disposition': 'executed_in_sandbox',
-           'exit_code': 0, 'profile_id': 'post-batch', 'stderr_bytes': 0,
-           'stdout_bytes': 66, 'timeout_status': 'not_observed',
-           'typed_result': {'schema_name': 'sandbox-http',
-                            'values': [{'name': 'http_status', 'value': 200},
-                                       {'name': 'remote_ip', 'value': '127.0.0.1'},
-                                       {'name': 'local_ip', 'value': '127.0.0.1'}]}}}
+{'posting': {'activity_result': None,
+             'sandbox_execution': {
+                 'cleanup_status': 'deleted',
+                 'disposition': 'executed_in_sandbox', 'exit_code': 0,
+                 'profile_id': 'post-batch', 'status': 'completed',
+                 'stderr_bytes': 0, 'stdout_bytes': 66,
+                 'timeout_status': 'not_observed',
+                 'typed_result': {'schema_name': 'sandbox-http',
+                                  'values': [{'name': 'http_status', 'value': 200},
+                                             {'name': 'remote_ip', 'value': '127.0.0.1'},
+                                             {'name': 'local_ip', 'value': '127.0.0.1'}]}}},
+ 'total': {'batch_id': 'B-2026-001', 'computed_by': 'host'}}
 ```
 
-`computed_by` never appears, because the second activity body never ran.
+`activity_result: None` beside a populated `sandbox_execution` is the CONSTRAIN
+signature. `computed_by: host` under `total` is expected on every run and does
+not indicate a missed constraint.
 
 </TabItem>
 </Tabs>
