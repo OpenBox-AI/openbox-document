@@ -160,6 +160,7 @@ matches it by name.
 from datetime import timedelta
 
 from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 
 @workflow.defn
@@ -170,6 +171,10 @@ class PaymentBatchWorkflow:
             "post_payment_batch",
             batch,
             start_to_close_timeout=timedelta(minutes=2),
+            # A governed activity that cannot reach its sandbox fails
+            # retryably, and Temporal retries without limit by default,
+            # so an unreachable sandbox would spin instead of failing.
+            retry_policy=RetryPolicy(maximum_attempts=3),
         )
 ```
 
@@ -293,6 +298,7 @@ runs on the host.
 from datetime import timedelta
 
 from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 
 @workflow.defn
@@ -303,11 +309,16 @@ class PaymentBatchWorkflow:
             "post_payment_batch",
             batch,
             start_to_close_timeout=timedelta(minutes=2),
+            # A governed activity that cannot reach its sandbox fails
+            # retryably, and Temporal retries without limit by default,
+            # so an unreachable sandbox would spin instead of failing.
+            retry_policy=RetryPolicy(maximum_attempts=3),
         )
         total = await workflow.execute_activity(
             "compute_payment_total",
             batch,
             start_to_close_timeout=timedelta(minutes=2),
+            retry_policy=RetryPolicy(maximum_attempts=3),
         )
         return {"posting": posting, "total": total}
 ```
