@@ -26,8 +26,8 @@ OpenBox publishes two release lines. Each launcher binary is compiled for one li
 
 | Line | Tag | Default policy | Network behavior |
 |---|---|---|---|
-| Base | `v0.1.0` | `policy-deny-network-dev.yaml` | Denies every network destination |
-| Dev | `v0.1.0-dev` | `policy-allow-network-dev.yaml` | Permits only `/usr/bin/curl` to reach `example.com:443` |
+| Base | `v0.1.1` | `policy-deny-network-dev.yaml` | Denies every network destination |
+| Dev | `v0.1.1-dev` | `policy-allow-network-dev.yaml` | Permits only `/usr/bin/curl` to reach `example.com:443` |
 
 Use the dev line to demonstrate the difference between a permitted destination and a refused one. One policy that permits everything, or denies everything, cannot show that difference.
 

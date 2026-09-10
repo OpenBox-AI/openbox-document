@@ -53,11 +53,11 @@ temporal server start-dev
 
 ## 1. Provision the sandbox
 
-Download the launcher into a directory you own, then provision. The `v0.1.0-dev` tag selects the development release line, whose default policy permits `/usr/bin/curl` to reach `example.com:443`. [Provisioning](./provisioning) explains the release lines and every flag.
+Download the launcher into a directory you own, then provision. The `v0.1.1-dev` tag selects the development release line, whose default policy permits `/usr/bin/curl` to reach `example.com:443`. [Provisioning](./provisioning) explains the release lines and every flag.
 
 ```bash
-curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/obs-darwin-arm64
-curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.0-dev/SHA256SUMS
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.1-dev/obs-darwin-arm64
+curl -fL -O https://github.com/OpenBox-AI/openbox-sandbox/releases/download/v0.1.1-dev/SHA256SUMS
 shasum -a 256 -c SHA256SUMS 2>/dev/null | grep obs-darwin-arm64
 chmod +x obs-darwin-arm64 && mv obs-darwin-arm64 obs
 ./obs provision --detach
@@ -585,7 +585,7 @@ same shell as the Worker.
 
 ### The request to `example.com` is refused
 
-You provisioned the base release line, which denies every destination. Provision from the `v0.1.0-dev` tag.
+You provisioned the base release line, which denies every destination. Provision from the `v0.1.1-dev` tag.
 
 ### `deployment policy identity or native profile mismatch`
 
