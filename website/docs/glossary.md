@@ -210,7 +210,7 @@ A cryptographic data structure used to combine individual event hashes into a si
 
 ## Policy (OPA/Rego)
 
-Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (Open Policy Agent) Rego language. Policies evaluate an input document at runtime and return a governance decision (`CONTINUE` or `REQUIRE_APPROVAL`) with an optional reason.
+Stateless permission checks written in [OPA](https://www.openpolicyagent.org/) (Open Policy Agent) Rego language. Policies evaluate an input document at runtime and return a governance decision (`ALLOW`, `CONSTRAIN`, `REQUIRE_APPROVAL`, `BLOCK`, or `HALT`) with an optional reason. A `CONSTRAIN` result also requires `constraints: ["run_in_sandbox"]`.
 
 Unlike [Behavioral Rules](#behavioral-rules), policies are stateless: they evaluate each operation independently without tracking prior actions.
 
