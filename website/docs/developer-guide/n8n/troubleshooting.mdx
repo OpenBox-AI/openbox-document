@@ -16,7 +16,7 @@ Use this page to diagnose the most common OpenBox n8n integration issues.
 
 ## Node Not Appearing After Install
 
-1. Confirm **Settings → Community Nodes** shows `n8n-nodes-openbox-hook` as installed.
+1. Confirm **Settings → Community Nodes** shows `n8n-nodes-openbox-hook` as installed. On n8n Cloud, only the Cloud Edition (`0.5.0` or later) can be installed; the Full Edition (`0.4.x`) is self-hosted only. See [Editions](/developer-guide/n8n/editions).
 2. Restart n8n — some installs require a restart before the node appears in the node panel.
 3. Search "OpenBox" in the node panel to find **OpenBox: Agent**.
 4. If you built a custom n8n image, confirm the package was installed before the image was built and that `N8N_CUSTOM_EXTENSIONS` (or your image's install path) includes it.
@@ -43,7 +43,8 @@ This means the node could not resolve a user message for that item.
 2. If **Require signing** is enabled for the agent, confirm both **Agent
    DID** and **Agent Private Key** are set — partial identity configuration
    will fail requests.
-3. Confirm the runtime running n8n can reach `https://core.openbox.ai`.
+3. Confirm **API Base URL** points at your OpenBox Core (default `https://core.openbox.ai`) and that n8n can reach it.
+4. For an agent with a workload identity (Cloud Edition), confirm **Workload Private Key** holds the key of the agent's *active* workload identity and that Agent DID and Agent Private Key are blank. An `invalid_client` error means the identity provider rejected the key.
 
 ## No Runs In The Dashboard
 
@@ -99,11 +100,29 @@ responses), the agent node detects it and stops with
 expected behavior, not a governance block — check the tool's underlying HTTP
 call for the actual failure.
 
+## Workload Authentication Failed
+
+**Cloud Edition.** `OpenBox workload authentication failed — no governed request
+was sent` means the node could not obtain a workload token, so the run stopped
+before any governance call. This happens even with **On API Error** set to
+**Fail Open**, by design.
+
+1. Run the credential's **Test** button; the message names the stage that failed: `config` (the key could not be read), `bootstrap` (fetching workload settings from OpenBox), or `token` (the exchange with the identity provider).
+2. Confirm the key is the one for the agent's current workload identity. A key from a rotated or deleted identity is rejected with `invalid_client`.
+3. Confirm n8n can reach both OpenBox Core and the identity provider.
+
 ## Missing HTTP Or Database Telemetry
 
-1. Confirm the code path actually performs HTTP or database I/O during the agent run.
-2. Confirm the operation happens inside the active node execution, not in an unrelated node earlier in the workflow.
-3. Remember n8n's own internal Postgres connection is filtered out by design — only your workflow's own database calls appear.
+HTTP, database, and file telemetry is captured by the **Full Edition** only. On
+the Cloud Edition it is expected to be absent; OpenBox sees each tool's input
+and output instead.
+
+On the Full Edition:
+
+1. Confirm the matching **Instrument …** setting is on under **Advanced Governance**, and for databases that the driver is listed in **Database Drivers to Instrument**.
+2. Confirm the code path actually performs HTTP or database I/O during the agent run.
+3. Confirm the operation happens inside the active node execution, not in an unrelated node earlier in the workflow.
+4. Remember n8n's own internal Postgres connection is filtered out by design — only your workflow's own database calls appear.
 
 ## Next Steps
 

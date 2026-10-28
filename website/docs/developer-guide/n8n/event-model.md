@@ -49,8 +49,9 @@ These are not separate business events:
 - internal HTTP telemetry (including the HTTP call to the model provider itself)
 - internal database telemetry
 
-Those appear as operational spans associated with the active model call,
-tool call, or agent run.
+In the **Full Edition**, those appear as operational spans associated with the
+active model call, tool call, or agent run. The **Cloud Edition** does not
+capture them. See [Telemetry](/developer-guide/n8n/telemetry).
 
 ## How Agent Runs Appear
 
@@ -58,7 +59,7 @@ Each **OpenBox: Agent** node execution creates a fresh run identity in
 `beforeAgent`. The workflow type sent to OpenBox is
 `n8n.Agent.<node display name>` unless you configure the node's display name
 differently. See
-[Configuration](/developer-guide/n8n/configuration#current-defaults-not-yet-configurable).
+[Configuration](/developer-guide/n8n/configuration#fixed-values).
 
 Important implications:
 
@@ -115,7 +116,7 @@ Common fields:
 SignalReceived(user_prompt)
 -> WorkflowStarted
 -> LLMStarted
--> zero or more telemetry spans during model execution
+-> zero or more telemetry spans during model execution (Full Edition)
 -> LLMCompleted
 -> WorkflowCompleted
 ```
@@ -127,7 +128,7 @@ SignalReceived(user_prompt)
 -> WorkflowStarted
 -> LLMStarted -> LLMCompleted (model decides to call a tool)
 -> ToolStarted
--> zero or more telemetry spans during tool execution
+-> zero or more telemetry spans during tool execution (Full Edition)
 -> ToolCompleted
 -> LLMStarted -> LLMCompleted (model reads the tool result)
 -> WorkflowCompleted
@@ -154,4 +155,4 @@ Recommended approach:
 2. Use `LLMCompleted` for response-side model governance.
 3. Use `ToolStarted` for tool-input guardrails and approval policies.
 4. Use `ToolCompleted` for tool-output guardrails and result review.
-5. Treat HTTP and database telemetry as internal by default.
+5. In the Full Edition, treat HTTP and database telemetry as internal by default.
