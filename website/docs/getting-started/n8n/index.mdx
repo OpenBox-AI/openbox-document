@@ -61,20 +61,6 @@ evaluation, approvals, guardrails, and operational telemetry.
 Everything downstream — the Chat Model, Memory, and Tool sub-nodes, and
 whatever consumes the agent's output — is untouched.
 
-## Two Editions
-
-The node comes in two editions of the same package:
-
-| Edition | Runs on | Install |
-| --- | --- | --- |
-| **Cloud Edition** (`0.5.0`+) | n8n Cloud and self-hosted n8n | `n8n-nodes-openbox-hook` |
-| **Full Edition** (`0.4.x`) | Self-hosted n8n only | `n8n-nodes-openbox-hook@0.4.4` |
-
-Both govern the agent run, the user prompt, every model call, and every tool
-call. The Full Edition also captures the HTTP requests and database queries made
-inside those calls, which is why it cannot run on n8n Cloud. If you are unsure,
-start with the Cloud Edition. See [Editions](/developer-guide/n8n/editions).
-
 Newly created OpenBox agents require DID signing by default. If **Require
 signing** is disabled for the agent, leave the credential's Agent DID and
 Agent Private Key fields blank. See
@@ -110,7 +96,7 @@ From a single node, OpenBox captures:
 - Model call lifecycle events, including token metadata when the provider returns it
 - Tool call lifecycle events for every connected Tool sub-node that executes
 - User prompt signals for auditability
-- HTTP and database telemetry for outbound calls made during the run (Full Edition)
+- HTTP and database telemetry for outbound calls made during the run
 - Governance decisions, approvals, and guardrail outcomes
 
 ## What To Expect In The UI
@@ -127,5 +113,4 @@ After integration, OpenBox gives you:
 
 1. Read [n8n 101](/getting-started/n8n/n8n-101) if you want the conceptual model first.
 2. Use [Wrap an Existing Agent](/getting-started/n8n/wrap-an-existing-agent) if you already have an AI Agent node in production.
-3. Read [Editions](/developer-guide/n8n/editions) to choose between the Cloud Edition and the Full Edition.
-4. Read [n8n Node Reference](/developer-guide/n8n) for the full reference.
+3. Read [n8n Node Reference](/developer-guide/n8n) for the full reference.

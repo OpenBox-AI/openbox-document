@@ -81,26 +81,10 @@ the model — as long as the redacted text isn't longer than the original
 prompt plus a small margin (to avoid overwriting the current turn with stale
 data from a prior session).
 
-## Where A Run Can Be Stopped
-
-Verdicts apply at the governed boundaries above, in both editions. A verdict on
-`LLMStarted` or `ToolStarted` prevents the call. A verdict on `LLMCompleted` or
-`ToolCompleted` stops the agent from going further, but the call has already
-run.
-
-The **Full Edition** can also return a verdict on an individual HTTP request or
-database query inside a tool, so a single query can be blocked mid-tool. The
-**Cloud Edition** does not see inside a tool; to gate a specific operation, make
-it its own tool so it gets its own `ToolStarted` check. See
-[Editions](/developer-guide/n8n/editions).
-
 ## Approval Handling
 
 When OpenBox returns `REQUIRE_APPROVAL`, the node polls the OpenBox approval
-endpoint every 5 seconds for up to an hour by default. Both values are set under
-**Advanced Governance** (**Approval Poll Interval** and **Approval Max Wait**;
-`0` waits indefinitely), and **Human-in-the-Loop Approval Enabled** turns
-pausing off. See [Configuration](/developer-guide/n8n/configuration#advanced-governance).
+endpoint every 5 seconds for up to 5 minutes by default.
 
 Typical behavior:
 

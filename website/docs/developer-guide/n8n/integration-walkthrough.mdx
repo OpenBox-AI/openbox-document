@@ -28,15 +28,12 @@ If you only need the shortest setup path, start with
 
 ## Prerequisites
 
-- n8n with Community Nodes enabled: n8n Cloud, or self-hosted n8n
-- The edition you will install: the **Cloud Edition** for n8n Cloud, or for
-  self-hosted n8n unless you need HTTP and database telemetry; otherwise the
-  **Full Edition**. See [Editions](/developer-guide/n8n/editions).
+- n8n with Community Nodes enabled (self-hosted, or n8n Cloud with community
+  node installs allowed)
 - An existing (or new) AI Agent node connected to a Chat Model sub-node
 - An OpenBox agent registration with an API key
 - The OpenBox agent DID and private key unless **Require signing** is
-  disabled, or the workload private key for an agent with a workload identity
-  (Cloud Edition)
+  disabled
 
 ## Part 1: Register Your Agent In OpenBox
 
@@ -44,56 +41,27 @@ If you only need the shortest setup path, start with
 2. Navigate to **Agents**
 3. Create or open the agent you want to govern
 4. Generate an API key
-5. Copy the generated DID and private key unless **Require signing** is
-   disabled. For an agent with a workload identity, copy its workload private
-   key instead.
+5. Copy the generated DID and private key unless **Require signing** is disabled
 6. Keep the credentials in your n8n credential store
 
 ## Part 2: Install The Node
 
 Package: `n8n-nodes-openbox-hook`
 
-In n8n, go to **Settings → Community Nodes → Install** and enter the package
-name for your edition:
-
-<Tabs groupId="n8n-edition">
-<TabItem value="cloud" label="Cloud Edition" default>
+In n8n, go to **Settings → Community Nodes → Install** and enter:
 
 ```
 n8n-nodes-openbox-hook
 ```
 
-</TabItem>
-<TabItem value="full" label="Full Edition (self-hosted)">
-
-```
-n8n-nodes-openbox-hook@0.4.4
-```
-
-</TabItem>
-</Tabs>
-
 Restart n8n if prompted.
 
-If you build your own self-hosted n8n image instead of installing through the
-UI, install the package into n8n's nodes folder (`~/.n8n/nodes`) and rebuild:
-
-<Tabs groupId="n8n-edition">
-<TabItem value="cloud" label="Cloud Edition" default>
+If you build your own n8n image instead of installing through the UI,
+install it as a regular dependency and rebuild:
 
 ```bash
 npm install n8n-nodes-openbox-hook
 ```
-
-</TabItem>
-<TabItem value="full" label="Full Edition (self-hosted)">
-
-```bash
-npm install n8n-nodes-openbox-hook@0.4.4
-```
-
-</TabItem>
-</Tabs>
 
 ## Part 3: Add OpenBox Credentials
 
@@ -102,14 +70,9 @@ In n8n, go to **Settings → Credentials → Add Credential** and create an
 
 | Field | Required | Description |
 |---|---|---|
-| **API Base URL** | Yes | Defaults to `https://core.openbox.ai`. Change it only for your own OpenBox deployment. |
 | **API Key** | Yes | Agent API key issued by OpenBox. |
 | **Agent DID** | No | Required for agents with `signing_required = true`. |
 | **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed, paired with Agent DID. |
-| **Workload Private Key** | No | Cloud Edition. PKCS8 PEM RSA key for agents with a workload identity. Leave Agent DID and Agent Private Key blank when you use it. |
-
-See [Configuration](/developer-guide/n8n/configuration#openbox-api-credential)
-for which fields each kind of agent needs.
 
 ## Part 4: Replace The Node
 
@@ -162,7 +125,7 @@ Run one real request through the governed agent, then check OpenBox for:
 - a run under the registered agent
 - model call events with prompt and response metadata
 - tool call activities with started and completed events, if tools executed
-- HTTP and database telemetry captured during the run (Full Edition only)
+- HTTP and database telemetry captured during the run
 - governance decisions for allowed, blocked, halted, or approval-required operations
 - signed request authentication when **Require signing** is enabled
 
@@ -181,10 +144,9 @@ middleware, called directly inside the node's `execute()` function:
 | `wrapToolCall` | Emits `ToolStarted`, invokes the connected Tool sub-node, then emits `ToolCompleted` |
 | `afterAgent` | Emits `WorkflowCompleted` with a `completed` or `failed` status — this always fires, even when the agent loop errors |
 
-The **Full Edition** also instruments HTTP, database, and (optionally) file
-activity, so I/O during a model or tool call is captured as telemetry attached
-to that call. The **Cloud Edition** does not instrument anything outside the
-node; see [Telemetry](/developer-guide/n8n/telemetry).
+The node also patches Node's `https` module and instruments outbound
+database queries for the duration of the run, so HTTP and database activity
+during a model or tool call is captured as telemetry attached to that call.
 
 ## Tool Invocation
 
@@ -196,8 +158,7 @@ appears on `ToolStarted` / `ToolCompleted` events.
 ## Human-in-the-Loop Approvals
 
 If OpenBox returns `REQUIRE_APPROVAL`, the node polls the OpenBox approval
-endpoint every 5 seconds for up to an hour by default (**Approval Poll Interval**
-and **Approval Max Wait** in [Configuration](/developer-guide/n8n/configuration#advanced-governance)). If the request is
+endpoint every 5 seconds for up to 5 minutes by default. If the request is
 rejected or the poll times out, the node raises `GovernanceHaltError` and the
 agent run stops.
 

@@ -426,7 +426,6 @@ const sidebars = {
             id: 'developer-guide/n8n/index',
           },
           items: [
-            'developer-guide/n8n/editions',
             'developer-guide/n8n/integration-walkthrough',
             'developer-guide/n8n/configuration',
             'developer-guide/n8n/error-handling',

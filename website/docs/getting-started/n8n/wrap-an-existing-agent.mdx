@@ -22,7 +22,8 @@ swapping its node type for **OpenBox: Agent**. The same **Chat Model**,
 
 - An existing n8n workflow with a standard AI Agent node
   (`@n8n/n8n-nodes-langchain.agent`) connected to a Chat Model sub-node
-- n8n with Community Nodes enabled: n8n Cloud, or self-hosted n8n
+- n8n with Community Nodes enabled (self-hosted, or n8n Cloud with community
+  node installs allowed)
 - An OpenBox agent, registered at [platform.openbox.ai](https://platform.openbox.ai),
   which provides the agent API key and, unless **Require signing** is
   disabled for the agent, the agent DID and private key
@@ -31,27 +32,11 @@ swapping its node type for **OpenBox: Agent**. The same **Chat Model**,
 
 Package: `n8n-nodes-openbox-hook`
 
-In n8n, go to **Settings → Community Nodes → Install** and enter the package
-name for your edition. Use the **Cloud Edition** on n8n Cloud, and on
-self-hosted n8n unless you need HTTP and database telemetry. See
-[Editions](/developer-guide/n8n/editions).
-
-<Tabs groupId="n8n-edition">
-<TabItem value="cloud" label="Cloud Edition" default>
+In n8n, go to **Settings → Community Nodes → Install** and enter:
 
 ```
 n8n-nodes-openbox-hook
 ```
-
-</TabItem>
-<TabItem value="full" label="Full Edition (self-hosted)">
-
-```
-n8n-nodes-openbox-hook@0.4.4
-```
-
-</TabItem>
-</Tabs>
 
 Restart n8n if prompted.
 
@@ -62,11 +47,9 @@ In n8n, go to **Settings → Credentials → Add Credential** and create an
 
 | Field | Required | Description |
 |---|---|---|
-| **API Base URL** | Yes | Defaults to `https://core.openbox.ai`. Change it only for your own OpenBox deployment. |
 | **API Key** | Yes | Agent API key issued by OpenBox. Live keys start with `obx_live_`; test keys with `obx_test_`. |
 | **Agent DID** | No | Agent decentralised identifier (`did:aip:<uuid>`). Required for agents with `signing_required = true`. Pair with Agent Private Key. |
 | **Agent Private Key** | No | Base64-encoded raw 32-byte Ed25519 seed. Every request is signed locally with this key. Pair with Agent DID. |
-| **Workload Private Key** | No | Cloud Edition. PKCS8 PEM RSA key for agents with a workload identity. Leave Agent DID and Agent Private Key blank when you use it. |
 
 Get your API key, and — unless **Require signing** is disabled for the
 agent — the Agent DID and private key, from the agent's registration page at
