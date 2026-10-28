@@ -55,16 +55,6 @@ does not raise `GovernanceHaltError`, `GovernanceBlockedError`, or
 `GuardrailsValidationError`. `WorkflowCompleted` still fires with a `failed`
 status so the run is recorded in OpenBox.
 
-## Workload Authentication Failure
-
-**Cloud Edition.** For an agent with a workload identity, the node obtains a
-token before the run. If that fails, the node stops with
-`OpenBox workload authentication failed — no governed request was sent`, and
-the description names the stage (`config`, `bootstrap`, or `token`) and the
-reason. This is not a governance verdict and is never treated as an outage:
-the run stops even when **On API Error** is **Fail Open**. See
-[Troubleshooting](/developer-guide/n8n/troubleshooting#workload-authentication-failed).
-
 ## Approval Rejection And Timeout
 
 If OpenBox returns `REQUIRE_APPROVAL`, the node polls for a decision. If the

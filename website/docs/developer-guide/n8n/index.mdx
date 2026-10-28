@@ -1,6 +1,6 @@
 ---
 title: n8n Node Reference
-description: "OpenBox reference for n8n: govern the AI Agent node, model calls, tools, approvals, and guardrails, on n8n Cloud or self-hosted n8n."
+description: "OpenBox reference for n8n: govern the AI Agent node, model calls, tools, approvals, guardrails, and operational telemetry."
 llms_description: n8n community node reference and guide set
 sidebar_position: 1
 tags:
@@ -19,22 +19,14 @@ unchanged.
 
 Published package: `n8n-nodes-openbox-hook`
 
-:::info Two editions
-The node comes in two editions. The **Cloud Edition** (`0.5.0`+) runs on n8n
-Cloud and self-hosted n8n. The **Full Edition** (`0.4.x`) runs on self-hosted
-n8n only and also captures the HTTP and database activity inside model and tool
-calls. See **[Editions](/developer-guide/n8n/editions)** to choose.
-:::
-
 | Guide | Description |
 |-------|-------------|
-| **[Editions](/developer-guide/n8n/editions)** | Cloud Edition versus Full Edition: where each runs, what each captures, and how to switch |
 | **[Integration Walkthrough](/developer-guide/n8n/integration-walkthrough)** | End-to-end guide for installing the node, adding credentials, replacing your AI Agent node, and verifying live runs |
-| **[Configuration](/developer-guide/n8n/configuration)** | Credential fields, node parameters, and governance settings |
+| **[Configuration](/developer-guide/n8n/configuration)** | Credential fields, node parameters, and current governance defaults |
 | **[Error Handling](/developer-guide/n8n/error-handling)** | Node errors, approval outcomes, guardrail failures, and Continue On Fail behavior |
 | **[Event Model](/developer-guide/n8n/event-model)** | Understand agent runs, model calls, tools, signals, and how they appear in OpenBox |
 | **[Approvals and Guardrails](/developer-guide/n8n/approvals-and-guardrails)** | How verdicts are enforced and how to test live guardrails correctly |
-| **[Telemetry](/developer-guide/n8n/telemetry)** | HTTP, database, and file capture (Full Edition) |
+| **[Telemetry](/developer-guide/n8n/telemetry)** | HTTP and database capture behavior |
 | **[Troubleshooting](/developer-guide/n8n/troubleshooting)** | Diagnose installation, credential, policy, and telemetry issues |
 
 :::info What The Node Does
@@ -50,7 +42,7 @@ The integration is intentionally minimal:
 - One node, **OpenBox: Agent**, that replaces the standard AI Agent node
 - No rewrite of existing Chat Model, Memory, or Tool sub-nodes
 - Automatic governance at agent, model, and tool boundaries
-- In the Full Edition, automatic HTTP and database telemetry through the node's built-in instrumentation
+- Automatic HTTP and database telemetry through the node's built-in instrumentation
 
 ## Recommended Entry Point
 
@@ -76,17 +68,13 @@ uses:
 }
 ```
 
-The node type is the same in both editions, so this excerpt works with either.
-
 Newly created OpenBox agents require DID signing by default. Configure
 **Agent DID** and **Agent Private Key** together on the credential unless
-**Require signing** is disabled for the registered agent. Agents that use a
-workload identity need the **Workload Private Key** instead (Cloud Edition). See
-[Configuration](/developer-guide/n8n/configuration#openbox-api-credential).
+**Require signing** is disabled for the registered agent.
 
 ## What The Node Captures
 
-OpenBox receives, in both editions:
+OpenBox receives:
 
 ### Agent Boundaries
 
@@ -104,30 +92,22 @@ OpenBox receives, in both editions:
 - `ToolStarted`
 - `ToolCompleted`
 
-### Memory
-
-- Memory load and save, when a Memory sub-node is connected
-
-### Operational Telemetry (Full Edition)
+### Operational Telemetry
 
 - HTTP requests, including the model provider call itself
-- database queries when the workflow uses a database node or tool, excluding n8n's own internal Postgres and queue traffic
-- file reads and writes, when enabled
-
-The Cloud Edition does not capture operational telemetry. It sees what goes
-into and comes out of each model and tool call, not the I/O inside it.
+- database queries when the workflow uses a database node or tool, excluding n8n's own internal Postgres connection
 
 ## Supported Runtime Conditions
 
-| Requirement | Cloud Edition | Full Edition |
-| --- | --- | --- |
-| n8n | n8n Cloud, or self-hosted with Community Nodes enabled | Self-hosted with Community Nodes enabled |
-| Node.js | n8n's supported runtime | n8n's supported runtime |
-| OpenBox Core | `https://core.openbox.ai` by default; set **API Base URL** for your own deployment | Same |
+| Requirement | Value |
+| --- | --- |
+| n8n | Community Nodes enabled |
+| Node.js | n8n's supported runtime |
+| n8n-workflow (peer dependency) | `>=1.0.0` |
+| OpenBox Core | `https://core.openbox.ai` (fixed; not user-configurable in the credential) |
 
 ## Next Steps
 
-1. Choose an edition in [Editions](/developer-guide/n8n/editions).
-2. Start with the [Integration Walkthrough](/developer-guide/n8n/integration-walkthrough).
-3. Review the settings in [Configuration](/developer-guide/n8n/configuration).
-4. Read [Event Model](/developer-guide/n8n/event-model) before writing policy or guardrails.
+1. Start with the [Integration Walkthrough](/developer-guide/n8n/integration-walkthrough).
+2. Review current defaults in [Configuration](/developer-guide/n8n/configuration).
+3. Read [Event Model](/developer-guide/n8n/event-model) before writing policy or guardrails.
