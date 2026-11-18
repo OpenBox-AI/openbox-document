@@ -1,0 +1,229 @@
+---
+title: Getting Started with OpenShell
+description: "Add OpenBox governance to NVIDIA OpenShell: a verdict on every request a sandbox sends out, every sandbox governed from creation, and each sandbox as one OpenBox session."
+llms_description: OpenShell Helm install and first governed sandbox
+sidebar_position: 9
+tags:
+  - getting-started
+  - openshell
+---
+
+# Getting Started with OpenShell
+
+OpenBox integrates with [NVIDIA OpenShell](https://github.com/NVIDIA/OpenShell)
+through **OpenBox for OpenShell**, two services you install with one Helm chart
+next to your OpenShell gateway. Every request an agent sends out of a sandbox
+(model calls, tool calls, web requests) gets an OpenBox verdict before it
+leaves. Your OpenBox policies, guardrails, behavior rules and approvals apply to
+every sandbox the gateway creates, and each sandbox shows up in the OpenBox
+dashboard as one session you can follow step by step.
+
+You keep using OpenShell exactly as before. Nothing changes in your sandbox
+images, your agents or the `openshell` commands you run.
+
+Built for OpenShell v0.1.8. The current release is **v0.2.0**.
+
+Just want to see it work? [See It Block a Request](/getting-started/openshell/see-it-block)
+runs everything on one machine, with no Kubernetes and no certificates. In a
+few minutes you watch an OpenBox policy allow, block and hold a sandbox's
+request.
+
+## How it fits
+
+Two small services sit beside your OpenShell gateway:
+
+- The **door guard** is an OpenShell middleware. Before any request leaves a
+  sandbox, OpenShell asks it for a verdict, and it asks OpenBox.
+- The **front desk** is an OpenShell interceptor. It attaches the door guard
+  to every sandbox the gateway creates, and refuses any change that would
+  detach or weaken it.
+
+Your agents and sandbox images do not change, and neither do the `openshell`
+commands you run.
+
+## What you get
+
+- **A verdict on every outbound request.** Before a request leaves a sandbox,
+  OpenBox decides: allow it, block it, hold it for a person to approve, or halt
+  the whole sandbox.
+- **Governance nobody can switch off from inside.** Every new sandbox is
+  attached to OpenBox automatically. A policy change that would remove or
+  weaken that attachment is refused.
+- **A readable record.** Each sandbox is one OpenBox session: the user's
+  prompts, each model call, each tool the model asked for, and the requests
+  made inside that tool, in order, with their timing.
+- **Content stays inside by default.** Core gets a hash of each prompt and
+  body, the kinds of sensitive data found in it, and the shape of its JSON, not
+  the content itself. Sending the text is opt-in, per host if you like.
+- **An inventory.** Every sandbox is registered in the OpenBox AI Inventory and
+  kept up to date as it changes and is deleted, marked `compliant`, `weakened`
+  or `ungoverned`.
+- **No stalls when Core is slow.** When Core takes more than 2 s, the agent is
+  told `openbox_pending` and its retry gets the verdict.
+- **Fail closed.** If OpenBox cannot give a verdict in time, the request is
+  denied with an explicit reason, never silently allowed.
+
+![An agent's sessions in the OpenBox dashboard: each OpenShell sandbox is one session](/img/openshell/sessions-list.webp)
+
+Each session holds every request with its verdict, hash-chained and signed:
+
+![A sandbox's session, verified: goal alignment and integrity checks](/img/openshell/session-verify.webp)
+
+## What an agent in a sandbox sees
+
+| OpenBox decides | The request | The agent sees |
+|---|---|---|
+| Allow | goes out | the normal response |
+| Allow with a constraint | goes out rewritten as the constraint says (redacted, narrowed, headers stripped) | the response to the rewritten request |
+| Block | does not go out | HTTP 403, reason code `openbox_blocked` |
+| Require approval | does not go out yet | HTTP 403, `openbox_approval_required`. Retrying the identical request after a person approves it lets it through |
+| Halt | does not go out | HTTP 403, `openbox_halted`. The sandbox is stopped, and nothing else from it gets out |
+| No verdict in time | does not go out | HTTP 403, `openbox_unavailable` |
+| Still deciding (Core took more than 2 s) | does not go out yet | HTTP 403, `openbox_pending`. The identical retry gets the verdict |
+
+OpenShell cannot hold a request open while a person decides, so approval is
+deny-then-retry. [Approvals for agent authors](/developer-guide/openshell/approvals)
+explains what an agent should do with each code.
+
+## Quick start
+
+Install the published Helm chart next to your gateway. You do not need to clone
+or build anything.
+
+**You need**
+
+- An OpenShell v0.1.8 gateway on Kubernetes, with extension tokens on (the
+  `[openshell.gateway.gateway_jwt]` section of its TOML). Note its `gateway_id`
+  and the PEM file at `public_key_path`.
+- An agent in the OpenBox dashboard with a workload identity. The dashboard
+  gives you `OPENBOX_API_URL`, `OPENBOX_API_KEY` and
+  `OPENBOX_WORKLOAD_PRIVATE_KEY`.
+- [cert-manager](https://cert-manager.io) in the cluster, to issue the two
+  services' TLS certificates. Already have certificates? See
+  [Server certificates](/developer-guide/openshell/configuration#server-certificates).
+- A Redis every replica can reach. For a first look, the chart can run one
+  (`redis.enabled: true` below).
+- Helm 3.8 or later.
+
+### 1. Store the agent's credentials
+
+Save the dashboard's private key as `workload.pem`, ask Core for the key's
+`kid`, and put the three values in a Secret:
+
+```bash
+curl -fsS -H "Authorization: Bearer $OPENBOX_API_KEY" \
+  "$OPENBOX_API_URL/api/v3/auth/bootstrap"        # prints "kid": "..."
+
+kubectl create namespace openbox
+kubectl -n openbox create secret generic openbox-agent \
+  --from-literal=api-key="$OPENBOX_API_KEY" \
+  --from-file=workload.pem=workload.pem \
+  --from-literal=workload-kid=<kid>
+```
+
+If `kid` is empty, the agent has no workload key registered.
+
+### 2. Create a CA for OpenBox
+
+The gateway and the sandbox supervisors check both services' certificates
+against a CA you name in the gateway's TOML. This makes a dedicated one with
+cert-manager and saves its certificate as `openbox-ca.pem`:
+
+```bash
+kubectl -n openbox apply -f - <<'EOF'
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata: {name: openbox-selfsigned}
+spec: {selfSigned: {}}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata: {name: openbox-ca}
+spec:
+  isCA: true
+  commonName: OpenBox for OpenShell CA
+  secretName: openbox-ca
+  duration: 87600h
+  privateKey: {algorithm: ECDSA, size: 256}
+  issuerRef: {name: openbox-selfsigned, kind: Issuer}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata: {name: openbox-ca}
+spec: {ca: {secretName: openbox-ca}}
+EOF
+
+kubectl -n openbox wait --for=condition=Ready certificate/openbox-ca
+kubectl -n openbox get secret openbox-ca -o jsonpath='{.data.ca\.crt}' \
+  | base64 -d > openbox-ca.pem
+```
+
+### 3. Install the chart
+
+Save this as `openbox-values.yaml`:
+
+```yaml title="openbox-values.yaml"
+openbox:
+  url: https://<OpenBox Core URL>
+  backendUrl: https://<OpenBox backend URL>   # AI Inventory
+credentials:
+  existingSecret: openbox-agent
+gateway:
+  id: <gateway_id>
+tls:
+  certManager:
+    enabled: true
+    issuerRef: {name: openbox-ca}
+redis:
+  enabled: true        # evaluation only; use externalRedis.url in production
+```
+
+```bash
+helm install openbox oci://ghcr.io/openbox-ai/charts/openbox-openshell \
+  --version 0.2.0 -n openbox -f openbox-values.yaml \
+  --set-file gateway.publicKey=<public_key_path>
+
+kubectl -n openbox wait --for=condition=Available deploy --all --timeout=3m
+```
+
+The chart refuses a configuration the services would refuse at startup, and
+tells you which value is missing.
+`helm show values oci://ghcr.io/openbox-ai/charts/openbox-openshell` lists
+every value.
+
+### 4. Register OpenBox with the gateway
+
+`helm install` prints three TOML blocks with your Service names filled in. Add
+them to the gateway's TOML, set each `tls_ca_cert_path` to where the gateway
+can read `openbox-ca.pem`, and restart the gateway.
+
+:::warning Start OpenBox first
+The gateway does not start while a registered service is unreachable. Wait for
+both deployments to be available before you restart the gateway.
+:::
+
+[Register with the gateway](/developer-guide/openshell/configuration#register-with-the-gateway)
+explains each block and the settings you must keep.
+
+### 5. Create a sandbox and check it is governed
+
+```bash
+openshell sandbox create --name check --policy policy.yaml
+openshell policy get check --full | grep 'middleware: openbox'
+```
+
+Requests from the sandbox now get an OpenBox verdict, and the sandbox shows up
+as a session on the agent in the OpenBox dashboard. Write your
+[policies](/trust-lifecycle/authorize/policies),
+[guardrails](/trust-lifecycle/authorize/guardrails) and
+[behavior rules](/trust-lifecycle/authorize/behaviors) on that agent; they apply
+to all its sandboxes.
+
+## Next steps
+
+- **[See It Block a Request](/getting-started/openshell/see-it-block)**: the whole loop on one machine
+- **[OpenShell reference](/developer-guide/openshell)**: how the two services work, and what is not governed
+- **[Configuration](/developer-guide/openshell/configuration)**: the gateway API credential (needed to stop a halted sandbox), certificates and content capture
+- **[Request Controls](/developer-guide/openshell/controls)**: fast-path verdicts, CONSTRAIN rewrites, response checks and fleet checks
+- **[Approvals for agent authors](/developer-guide/openshell/approvals)**: the page to give the people who write your agents
+- **[Operations](/developer-guide/openshell/operations)**: metrics, alerts, halts and break-glass
