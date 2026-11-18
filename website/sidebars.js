@@ -131,6 +131,17 @@ const sidebars = {
         },
         {
           type: 'category',
+          label: 'OpenShell',
+          link: {
+            type: 'doc',
+            id: 'getting-started/openshell/index',
+          },
+          items: [
+            'getting-started/openshell/see-it-block',
+          ],
+        },
+        {
+          type: 'category',
           label: 'Temporal',
           link: {
             type: 'doc',
@@ -347,6 +358,20 @@ const sidebars = {
           type: 'doc',
           id: 'developer-guide/openclaw/index',
           label: 'OpenClaw',
+        },
+        {
+          type: 'category',
+          label: 'OpenShell',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/openshell/index',
+          },
+          items: [
+            'developer-guide/openshell/configuration',
+            'developer-guide/openshell/controls',
+            'developer-guide/openshell/approvals',
+            'developer-guide/openshell/operations',
+          ],
         },
         {
           type: 'category',

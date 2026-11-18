@@ -169,6 +169,11 @@ openclaw:
   permalink: /openclaw
   description: OpenClaw agent framework integration
 
+openshell:
+  label: OpenShell
+  permalink: /openshell
+  description: NVIDIA OpenShell sandbox integration
+
 openrouter:
   label: OpenRouter
   permalink: /openrouter

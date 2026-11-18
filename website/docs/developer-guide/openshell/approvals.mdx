@@ -1,0 +1,197 @@
+---
+title: Approvals for Agent Authors
+description: "What an agent in a governed OpenShell sandbox sees when OpenBox denies, holds or halts a request, every reason code, and how to retry an approval."
+llms_description: OpenShell reason codes and approval retry contract
+sidebar_position: 4
+tags:
+  - openshell
+  - hitl
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Approvals for Agent Authors
+
+This page is for people who write agents that run in an OpenShell sandbox
+governed by OpenBox. It explains what your agent sees when OpenBox denies a
+request, and what it should do.
+
+## What a denial looks like
+
+OpenShell has no way to hold a request while a person decides. So when OpenBox
+needs an approval, the request is denied at once and never reaches its
+destination. Your agent receives `403 Forbidden` with this body:
+
+```json
+{
+  "error": "middleware_denied",
+  "detail": "Request rejected by configured middleware",
+  "policy": "<network policy name>",
+  "middleware": "openbox",
+  "reason_code": "openbox_approval_required"
+}
+```
+
+Read `reason_code`. It is the only field that tells you why.
+
+## Reason codes
+
+| `reason_code` | Meaning | What the agent should do |
+|---|---|---|
+| `openbox_approval_required` | A person must approve this action. | Tell the user, then retry the identical request later. |
+| `openbox_pending` | OpenBox is still deciding. This is the default when a verdict takes more than 2 s. | Retry the identical request after a second or two; the verdict is waiting for it. |
+| `openbox_blocked` | OpenBox policy forbids this action. | Do not retry. Choose another approach or report it. |
+| `openbox_halted` | OpenBox halted this sandbox. | Stop. Every later request is denied too. |
+| `openbox_unavailable` | OpenBox gave no verdict (Core unreachable or slower than 29 s). | Retry with backoff. Nothing was approved. |
+| `openbox_constrain_failed` | OpenBox allowed the request only with a change the door guard could not make. | Do not retry unchanged. Report it. |
+| `openbox_response_blocked` | The request went out, but its response carried data the sandbox policy keeps out. | Do not retry: the request already ran. Report it. |
+
+If `error` is `middleware_failed` instead, the door guard did not answer at
+all. Treat it like `openbox_unavailable`.
+
+## Deny, then retry
+
+1. Your agent sends a request. OpenBox decides it needs approval. The door
+   guard denies it with `openbox_approval_required` and remembers the action.
+2. A person sees the request in the OpenBox dashboard and
+   [approves or rejects it](/approvals).
+3. Your agent sends the identical request again.
+   - **Approved:** the request goes through.
+   - **Still pending:** denied again with `openbox_approval_required`. OpenBox
+     does not score it again or open a second approval.
+   - **Rejected:** OpenBox reports the rejection as a halt. The request is
+     denied with `openbox_halted`, and the sandbox is stopped.
+
+Retry no more often than every 10 to 30 seconds. Each retry costs one call to
+OpenBox, and approvals take a person's time. Tell the user that an approval is
+waiting, so they can go and give it.
+
+### Retry helpers
+
+Ready-made helpers do this loop. Copy the one file you need into your agent;
+neither has dependencies.
+
+| Language | File | Entry point |
+|---|---|---|
+| Python (any HTTP client) | [`clients/python/openbox_retry.py`](https://github.com/OpenBox-AI/openbox-openshell/blob/v0.2.0/clients/python/openbox_retry.py) | `with_openbox_retry` |
+| TypeScript (`fetch`) | [`clients/typescript/openbox-retry.ts`](https://github.com/OpenBox-AI/openbox-openshell/blob/v0.2.0/clients/typescript/openbox-retry.ts) | `withOpenBoxRetry` |
+
+Each retries the identical request while the code is
+`openbox_approval_required`, `openbox_pending` or `openbox_unavailable`, and
+raises on the others.
+
+<Tabs>
+<TabItem value="python" label="Python" default>
+
+```python
+import requests
+from openbox_retry import OpenBoxDenied, with_openbox_retry
+
+payload = {"query": "quarterly report"}   # build the request once
+
+try:
+    response = with_openbox_retry(
+        lambda: requests.post(url, json=payload, timeout=60),
+        on_wait=lambda code, waited: print(f"{code}: waiting ({waited:.0f}s)"),
+    )
+except OpenBoxDenied as denied:
+    # openbox_blocked, openbox_halted, ... or the wait ran out
+    print(f"OpenBox denied the request: {denied.code}")
+```
+
+</TabItem>
+<TabItem value="typescript" label="TypeScript">
+
+```typescript
+import { OpenBoxDenied, withOpenBoxRetry } from "./openbox-retry.ts";
+
+const body = JSON.stringify({ query: "quarterly report" });   // build it once
+
+try {
+  const response = await withOpenBoxRetry(
+    () => fetch(url, { method: "POST", body, headers }),
+    { onWait: (code, waitedMs) => console.log(`${code}: waiting`) },
+  );
+} catch (err) {
+  if (err instanceof OpenBoxDenied) {
+    // openbox_blocked, openbox_halted, ... or the wait ran out
+    console.log(`OpenBox denied the request: ${err.code}`);
+  } else throw err;
+}
+```
+
+</TabItem>
+</Tabs>
+
+The callback must send the same request every time, so build the body once,
+outside it. By default a helper retries every 15 s while a person decides,
+every 2 s while OpenBox is still deciding, backs off from 2 s to 60 s while
+OpenBox is unreachable, and gives up after 30 minutes.
+
+## What "identical" means
+
+The door guard matches a retry to its approval by a fingerprint of the action.
+The fingerprint covers:
+
+- the sandbox
+- the scheme, host and port
+- the method, path and query string
+- the body. A JSON body is compared in a canonical form: object key order does
+  not matter, array order does. Any other body must match byte for byte.
+
+It leaves out what changes between two attempts without changing the action:
+
+- every header (dates, trace ids, nonces)
+- OpenShell's per-request id
+- the JSON-RPC `id`, so an MCP `tools/call` retried with a new id still matches
+
+Change anything the fingerprint covers, and the retry is a new action that
+OpenBox scores again. It may need a new approval. In practice: resend the same
+request. Do not add a timestamp to the body, reorder an array, or edit the
+arguments.
+
+A retry can arrive at any door guard replica. They share the record through
+Redis, so this works across replicas.
+
+## How long an approval waits
+
+The door guard keeps a pending approval for as long as Core does. Core sends
+its deadline with the verdict: the agent's approval wait time in OpenBox, 30
+minutes by default. The door guard adds one minute for clock skew. When Core
+sends no deadline, the door guard falls back to `doorGuard.approvalTtlSecs`
+(`OPENBOX_APPROVAL_TTL_SECS`), 900 seconds by default.
+
+After the window closes, the next identical request is a new action. OpenBox
+scores it again, and it may need a new approval.
+
+If the door guard loses its record, for example because Redis restarted, the
+same happens: the retry needs a new approval. A lost record never lets a
+request through without one.
+
+## What halt means
+
+Halt is the strongest verdict. OpenBox halts a sandbox when policy says so, or
+when a person rejects an approval.
+
+- The request that triggered it is denied with `openbox_halted`.
+- Every later request from that sandbox is denied with `openbox_halted`.
+- The door guard stops the sandbox through the OpenShell gateway. It stops the
+  sandbox and does not delete it, so it can be inspected and restarted. If the
+  door guard has no gateway credential, it still denies all traffic but cannot
+  stop the sandbox.
+
+An agent that sees `openbox_halted` should stop work and report it. Retrying
+does not help. An operator can
+[resume the sandbox](/developer-guide/openshell/operations#resuming-a-halted-sandbox);
+its traffic is then scored again.
+
+## Turning approvals into blocks
+
+A sandbox policy can set `approval_mode: deny` in the `openbox` entry's
+`config`. Every approval is then a block: `openbox_blocked`, with no retry
+path. The default is `queue`, which this page describes.
+
+The front desk writes `approval_mode: queue` when it creates the sandbox, so
+set `deny` with a policy update afterwards. The front desk accepts `queue` or
+`deny` there and refuses anything else.
