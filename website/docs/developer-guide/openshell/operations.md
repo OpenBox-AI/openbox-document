@@ -271,5 +271,5 @@ your organization's public key:
 openbox-evidence check --core-key org-attestation.pub --certificate cert-line.json records-*.jsonl
 ```
 
-See [Proof Engine](/trust-lifecycle/proof-engine) for how OpenBox attests
+See [Attestation & Cryptographic Proof](/administration/attestation-and-cryptographic-proof) for how OpenBox attests
 governance decisions.
