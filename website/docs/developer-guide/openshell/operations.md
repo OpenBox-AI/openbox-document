@@ -264,8 +264,50 @@ openbox-evidence join --ocsf openshell-ocsf.2026-11-14.jsonl records.jsonl
 
 With `doorGuard.evidenceCertifySecs` above 0, the door guard also sends each
 chain's new records to Core that often, and Core returns an OpenBox Proof
-Certificate signed with your organization's attestation key. Check one with
-your organization's public key:
+Certificate signed with your organization's attestation key.
+
+The door guard sends its public key with the records. Core certifies only
+records signed by a key registered on the agent, so register `evidence.pub`
+once:
+
+1. Get the raw public key in base64. This is the form the door guard sends:
+
+   ```bash
+   openssl pkey -pubin -in evidence.pub -outform DER | tail -c 32 | base64
+   ```
+
+   Core also accepts the whole PEM file as one string.
+
+2. Add the key to the agent's config, under `openshell.evidence_public_keys`:
+
+   ```json
+   {
+     "openshell": {
+       "evidence_public_keys": ["<the base64 key>"]
+     }
+   }
+   ```
+
+   The dashboard has no field for this yet. Set it with the backend's agent
+   update call, `PUT https://api.openbox.ai/agent/<agent id>`, signed in as a
+   user who can edit agents. The call replaces the whole `config` object.
+   Read the agent first (`GET https://api.openbox.ai/agent/<agent id>`), add
+   `openshell.evidence_public_keys` to its current `config`, and send all of
+   it back as `{"config": {...}}`.
+
+The list can hold more than one key. To rotate the key, add the new key,
+switch the door guard to the new Secret, then remove the old key. If the key
+is not registered, Core answers `403` and certifies nothing. The door guard
+keeps those records and sends them again, so they are certified once you
+register the key.
+
+:::note
+Core does not issue Proof Certificates on production yet. Until it does, the
+door guard's requests fail and it keeps retrying them. Your signed records
+are still written and `openbox-evidence verify` still checks them.
+:::
+
+Check a certificate with your organization's public key:
 
 ```bash
 openbox-evidence check --core-key org-attestation.pub --certificate cert-line.json records-*.jsonl
