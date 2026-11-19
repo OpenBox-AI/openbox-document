@@ -42,8 +42,8 @@ You need:
 ```bash
 helm install openbox oci://ghcr.io/openbox-ai/charts/openbox-openshell \
   --version 0.2.0 -n openbox --create-namespace \
-  --set openbox.url=<Core URL> \
-  --set openbox.backendUrl=<backend URL> \
+  --set openbox.url=https://core.openbox.ai \
+  --set openbox.backendUrl=https://api.openbox.ai \
   --set credentials.existingSecret=openbox-agent \
   --set gateway.id=<gateway_id> \
   --set-file gateway.publicKey=<public_key_path> \
@@ -64,8 +64,8 @@ helm install openbox oci://ghcr.io/openbox-ai/charts/openbox-openshell \
 
 | Value | Default | What it sets |
 |---|---|---|
-| `openbox.url` | – | OpenBox Core URL |
-| `openbox.backendUrl` | – | OpenBox backend URL, for the AI Inventory |
+| `openbox.url` | – | OpenBox Core URL: `https://core.openbox.ai` |
+| `openbox.backendUrl` | – | OpenBox backend URL, for the AI Inventory: `https://api.openbox.ai` |
 | `credentials.existingSecret` | – | The agent's credentials (above) |
 | `gateway.id`, `gateway.publicKey` | – | The gateway's `gateway_id` and extension-token public key |
 | `gateway.api.endpoint`, `gateway.api.mtlsSecret` | – | The gateway API and OpenBox's client certificate for it |
