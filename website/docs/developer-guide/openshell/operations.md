@@ -152,7 +152,43 @@ A halted sandbox is stopped, not deleted. Inspect it before you restart it.
 A halt is held in two places: OpenBox Core latches it on the session, and the
 door guard replicas cache it. Resume clears both. It is off unless the door
 guard has an admin token (`doorGuard.adminTokenSecret`, a Secret with
-`admin-token`, 32 characters or more):
+`admin-token`, 32 characters or more).
+
+The admin token is also the key Core checks before it clears its halt. The
+agent's own credentials are not enough, so a sandbox cannot resume itself.
+Register the token with the agent once:
+
+1. Compute the SHA-256 of the token. Hash it without a trailing newline:
+
+   ```bash
+   printf %s "$(cat admin-token)" | sha256sum | cut -d' ' -f1
+   ```
+
+   On macOS, use `shasum -a 256` in place of `sha256sum`.
+
+2. Add the digest to the agent's config, under `openshell.resume_key_sha256`:
+
+   ```json
+   {
+     "openshell": {
+       "resume_key_sha256": ["<the 64 hex characters>"]
+     }
+   }
+   ```
+
+   The dashboard has no field for this yet. Set it with the backend's agent
+   update call, `PUT https://api.openbox.ai/agent/<agent id>`, signed in as a
+   user who can edit agents. The call replaces the whole `config` object.
+   Read the agent first (`GET https://api.openbox.ai/agent/<agent id>`), add
+   `openshell.resume_key_sha256` to its current `config`, and send all of it
+   back as `{"config": {...}}`.
+
+The list can hold more than one digest. To rotate the token, add the new
+digest, switch the door guard to the new token, then remove the old digest.
+Core records each resume as `resume-key:` and the first 12 characters of the
+digest that matched.
+
+To resume a sandbox:
 
 ```bash
 kubectl -n openbox port-forward deploy/openbox-openbox-openshell-door-guard 9464 &
@@ -163,7 +199,9 @@ openshell sandbox start <sandbox name>
 
 `200` means the door guard and Core both cleared it; the replica that answers
 tells the others through the shared store. `502` means the door guard cleared
-it but Core did not, and requests stay halted until Core's latch is cleared.
+it but Core did not, and requests stay halted until Core's halt is cleared.
+The reply says why. If Core answered `403`, the token's digest is not
+registered on the agent: register it and resume again.
 
 :::note
 Core's side of resume is not served yet, so today expect `502`.
