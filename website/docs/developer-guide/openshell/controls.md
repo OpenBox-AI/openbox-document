@@ -31,7 +31,7 @@ sooner where that is safe:
 | Tier | Answers | Setting |
 |---|---|---|
 | 0, local rules | Requests a rule in a local snapshot matches | `doorGuard.fastPath.rulesSource`: `core` (from Core) or `rulesConfigMap` (a ConfigMap with `rules.json`); `doorGuard.fastPath.rulesMode`: `shadow` (default) or `enforce` |
-| 1, recent verdict | An action identical to one Core allowed within a TTL | Core's `verdict_ttl_secs` on the verdict, else `doorGuard.fastPath.verdictTtlSecs` (default 0: off) |
+| 1, recent verdict | An action identical to one Core allowed within a TTL | Core's `verdict_ttl_secs` on the verdict, from the agent's `config.openshell.verdict_ttl_secs` (0 means do not reuse), else `doorGuard.fastPath.verdictTtlSecs` (default 0: off) |
 | 2, Core | Everything else | `doorGuard.fastPath.slowCore`: `pending` (default) or `inline` |
 
 A request a fast tier allows is still recorded in Core, in order with the
@@ -47,6 +47,15 @@ agent's snapshot from Core every 30 s. Core builds it from the agent's
 `config.openshell.fast_rules_ttl_secs` (30 s to 1 h, default 5 minutes). A door
 guard that cannot reach Core keeps the last snapshot until it expires, then
 asks Core for everything.
+
+Core checks the rules as a whole. If any rule is malformed, has a field the
+format does not know, or there are more than 500, Core serves a snapshot with
+no rules and says why in `rejected`. The door guard then asks Core for
+everything. Core does not skip the bad rule and keep the rest: the first
+matching rule decides, so one missing rule changes what the rules after it do.
+
+Production Core does not serve the rule snapshot yet. Until it does, use
+`rulesSource: rulesConfigMap` there.
 
 **Local rules from a file.** The snapshot is JSON, reloaded within 10 s of a
 change. A snapshot past `expires_at` is not used:
