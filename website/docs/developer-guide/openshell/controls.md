@@ -39,7 +39,9 @@ sandbox's other events, after it has been answered. If Core then refuses it,
 the door guard logs it and counts it in
 `openbox_mw_fast_path_disagreements_total`; the request has already gone.
 Model calls always go to Core. An approved retry is never reused: approvals
-stay single use.
+stay single use. A verdict Core replays for a retried request, rather than
+deciding it afresh, carries only the reuse time it has left, or
+`verdict_ttl_secs: 0` when that is not known.
 
 **Local rules from Core.** With `rulesSource: core` the door guard fetches the
 agent's snapshot from Core every 30 s. Core builds it from the agent's
@@ -49,7 +51,8 @@ guard that cannot reach Core keeps the last snapshot until it expires, then
 asks Core for everything.
 
 Core checks the rules as a whole. If any rule is malformed, has a field the
-format does not know, or there are more than 500, Core serves a snapshot with
+format does not know, sets a condition to `null` or an empty list, or there
+are more than 500, Core serves a snapshot with
 no rules and says why in `rejected`. The door guard then asks Core for
 everything. Core does not skip the bad rule and keep the rest: the first
 matching rule decides, so one missing rule changes what the rules after it do.
