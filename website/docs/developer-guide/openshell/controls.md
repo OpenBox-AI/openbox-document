@@ -99,6 +99,18 @@ The approval fingerprint is the request as the agent sent it, so an identical
 retry still matches its approval. A CONSTRAIN verdict without constraints, or
 with `run_in_sandbox` (which the sandbox itself meets), goes out unchanged.
 
+Rewrite rules apply only to agents whose workflow engine is OpenShell. Other
+runtimes cannot apply a rewrite, so OpenBox refuses to save or assign a rule
+with `redact`, `narrow` or `strip_headers` to those agents. If such a rule
+still reaches one, for example after its workflow engine changes, Core
+returns BLOCK instead of CONSTRAIN. A rule with only `run_in_sandbox` works
+for any agent.
+
+:::note
+The hosted OpenBox platform does not send rewrites yet. Until that release
+is out, a CONSTRAIN verdict there carries only `run_in_sandbox`.
+:::
+
 ## Responses and WebSocket messages
 
 What comes back into the sandbox is checked by the door guard itself, with the
