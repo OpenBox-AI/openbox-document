@@ -73,11 +73,13 @@ When OpenBox returns `require_approval`, the SDK chooses the approval path based
 
 ### Workflow-Backed Execution
 
-Preferred behavior:
+When a workflow step itself needs approval:
 
 - approval state is created
 - the workflow suspends through Mastra resume behavior
 - later resume paths emit signals and continue after approval resolves
+
+A tool that an agent calls is not a workflow step, even when the agent runs inside one, so it uses the inline path below.
 
 ### Non-Workflow Execution
 
@@ -87,9 +89,14 @@ Fallback behavior:
 - execution continues only after approval is granted
 - timeout or rejection raises an approval error
 
-## Output-Time Approval
+## Approval After An Activity Ran
 
-Approval is not limited to requested action. `ActivityCompleted` can also return `require_approval`, which is useful when policy needs to review actual output instead of just the requested operation.
+Only `ActivityStarted` can gate an activity. If `ActivityCompleted` returns `require_approval`, the tool or step has already run, so the SDK logs a warning, keeps the output and continues without waiting. To put a tool or step behind a human approval, match the rule on `event_type == "ActivityStarted"`.
+
+## Writing Rules For Mastra Activities
+
+- `activity_type` is the camelCase form of the tool or step id: `refund_order` and `refund-order` both become `refundOrder`. A rule on the original id will not match.
+- On `ActivityStarted`, `activity_input` is the tool or step input object, not a list. Rules written for list-shaped input (`activity_input[_].<field>`) do not match Mastra tools.
 
 ## Runtime Errors You Should Expect
 
