@@ -20,6 +20,7 @@ const IntegrationsLive = [
   {label: 'Mastra', to: '/getting-started/mastra'},
   {label: 'n8n', to: '/getting-started/n8n'},
   {label: 'OpenRouter', to: '/getting-started/openrouter'},
+  {label: 'Salesforce Agentforce', to: '/getting-started/salesforce-agentforce'},
   {label: 'Temporal', to: '/getting-started/temporal'},
 ];
 
@@ -207,6 +208,49 @@ export const governedMastra = await withOpenBox(mastra, {
 process.on("SIGTERM", async () => {
   await getOpenBoxRuntime(governedMastra)?.shutdown();
 });`;
+
+const SalesforceSnippet = `public with sharing class FindAccount {
+    public class Request {
+        @InvocableVariable(label='Account Name' required=true) public String name;
+        @InvocableVariable(label='Conversation Key') public String conversationKey;
+    }
+
+    /** The tool's work. It runs only after OpenBox allows the call. */
+    public class Finder implements OpenBoxToolExecutor {
+        public Map<String, Object> execute(OpenBoxToolContext context, Map<String, Object> input) {
+            String term = String.valueOf(input.get('name')).replace('\\\\', '\\\\\\\\').replace('%', '\\\\%').replace('_', '\\\\_');
+            String pattern = '%' + term + '%';
+            List<Account> found = [SELECT Name FROM Account WHERE Name LIKE :pattern WITH USER_MODE LIMIT 1];
+            return new Map<String, Object>{ 'name' => found.isEmpty() ? null : found[0].Name };
+        }
+    }
+
+    @InvocableMethod(label='Find Account')
+    public static List<String> find(List<Request> requests) {
+        List<OpenBoxToolGovernance.ToolCall> calls = new List<OpenBoxToolGovernance.ToolCall>();
+        for (Request request : requests) {
+            OpenBoxToolGovernance.ToolCall call = new OpenBoxToolGovernance.ToolCall();
+            call.sessionKey = request.conversationKey;    // the conversation's OpenBox session
+            call.toolName = 'find_account';               // the activity_type policies match on
+            call.input = new Map<String, Object>{ 'name' => request.name };
+            call.targetType = OpenBoxToolGovernance.TARGET_APEX_EXECUTOR;
+            call.targetName = Finder.class.getName();
+            call.readOnly = true;
+            calls.add(call);
+        }
+        // OpenBox decides every call before any of them runs
+        List<String> replies = new List<String>();
+        for (OpenBoxToolGovernance.Result outcome : new OpenBoxToolGovernance().governAll(calls)) {
+            if (!outcome.executed) {
+                replies.add(outcome.message);                  // OpenBox's refusal, or the approval request
+            } else {
+                Object name = outcome.output.get('name');
+                replies.add(name == null ? 'No matching Account.' : 'Found ' + name + '.');
+            }
+        }
+        return replies;
+    }
+}`;
 
 const TemporalSnippet = `import os
 import asyncio
@@ -461,6 +505,12 @@ export default function Home() {
                   <CodeBlock language="typescript" title="src/agent.ts">{OpenRouterSnippet}</CodeBlock>
                   <Link className={styles.tabFooterLink} to="/getting-started/openrouter">
                     OpenRouter quickstart →
+                  </Link>
+                </TabItem>
+                <TabItem value="salesforce" label="Salesforce Agentforce (Apex)">
+                  <CodeBlock language="apex" title="FindAccount.cls">{SalesforceSnippet}</CodeBlock>
+                  <Link className={styles.tabFooterLink} to="/getting-started/salesforce-agentforce">
+                    Salesforce Agentforce quickstart →
                   </Link>
                 </TabItem>
                 <TabItem value="temporal" label="Temporal (Python)">
