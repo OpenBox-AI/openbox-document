@@ -19,7 +19,7 @@ tags:
 | Conversations | `OpenBox_Agent_Session__c`, one per conversation |
 | Approve or reject | OpenBox dashboard ([Approvals](/approvals)), or `node scripts/openbox/approvals.mjs approve <request-id>` |
 | See what OpenBox stored | OpenBox dashboard > the agent > Sessions, or `node scripts/openbox/inspect-session.mjs <request-id>` |
-| Undelivered events | `OpenBox_Event_Outbox__c` with `Status__c` `Queued` or `Failed` |
+| Undelivered events | `OpenBox_Event_Outbox__c` with `Status__c` `Queued` (waiting or retrying) or `Failed` (gave up after `Outbox_Max_Attempts__c`). `Rejected` means OpenBox had already closed the session after a halt |
 | Change policy | OpenBox dashboard > the agent; the next call follows it |
 
 The scripts run from a clone of the
@@ -69,7 +69,7 @@ sf package version create --package OpenBoxGovernance --installation-key-bypass 
 │       ├── externalCredentials/   # OpenBox_Core_Auth (API key)
 │       ├── remoteSiteSettings/    # OpenBox_Identity
 │       ├── permissionsets/        # OpenBox_Governed_Agent, OpenBox_Governance_Admin
-│       └── customPermissions/     # Governed_Record_Write, Guarded_Field_Direct_Edit
+│       └── customPermissions/     # OpenBox_Governed_Record_Write, OpenBox_Guarded_Field_Direct_Edit
 ├── reference-agent/               # the worked example; deployed, not packaged
 ├── config/                        # scratch org definition for a package test org
 ├── scripts/

@@ -63,10 +63,10 @@ Two things change in your agent:
 | OpenBox decides | What happens in Salesforce | The agent tells the user |
 |---|---|---|
 | Allow | The tool runs, or the record is written | The normal result |
-| Require approval | Nothing runs yet. The call waits as a `Pending_Approval` governed request | The request number. Once an approver decides in the OpenBox dashboard, the change is applied |
+| Require approval | Nothing runs yet. The call waits as a `Pending_Approval` governed request | The request number. Once an approver approves it in the OpenBox dashboard, Apex tools and record writes are applied in the background; flows and standard actions run when the agent next checks on the request |
 | Block | Nothing runs | OpenBox's refusal, with the reason |
 | Halt | Nothing runs, and the conversation ends | OpenBox's refusal |
-| No answer in time | Nothing runs (fail closed) | That governance is unavailable |
+| No answer in time, or any error | Nothing runs (fail closed) | That OpenBox could not authorize the call, and to try again later |
 
 A refused user message never reaches the model: the agent replies with
 OpenBox's message and nothing else.
@@ -147,9 +147,9 @@ classes (step 5) through a permission set of yours.
 
 ### 4. Hook the conversation in Agent Script
 
-In your agent's `.agent` file, add a conversation key variable and the two
-conversation actions. Then run them around the reasoning of the start agent
-and of every subagent:
+In your agent's `.agent` file, add three variables (the conversation key, and
+OpenBox's answer on the latest message) and the two conversation actions. Then
+run the actions around the reasoning of the start agent and of every subagent:
 
 ```yaml title="My_Agent.agent (excerpt)"
 config:
@@ -222,9 +222,30 @@ start_agent agent_router:
             with conversationKey = @variables.ob_conversation_key
 ```
 
-Add the same `before_reasoning` and `after_reasoning` blocks, and the same two
-actions, to every subagent. Then add the subagent the router sends refused
-messages to:
+Add the same two actions, and the same `before_reasoning` and `after_reasoning`
+blocks, to every subagent, with one change: pass the subagent's own name as
+`subagent`. That is how OpenBox records the agent moving between subagents
+(the `subagent_selected` signal):
+
+```yaml
+subagent account_lookup:
+    # ...
+    before_reasoning:
+        run @actions.openbox_govern_message
+            with userInput = @system_variables.user_input
+            with conversationKey = @variables.ob_conversation_key
+            with subagent = "account_lookup"
+            set @variables.ob_conversation_key = @outputs.conversationKey
+            set @variables.ob_allowed = @outputs.allowed
+            set @variables.ob_message = @outputs.message
+        if @variables.ob_allowed == False:
+            transition to @subagent.governance_refused
+```
+
+OpenBox evaluates each message once per turn, however many subagents the turn
+passes through.
+
+Then add the subagent the router sends refused messages to:
 
 ```yaml
 subagent governance_refused:
@@ -363,8 +384,8 @@ agent:
 
 - **Sessions** shows the conversation: the user message, the `find_account`
   call and OpenBox's verdict for each.
-- **Add a policy rule** that blocks `activity_type` `find_account`, and ask
-  again. The agent now replies with OpenBox's refusal, and the lookup never
+- **Add a policy rule** that blocks `activity_type` `find_account` (see
+  [Policies](/trust-lifecycle/authorize/policies)), and ask again. The agent now replies with OpenBox's refusal, and the lookup never
   runs.
 
 That is the whole loop.

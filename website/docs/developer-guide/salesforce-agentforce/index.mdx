@@ -31,37 +31,32 @@ To install it, start with [Getting Started with Salesforce Agentforce](/getting-
 ```mermaid
 flowchart LR
   rep(["Sales rep"])
-
-  subgraph org["Your Salesforce org"]
-    direction TB
-    agent["<b>Agentforce agent</b><br/><small>Agent Script</small><br/>Runs as a least-privilege agent user"]
-    actions["<b>Governed actions</b><br/><small>Apex invocable methods</small><br/>Your tools, wrapped by the SDK"]
-    sdk["<b>OpenBox Apex SDK</b><br/><small>Unlocked package</small><br/>Workload identity, client, governed run,<br/>events, spans, outbox, approval poller"]
-    creds["<b>Credentials</b><br/><small>Named and External Credential, certificate</small><br/>API key and signing key, invisible to Apex"]
-    data[("<b>Your records</b><br/>Guarded fields protected by a trigger")]
-    records[("<b>Governance records</b><br/>Governed Request, Audit, Event Outbox")]
-  end
-
-  subgraph ob["OpenBox"]
-    direction TB
-    identity["<b>Identity</b><br/>Verifies the signed assertion,<br/>issues workload tokens"]
-    core["<b>Core</b><br/><small>Governance API v3</small><br/>Evaluate, approval"]
-    dash["<b>Dashboard</b><br/>Policies, approvals, sessions"]
-  end
-
+  agent["<b>Agentforce agent</b><br/>runs as the agent user"]
+  sdk["<b>Governed actions</b><br/>your tools, on the OpenBox SDK"]
+  data[("<b>Records</b><br/>yours, and the<br/>governance records")]
+  core["<b>OpenBox</b><br/>Identity and Core"]
   approver(["Approver"])
 
-  rep -- "Chats" --> agent
-  agent -- "Invokes" --> actions
-  actions -- "Uses" --> sdk
-  sdk -- "Signs and authenticates with" --> creds
-  sdk -- "Writes only after allow" --> data
-  sdk -- "Writes" --> records
-  sdk -- "Signed JWT for a token" --> identity
-  sdk -- "Events and verdicts" --> core
-  dash -- "Policies, approvals" --> core
-  approver -- "Decides held requests" --> dash
+  rep --> agent
+  agent --> sdk
+  sdk -- "verdict first" --> core
+  sdk -- "write only after allow" --> data
+  approver -- "dashboard" --> core
 ```
+
+- **The agent** runs as a dedicated, least-privilege agent user with
+  `OpenBox_Governed_Agent`. It reaches your tools only through governed actions.
+- **The SDK** asks OpenBox Core for a verdict before anything runs, and writes
+  only after an allow. It authenticates with a certificate-signed workload
+  identity (see [Security Model](/developer-guide/salesforce-agentforce/security-model)).
+- **Credentials** live in the Named Credential `OpenBox_Core`, the External
+  Credential `OpenBox_Core_Auth` (the agent's API key) and the certificate
+  `OpenBox_Workload`. Apex can read neither the key nor the signing key.
+- **Governance records** sit next to your own: `OpenBox_Governed_Request__c`,
+  `OpenBox_Governance_Audit__c`, `OpenBox_Agent_Session__c` and
+  `OpenBox_Event_Outbox__c`.
+- **Approvers** decide held requests in the OpenBox dashboard. OpenBox never
+  calls into Salesforce; the org picks up the decision.
 
 ## Inside the SDK
 
@@ -105,8 +100,9 @@ conversation is one session in the OpenBox dashboard.
 | Salesforce replies | `WorkflowCompleted` (status `failed` when OpenBox refused the message), queued so the reply is not delayed | No |
 
 A turn that leaves a call waiting for approval stays open until that call is
-approved and run, rejected, or expires. Turns whose reply never arrives are
-closed by an hourly idle sweep.
+approved and run, rejected, or expires. Conversations idle for
+`Session_Idle_Minutes__c` (60 by default) are closed by an hourly sweep, which
+also closes turns whose reply never arrived.
 
 ## A governed write, end to end
 

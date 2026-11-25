@@ -161,10 +161,80 @@ custom metadata type `OpenBox_Governed_Tool__mdt`:
 | `Active__c` | Only active tools can run |
 | `Description__c` | What the tool does and its inputs, for the agent |
 
-Then give the agent the action **Run Governed Tool (OpenBox)**
-(`apex://OpenBox_GovernedAction`), with `toolName`, `inputJson` and
-`conversationKey`. The reference agent registers a flow this way:
-[`OpenBox_Governed_Tool.Log_Opportunity_Note`](https://github.com/OpenBox-AI/openbox-agentforce-sdk/blob/main/reference-agent/main/default/customMetadata/OpenBox_Governed_Tool.Log_Opportunity_Note.md-meta.xml).
+The reference agent registers its note-logging flow this way:
+
+```xml title="customMetadata/OpenBox_Governed_Tool.Log_Opportunity_Note.md-meta.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Log Opportunity Note</label>
+    <protected>false</protected>
+    <values><field>Tool_Name__c</field><value xsi:type="xsd:string">log_opportunity_note</value></values>
+    <values><field>Target_Type__c</field><value xsi:type="xsd:string">flow</value></values>
+    <values><field>Target_Name__c</field><value xsi:type="xsd:string">OpenBox_Log_Opportunity_Note</value></values>
+    <values><field>Description__c</field><value xsi:type="xsd:string">Logs a completed call note (Task) on an Opportunity. Inputs: opportunityId, subject, note.</value></values>
+    <values><field>Active__c</field><value xsi:type="xsd:boolean">true</value></values>
+    <values><field>Read_Only__c</field><value xsi:type="xsd:boolean">false</value></values>
+</CustomMetadata>
+```
+
+Then give the agent one action, **Run Governed Tool (OpenBox)**
+(`apex://OpenBox_GovernedAction`), which runs any registered tool by name:
+
+```yaml
+        run_governed_tool:
+            description: "Runs a registered tool after OpenBox authorizes it. The result says whether it ran, was refused, or is waiting for human approval."
+            label: "Run Governed Tool (OpenBox)"
+            target: "apex://OpenBox_GovernedAction"
+            inputs:
+                toolName: string
+                    label: "Tool Name"
+                    description: "The registered tool to run, for example log_opportunity_note."
+                    is_required: True
+                inputJson: string
+                    label: "Tool Input (JSON)"
+                    description: "The tool arguments as a JSON object."
+                    is_required: False
+                conversationKey: string
+                    label: "Conversation Key"
+                    is_required: False
+            outputs:
+                status: string
+                    label: "Status"
+                    is_displayable: False
+                    filter_from_agent: False
+                executed: boolean
+                    label: "Executed"
+                    is_displayable: False
+                    filter_from_agent: False
+                message: string
+                    label: "Message"
+                    is_displayable: True
+                    filter_from_agent: False
+                requestNumber: string
+                    label: "Request Number"
+                    is_displayable: False
+                    filter_from_agent: False
+```
+
+In the subagent's reasoning, tell the agent which tool name and JSON keys to
+use, and pass the conversation key:
+
+```yaml
+    reasoning:
+        actions:
+            run_governed_tool: @actions.run_governed_tool
+                with toolName = ...
+                with inputJson = ...
+                with conversationKey = @variables.ob_conversation_key
+```
+
+`status` is the governed request's status (see
+[Request statuses](/developer-guide/salesforce-agentforce#request-statuses)), or
+`Not_Registered` when no active tool has that name. The action
+also returns `verdict`, `reason` and `outputJson` (the tool's result, when it
+ran) if your agent needs them. Instruct the agent to relay `message`, and never
+to claim a tool ran unless `executed` is true.
 
 ## Approvals
 

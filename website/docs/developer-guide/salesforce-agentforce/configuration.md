@@ -24,6 +24,7 @@ The custom metadata record `OpenBox_Settings__mdt.Default`:
 | `Approval_Poll_Interval_Minutes__c` | `1` | How often the poller checks waiting requests |
 | `Max_Requests_Per_Transaction__c` | `5` | Governed calls allowed in one transaction |
 | `Outbox_Max_Attempts__c` | `5` | Delivery attempts for post-write events |
+| `Session_Idle_Minutes__c` | `60` | Minutes without activity after which a conversation is closed in OpenBox. Values under 5 fall back to 60 |
 | `Identity_Issuer__c` | `https://identity.openbox.ai/realms/openbox` | The one identity issuer Apex trusts |
 | `Workload_Certificate__c` | `OpenBox_Workload` | The certificate that signs workload assertions |
 

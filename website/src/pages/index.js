@@ -218,9 +218,10 @@ const SalesforceSnippet = `public with sharing class FindAccount {
     /** The tool's work. It runs only after OpenBox allows the call. */
     public class Finder implements OpenBoxToolExecutor {
         public Map<String, Object> execute(OpenBoxToolContext context, Map<String, Object> input) {
-            String pattern = '%' + String.valueOf(input.get('name')) + '%';
-            List<Account> found = [SELECT Id, Name FROM Account WHERE Name LIKE :pattern WITH USER_MODE LIMIT 1];
-            return new Map<String, Object>{ 'account_id' => found.isEmpty() ? null : found[0].Id };
+            String term = String.valueOf(input.get('name')).replace('\\\\', '\\\\\\\\').replace('%', '\\\\%').replace('_', '\\\\_');
+            String pattern = '%' + term + '%';
+            List<Account> found = [SELECT Name FROM Account WHERE Name LIKE :pattern WITH USER_MODE LIMIT 1];
+            return new Map<String, Object>{ 'name' => found.isEmpty() ? null : found[0].Name };
         }
     }
 
@@ -238,11 +239,16 @@ const SalesforceSnippet = `public with sharing class FindAccount {
             calls.add(call);
         }
         // OpenBox decides every call before any of them runs
-        List<String> messages = new List<String>();
+        List<String> replies = new List<String>();
         for (OpenBoxToolGovernance.Result outcome : new OpenBoxToolGovernance().governAll(calls)) {
-            messages.add(outcome.message);
+            if (!outcome.executed) {
+                replies.add(outcome.message);                  // OpenBox's refusal, or the approval request
+            } else {
+                Object name = outcome.output.get('name');
+                replies.add(name == null ? 'No matching Account.' : 'Found ' + name + '.');
+            }
         }
-        return messages;
+        return replies;
     }
 }`;
 

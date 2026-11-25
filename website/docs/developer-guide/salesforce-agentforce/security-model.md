@@ -56,9 +56,6 @@ sequenceDiagram
   Apex->>Core: evaluate, with the API key and X-OpenBox-Workload-Token
 ```
 
-See [Agent Identity](/core-concepts/agent-identity) for how OpenBox uses
-workload identities across integrations.
-
 ## Events after the write
 
 Apex cannot make a callout after DML in the same transaction, so events that
@@ -83,7 +80,16 @@ sequenceDiagram
   end
 ```
 
-Delivery is attempted up to `Outbox_Max_Attempts__c` times. The write and its
-outbox rows commit together, so a write is never recorded in Salesforce
-without its events, and the decision that allowed it was already made before
-any DML.
+- **Commit together.** The write and its outbox rows are one transaction, so
+  every committed write has its events queued. The decision that allowed the
+  write was made before any DML.
+- **In order.** Events of one request (or, for conversation events, of one
+  conversation) are sent strictly in sequence. A failing event holds back the
+  ones after it.
+- **Bounded retries.** An event that fails `Outbox_Max_Attempts__c` times is
+  marked `Failed`, so the events after it can still close the run in OpenBox.
+- **After a halt.** OpenBox answers events for a session it already closed with
+  a halt; those rows are marked `Rejected`.
+- **Never undone.** An output guardrail failure reported on a completed write
+  goes to the audit trail. The write it describes has already happened and is
+  not rolled back.
