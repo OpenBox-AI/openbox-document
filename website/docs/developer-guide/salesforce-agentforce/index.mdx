@@ -1,0 +1,192 @@
+---
+title: Salesforce Agentforce Reference
+description: "How OpenBox for Salesforce Agentforce works: the Apex SDK inside your org, the conversation event model, a governed write end to end, and the wire format OpenBox receives."
+llms_description: Agentforce SDK architecture and event model
+sidebar_position: 1
+tags:
+  - salesforce
+  - integration
+---
+
+# Salesforce Agentforce Reference
+
+OpenBox for Salesforce Agentforce is an Apex SDK, shipped as the unlocked
+package `OpenBoxGovernance`, that puts an Agentforce agent under OpenBox
+governance. It runs inside your own org: Salesforce calls OpenBox over HTTPS,
+and OpenBox never calls into Salesforce.
+
+Source, issues and releases are in
+[OpenBox-AI/openbox-agentforce-sdk](https://github.com/OpenBox-AI/openbox-agentforce-sdk).
+To install it, start with [Getting Started with Salesforce Agentforce](/getting-started/salesforce-agentforce).
+
+| Page | What it covers |
+|---|---|
+| [Building a Governed Agent](/developer-guide/salesforce-agentforce/building-a-governed-agent) | Apex tools, record writes and guarded fields, flows and standard actions, approvals |
+| [Configuration](/developer-guide/salesforce-agentforce/configuration) | Settings, permission sets, API key scopes, other environments, several orgs |
+| [Security Model](/developer-guide/salesforce-agentforce/security-model) | Fail closed, workload identity, secrets, replay safety, the outbox |
+| [Operations and Troubleshooting](/developer-guide/salesforce-agentforce/operations) | Where to look, common failures, testing, building the package |
+
+## Inside your Salesforce org
+
+```mermaid
+flowchart LR
+  rep(["Sales rep"])
+
+  subgraph org["Your Salesforce org"]
+    direction TB
+    agent["<b>Agentforce agent</b><br/><small>Agent Script</small><br/>Runs as a least-privilege agent user"]
+    actions["<b>Governed actions</b><br/><small>Apex invocable methods</small><br/>Your tools, wrapped by the SDK"]
+    sdk["<b>OpenBox Apex SDK</b><br/><small>Unlocked package</small><br/>Workload identity, client, governed run,<br/>events, spans, outbox, approval poller"]
+    creds["<b>Credentials</b><br/><small>Named and External Credential, certificate</small><br/>API key and signing key, invisible to Apex"]
+    data[("<b>Your records</b><br/>Guarded fields protected by a trigger")]
+    records[("<b>Governance records</b><br/>Governed Request, Audit, Event Outbox")]
+  end
+
+  subgraph ob["OpenBox"]
+    direction TB
+    identity["<b>Identity</b><br/>Verifies the signed assertion,<br/>issues workload tokens"]
+    core["<b>Core</b><br/><small>Governance API v3</small><br/>Evaluate, approval"]
+    dash["<b>Dashboard</b><br/>Policies, approvals, sessions"]
+  end
+
+  approver(["Approver"])
+
+  rep -- "Chats" --> agent
+  agent -- "Invokes" --> actions
+  actions -- "Uses" --> sdk
+  sdk -- "Signs and authenticates with" --> creds
+  sdk -- "Writes only after allow" --> data
+  sdk -- "Writes" --> records
+  sdk -- "Signed JWT for a token" --> identity
+  sdk -- "Events and verdicts" --> core
+  dash -- "Policies, approvals" --> core
+  approver -- "Decides held requests" --> dash
+```
+
+## Inside the SDK
+
+The Apex classes behind a governed call.
+
+| Class | Role |
+|---|---|
+| `OpenBoxToolGovernance` | The entry point. `govern` and `governAll` run a decide phase (callouts only), then one commit phase (all DML) |
+| `OpenBoxToolExecutor` | Interface your tool implements; `execute` runs only after OpenBox allows the call |
+| `OpenBoxRecordWriter` | Base class for a governed write: you describe the object, record and change; the SDK does the rest |
+| `OpenBoxFieldGuard` | Trigger helper: only governed writes can change a guarded field |
+| `OpenBoxAccess` | Salesforce permission checks for the requesting user |
+| `OpenBoxGovernedRun` | Event order; pairs every started with its completed |
+| `OpenBoxEvents`, `OpenBoxSpan` | OpenBox SDK payloads |
+| `OpenBoxClient` | HTTP to OpenBox Core: retry once, fail closed |
+| `OpenBoxWorkloadIdentity` | Bootstrap, certificate-signed JWT, cached workload token |
+| `OpenBoxOutbox`, `OpenBoxOutboxDispatcher` | Delivers post-write events, in order, from a queueable |
+| `OpenBoxApprovalPoller` | Queueable that resumes approved requests |
+
+The invocable actions your agent calls are thin wrappers around these:
+
+| Action | Target | Purpose |
+|---|---|---|
+| Govern User Message (OpenBox) | `apex://OpenBox_GovernMessage` | Checks each user message before the agent reasons about it |
+| End Turn (OpenBox) | `apex://OpenBox_EndTurn` | Closes the OpenBox run of the turn after the agent replies |
+| Run Governed Tool (OpenBox) | `apex://OpenBox_GovernedAction` | Runs a flow, standard action or Apex registered in `OpenBox_Governed_Tool__mdt` |
+| Check Approval (OpenBox Governed) | `apex://OpenBox_CheckApproval` | Checks on, and applies, a request waiting for approval |
+
+## The conversation, end to end
+
+Each user message is one OpenBox run, closed when Salesforce replies. All runs
+of a conversation share its `workflow_id` and `session_id`, so the whole
+conversation is one session in the OpenBox dashboard.
+
+| When | Event | Decides? |
+|---|---|---|
+| A user message arrives | `WorkflowStarted` (goal = the message), then `SignalReceived` `user_prompt` | **Yes**: block or approval refuses the message, halt ends the conversation |
+| The agent moves to a subagent | `SignalReceived` `subagent_selected` | No |
+| The agent calls any tool | `ActivityStarted`, `activity_type` = tool name, `activity_input` = its arguments | **Yes**: the tool runs only on allow; approval holds it |
+| The tool finishes | `ActivityCompleted` with the result or error | Read-only tools: output guardrails apply before the agent sees the result |
+| Salesforce replies | `WorkflowCompleted` (status `failed` when OpenBox refused the message), queued so the reply is not delayed | No |
+
+A turn that leaves a call waiting for approval stays open until that call is
+approved and run, rejected, or expires. Turns whose reply never arrives are
+closed by an hourly idle sweep.
+
+## A governed write, end to end
+
+Shown with the reference agent's discount change; your own writes follow the
+same path.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Rep as Sales rep
+  participant Agent as Agentforce agent
+  participant Apex as Governed action (Apex)
+  participant Core as OpenBox Core
+  participant Rec as Record
+
+  Rep->>Agent: Set Routine Renewal to 10%, loyal renewal
+  Agent->>Apex: Find Opportunity, then Update Discount
+  Apex->>Apex: Validate input, entitlement, limits
+  Apex->>Core: WorkflowStarted, SignalReceived
+  Apex->>Core: Lookup activity and SELECT span
+  Apex->>Core: ActivityStarted for the write
+  Core-->>Apex: Verdict
+
+  alt allow
+    Apex->>Core: SELECT FOR UPDATE span (locked re-read)
+    Apex->>Core: UPDATE span started
+    Core-->>Apex: allow (behavior rules)
+    Apex->>Rec: Update the field (commit phase)
+    Apex->>Apex: Stage completed events in the outbox
+  else require_approval
+    Apex->>Apex: Save the request as Pending_Approval
+  else block or halt
+    Apex->>Core: ActivityCompleted, WorkflowFailed
+  end
+
+  Apex-->>Agent: Status, message, request number
+  Agent-->>Rep: Done, held or refused, with the reason
+```
+
+## Request statuses
+
+Every governed tool call and record write is an `OpenBox_Governed_Request__c`
+record. Its `Status__c` moves through:
+
+```
+Authorizing -> Executed | Blocked | Halted | Permission_Denied | Failed
+            -> Pending_Approval -> Approved -> Executed | Failed | Stale | Permission_Denied
+                                -> Rejected | Expired | Halted
+```
+
+Only `Pending_Approval` and `Approved` are waiting; every other status after
+`Authorizing` is final.
+
+## Wire format
+
+A governed write produces this sequence within its run. Events and spans
+follow the OpenBox SDK wire format: the lifecycle shapes of the
+[LangGraph SDK](/developer-guide/langgraph/event-model) and the flat `SpanData`
+spans of the base SDK.
+
+```
+WorkflowStarted                       goal = the user's request
+SignalReceived      user_prompt
+ActivityStarted     <Object>Lookup
+  span SELECT <Object>                started → completed
+ActivityCompleted   <Object>Lookup    output guardrails may redact what the agent sees
+ActivityStarted     <tool name>       ◄ policy rules and input guardrails decide
+  span SELECT <Object> (FOR UPDATE)   started → completed    locked re-read
+  span UPDATE <Object>                started ◄ behavior rules decide → write → completed
+ActivityCompleted   <tool name>
+WorkflowCompleted | WorkflowFailed
+```
+
+- Every `ActivityStarted` is closed by exactly one `ActivityCompleted` with the
+  same `activity_id`, on success, failure or refusal. A span refused at
+  `started` is closed as an error. After a `halt`, OpenBox closes the session
+  and accepts nothing more.
+- Event timestamps strictly increase within a transaction, so stored order
+  matches send order.
+
+Your policies match on `activity_type` (the tool name) and read
+`activity_input` (its arguments). See [Policies](/trust-lifecycle/authorize/policies)
+for how to write rules against them.

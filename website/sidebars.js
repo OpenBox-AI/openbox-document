@@ -164,6 +164,17 @@ const sidebars = {
         },
         {
           type: 'category',
+          label: 'Salesforce Agentforce',
+          link: {
+            type: 'doc',
+            id: 'getting-started/salesforce-agentforce/index',
+          },
+          items: [
+            'getting-started/salesforce-agentforce/run-the-reference-agent',
+          ],
+        },
+        {
+          type: 'category',
           label: 'Temporal',
           link: {
             type: 'doc',
@@ -485,6 +496,20 @@ const sidebars = {
             'developer-guide/openshell/controls',
             'developer-guide/openshell/approvals',
             'developer-guide/openshell/operations',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Salesforce Agentforce (Apex)',
+          link: {
+            type: 'doc',
+            id: 'developer-guide/salesforce-agentforce/index',
+          },
+          items: [
+            'developer-guide/salesforce-agentforce/building-a-governed-agent',
+            'developer-guide/salesforce-agentforce/configuration',
+            'developer-guide/salesforce-agentforce/security-model',
+            'developer-guide/salesforce-agentforce/operations',
           ],
         },
         {
