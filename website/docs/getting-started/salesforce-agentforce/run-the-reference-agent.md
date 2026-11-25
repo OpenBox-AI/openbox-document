@@ -70,6 +70,17 @@ node scripts/salesforce/create-agent-user.mjs --target-org my-org
 node scripts/salesforce/publish-agent.mjs --target-org my-org
 ```
 
+What each step does:
+
+| Script | Does |
+|---|---|
+| `workload-certificate.mjs` | Generates the signing certificate inside Salesforce and writes its public key to `.env` |
+| `provision.mjs` | Registers the agent in OpenBox with its starting controls, and writes its runtime key to `.env` |
+| `deploy.mjs` | Deploys the SDK and the reference agent from source, runs the Apex tests, installs the approval poller schedule |
+| `setup-org.mjs --skip-deploy` | Assigns `OpenBox_Governance_Admin` and `OpenBox_Sales_Admin` to you, stores the runtime key in the External Credential, and seeds four demo Opportunities |
+| `create-agent-user.mjs` | Creates the agent user and saves its username to `.env` |
+| `publish-agent.mjs` | Publishes and activates `OpenBox_Sales_Agent` |
+
 `deploy.mjs` deploys the SDK from source as well. To use the installed package
 instead, deploy only the reference agent:
 
@@ -80,23 +91,26 @@ sf project deploy start --source-dir reference-agent --target-org my-org
 ## Try it
 
 Open the agent with `sf agent preview --api-name OpenBox_Sales_Agent --target-org my-org`,
-or in the Agentforce builder, and try the policy table on an open Opportunity
-that is not in `Negotiation/Review` (a late-stage deal also needs the sales-ops
-sign-off behavior rule):
+or in the Agentforce builder. `setup-org.mjs` seeded four Opportunities, each
+at a 5% discount, to exercise the policies:
 
 | Ask the agent | OpenBox decides |
 |---|---|
-| Set the Opportunity's discount to 10% | Allow: the discount changes |
-| Set it to 20% | Require approval: the agent gives a request number. Approve it in the OpenBox dashboard and the change is applied |
-| Set it to 50% | Block: nothing changes, and the agent says why |
-| Set it to 95% | Halt: nothing changes, and the conversation ends |
-| Change the discount on a closed Opportunity | Block |
+| Set the discount on *OBX Demo - Routine Renewal* to 10%. They committed to a three-year renewal. | Allow: the discount changes to 10% |
+| Set the discount on *OBX Demo - Approval Track* to 25%. | Require approval: the agent gives you a request number. Approve it in the OpenBox dashboard and the discount changes to 25% |
+| Set the discount on *OBX Demo - Late Stage Expansion* to 10%. | Require approval: the late-stage sign-off behavior rule holds the write until it is approved |
+| Set the discount on *OBX Demo - Routine Renewal* to 55%. | Block: nothing changes, and the agent says why |
+| Set the discount on *OBX Demo - Closed Deal* to 8%. | Block: closed deals cannot be discounted |
+| Set the discount on *OBX Demo - Routine Renewal* to 95%. | Halt: nothing changes, and the conversation ends. Try this one last, or start a new conversation afterwards |
 
 Each conversation shows up in the OpenBox dashboard under the agent's
 **Sessions**, with every lookup, write and verdict in order.
 
-Try to edit `Discount__c` directly as the agent user, or through any path that
-is not a governed write: the field guard refuses the change.
+Then try to change `Discount__c` any other way, as a user without the
+`OpenBox_Guarded_Field_Direct_Edit` custom permission: from the record page, a
+flow, Apex or the API. The field guard refuses the change. (System
+Administrators hold that permission by default; see
+[Permission sets and custom permissions](/developer-guide/salesforce-agentforce/configuration#permission-sets-and-custom-permissions).)
 
 ## Test it end to end
 
